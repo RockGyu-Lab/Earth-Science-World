@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>지구과학 World</title>
+<style>
+:root{--bg:#f3f6fb;--fg:#172334;--muted:#5d6b7d;--card:#fff;--line:#dce4ef;--blue:#1e4f7a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}
+header{background:linear-gradient(135deg,#163650,#24618a);color:white;padding:48px 20px 42px;text-align:center}
+header .eyebrow{font-size:.9rem;letter-spacing:.12em;opacity:.82}
+header h1{margin:8px 0;font-size:clamp(2rem,5vw,3rem)}
+header p{margin:0;color:#e0edf7}
+main{max-width:1000px;margin:0 auto;padding:28px 18px 48px}
+h2{font-size:1.35rem;margin:0 0 14px}
+.subject{display:flex;align-items:center;gap:18px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;text-decoration:none;color:inherit;box-shadow:0 6px 20px #183b5a0b;transition:transform .15s,box-shadow .15s}
+.subject:hover{transform:translateY(-2px);box-shadow:0 10px 26px #183b5a16}
+.symbol{display:grid;place-items:center;flex:0 0 64px;width:64px;height:64px;border-radius:16px;background:#e6f0fa;font-size:2rem}
+.subject h3{margin:0 0 4px;font-size:1.2rem}
+.subject p{margin:0;color:var(--muted)}
+.arrow{margin-left:auto;font-size:1.6rem;color:var(--blue)}
+footer{text-align:center;color:var(--muted);font-size:.88rem;padding:0 18px 24px}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">INTERACTIVE EARTH SCIENCE</div>
+  <h1>지구과학 World</h1>
+  <p>직접 탐구하고 체험하는 지구과학</p>
+</header>
+<main>
+  <h2>주제별 학습실</h2>
+  <a class="subject" href="./eclipse/">
+    <div class="symbol" aria-hidden="true">🌒</div>
+    <div>
+      <h3>일식과 월식</h3>
+      <p>태양·지구·달의 위치와 그림자를 인터랙티브 자료로 탐구합니다.</p>
+    </div>
+    <span class="arrow" aria-hidden="true">›</span>
+  </a>
+</main>
+<footer>지구과학 World · 인터랙티브 수업 자료실</footer>
+</body>
+</html>

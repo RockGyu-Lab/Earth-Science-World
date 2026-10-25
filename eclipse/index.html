@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>일식과 월식 | 지구과학 World</title>
+<style>
+:root{--bg:#f3f6fb;--fg:#172334;--muted:#5d6b7d;--card:#fff;--line:#dce4ef;--blue:#1e4f7a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}
+header{background:linear-gradient(135deg,#163650,#24618a);color:white;padding:26px 18px}
+.wrap{max-width:1000px;margin:0 auto}
+.back{display:inline-block;color:#e0edf7;text-decoration:none;margin-bottom:12px}
+h1{font-size:clamp(1.8rem,4vw,2.4rem);margin:0 0 6px}
+header p{margin:0;color:#e0edf7}
+main{max-width:1000px;margin:0 auto;padding:28px 18px 48px}
+.intro{color:var(--muted);margin:0 0 20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:16px}
+.card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;text-decoration:none;color:inherit;min-height:190px;box-shadow:0 6px 20px #183b5a0b;transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 26px #183b5a16}
+.num{font-size:.85rem;color:var(--blue);font-weight:700;letter-spacing:.04em}
+.card h2{font-size:1.18rem;margin:10px 0 6px}
+.card p{margin:0;color:var(--muted)}
+.open{margin-top:auto;padding-top:18px;color:var(--blue);font-weight:700}
+footer{text-align:center;color:var(--muted);font-size:.88rem;padding:0 18px 24px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="back" href="../">← 지구과학 World</a>
+    <h1>일식과 월식</h1>
+    <p>그림자의 구조와 일식·월식이 일어나는 원리를 탐구합니다.</p>
+  </div>
+</header>
+<main>
+  <p class="intro">아래 자료를 순서대로 열어 직접 조작하고 관찰해 보세요.</p>
+  <div class="cards">
+    <a class="card" href="./shadow-types/">
+      <span class="num">체험 01</span>
+      <h2>본그림자, 반그림자, 금환그림자</h2>
+      <p>광원의 크기와 물체가 만드는 그림자 영역을 살펴봅니다.</p>
+      <span class="open">자료 열기　→</span>
+    </a>
+    <a class="card" href="./eclipse-principle/">
+      <span class="num">체험 02</span>
+      <h2>일식과 월식의 원리</h2>
+      <p>일식과 월식 모드를 바꾸고 달의 위치와 공전 움직임을 관찰합니다.</p>
+      <span class="open">자료 열기　→</span>
+    </a>
+  </div>
+</main>
+<footer>지구과학 World · 일식과 월식</footer>
+</body>
+</html>
