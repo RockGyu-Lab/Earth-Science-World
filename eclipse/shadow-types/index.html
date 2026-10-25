@@ -19,29 +19,35 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 .zone{cursor:pointer;transition:opacity .15s}
 .dim .zone:not(.active){opacity:.35}
 #tip{position:absolute;pointer-events:none;background:#fff;color:#111;border:2px solid #111;border-radius:8px;padding:6px 10px;font-size:.95rem;font-weight:700;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-#info{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;min-height:5.2em}
+.ctl{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px}
+.ctl label{font-weight:700;display:block;margin-bottom:6px}
+.ctl input[type=range]{width:100%;accent-color:#666}
+.ctl .ends{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted)}
+.ctl p{margin:8px 0 0;font-size:.9rem;color:var(--muted)}
+.row{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap}
+#info{flex:1 1 320px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;min-height:5.2em}
+.skybox{flex:0 0 200px;height:200px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0f0f1e}
+.skybox svg{display:block;width:200px;height:200px}
 #info b{font-size:1.05rem}
-</style>
-
-<style>
-.site-back{display:inline-block;margin:0 0 12px;padding:7px 11px;border:1px solid #b8c4d2;border-radius:8px;
-color:inherit;text-decoration:none;font-size:.92rem;background:rgba(255,255,255,.75)}
-.site-back:hover{background:#e8eef6}
 </style>
 </head>
 <body>
-<main>\n<a class="site-back" href="../">← 일식과 월식 메뉴로 돌아가기</a>\n
+<main>
 <h1>본그림자와 반그림자</h1>
 <p class="sub">큰 광원이 만드는 그림자입니다. 그림자 위에 마우스를 올려 보세요.</p>
 <div class="card" id="card">
-<svg id="svg" viewBox="0 0 970 550" role="img" aria-label="큰 광원, 물체, 본그림자와 반그림자 도식">
+<svg id="svg" viewBox="0 0 970 550" role="img" aria-label="큰 광원, 물체, 본그림자, 반그림자, 금환그림자 도식">
 <defs>
 <linearGradient id="pen" gradientUnits="userSpaceOnUse" x1="0" y1="50" x2="0" y2="500">
 <stop offset="0" stop-color="#f1f1f1"/><stop offset=".5" stop-color="#555"/><stop offset="1" stop-color="#f1f1f1"/>
 </linearGradient>
-<marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#f00"/></marker>
+<linearGradient id="antG" gradientUnits="userSpaceOnUse" x1="1000" y1="0" x2="1400" y2="0">
+<stop offset="0" stop-color="#151515"/><stop offset="1" stop-color="#7a7a7a"/>
+</linearGradient>
 <clipPath id="clip"><rect width="970" height="550"/></clipPath>
-<clipPath id="lClip"><circle cx="175" cy="275" r="172"/></clipPath>
+<radialGradient id="lightG" cx=".38" cy=".33" r=".85"><stop offset="0" stop-color="#ffffd0"/><stop offset=".55" stop-color="#ffff99"/><stop offset="1" stop-color="#e3d84f"/></radialGradient>
+<radialGradient id="objG" cx=".38" cy=".33" r=".85"><stop offset="0" stop-color="#9a9a9a"/><stop offset=".6" stop-color="#666"/><stop offset="1" stop-color="#3c3c3c"/></radialGradient>
+<radialGradient id="objS" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#2b2b2b"/><stop offset="1" stop-color="#000"/></radialGradient>
 <mask id="mVis" maskUnits="userSpaceOnUse" x="0" y="0" width="970" height="550"><rect width="970" height="550" fill="#fff"/><polygon id="wedgeK" fill="#000"/></mask>
 <mask id="mHid" maskUnits="userSpaceOnUse" x="0" y="0" width="970" height="550"><rect width="970" height="550" fill="#000"/><polygon id="wedgeW" fill="#fff"/></mask>
 </defs>
@@ -49,51 +55,77 @@ color:inherit;text-decoration:none;font-size:.92rem;background:rgba(255,255,255,
 <g clip-path="url(#clip)">
 <polygon id="penPoly" class="zone" data-k="pen" fill="url(#pen)"/>
 <g id="rays" stroke="#cfcfcf" stroke-width="1.2" fill="none"></g>
+<polygon id="antPoly" class="zone" data-k="ant" fill="url(#antG)"/>
 <polygon id="umbPoly" class="zone" data-k="umb" fill="#000"/>
 </g>
-<circle id="light" cx="175" cy="275" r="172" fill="#ffff99" stroke="#a39600" stroke-width="4"/>
+<circle cx="175" cy="275" r="172" fill="url(#lightG)" stroke="#a39600" stroke-width="4"/>
 <text x="175" y="282" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" font-size="48" fill="#000">광원</text>
 <text x="175" y="316" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="#333">Light Source</text>
-<circle id="obj" cx="725" cy="275" r="85" fill="#666" stroke="#000" stroke-width="3"/>
+<circle id="obj" cx="725" cy="275" r="85" fill="url(#objG)" stroke="#000" stroke-width="3"/>
 <g id="vis" style="display:none;pointer-events:none">
 <circle cx="175" cy="275" r="172" fill="#333" fill-opacity=".6" mask="url(#mHid)"/>
 <line id="ray1" stroke="#e00" stroke-width="2.5" stroke-dasharray="9 7"/>
 <line id="ray2" stroke="#e00" stroke-width="2.5" stroke-dasharray="9 7"/>
+<line id="ray3" stroke="#e00" stroke-width="2.5" stroke-dasharray="9 7"/>
+<line id="ray4" stroke="#e00" stroke-width="2.5" stroke-dasharray="9 7"/>
 <circle id="pDot" r="6" fill="#fff" stroke="#000" stroke-width="3"/>
 </g>
 </svg>
 <div id="tip"></div>
 </div>
+<div class="ctl">
+<label for="pos">물체의 위치</label>
+<input type="range" id="pos" min="450" max="800" step="1" value="725">
+<div class="ends"><span>광원에 가까움</span><span>광원에서 멂</span></div>
+<p>물체를 광원에 가깝게 옮기면 본그림자가 짧아지고, 본그림자 끝 뒤에 금환그림자(antumbra)가 나타납니다.</p>
+</div>
+<div class="row">
 <div id="info"><span style="color:var(--muted)">그림자 영역에 마우스를 올리면 설명이 나타납니다.</span></div>
+<div class="skybox"><svg viewBox="0 0 240 240" role="img" aria-label="관측 지점에서 본 광원과 물체">
+<text x="120" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="'Noto Sans KR',sans-serif">관측 지점에서 본 모습</text>
+<circle cx="120" cy="130" r="60" fill="url(#lightG)"/>
+<circle id="skyObj" cx="120" cy="130" r="50" fill="url(#objS)" stroke="#000" stroke-width="1.5" style="display:none"/>
+<circle cx="120" cy="130" r="60" fill="none" stroke="#e00" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="120" y="226" text-anchor="middle" font-size="12" fill="#bbb" font-family="'Noto Sans KR',sans-serif">입체(구)로 본 광원과 물체</text>
+</svg></div>
+</div>
 </main>
 <script>
 (function(){
-  var C1={x:175,y:275},R=172,C2={x:725,y:275},r=85,d=C2.x-C1.x,L=1200;
+  var C1={x:175,y:275},R=172,C2={x:725,y:275},r=85,L=3000;
+  var NS='http://www.w3.org/2000/svg';
   var svg=document.getElementById('svg'),card=document.getElementById('card'),tip=document.getElementById('tip'),info=document.getElementById('info');
+  var rays=document.getElementById('rays'),obj=document.getElementById('obj'),slider=document.getElementById('pos');
   function pt(x,y){return x.toFixed(1)+','+y.toFixed(1)}
-  // umbra (outer tangents, converge)
-  var a=Math.asin((R-r)/d),ca=Math.cos(a),sa=Math.sin(a);
-  var uT=[C2.x+r*sa,C2.y-r*ca],uB=[C2.x+r*sa,C2.y+r*ca];
-  var uTe=[uT[0]+L*ca,uT[1]+L*sa],uBe=[uB[0]+L*ca,uB[1]-L*sa];
-  document.getElementById('umbPoly').setAttribute('points',[pt(uT[0],uT[1]),pt(uTe[0],uTe[1]),pt(uBe[0],uBe[1]),pt(uB[0],uB[1])].join(' '));
-  // penumbra (inner tangents, diverge)
-  var b=Math.asin((R+r)/d),cb=Math.cos(b),sb=Math.sin(b);
-  var pT=[C2.x-r*sb,C2.y-r*cb],pB=[C2.x-r*sb,C2.y+r*cb];
-  var pTe=[pT[0]+L*cb,pT[1]-L*sb],pBe=[pB[0]+L*cb,pB[1]+L*sb];
-  document.getElementById('penPoly').setAttribute('points',[pt(pT[0],pT[1]),pt(pTe[0],pTe[1]),pt(pBe[0],pBe[1]),pt(pB[0],pB[1])].join(' '));
-  // thin guide rays from light edge to object edge
-  var rays=document.getElementById('rays');
-  function line(x1,y1,x2,y2){var l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);rays.appendChild(l)}
-  line(C1.x+R*sa,C1.y-R*ca,uT[0],uT[1]);
-  line(C1.x+R*sa,C1.y+R*ca,uB[0],uB[1]);
-  line(C1.x-R*(-sb),C1.y-R*(-cb)*-1,pT[0],pT[1]); // placeholder, replaced below
-  rays.removeChild(rays.lastChild);
-  line(C1.x+R*sb,C1.y+R*cb,pT[0],pT[1]);
-  line(C1.x+R*sb,C1.y-R*cb,pB[0],pB[1]);
+  function line(x1,y1,x2,y2){var l=document.createElementNS(NS,'line');l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);rays.appendChild(l)}
+  function build(){
+    var d=C2.x-C1.x;
+    // umbra: outer tangents converge at the apex
+    var a=Math.asin((R-r)/d),ca=Math.cos(a),sa=Math.sin(a);
+    var uT=[C2.x+r*sa,C2.y-r*ca],uB=[C2.x+r*sa,C2.y+r*ca],ax=C2.x+r/sa;
+    document.getElementById('umbPoly').setAttribute('points',[pt(uT[0],uT[1]),pt(ax,C2.y),pt(uB[0],uB[1])].join(' '));
+    // antumbra: beyond the apex, the same lines diverge again
+    document.getElementById('antPoly').setAttribute('points',[pt(ax,C2.y),pt(ax+L*ca,C2.y+L*sa),pt(ax+L*ca,C2.y-L*sa)].join(' '));
+    var g=document.getElementById('antG');g.setAttribute('x1',ax);g.setAttribute('x2',ax+400);
+    // penumbra: inner tangents diverge
+    var b=Math.asin((R+r)/d),cb=Math.cos(b),sb=Math.sin(b);
+    var pT=[C2.x-r*sb,C2.y-r*cb],pB=[C2.x-r*sb,C2.y+r*cb];
+    var pTe=[pT[0]+L*cb,pT[1]-L*sb],pBe=[pB[0]+L*cb,pB[1]+L*sb];
+    document.getElementById('penPoly').setAttribute('points',[pt(pT[0],pT[1]),pt(pTe[0],pTe[1]),pt(pBe[0],pBe[1]),pt(pB[0],pB[1])].join(' '));
+    // thin guide lines
+    while(rays.firstChild)rays.removeChild(rays.firstChild);
+    line(C1.x+R*sa,C1.y-R*ca,uT[0],uT[1]);
+    line(C1.x+R*sa,C1.y+R*ca,uB[0],uB[1]);
+    line(C1.x+R*sb,C1.y+R*cb,pT[0],pT[1]);
+    line(C1.x+R*sb,C1.y-R*cb,pB[0],pB[1]);
+    obj.setAttribute('cx',C2.x);
+  }
+  build();
 
   var data={
     umb:{ko:'본그림자',en:'umbra',txt:'광원의 모든 부분이 물체에 가려져 빛이 전혀 도달하지 못하는 가장 어두운 영역입니다.'},
-    pen:{ko:'반그림자',en:'penumbra',txt:'광원의 일부만 가려져 빛이 일부만 도달하는 영역입니다. 본그림자 바깥쪽으로 갈수록 점점 밝아집니다.'}
+    pen:{ko:'반그림자',en:'penumbra',txt:'광원의 일부만 가려져 빛이 일부만 도달하는 영역입니다. 본그림자 바깥쪽으로 갈수록 점점 밝아집니다.'},
+    ant:{ko:'금환그림자',en:'antumbra',txt:'물체가 광원보다 작게 보이는 영역입니다. 광원의 가운데는 물체에 가려지지만 양쪽 가장자리는 보이기 때문에 완전히 어둡지는 않습니다.'}
   };
   var zones=svg.querySelectorAll('.zone');
   function show(k,ev){
@@ -118,6 +150,16 @@ color:inherit;text-decoration:none;font-size:.92rem;background:rgba(255,255,255,
     t=Math.max(0,Math.min(1,t));
     return Math.hypot(P.x+t*vx-C2.x,P.y+t*vy-C2.y)<r;
   }
+  function lens(a,b,d){
+    if(d>=a+b)return 0;
+    if(d<=Math.abs(a-b)){var m=Math.min(a,b);return Math.PI*m*m}
+    var A=a*a*Math.acos((d*d+a*a-b*b)/(2*d*a)),B=b*b*Math.acos((d*d+b*b-a*a)/(2*d*b)),C=0.5*Math.sqrt((-d+a+b)*(d+a-b)*(d-a+b)*(d+a+b));
+    return A+B-C;
+  }
+  function drawSky(del,g,rc){
+    var sc=60,o=document.getElementById('skyObj');
+    o.setAttribute('r',sc*g/del);o.setAttribute('cy',130-rc/del*sc);o.style.display='';
+  }
   function updateVis(k,ev){
     var vis=document.getElementById('vis'),P=toSvg(ev);
     var dx=C2.x-P.x,dy=C2.y-P.y,D=Math.hypot(dx,dy);
@@ -130,24 +172,27 @@ color:inherit;text-decoration:none;font-size:.92rem;background:rgba(255,255,255,
     var dL=Math.hypot(C1.x-P.x,C1.y-P.y),thL=Math.atan2(C1.y-P.y,C1.x-P.x),del=Math.asin(R/dL);
     function wr(a){return Math.atan2(Math.sin(a),Math.cos(a))}
     var rc=wr(th-thL),r1=rc-g,r2=rc+g,c1=Math.abs(r1)<del,c2=Math.abs(r2)<del;
-    var l1=document.getElementById('ray1'),l2=document.getElementById('ray2');
+    var l1=document.getElementById('ray1'),l2=document.getElementById('ray2'),l3=document.getElementById('ray3'),l4=document.getElementById('ray4');
+    l3.style.display='none';l4.style.display='none';
     if(k==='pen'&&c1!==c2){
       var objAng=thL+(c1?r1:r2),tanAng=thL+(c1?-del:del),tt=Math.sqrt(dL*dL-R*R);
       setRay('ray1',P,objAng);
       l2.setAttribute('x1',P.x);l2.setAttribute('y1',P.y);l2.setAttribute('x2',P.x+tt*Math.cos(tanAng));l2.setAttribute('y2',P.y+tt*Math.sin(tanAng));
       l1.style.display='';l2.style.display='';
+    }else if(k==='ant'&&c1&&c2){
+      var tt2=Math.sqrt(dL*dL-R*R);
+      setRay('ray1',P,thL+r1);setRay('ray2',P,thL+r2);
+      [[l3,thL-del],[l4,thL+del]].forEach(function(a){var l=a[0];l.setAttribute('x1',P.x);l.setAttribute('y1',P.y);l.setAttribute('x2',P.x+tt2*Math.cos(a[1]));l.setAttribute('y2',P.y+tt2*Math.sin(a[1]))});
+      l1.style.display='';l2.style.display='';l3.style.display='';l4.style.display='';
     }else{l1.style.display='none';l2.style.display='none';}
     var dot=document.getElementById('pDot');dot.setAttribute('cx',P.x);dot.setAttribute('cy',P.y);
     vis.style.display='';
-    var tot=0,vs=0,st=5;
-    for(var x=C1.x-R;x<=C1.x+R;x+=st){for(var y=C1.y-R;y<=C1.y+R;y+=st){
-      if((x-C1.x)*(x-C1.x)+(y-C1.y)*(y-C1.y)>R*R)continue;
-      tot++;if(!blocked(P,x,y))vs++;
-    }}
-    var pct=Math.round(vs/tot*100),label=pct+'%';
-    if(k==='pen'){if(pct<1)label='1% 미만';else if(pct>99)label='99% 이상';else label='약 '+label;}
+    var ov=lens(del,g,Math.abs(rc)),pct=Math.round((1-ov/(Math.PI*del*del))*100),label=pct+'%';
+    drawSky(del,g,rc);
+    if(k!=='umb'){if(pct<1)label='1% 미만';else if(pct>99)label='99% 이상';else label='약 '+label;}
     var extra='<br>이 지점에서 보이는 광원: <b>'+label+'</b>';
-    if(k==='pen')extra+=' &mdash; 두 점선 사이가 이 지점에서 보이는 광원의 영역이고, 어두운 부분은 가려져 보이지 않습니다. 광원의 일부가 보이므로 완전히 어둡지 않습니다.';
+    if(k==='pen')extra+=' &mdash; 두 점선 사이가 이 지점에서 보이는 광원의 영역이고, 어두운 부분은 가려져 보이지 않습니다.';
+    else if(k==='ant')extra+=' &mdash; 안쪽 두 점선 사이는 물체에 가려지고(어두운 부분), 바깥쪽 점선과의 사이인 위·아래 가장자리만 보입니다.';
     else extra+=' &mdash; 광원 전체가 가려져 있습니다.';
     info.innerHTML+=extra;
   }
@@ -159,7 +204,7 @@ color:inherit;text-decoration:none;font-size:.92rem;background:rgba(255,255,255,
     tip.style.left=x+'px';tip.style.top=y+'px';
   }
   function hide(){
-    tip.style.opacity=0;svg.classList.remove('dim');document.getElementById('vis').style.display='none';
+    tip.style.opacity=0;svg.classList.remove('dim');document.getElementById('vis').style.display='none';document.getElementById('skyObj').style.display='none';
     zones.forEach(function(z){z.classList.remove('active')});
     info.innerHTML='<span style="color:var(--muted)">그림자 영역에 마우스를 올리면 설명이 나타납니다.</span>';
   }
@@ -168,6 +213,7 @@ color:inherit;text-decoration:none;font-size:.92rem;background:rgba(255,255,255,
     z.addEventListener('pointermove',function(e){show(z.dataset.k,e)});
     z.addEventListener('pointerleave',hide);
   });
+  slider.addEventListener('input',function(){C2.x=+slider.value;build();hide();});
 })();
 </script>
 </body>
