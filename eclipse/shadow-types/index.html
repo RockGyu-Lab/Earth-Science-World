@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>본그림자와 반그림자</title>
+<title>본그림자, 반그림자, 금환그림자</title>
 <style>
 :root{--bg:#f4f4f2;--fg:#1c1c1c;--muted:#666;--card:#fff;--line:#d9d9d6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1b1a;--fg:#eee;--muted:#a8a8a4;--line:#3a3a38}}
@@ -11,11 +11,13 @@
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}
-main{max-width:980px;margin:0 auto;padding:20px 16px 32px}
+main{max-width:700px;margin:0 auto;padding:20px 16px 32px}
 h1{font-size:1.4rem;margin:0 0 4px}
+.back{display:inline-block;margin:0 0 14px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--fg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--line)}
 p.sub{margin:0 0 14px;color:var(--muted);font-size:.95rem}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;position:relative}
-svg{display:block;width:100%;height:auto;touch-action:manipulation}
+svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 .zone{cursor:pointer;transition:opacity .15s}
 .dim .zone:not(.active){opacity:.35}
 #tip{position:absolute;pointer-events:none;background:#fff;color:#111;border:2px solid #111;border-radius:8px;padding:6px 10px;font-size:.95rem;font-weight:700;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2)}
@@ -33,10 +35,11 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
 </head>
 <body>
 <main>
-<h1>본그림자와 반그림자</h1>
+<a class="back" href="../index.html">← [일식과 월식] 메뉴로 돌아가기</a>
+<h1>본그림자, 반그림자, 금환그림자</h1>
 <p class="sub">큰 광원이 만드는 그림자입니다. 그림자 위에 마우스를 올려 보세요.</p>
 <div class="card" id="card">
-<svg id="svg" viewBox="0 0 970 550" role="img" aria-label="큰 광원, 물체, 본그림자, 반그림자, 금환그림자 도식">
+<svg id="svg" viewBox="0 40 970 470" role="img" aria-label="큰 광원, 물체, 본그림자, 반그림자, 금환그림자 도식">
 <defs>
 <linearGradient id="pen" gradientUnits="userSpaceOnUse" x1="0" y1="50" x2="0" y2="500">
 <stop offset="0" stop-color="#f1f1f1"/><stop offset=".5" stop-color="#555"/><stop offset="1" stop-color="#f1f1f1"/>
@@ -198,7 +201,7 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
   }
   function move(ev){
     var rc=card.getBoundingClientRect();
-    var cy=ev.clientY-rc.top,lower=cy>rc.height/2,x=ev.clientX-rc.left+30,y=lower?cy+30:cy-68;
+    var cy=ev.clientY-rc.top,touch=ev.pointerType==='touch',lower=!touch&&cy>rc.height/2,x=touch?ev.clientX-rc.left-tip.offsetWidth/2:ev.clientX-rc.left+30,y=touch?cy-95:(lower?cy+30:cy-68);
     x=Math.min(Math.max(x,4),rc.width-tip.offsetWidth-4);
     y=Math.max(Math.min(y,rc.height-tip.offsetHeight-4),4);
     tip.style.left=x+'px';tip.style.top=y+'px';
@@ -208,11 +211,13 @@ svg{display:block;width:100%;height:auto;touch-action:manipulation}
     zones.forEach(function(z){z.classList.remove('active')});
     info.innerHTML='<span style="color:var(--muted)">그림자 영역에 마우스를 올리면 설명이 나타납니다.</span>';
   }
-  zones.forEach(function(z){
-    z.addEventListener('pointerenter',function(e){show(z.dataset.k,e)});
-    z.addEventListener('pointermove',function(e){show(z.dataset.k,e)});
-    z.addEventListener('pointerleave',hide);
-  });
+  function handle(ev){
+    var el=document.elementFromPoint(ev.clientX,ev.clientY),z=el&&el.closest?el.closest('.zone'):null;
+    if(z)show(z.dataset.k,ev);else hide();
+  }
+  svg.addEventListener('pointerdown',handle);
+  svg.addEventListener('pointermove',handle);
+  svg.addEventListener('pointerleave',function(e){if(e.pointerType==='mouse')hide()});
   slider.addEventListener('input',function(){C2.x=+slider.value;build();hide();});
 })();
 </script>
