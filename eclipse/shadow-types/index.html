@@ -39,9 +39,9 @@ svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-web
 <h1>본그림자, 반그림자, 금환그림자</h1>
 <p class="sub">큰 광원이 만드는 그림자입니다. 그림자 위에 마우스를 올려 보세요.</p>
 <div class="card" id="card">
-<svg id="svg" viewBox="0 40 970 470" role="img" aria-label="큰 광원, 물체, 본그림자, 반그림자, 금환그림자 도식">
+<svg id="svg" viewBox="0 85 970 380" role="img" aria-label="큰 광원, 물체, 본그림자, 반그림자, 금환그림자 도식">
 <defs>
-<linearGradient id="pen" gradientUnits="userSpaceOnUse" x1="0" y1="50" x2="0" y2="500">
+<linearGradient id="pen" gradientUnits="userSpaceOnUse" x1="0" y1="75" x2="0" y2="475">
 <stop offset="0" stop-color="#f1f1f1"/><stop offset=".5" stop-color="#555"/><stop offset="1" stop-color="#f1f1f1"/>
 </linearGradient>
 <linearGradient id="antG" gradientUnits="userSpaceOnUse" x1="1000" y1="0" x2="1400" y2="0">
@@ -61,12 +61,12 @@ svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-web
 <polygon id="antPoly" class="zone" data-k="ant" fill="url(#antG)"/>
 <polygon id="umbPoly" class="zone" data-k="umb" fill="#000"/>
 </g>
-<circle cx="175" cy="275" r="172" fill="url(#lightG)" stroke="#a39600" stroke-width="4"/>
-<text x="175" y="282" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" font-size="48" fill="#000">광원</text>
-<text x="175" y="316" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="#333">Light Source</text>
-<circle id="obj" cx="725" cy="275" r="85" fill="url(#objG)" stroke="#000" stroke-width="3"/>
+<circle cx="140" cy="275" r="115" fill="url(#lightG)" stroke="#a39600" stroke-width="3"/>
+<text x="140" y="281" text-anchor="middle" font-family="'Noto Sans KR','Malgun Gothic',sans-serif" font-weight="700" font-size="32" fill="#000">광원</text>
+<text x="140" y="304" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#333">Light Source</text>
+<circle id="obj" cx="500" cy="275" r="57" fill="url(#objG)" stroke="#000" stroke-width="3"/>
 <g id="vis" style="display:none;pointer-events:none">
-<circle cx="175" cy="275" r="172" fill="#333" fill-opacity=".6" mask="url(#mHid)"/>
+<circle cx="140" cy="275" r="115" fill="#333" fill-opacity=".6" mask="url(#mHid)"/>
 <line id="ray1" stroke="#e00" stroke-width="2.5" stroke-dasharray="9 7"/>
 <line id="ray2" stroke="#e00" stroke-width="2.5" stroke-dasharray="9 7"/>
 <line id="ray3" stroke="#e00" stroke-width="2.5" stroke-dasharray="9 7"/>
@@ -78,9 +78,9 @@ svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-web
 </div>
 <div class="ctl">
 <label for="pos">물체의 위치</label>
-<input type="range" id="pos" min="450" max="800" step="1" value="725">
+<input type="range" id="pos" min="325" max="700" step="1" value="500">
 <div class="ends"><span>광원에 가까움</span><span>광원에서 멂</span></div>
-<p>물체를 광원에 가깝게 옮기면 본그림자가 짧아지고, 본그림자 끝 뒤에 금환그림자(antumbra)가 나타납니다.</p>
+ 
 </div>
 <div class="row">
 <div id="info"><span style="color:var(--muted)">그림자 영역에 마우스를 올리면 설명이 나타납니다.</span></div>
@@ -95,7 +95,7 @@ svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-web
 </main>
 <script>
 (function(){
-  var C1={x:175,y:275},R=172,C2={x:725,y:275},r=85,L=3000;
+  var C1={x:140,y:275},R=115,C2={x:500,y:275},r=57,L=3000;
   var NS='http://www.w3.org/2000/svg';
   var svg=document.getElementById('svg'),card=document.getElementById('card'),tip=document.getElementById('tip'),info=document.getElementById('info');
   var rays=document.getElementById('rays'),obj=document.getElementById('obj'),slider=document.getElementById('pos');
