@@ -148,7 +148,9 @@ function skyMoon(L){
  [[-12,-9,9],[13,-13,5],[9,13,10],[-16,16,5]].forEach(([a,b,r])=>el('circle',{cx:cx+a,cy:cy+b,r,fill:'#b9b5a6',opacity:.55},g));
  const g2=el('g',{'clip-path':'url(#cm)'},g);
  el('circle',{cx:cx+off,cy,r:rp,fill:'url(#pg)'},g2);
- if(ru>0)el('circle',{cx:cx+off,cy,r:ru,fill:'url(#ug)'},g2);
+ if(ru>0){const gk=Math.max(0,Math.min(1,(ft-.85)/.15));   // 달이 본그림자에 85% 이상 들어가야 붉은색이 나타남
+  if(gk<1)el('circle',{cx:cx+off,cy,r:ru,fill:'#05081a',opacity:1-gk},g2);
+  if(gk>0)el('circle',{cx:cx+off,cy,r:ru,fill:'url(#ug)',opacity:gk},g2);}
  el('circle',{cx,cy,r:R+1,fill:'none',stroke:'#fff',opacity:.5});
  compass(cx,cy,R);title(cx,'지구에서 본 달의 모습');
 }
