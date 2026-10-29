@@ -1,0 +1,559 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>복사 법칙</title>
+<style>
+:root{--bg:#ffffff;--fg:#1b2233;--muted:#5d6678;--grid:#d9dde6;--uv:#7a4fd0;--ir:#c0392b;--c10:#b0309a;--c6:#d98a00;--c58:#0f9bb0;--c5:#2f9e5b;--c4:#2f64d8;--c3:#d23b2a;--btn:#eef0f5;--ok:#1b7f45;--bad:#b3341f;--acc:#2a5bd7;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161f;--fg:#e8ebf2;--muted:#9aa3b5;--grid:#2a3141;--uv:#a98bf0;--ir:#ee7b6c;--c10:#f08bd8;--c6:#ffc247;--c58:#4fd3e3;--c5:#5fd08a;--c4:#7fa8ff;--c3:#ff7a66;--btn:#1e2431;--ok:#5fd08a;--bad:#ff8f7d;--acc:#8aa9ff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161f;--fg:#e8ebf2;--muted:#9aa3b5;--grid:#2a3141;--uv:#a98bf0;--ir:#ee7b6c;--c10:#f08bd8;--c6:#ffc247;--c58:#4fd3e3;--c5:#5fd08a;--c4:#7fa8ff;--c3:#ff7a66;--btn:#1e2431;--ok:#5fd08a;--bad:#ff8f7d;--acc:#8aa9ff;color-scheme:dark}
+[hidden]{display:none !important}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;line-height:1.5}
+main{max-width:1080px;margin:0 auto;padding:10px 16px 4px}
+h1{font-size:1.2rem;margin:6px 0 4px}
+.back{display:inline-block;margin:0;padding:6px 14px;border:1px solid var(--grid);border-radius:999px;background:var(--bg);color:var(--fg);font-size:.88rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--btn)}
+.intro{margin:0 0 10px;font-size:.92rem;line-height:1.55;color:var(--muted)}
+.intro b{color:var(--fg)}
+.explain{margin:0 0 10px;padding:8px 12px;border-radius:10px;background:var(--btn);font-size:.92rem;line-height:1.55}
+h2{font-size:1.1rem;margin:0 0 12px;text-align:center}
+#st-title{font-size:1.05rem;font-weight:600;margin:0 0 12px}
+svg{width:100%;height:auto;display:block}
+button{font:inherit;color:var(--fg)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.tabs button{flex:1 1 180px;padding:9px 8px;font-size:.95rem;border:1px solid var(--grid);border-radius:10px;background:var(--btn);cursor:pointer}
+.tabs button[aria-selected="true"]{background:#3b6cf6;border-color:#3b6cf6;color:#fff;font-weight:700}
+
+.bar{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:0 0 8px}
+.hint{font-size:.9rem;color:var(--muted)}
+.lg{display:flex;flex-wrap:wrap;gap:8px}
+.lg button{font-size:.9rem;background:var(--btn);border:1px solid var(--grid);border-radius:8px;padding:5px 12px;cursor:pointer}
+.lg button::before{content:"";display:inline-block;width:20px;height:0;border-top:3px solid var(--k);vertical-align:middle;margin-right:7px}
+.lg button[aria-pressed="true"]{border-color:var(--fg);font-weight:600}
+.lg button.tog[aria-pressed="false"]{opacity:.5}
+.lg button.tog[aria-pressed="false"]::before{border-top-style:dashed}
+
+.grid{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px) and (orientation:landscape){.grid{grid-template-columns:minmax(0,1.9fr) minmax(250px,1fr);align-items:center}}
+@media (min-width:900px) and (orientation:landscape){.grid.top{align-items:start}}
+.stack,.side{display:flex;flex-direction:column;gap:6px;min-width:0}
+@media (min-width:700px) and (orientation:portrait){.side.row2{flex-direction:row;align-items:flex-start}.side.row2>*{flex:1 1 0;min-width:0}}
+.card{border:1px solid var(--grid);border-radius:12px;padding:12px 14px;min-width:0}
+.tight-card{padding:6px 12px}
+.t{fill:var(--muted);font-size:15px}
+.lab{fill:var(--fg);font-size:16px;font-weight:600}
+.ax{fill:var(--fg);font-size:15px}
+.pk{font-size:14px;font-weight:600}
+.t2{fill:var(--muted);font-size:11.5px}
+.ax2{fill:var(--fg);font-size:12px}
+.pk2{font-size:12px;font-weight:600}
+svg.pan{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.slider{margin:0 2.5% 0 9.75%}
+.slider input{width:100%;height:30px;margin:0;accent-color:var(--fg)}
+.think{border:1px solid var(--grid);border-radius:10px;padding:6px 10px;display:flex;flex-direction:column;gap:4px}
+.think-t{color:var(--acc);font-size:.95rem}
+.think .q var{font-style:normal}
+.think .q p{margin:0;font-size:.9rem;line-height:1.35}
+.think .ch{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;margin:6px 0 0}
+.think .ch button{font-size:.85rem;background:var(--btn);border:1px solid var(--grid);border-radius:8px;padding:3px 10px;cursor:pointer;color:var(--fg)}
+.think .ch button.sel{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc);font-weight:600}
+.think .ch button.chk{grid-column:1/-1;justify-self:end;background:var(--acc);border-color:var(--acc);color:#fff}
+.think .fb{font-size:.85rem;min-height:0}
+.think .fb:empty{display:none}
+.bar:has(.open-think){display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between}
+.open-think{font-size:.9rem;font-weight:700;color:#fff;background:var(--acc);border:1px solid var(--acc);border-radius:8px;padding:5px 14px;cursor:pointer}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.ov .think{background:var(--bg);width:min(640px,100%);max-height:100%;overflow:auto;padding:12px 16px;gap:10px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center}
+.think .x{font-size:.85rem;background:var(--btn);border:1px solid var(--grid);border-radius:8px;padding:3px 10px;cursor:pointer;color:var(--fg)}
+.think .q p{font-size:1rem}
+.think .ch button{font-size:.95rem;padding:5px 14px}
+.think .fb{font-size:.95rem;margin-top:4px}
+.note{font-size:.8rem;color:var(--muted);margin:0}
+
+.ct{font-size:1rem;line-height:1.4;margin:0 0 10px;text-align:center}
+.ct small{font-size:.82rem;font-weight:400;color:var(--muted)}
+.rd-head{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.sw{width:38px;height:38px;border-radius:8px;border:1px solid var(--grid);flex:none}
+.rd-head b{font-size:1.4rem}
+.rd-head span.rg{color:var(--muted);font-size:.95rem}
+.r1-body{display:flex;flex-direction:column;gap:10px}
+@media (min-width:700px) and (orientation:portrait){.r1-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:16px;align-items:center}}
+.hint-c{text-align:center;margin:0}
+.cue{color:var(--acc);font-weight:600}
+.bt{fill:var(--muted);font-size:11px}
+.bv{fill:var(--fg);font-size:13px;font-weight:700}
+.bl{font-size:12.5px;font-weight:700}
+.lg1t{fill:var(--fg);font-size:16px;font-weight:600}
+.meter{height:10px;background:var(--btn);border-radius:5px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--k)}
+
+.tb{width:100%;border-collapse:collapse;font-size:.92rem}
+.tb th,.tb td{padding:6px 4px;text-align:left;border-bottom:1px solid var(--grid);font-weight:400}
+.tb thead th{font-size:.78rem;color:var(--muted);font-weight:600;vertical-align:bottom}
+.tb tbody th{white-space:nowrap}
+.tb.tight th,.tb.tight td{padding:2px 4px;text-align:center}
+.tb.tight tbody th{white-space:nowrap}
+.tb.tight thead th{word-break:keep-all;line-height:1.35}
+.tb tr.off{opacity:.3}
+.tb .ln{display:inline-block;width:14px;border-top:3px solid var(--k);vertical-align:middle;margin-right:6px}
+.tb small{color:var(--muted)}
+.cellbar{display:flex;align-items:center;gap:8px}
+.cellbar .meter{flex:1;min-width:30px}
+.cellbar b{min-width:2.4em;text-align:right}
+.formula{margin-top:6px;padding:3px 10px;border-radius:8px;background:var(--btn);font-size:1rem;line-height:1.4;text-align:center}
+var{font-style:normal}
+.formula .final{color:var(--acc);font-weight:800;font-size:1.22em}
+.formula small{font-size:.78em;color:var(--muted)}
+sup{font-size:.8em;margin-left:.18em;line-height:0}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.25;margin:0 2px}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 4px}
+.frac>span+span{padding:0 4px}
+.tb sub{font-size:.75em}
+.ratio{margin-top:6px;font-size:.92rem;min-height:1.6em}
+.ok{color:var(--ok);font-weight:700}
+.bad{color:var(--bad);font-weight:700}
+
+.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:center}
+.sky{width:170px;height:170px;border-radius:12px;background:#080b14;display:grid;place-items:center;flex:none}
+#orb{width:100px;height:100px;border-radius:50%;background:var(--star,#fff);box-shadow:0 0 26px 10px var(--glow,transparent);transition:background .25s,box-shadow .25s}
+#mix{flex:1 1 240px;min-width:0}
+@media (prefers-reduced-motion:reduce){#orb{transition:none}}
+
+/* ---- 별의 물리량 학습실 공통 스타일 (luminosity.html과 같은 규칙) ----
+   색: 남색 하나를 기본 강조색으로, 결론은 옅은 남색 카드 / 상자: 테두리 대신 옅은 회색 판 / 모서리: 판 14px, 버튼 10px */
+:root{--acc:#5468d4;--acc-bg:#eef0fc;--acc-bd:#c3caf2;--on-acc:#fff;--card:#f3f4f8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--card:#1b2029}}
+:root[data-theme="dark"]{--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--card:#1b2029}
+body{font-family:"Pretendard Variable",Pretendard,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;word-break:keep-all}
+/* 수식 변수(기울임꼴): 기울어진 글자가 옆 글자와 겹치지 않도록 좌우에 작은 여백 */
+var,.think .q var{font-family:"Times New Roman",Cambria,serif;font-style:italic;font-size:1.1em;line-height:1;padding:0 .09em 0 .03em}
+var+sup{margin-left:.03em}
+.tabs button{border-radius:10px}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.explain{border-radius:12px;background:var(--card);padding:10px 14px}
+.card{border:0;border-radius:14px;background:var(--card)}
+.lg button{border-radius:10px}
+.slider input{accent-color:var(--acc)}
+.formula{margin-top:10px;padding:8px 12px;border:1px solid var(--acc-bd);border-radius:12px;background:var(--acc-bg)}
+.open-think{color:var(--on-acc);border-radius:10px}
+.think .ch button{background:var(--bg);border:1px solid transparent;border-radius:10px;box-shadow:0 1px 2px rgba(20,25,45,.12);transition:border-color .15s,background .15s}
+.think .ch button:hover{border-color:var(--acc)}
+.think .ch button.sel{border-color:var(--acc);background:var(--acc-bg);color:var(--acc);font-weight:700;box-shadow:none}
+.think .ch button.chk{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.ov .think{border:0;border-radius:14px}
+.ov .think .ch button:not(.sel):not(.chk){background:var(--card);box-shadow:none}
+/* 별 그림: 밝은 중심 → 별의 색 → 어두운 가장자리, 배경에 옅은 별밭 */
+.sky{border-radius:14px;background:radial-gradient(1px 1px at 18% 24%,#dfe5ff99,transparent),radial-gradient(1px 1px at 72% 16%,#dfe5ff66,transparent),radial-gradient(1.2px 1.2px at 84% 70%,#dfe5ff88,transparent),radial-gradient(1px 1px at 30% 82%,#dfe5ff55,transparent),radial-gradient(1px 1px at 58% 46%,#dfe5ff44,transparent),radial-gradient(130% 100% at 50% 0%,#1c2340 0%,#111729 55%,#0b0f1c 100%)}
+#orb{background:radial-gradient(circle at 42% 38%,#fffef9 0%,var(--star,#fff) 48%,color-mix(in srgb,var(--star,#fff) 78%,#8a3c10) 100%)}
+/* 탭을 바꿀 때 내용이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+</head>
+<body>
+<main>
+<a class="back" href="./Star_index.html">← [별의 물리량] 메뉴로 돌아가기</a>
+<h1>복사 법칙</h1>
+<p class="intro"><b>흑체(Blackbody)</b>는 자신에게 닿는 모든 파장의 빛을 100% 흡수하고, 온도에 따라 정해진 세기로 모든 파장의 빛을 방출하는 이상적인 물체입니다. 별은 흑체에 가까운 특성을 가지고 있습니다.</p>
+<div class="tabs" role="tablist" aria-label="학습 메뉴">
+  <button role="tab" id="tab1" aria-controls="p1" aria-selected="true">① 플랑크 곡선</button>
+  <button role="tab" id="tab2" aria-controls="p2" aria-selected="false" tabindex="-1">② 플랑크 곡선과 별의 색</button>
+  <button role="tab" id="tab3" aria-controls="p3" aria-selected="false" tabindex="-1">③ 빈의 변위 법칙</button>
+  <button role="tab" id="tab4" aria-controls="p4" aria-selected="false" tabindex="-1">④ 슈테판-볼츠만 법칙</button>
+</div>
+
+<!-- ① 플랑크 곡선 -->
+<section id="p1" role="tabpanel" aria-labelledby="tab1">
+  <p class="explain"><b>플랑크 법칙(Planck's law)</b>은 흑체가 파장에 따라 얼마나 많은 빛에너지를 방출하는지를 나타낸 법칙입니다. <b>플랑크 곡선</b>은 이 법칙에 따라 각 온도에서 파장에 따른 방출 에너지량을 그린 곡선입니다.</p>
+  <div class="grid">
+    <div class="stack">
+      <svg id="c1" class="pan" viewBox="0 0 800 500" role="img" aria-label="6000 K, 5000 K, 4000 K, 3000 K 플랑크 곡선. 가로축은 파장, 세로축은 에너지량"></svg>
+      <div class="slider"><input type="range" id="s1" min="0" max="2500" step="5" value="500" aria-label="파장 선택 (nm)"></div>
+      <p class="hint hint-c cue">그래프를 누르거나 끌어서 파장을 골라 보세요.</p>
+    </div>
+    <div class="card" id="r1" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- ② 플랑크 곡선과 별의 색 -->
+<section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
+  <p class="explain">우리의 눈은 별이 가시광선 영역에서 방출하는 각 파장의 빛을 한꺼번에 받아들이므로, 이 빛을 모두 합성한 색으로 인식하게 됩니다. 실제 별은 완전한 흑체가 아니고 지구 대기의 영향도 받기 때문에, 지구에서 관찰한 별의 색과 조금 다를 수 있습니다.<br><span class="cue">원하는 온도를 선택하여 별의 색을 확인해 보세요.</span></p>
+  <div class="bar"><div class="lg" id="lg2" role="group" aria-label="온도 선택"></div></div>
+  <div class="grid">
+    <svg id="c2" viewBox="0 0 800 500" role="img" aria-label="10000 K, 6000 K, 5800 K, 5000 K, 4000 K, 3000 K 플랑크 곡선 비교. 10000 K 곡선의 윗부분은 그래프 밖으로 잘려 있습니다."></svg>
+    <section class="star" aria-live="polite">
+      <h2 class="ct">온도에 따른 별의 색깔 <small>(시뮬레이션)</small></h2>
+      <h2 id="st-title"></h2>
+      <div class="row">
+        <div class="sky"><div id="orb"></div></div>
+        <svg id="mix" viewBox="0 0 380 104" role="img" aria-label="가시광선 영역에서 파장별로 섞이는 빛의 세기"></svg>
+      </div>
+    </section>
+  </div>
+</section>
+
+<!-- ③ 빈의 변위 법칙 -->
+<section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
+  <p class="explain"><b>빈의 변위 법칙(Wien's displacement law)</b>은 온도와, 최대 에너지를 방출하는 파장 사이의 관계를 나타낸 법칙입니다.<br><span class="cue">높은 온도부터 차례대로 버튼을 눌러서 최대 에너지 파장과 온도와의 관계를 살펴보세요.</span></p>
+  <div class="bar"><div class="lg" id="lg3" role="group" aria-label="봉우리 표시 켜고 끄기"></div><button type="button" class="open-think" id="thb3">생각해 보기</button></div>
+  <div class="grid top">
+    <svg id="c3" viewBox="0 0 800 500" role="img" aria-label="플랑크 곡선의 봉우리를 이은 곡선"></svg>
+    <div class="side row2">
+      <svg id="c3b" viewBox="0 0 340 128" role="img" aria-label="온도에 따른 최대 에너지 파장. 온도가 높을수록 파장이 짧아진다"></svg>
+      <div class="card tight-card">
+        <table class="tb tight"><thead><tr><th><var>T</var><br>(온도)</th><th><var>λ</var><sub>max</sub><br>(최대 에너지 파장)</th><th><var>T</var> × <var>λ</var><sub>max</sub><br>(온도 × 최대 에너지 파장)</th></tr></thead><tbody id="tb3"></tbody></table>
+        <div class="formula" id="fm3" aria-live="polite" hidden><var>T</var> × <var>λ</var><sub>max</sub> = 일정<br>∴ <var>λ</var><sub>max</sub> ∝ <span class="frac"><span>1</span><span><var>T</var></span></span><br><span class="final"><var>λ</var><sub>max</sub> = <span class="frac"><span><var>a</var></span><span><var>T</var></span></span></span> <small>(<var>a</var> ≈ 2.90×10⁶ nm·K)</small></div>
+      </div>
+    </div>
+  </div>
+<div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기">
+        <div class="think-h"><b class="think-t">생각해 보기</b><button type="button" class="x" id="thx3" aria-label="닫기">닫기 ✕</button></div>
+        <div class="q" data-ans="1" data-exp="빈의 변위 법칙 λmax ∝ 1/T 이므로, 온도가 2배인 2T인 별의 최대 에너지 파장은 T인 별의 1/2배입니다.">
+          <p>온도가 <var>T</var>인 별과 온도가 2<var>T</var>인 별을 비교하면, 2<var>T</var>인 별의 최대 에너지 파장은 <var>T</var>인 별의 몇 배일까요?</p>
+          <div class="ch"><button type="button">① 2배</button><button type="button">② 1/2배</button><button type="button">③ 4배</button><button type="button">④ 1/4배</button><button type="button" class="chk">정답 확인</button></div>
+          <p class="fb" aria-live="polite"></p>
+        </div>
+      </div></div>
+</section>
+
+<!-- ④ 슈테판-볼츠만 법칙 -->
+<section id="p4" role="tabpanel" aria-labelledby="tab4" hidden>
+  <p class="explain"><b>슈테판-볼츠만 법칙(Stefan–Boltzmann law)</b>은 흑체가 단위 시간, 단위 면적당 방출하는 전체 에너지(<var>E</var>)와 온도 사이의 관계를 나타낸 법칙입니다. <var>E</var>는 플랑크 곡선 아래의 전체 면적으로 구합니다.<br><span class="cue">높은 온도부터 차례대로 버튼을 눌러서 방출 에너지와 온도와의 관계를 살펴보세요.</span></p>
+  <div class="bar"><div class="lg" id="lg4" role="group" aria-label="곡선 아래 면적 표시 켜고 끄기"></div><button type="button" class="open-think" id="thb">생각해 보기</button></div>
+  <div class="grid top">
+    <div class="stack">
+      <svg id="c4" viewBox="0 0 800 500" role="img" aria-label="플랑크 곡선 아래 면적"></svg>
+      <div class="ov" id="ov" hidden><div class="think" id="think" role="dialog" aria-modal="true" aria-label="생각해 보기">
+        <div class="think-h"><b class="think-t">생각해 보기</b><button type="button" class="x" id="thx" aria-label="닫기">닫기 ✕</button></div>
+        <div class="q" data-ans="3" data-exp="슈테판-볼츠만 법칙 E ∝ T⁴ 이므로, 온도가 2배인 2T인 별의 방출 에너지는 T인 별의 2⁴ = 16배입니다.">
+          <p>온도가 <var>T</var>인 별과 온도가 2<var>T</var>인 별을 비교하면, 2<var>T</var>인 별이 단위 시간, 단위 면적당 방출하는 전체 에너지는 <var>T</var>인 별의 몇 배일까요?</p>
+          <div class="ch"><button type="button">① 2배</button><button type="button">② 4배</button><button type="button">③ 8배</button><button type="button">④ 16배</button><button type="button" class="chk">정답 확인</button></div>
+          <p class="fb" aria-live="polite"></p>
+        </div>
+      </div></div>
+    </div>
+    <div class="card tight-card">
+      <table class="tb tight"><thead><tr><th><var>T</var><br>(온도)</th><th><var>E</var><br>(방출 에너지)</th><th><span class="frac"><span><var>E</var></span><span><var>T</var><sup>4</sup></span></span><br>(방출 에너지 ÷ 온도<sup>4</sup>)</th></tr></thead><tbody id="tb4"></tbody></table>
+      <div class="formula" id="fm4" aria-live="polite" hidden><span class="frac"><span><var>E</var></span><span><var>T</var><sup>4</sup></span></span> = 일정<br>∴ <var>E</var> ∝ <var>T</var><sup>4</sup><br><span class="final"><var>E</var> = <var>σ</var><var>T</var><sup>4</sup></span> <small>(<var>σ</var> ≈ 5.67×10⁻⁸ W/(m²·K⁴))</small></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const h = 6.62607e-34, c = 2.99792e8, k = 1.38065e-23, UNIT = 1e13, WIEN = 2.897772e6;
+const B = (nm, T) => { if (nm <= 0) return 0; const l = nm * 1e-9; return (2*h*c*c/Math.pow(l,5)) / (Math.exp(h*c/(l*k*T)) - 1) / UNIT; };
+const COL = {10000:'var(--c10)', 6000:'var(--c6)', 5800:'var(--c58)', 5000:'var(--c5)', 4000:'var(--c4)', 3000:'var(--c3)'};
+const T4 = [6000, 5000, 4000, 3000];
+const fmt = (x) => String(Number(x.toPrecision(3)));
+
+/* ---- 계산: 봉우리 파장(수치로 찾기), 곡선 아래 전체 면적(수치 적분) ---- */
+function peakNum(T) {
+  let a = 100, b = 5000; const g = (Math.sqrt(5) - 1) / 2;
+  let x1 = b - g*(b-a), x2 = a + g*(b-a), f1 = B(x1, T), f2 = B(x2, T);
+  for (let i = 0; i < 80; i++) {
+    if (f1 < f2) { a = x1; x1 = x2; f1 = f2; x2 = a + g*(b-a); f2 = B(x2, T); }
+    else { b = x2; x2 = x1; f2 = f1; x1 = b - g*(b-a); f1 = B(x1, T); }
+  }
+  return (a + b) / 2;
+}
+function areaNum(T) { let s = 0; for (let l = 0.5; l < 200000; l += 1) s += B(l, T); return s; }
+const PK = {}, PV = {}, AREA = {}, EMIT = {};
+for (const T of T4) { PK[T] = peakNum(T); PV[T] = B(PK[T], T); AREA[T] = areaNum(T); }
+for (const T of T4) EMIT[T] = Math.PI * AREA[T] * 1e4;   // 면적(B·dλ의 합, W·sr⁻¹·m⁻²) × π = 단위 시간·단위 면적당 방출 에너지 (W/m²)
+
+/* ---- 공통 그래프 (파장 0~2500 nm, 세로 0~3.8 ×10¹³) ---- */
+const G = {W:800, H:500, m:{l:78, r:20, t:36, b:60}, L0:0, L1:2500, YMAX:3.8};
+const X = (l) => G.m.l + (l - G.L0) / (G.L1 - G.L0) * (G.W - G.m.l - G.m.r);
+const base = G.H - G.m.b, yTop = G.m.t, ph = base - yTop;
+const Y = (v) => base - v / G.YMAX * ph;
+const PATH = {};
+function pathOf(T) {
+  if (!PATH[T]) { let d = ''; for (let l = 0; l <= 2500; l += 5) d += (l === 0 ? 'M' : 'L') + X(l).toFixed(1) + ' ' + Y(B(l, T)).toFixed(1); PATH[T] = d; }
+  return PATH[T];
+}
+function frame(p) {
+  let s = `<defs><linearGradient id="rb-${p}" gradientUnits="userSpaceOnUse" x1="${X(380)}" x2="${X(750)}" y1="0" y2="0">
+<stop offset="0" stop-color="#7b2fff"/><stop offset=".16" stop-color="#3a5cff"/><stop offset=".3" stop-color="#00c8d0"/>
+<stop offset=".42" stop-color="#3fc84a"/><stop offset=".56" stop-color="#f2e03a"/><stop offset=".68" stop-color="#ff8a1f"/>
+<stop offset=".88" stop-color="#e0241a"/><stop offset="1" stop-color="#8a1010"/></linearGradient>
+<clipPath id="plot-${p}"><rect x="${G.m.l}" y="${yTop}" width="${G.W-G.m.l-G.m.r}" height="${ph}"/></clipPath></defs>`;
+  s += `<rect x="${X(0)}" y="${yTop}" width="${X(380)-X(0)}" height="${ph}" fill="var(--uv)" opacity=".12"/>`;
+  s += `<rect x="${X(380)}" y="${yTop}" width="${X(750)-X(380)}" height="${ph}" fill="url(#rb-${p})" opacity=".28"/>`;
+  s += `<rect x="${X(750)}" y="${yTop}" width="${X(2500)-X(750)}" height="${ph}" fill="var(--ir)" opacity=".07"/>`;
+  for (let v = 0; v <= 3; v++) {
+    s += `<line x1="${G.m.l}" x2="${G.W-G.m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 0 ? 'var(--muted)' : 'var(--grid)'}"/>`;
+    s += `<text class="t" x="${G.m.l-8}" y="${Y(v)+5}" text-anchor="end">${v}</text>`;
+  }
+  for (let l = 0; l <= 2500; l += 500) {
+    s += `<line x1="${X(l)}" x2="${X(l)}" y1="${base}" y2="${base+5}" stroke="var(--muted)"/>`;
+    s += `<text class="t" x="${X(l)}" y="${base+23}" text-anchor="middle">${l}</text>`;
+  }
+  s += `<line x1="${X(380)}" x2="${X(380)}" y1="${yTop}" y2="${base}" stroke="var(--muted)" stroke-dasharray="3 4"/>`;
+  s += `<line x1="${X(750)}" x2="${X(750)}" y1="${yTop}" y2="${base}" stroke="var(--muted)" stroke-dasharray="3 4"/>`;
+  s += `<text class="lab" x="${(X(0)+X(380))/2}" y="${yTop-10}" text-anchor="middle" style="fill:var(--uv)">자외선</text>`;
+  s += `<text class="lab" x="${(X(380)+X(750))/2}" y="${yTop-10}" text-anchor="middle">가시광선</text>`;
+  s += `<text class="lab" x="${(X(750)+X(2500))/2}" y="${yTop-10}" text-anchor="middle" style="fill:var(--ir)">적외선</text>`;
+  s += `<text class="ax" x="${(G.m.l+G.W-G.m.r)/2}" y="${G.H-14}" text-anchor="middle">파장 (nm)</text>`;
+  s += `<text class="ax" transform="translate(18 ${(yTop+base)/2}) rotate(-90)" text-anchor="middle">에너지량 (×10¹³ W·sr⁻¹·m⁻³)</text>`;
+  return s;
+}
+const curveEl = (T, p, w, o) => `<path d="${pathOf(T)}" fill="none" stroke="${COL[T]}" stroke-width="${w}" stroke-linejoin="round" opacity="${o}" clip-path="url(#plot-${p})"/>`;
+
+/* ---- 온도 버튼 ---- */
+function makeButtons(root, temps, labels, toggle, onClick) {
+  root.innerHTML = '';
+  for (const T of temps) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.dataset.t = T; b.textContent = labels[T] || (T + ' K'); b.style.setProperty('--k', COL[T]);
+    if (toggle) b.className = 'tog';
+    b.addEventListener('click', () => onClick(T));
+    root.appendChild(b);
+  }
+}
+const setPressed = (root, fn) => { for (const b of root.children) b.setAttribute('aria-pressed', String(!!fn(+b.dataset.t))); };
+
+/* ============ ① 플랑크 곡선 ============ */
+const st1 = {lam:500};
+const regionOf = (l) => l < 380 ? '자외선' : l > 750 ? '적외선' : '가시광선 · ' + (l < 450 ? '보라색' : l < 495 ? '파란색' : l < 570 ? '초록색' : l < 590 ? '노란색' : l < 620 ? '주황색' : '빨간색');
+function waveRGB(w) {
+  let r = 0, gr = 0, b = 0;
+  if (w < 440) { r = -(w-440)/60; b = 1; } else if (w < 490) { gr = (w-440)/50; b = 1; }
+  else if (w < 510) { gr = 1; b = -(w-510)/20; } else if (w < 580) { r = (w-510)/70; gr = 1; }
+  else if (w < 645) { r = 1; gr = -(w-645)/65; } else { r = 1; }
+  const f = w < 420 ? .3 + .7*(w-380)/40 : w > 700 ? .3 + .7*(750-w)/50 : 1;
+  return [r, gr, b].map(v => Math.round(255 * Math.pow(v*f, .8)));
+}
+function legend1() {
+  const w = 142, h = 118, x0 = X(1250) - w / 2, y0 = 186;
+  let s = `<g pointer-events="none"><rect x="${x0}" y="${y0}" width="${w}" height="${h}" rx="10" fill="var(--bg)" fill-opacity=".93" stroke="var(--grid)"/>`;
+  T4.forEach((T, i) => { const yy = y0 + 28 + i * 26; s += `<line x1="${x0+14}" x2="${x0+44}" y1="${yy}" y2="${yy}" stroke="${COL[T]}" stroke-width="4" stroke-linecap="round"/><text class="lg1t" x="${x0+56}" y="${yy+5}">${T} K</text>`; });
+  return s + '</g>';
+}
+function bars1(l) {
+  const W = 300, H = 204, m = {l:30, r:6, t:22, b:30}, ph = H - m.t - m.b, pw = W - m.l - m.r;
+  const yy = (v) => H - m.b - Math.min(v, G.YMAX) / G.YMAX * ph;
+  let s = `<text class="bt" x="2" y="11">에너지량 (×10¹³ W·sr⁻¹·m⁻³)</text>`;
+  for (let v = 0; v <= 3; v++) s += `<line x1="${m.l}" x2="${W-m.r}" y1="${yy(v)}" y2="${yy(v)}" stroke="${v === 0 ? 'var(--muted)' : 'var(--grid)'}"/><text class="bt" x="${m.l-5}" y="${yy(v)+4}" text-anchor="end">${v}</text>`;
+  const slot = pw / 4, bw = 40;
+  T4.forEach((T, i) => {
+    const v = B(l, T), x = m.l + slot * i + (slot - bw) / 2, top = yy(v);
+    s += `<rect x="${x}" y="${top}" width="${bw}" height="${Math.max(0, H - m.b - top)}" rx="3" fill="${COL[T]}"/>`;
+    s += `<text class="bv" x="${x + bw/2}" y="${Math.max(top - 5, m.t + 2)}" text-anchor="middle">${v.toFixed(2)}</text>`;
+    s += `<text class="bl" x="${x + bw/2}" y="${H - m.b + 18}" text-anchor="middle" fill="${COL[T]}">${T} K</text>`;
+  });
+  return s;
+}
+function render1() {
+  let s = frame('1');
+  for (const T of T4) s += curveEl(T, '1', 3, 1);
+  const x = X(st1.lam);
+  s += `<line x1="${x}" x2="${x}" y1="${yTop}" y2="${base}" stroke="var(--fg)" stroke-width="2"/>`;
+  for (const T of T4) { const v = B(st1.lam, T); if (v <= G.YMAX) s += `<circle cx="${x}" cy="${Y(v)}" r="6" fill="${COL[T]}" stroke="var(--bg)" stroke-width="2"/>`; }
+  s += `<circle cx="${x}" cy="${base}" r="10" fill="var(--fg)" stroke="var(--bg)" stroke-width="3"/>`;
+  s += legend1();
+  $('c1').innerHTML = s;
+  $('s1').value = st1.lam;
+  const l = st1.lam, vis = l >= 380 && l <= 750;
+  $('r1').innerHTML = `<h2 class="ct">온도별 파장에 따른 에너지 방출량<br><small>(단위 시간, 단위 면적)</small></h2><div class="r1-body">`
+    + `<div class="rd-head"><span class="sw" style="background:${vis ? `rgb(${waveRGB(l)})` : 'var(--btn)'}"></span><b>${l} nm</b><span class="rg">${regionOf(l)}</span></div>`
+    + `<svg id="bars1" viewBox="0 0 300 204" role="img" aria-label="파장 ${l} nm에서 온도별 에너지 방출량 막대그래프">${bars1(l)}</svg></div>`;
+}
+function lamFrom(svg, e) {
+  const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY;
+  const q = p.matrixTransform(svg.getScreenCTM().inverse());
+  const l = G.L0 + (q.x - G.m.l) / (G.W - G.m.l - G.m.r) * (G.L1 - G.L0);
+  return Math.round(Math.min(G.L1, Math.max(G.L0, l)) / 5) * 5;
+}
+(function () {
+  const svg = $('c1'); let drag = false;
+  svg.addEventListener('pointerdown', (e) => { drag = true; try { svg.setPointerCapture(e.pointerId); } catch (_) {} st1.lam = lamFrom(svg, e); render1(); });
+  svg.addEventListener('pointermove', (e) => { if (!drag) return; st1.lam = lamFrom(svg, e); render1(); });
+  const end = () => { drag = false; };
+  svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
+  $('s1').addEventListener('input', (e) => { st1.lam = +e.target.value; render1(); });
+})();
+
+/* ============ ② 플랑크 곡선과 별의 색 ============ */
+const TEMPS2 = [
+  {T:10000, label:'10000 K', name:'푸른빛이 도는 흰색'},
+  {T:6000,  label:'6000 K', name:'거의 흰색'},
+  {T:5800,  label:'5800 K (태양)', name:'노란빛이 도는 흰색'},
+  {T:5000,  label:'5000 K', name:'연한 주황빛이 도는 노란색'},
+  {T:4000,  label:'4000 K', name:'주황색'},
+  {T:3000,  label:'3000 K', name:'붉은빛이 도는 주황색'}
+];
+const peakOf = (T) => WIEN / T;
+function render2(sel) {
+  let s = frame('2'), peaks = '', front = '';
+  for (const {T} of TEMPS2) {
+    const pk = peakOf(T), on = T === sel;
+    const path = `<path d="${pathOf(T)}" fill="none" stroke="${COL[T]}" stroke-width="${on ? 4 : 2.2}" stroke-linejoin="round" opacity="${on ? 1 : .5}" clip-path="url(#plot-2)"/>`;
+    if (on) front = path; else s += path;
+    if (B(pk, T) > G.YMAX) continue;
+    peaks += `<g opacity="${on ? 1 : .6}"><circle cx="${X(pk)}" cy="${Y(B(pk, T))}" r="${on ? 5.5 : 4}" fill="${COL[T]}"/>`;
+    peaks += `<text class="pk" x="${X(pk)}" y="${Y(B(pk, T))-10}" text-anchor="middle" fill="${COL[T]}">${Math.round(pk)} nm</text></g>`;
+  }
+  $('c2').innerHTML = s + front + peaks;
+}
+const g2 = (l, mu, s1, s2) => { const t = (l - mu) / (l < mu ? s1 : s2); return Math.exp(-0.5 * t * t); };
+const xbar = (l) => 1.056*g2(l,599.8,37.9,31.0) + 0.362*g2(l,442.0,16.0,26.7) - 0.065*g2(l,501.1,20.4,26.2);
+const ybar = (l) => 0.821*g2(l,568.8,46.9,40.5) + 0.286*g2(l,530.9,16.3,31.1);
+const zbar = (l) => 1.217*g2(l,437.0,11.8,36.0) + 0.681*g2(l,459.0,26.0,13.8);
+const enc = (v) => { v = Math.min(Math.max(v, 0), 1); return 255 * (v <= 0.0031308 ? 12.92*v : 1.055*Math.pow(v, 1/2.4) - 0.055); };
+function starRGB(T) {
+  let X_ = 0, Y_ = 0, Z_ = 0;
+  for (let l = 380; l <= 780; l += 5) { const b = B(l, T); X_ += b*xbar(l); Y_ += b*ybar(l); Z_ += b*zbar(l); }
+  let r = 3.2406*X_ - 1.5372*Y_ - 0.4986*Z_, gg = -0.9689*X_ + 1.8758*Y_ + 0.0415*Z_, bl = 0.0557*X_ - 0.2040*Y_ + 1.0570*Z_;
+  r = Math.max(r, 0); gg = Math.max(gg, 0); bl = Math.max(bl, 0);
+  const mx = Math.max(r, gg, bl);
+  return [enc(r/mx), enc(gg/mx), enc(bl/mx)].map(Math.round);
+}
+function drawStar(T) {
+  const t = TEMPS2.find(x => x.T === T);
+  const [r, gr, b] = starRGB(T);
+  const orb = $('orb');
+  orb.style.setProperty('--star', `rgb(${r},${gr},${b})`);
+  orb.style.setProperty('--glow', `rgba(${r},${gr},${b},.45)`);
+  $('st-title').textContent = `${t.label} · ${t.name}`;
+  let vals = [], mx = 0;
+  for (let l = 380; l < 750; l += 10) { const v = B(l + 5, T); vals.push([l, v]); mx = Math.max(mx, v); }
+  let s = '';
+  for (const [l, v] of vals) { const hh = v / mx * 84, [rr, g3, bb] = waveRGB(l + 5); s += `<rect x="${l - 380}" y="${90 - hh}" width="9" height="${hh}" fill="rgb(${rr},${g3},${bb})"/>`; }
+  s += `<line x1="0" x2="370" y1="90" y2="90" stroke="var(--muted)"/>`;
+  for (const l of [400, 500, 600, 700]) s += `<text class="t" style="font-size:10px" x="${l - 380 + 4.5}" y="101" text-anchor="middle">${l} nm</text>`;
+  $('mix').innerHTML = s;
+}
+function select2(T) { setPressed($('lg2'), t => t === T); render2(T); drawStar(T); }
+makeButtons($('lg2'), TEMPS2.map(x => x.T), Object.fromEntries(TEMPS2.map(x => [x.T, x.label])), false, select2);
+
+/* ============ ③ 빈의 변위 법칙 ============ */
+const st3 = {on:{6000:false, 5000:false, 4000:false, 3000:false}};
+const H3 = {W:340, H:128, m:{l:54, r:14, t:8, b:34}, T0:2500, T1:6500, Y1:1200};
+const X3 = (T) => H3.m.l + (T - H3.T0) / (H3.T1 - H3.T0) * (H3.W - H3.m.l - H3.m.r);
+const Y3 = (v) => H3.H - H3.m.b - v / H3.Y1 * (H3.H - H3.m.t - H3.m.b);
+function render3() {
+  const on = T4.filter(T => st3.on[T]);
+  let s = frame('3');
+  for (const T of T4) s += curveEl(T, '3', st3.on[T] ? 3 : 2, st3.on[T] ? 1 : .35);
+  if (on.length >= 2) {
+    const lo = PK[Math.max(...on)], hi = PK[Math.min(...on)];
+    let d = '';
+    for (let l = lo; l <= hi + 0.01; l += 2) d += (d ? 'L' : 'M') + X(l).toFixed(1) + ' ' + Y(B(l, WIEN / l)).toFixed(1);
+    s += `<path d="${d}" fill="none" stroke="var(--fg)" stroke-width="2.6" stroke-dasharray="8 5" stroke-linecap="round" clip-path="url(#plot-3)"/>`;
+  }
+  for (const T of on) {
+    const x = X(PK[T]), y = Y(PV[T]);
+    s += `<line x1="${x}" x2="${x}" y1="${y}" y2="${base}" stroke="${COL[T]}" stroke-dasharray="4 4"/>`;
+    s += `<circle cx="${x}" cy="${y}" r="6.5" fill="${COL[T]}" stroke="var(--bg)" stroke-width="2"/>`;
+    s += `<text class="pk" x="${x+10}" y="${y-11}" text-anchor="start" fill="${COL[T]}">${Math.round(PK[T])} nm</text>`;
+  }
+  $('c3').innerHTML = s;
+
+  // 오른쪽 작은 그래프: 온도 - 최대 에너지 파장
+  let q = '';
+  for (let v = 0; v <= 1200; v += 300) {
+    q += `<line x1="${H3.m.l}" x2="${H3.W-H3.m.r}" y1="${Y3(v)}" y2="${Y3(v)}" stroke="${v === 0 ? 'var(--muted)' : 'var(--grid)'}"/>`;
+    q += `<text class="t2" x="${H3.m.l-6}" y="${Y3(v)+4}" text-anchor="end">${v}</text>`;
+  }
+  for (let T = 3000; T <= 6000; T += 1000) {
+    q += `<line x1="${X3(T)}" x2="${X3(T)}" y1="${Y3(0)}" y2="${Y3(0)+4}" stroke="var(--muted)"/>`;
+    q += `<text class="t2" x="${X3(T)}" y="${Y3(0)+17}" text-anchor="middle">${T}</text>`;
+  }
+  const hyp = (a, b) => { let d = ''; for (let T = a; T <= b + 0.01; T += 20) d += (d ? 'L' : 'M') + X3(T).toFixed(1) + ' ' + Y3(WIEN / T).toFixed(1); return d; };
+  q += `<path d="${hyp(H3.T0, H3.T1)}" fill="none" stroke="var(--muted)" stroke-width="1.6" opacity=".45"/>`;
+  if (on.length >= 2) q += `<path d="${hyp(Math.min(...on), Math.max(...on))}" fill="none" stroke="var(--fg)" stroke-width="2.6" stroke-dasharray="8 5" stroke-linecap="round"/>`;
+  for (const T of on) {
+    const x = X3(T), y = Y3(PK[T]), right = x > H3.W - 80;
+    q += `<line x1="${x}" x2="${x}" y1="${y}" y2="${Y3(0)}" stroke="${COL[T]}" stroke-dasharray="3 3"/><line x1="${H3.m.l}" x2="${x}" y1="${y}" y2="${y}" stroke="${COL[T]}" stroke-dasharray="3 3"/>`;
+    q += `<circle cx="${x}" cy="${y}" r="5.5" fill="${COL[T]}" stroke="var(--bg)" stroke-width="2"/>`;
+    q += `<text class="pk2" x="${right ? x - 9 : x + 9}" y="${right ? y + 18 : y - 8}" text-anchor="${right ? 'end' : 'start'}" fill="${COL[T]}">${Math.round(PK[T])} nm</text>`;
+  }
+  q += `<text class="ax2" x="${(H3.m.l+H3.W-H3.m.r)/2}" y="${H3.H-6}" text-anchor="middle">온도 (K)</text>`;
+  q += `<text class="ax2" transform="translate(13 ${(H3.m.t+H3.H-H3.m.b)/2}) rotate(-90)" text-anchor="middle">λ<tspan dy="3" font-size="9">max</tspan><tspan dy="-3"> (nm)</tspan></text>`;
+  $('c3b').innerHTML = q;
+
+  let rows = '';
+  for (const T of T4) rows += st3.on[T]
+    ? `<tr style="--k:${COL[T]}"><th><i class="ln"></i>${T} K</th><td>${PK[T].toFixed(0)} nm</td><td>${(T * PK[T] / 1e6).toFixed(2)}×10⁶ nm·K</td></tr>`
+    : `<tr class="off" style="--k:${COL[T]}"><th><i class="ln"></i>${T} K</th><td>–</td><td>–</td></tr>`;
+  $('tb3').innerHTML = rows;
+  $('fm3').hidden = on.length < 2;
+}
+makeButtons($('lg3'), T4, {}, true, (T) => { st3.on[T] = !st3.on[T]; setPressed($('lg3'), t => st3.on[t]); render3(); });
+setPressed($('lg3'), t => st3.on[t]);
+
+/* ============ ④ 슈테판-볼츠만 법칙 ============ */
+const st4 = {on:{6000:false, 5000:false, 4000:false, 3000:false}};
+const SUPCH = '⁻⁰¹²³⁴⁵⁶⁷⁸⁹';
+const sup = (v) => String(v).replace(/[-0-9]/g, (ch) => SUPCH['-0123456789'.indexOf(ch)]);
+function sci(x) { let e = Math.floor(Math.log10(x)), m = x / Math.pow(10, e); if (m.toFixed(2) === '10.00') { m = 1; e += 1; } return m.toFixed(2) + '×10' + sup(e); }
+function render4() {
+  let s = frame('4');
+  for (const T of T4) if (st4.on[T]) s += `<path d="${pathOf(T)} L${X(2500)} ${Y(0)} L${X(0)} ${Y(0)} Z" fill="${COL[T]}" fill-opacity=".26" stroke="none" clip-path="url(#plot-4)"/>`;
+  for (const T of T4) s += curveEl(T, '4', st4.on[T] ? 3 : 2, st4.on[T] ? 1 : .35);
+  $('c4').innerHTML = s;
+  let rows = '';
+  for (const T of T4) rows += st4.on[T]
+    ? `<tr style="--k:${COL[T]}"><th><i class="ln"></i>${T} K</th><td>${sci(EMIT[T])} W/m²</td><td>${sci(EMIT[T] / Math.pow(T, 4))} W/(m²·K⁴)</td></tr>`
+    : `<tr class="off" style="--k:${COL[T]}"><th><i class="ln"></i>${T} K</th><td>–</td><td>–</td></tr>`;
+  $('tb4').innerHTML = rows;
+  $('fm4').hidden = T4.filter(T => st4.on[T]).length < 2;
+}
+makeButtons($('lg4'), T4, {}, true, (T) => { st4.on[T] = !st4.on[T]; setPressed($('lg4'), t => st4.on[t]); render4(); });
+setPressed($('lg4'), t => st4.on[t]);
+
+/* ============ 메뉴(탭) ============ */
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function activate(i, focus) {
+  tabs.forEach((t, j) => { const on = j === i; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; $(t.getAttribute('aria-controls')).hidden = !on; });
+  const p = $(tabs[i].getAttribute('aria-controls')); p.classList.remove('enter'); void p.offsetWidth; p.classList.add('enter');
+  if (focus) tabs[i].focus();
+}
+tabs.forEach((t, i) => {
+  t.addEventListener('click', () => activate(i));
+  t.addEventListener('keydown', (e) => {
+    const k2 = {ArrowRight:(i + 1) % tabs.length, ArrowLeft:(i + tabs.length - 1) % tabs.length, Home:0, End:tabs.length - 1}[e.key];
+    if (k2 !== undefined) { e.preventDefault(); activate(k2, true); }
+  });
+});
+
+render1(); select2(6000); render3(); render4();
+
+
+[['ov','thb','thx'],['ov3','thb3','thx3']].forEach(([o, bt, x]) => {
+  const ov = $(o), btn = $(bt), cl = $(x);
+  const closeTh = () => { ov.hidden = true; btn.focus(); };
+  btn.addEventListener('click', () => { ov.hidden = false; cl.focus(); });
+  cl.addEventListener('click', closeTh);
+  ov.addEventListener('click', (e) => { if (e.target === ov) closeTh(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ov.hidden) closeTh(); });
+});
+/* 생각해 보기: 보기를 고른 뒤 '정답 확인' */
+document.querySelectorAll('.think .q').forEach((q) => {
+  const bs = [...q.querySelectorAll('.ch button:not(.chk)')], fb = q.querySelector('.fb'); let sel = -1;
+  bs.forEach((b, i) => b.addEventListener('click', () => { sel = i; bs.forEach((x, j) => x.classList.toggle('sel', j === i)); fb.textContent = ''; }));
+  q.querySelector('.chk').addEventListener('click', () => {
+    if (sel < 0) { fb.innerHTML = '<span class="cue">먼저 보기를 하나 골라 보세요.</span>'; return; }
+    const ok = sel === +q.dataset.ans;
+    fb.innerHTML = (ok ? '<span class="ok">✔ 정답입니다.</span> ' : '<span class="bad">✘ 다시 생각해 보세요.</span> 정답: <b>' + bs[+q.dataset.ans].textContent.replace(/^[①-④]\s*/, '') + '</b>. ') + (ok ? '' : '') + q.dataset.exp;
+  });
+});
+
+</script>
+</body>
+</html>
+
+</body></html>

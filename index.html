@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="light dark">
 <title>지구과학 World</title>
 <style>
 :root{--bg:#f3f6fb;--fg:#172334;--muted:#5d6b7d;--card:#fff;--line:#dce4ef;--blue:#1e4f7a}
@@ -15,14 +15,39 @@ header h1{margin:8px 0;font-size:clamp(2rem,5vw,3rem)}
 header p{margin:0;color:#e0edf7}
 main{max-width:1000px;margin:0 auto;padding:28px 18px 48px}
 h2{font-size:1.35rem;margin:0 0 14px}
+.subject-list{display:grid;gap:16px}
 .subject{display:flex;align-items:center;gap:18px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;text-decoration:none;color:inherit;box-shadow:0 6px 20px #183b5a0b;transition:transform .15s,box-shadow .15s}
 .subject:hover{transform:translateY(-2px);box-shadow:0 10px 26px #183b5a16}
+.subject:focus-visible{outline:3px solid #4b91cc;outline-offset:3px}
 .symbol{display:grid;place-items:center;flex:0 0 64px;width:64px;height:64px;border-radius:16px;background:#e6f0fa;font-size:2rem}
 .subject h3{margin:0 0 4px;font-size:1.2rem}
 .subject p{margin:0;color:var(--muted)}
-.arrow{margin-left:auto;font-size:1.6rem;color:var(--blue)}
+.arrow{margin-left:auto;font-size:1.6rem;color:var(--blue);flex:0 0 auto}
 footer{text-align:center;color:var(--muted);font-size:.88rem;padding:0 18px 24px}
+@media(max-width:520px){
+  header{padding:38px 18px 34px}
+  .subject{gap:13px;padding:17px}
+  .symbol{flex-basis:52px;width:52px;height:52px;border-radius:13px;font-size:1.7rem}
+  .subject h3{font-size:1.08rem}
+  .subject p{font-size:.94rem}
+}
+
+/* ---- 공통 스타일 (Star/luminosity.html 등 자료 화면과 같은 규칙) ----
+   색: 남색 하나를 기본 강조색으로 / 글꼴: Pretendard / 모서리: 카드 14px
+   메뉴 카드는 '눌러서 들어가는 문'이라 흰 카드 + 은은한 그림자 + 마우스를 올리면 떠오르는 효과를 유지 */
+:root{--bg:#f3f4f8;--fg:#1b1f2a;--muted:#5a6070;--card:#fff;--line:#e3e6ee;--blue:#5468d4;--acc-bg:#eef0fc}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--muted:#a3a9bb;--card:#1f222c;--line:#2c3247;--blue:#8f9cf0;--acc-bg:#1e2340}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--muted:#a3a9bb;--card:#1f222c;--line:#2c3247;--blue:#8f9cf0;--acc-bg:#1e2340}
+body{font-family:"Pretendard Variable",Pretendard,"Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif;word-break:keep-all}
+/* 머리 띠: 자료 화면의 그림판과 같은 밤하늘 남색 + 옅은 별 */
+header{background:radial-gradient(1px 1px at 12% 30%,#dfe5ffaa,transparent),radial-gradient(1.2px 1.2px at 28% 72%,#dfe5ff77,transparent),radial-gradient(1px 1px at 64% 22%,#dfe5ff99,transparent),radial-gradient(1.3px 1.3px at 82% 64%,#dfe5ff88,transparent),radial-gradient(1px 1px at 92% 18%,#dfe5ff66,transparent),linear-gradient(135deg,#141a36,#2d3a86)}
+.subject{border-color:transparent;border-radius:14px;box-shadow:0 1px 3px rgba(20,25,45,.06),0 6px 20px rgba(20,25,45,.05)}
+.subject:hover{border-color:var(--blue);box-shadow:0 2px 6px rgba(20,25,45,.08),0 12px 28px rgba(20,25,45,.09)}
+.subject:focus-visible{outline-color:var(--blue)}
+.symbol{background:var(--acc-bg);border-radius:12px}
 </style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 </head>
 <body>
 <header>
@@ -33,14 +58,24 @@ footer{text-align:center;color:var(--muted);font-size:.88rem;padding:0 18px 24px
 </header>
 <main>
   <h2>주제별 학습실</h2>
-  <a class="subject" href="./eclipse/">
-    <div class="symbol" aria-hidden="true">🌒</div>
-    <div>
-      <h3>일식과 월식</h3>
-      <p>일식과 월식이 생기는 원리, 일식과 월식의 진행 과정을 스스로 탐구해보는 학습실 입니다. </p>
-    </div>
-    <span class="arrow" aria-hidden="true">›</span>
-  </a>
+  <div class="subject-list">
+    <a class="subject" href="./Eclipses/Eclipse_index.html">
+      <div class="symbol" aria-hidden="true">🌒</div>
+      <div>
+        <h3>일식과 월식</h3>
+        <p>일식과 월식이 생기는 원리와 진행 과정을 스스로 탐구해 보는 학습실입니다.</p>
+      </div>
+      <span class="arrow" aria-hidden="true">›</span>
+    </a>
+    <a class="subject" href="./Star/Star_index.html">
+      <div class="symbol" aria-hidden="true">✨</div>
+      <div>
+        <h3>별의 물리량</h3>
+        <p>별빛의 스펙트럼을 살펴보고 별의 광도 등 별의 물리량을 탐구하는 학습실입니다.</p>
+      </div>
+      <span class="arrow" aria-hidden="true">›</span>
+    </a>
+  </div>
 </main>
 <footer>지구과학 World · 인터랙티브 수업 자료실</footer>
 </body>

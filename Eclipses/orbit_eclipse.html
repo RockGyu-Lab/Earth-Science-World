@@ -1,0 +1,407 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>일식과 월식이 매달 일어나지 않는 이유</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: 탭(일치/불일치) → [비스듬히 본 모습 | 옆에서 본 모습 + 횟수] → 조작 → 1년 기록 */
+:root{--bg:#f4f4f2;--fg:#1c1c1c;--muted:#666;--line:#d9d9d6;--btn:#fff;--btnh:#ececea;--tab:#1c6fb8;--tabfg:#fff;--accent:#c62828;--ok:#2e7d32;--font:"Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1b1a;--fg:#eee;--muted:#a8a8a4;--line:#3a3a38;--btn:#262624;--btnh:#33332f;--tab:#5aa8ec;--tabfg:#0e131c;--accent:#ef6b6b;--ok:#7cc47f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1b1a;--fg:#eee;--muted:#a8a8a4;--line:#3a3a38;--btn:#262624;--btnh:#33332f;--tab:#5aa8ec;--tabfg:#0e131c;--accent:#ef6b6b;--ok:#7cc47f;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:1.4rem;margin:0 0 12px;text-wrap:balance}
+.back{display:inline-block;margin:0 0 14px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--btn);color:var(--fg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--btnh)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.tabs button{font-size:.95rem;padding:8px 16px;text-align:left}
+#intro{margin:0 0 12px;font-size:.95rem}
+.views{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:12px;align-items:start}
+@media (max-width:760px){.views{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+canvas{display:block;width:100%;height:auto;aspect-ratio:640/440;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+svg{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+[data-tip]{cursor:pointer}
+#tip{position:fixed;z-index:20;pointer-events:none;background:#fff;color:#111;border:2px solid #111;border-radius:8px;padding:6px 10px;font-size:.88rem;max-width:260px;opacity:0;transition:opacity .12s;box-shadow:0 2px 8px rgba(0,0,0,.2);line-height:1.45}
+#tip b{display:block;font-size:.95rem}
+.count{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cbox{padding:5px 12px;border:1px solid var(--line);border-radius:10px}
+.cbox .lab{font-size:.82rem;color:var(--muted);line-height:1.4}
+.cbox .num{font-size:1.6rem;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
+.cbox .num small{font-size:.95rem;font-weight:400;color:var(--muted)}
+#msg{padding:8px 14px;border:1px solid var(--line);border-radius:10px;font-size:.9rem;line-height:1.55;height:8.2em;overflow-y:auto}  /* 높이 고정: 글이 길어져도 아래 기록 막대가 움직이지 않음 */
+#msg b{font-size:1rem}
+.yes{color:var(--ok)}.no{color:var(--accent)}
+.ctl{margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;gap:10px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,select{font:inherit;font-size:.9rem;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--btn);color:var(--fg);cursor:pointer}
+button:hover{background:var(--btnh)}
+button[aria-selected="true"]{background:var(--tab);color:var(--tabfg);border-color:var(--tab);font-weight:700}
+#play{font-weight:700}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--tab);outline-offset:2px}
+.slider label{font-weight:700;font-size:.93rem;display:flex;justify-content:space-between;gap:8px}
+.slider label span{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--tab)}
+.rec{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.rec svg{min-width:640px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.85rem;color:var(--muted)}
+.legend i{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:5px;vertical-align:-2px;border:2px solid #999}
+
+/* ---- 학습실 공통 스타일 (Star/luminosity.html과 같은 규칙) ----
+   색: 남색 하나를 기본 강조색으로 / 페이지는 흰 바탕, 상자는 테두리 없는 옅은 회색 판 / 모서리: 판 14px, 버튼 10px
+   옆에서 본 모습(흰 바탕 그림)과 1년 기록은 흰 바탕을 유지 */
+:root{--bg:#fff;--tab:#5468d4;--tabfg:#fff;--cd:#f3f4f8;--frame:#e3e6ee;
+  --font:"Pretendard Variable",Pretendard,"Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--btn:#262a36;--btnh:#30354a;--tab:#8f9cf0;--tabfg:#10142b;--cd:#1f222c;--frame:#2c3247}}
+:root[data-theme="dark"]{--bg:#14161d;--btn:#262a36;--btnh:#30354a;--tab:#8f9cf0;--tabfg:#10142b;--cd:#1f222c;--frame:#2c3247}
+body{word-break:keep-all}
+button,select{border-radius:10px}
+.tabs button{border-color:var(--line);background:var(--cd)}
+.tabs button[aria-selected="true"]{background:var(--tab);border-color:var(--tab)}
+.card{border:0;border-radius:14px;box-shadow:0 0 0 1px var(--frame)}
+.card[style]{box-shadow:none}
+.cbox,#msg,.ctl{border:0;border-radius:14px;background:var(--cd)}
+.ctl button,.ctl select{border-color:transparent;box-shadow:0 1px 2px rgba(20,25,45,.12)}
+.ctl button:hover{border-color:var(--tab)}
+#play{background:var(--tab);border-color:var(--tab);color:var(--tabfg)}
+.rec{border:0;border-radius:10px;box-shadow:0 0 0 1px var(--frame)}
+/* 탭을 바꿀 때 그림이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+
+<main>
+<a class="back" href="./Eclipse_index.html">← [일식과 월식] 메뉴로 돌아가기</a>
+<h1>일식과 월식이 매달 일어나지 않는 이유</h1>
+<div class="tabs" role="tablist">
+<button type="button" role="tab" id="tabSame" aria-selected="true">지구와 달의 공전 궤도면이 일치하는 경우</button>
+<button type="button" role="tab" id="tabTilt" aria-selected="false">지구와 달의 공전 궤도면이 일치하지 않는 경우(실제)</button>
+</div>
+<p id="intro"></p>
+
+<div class="views">
+<div class="card" style="background:#081538;border-color:#0b1d4d"><canvas id="cv" role="img" aria-label="비스듬히 위에서 본 태양, 지구, 달과 두 공전 궤도면"></canvas></div>
+<div class="col">
+<div class="card">
+<svg id="side" viewBox="0 0 600 280" role="img" aria-label="옆에서 본 태양, 달, 지구와 그림자">
+<rect width="600" height="280" fill="#fff"/>
+<circle cx="-70" cy="165" r="140" fill="#ffff99" stroke="#a39600" stroke-width="3" data-tip="태양|태양은 지구의 공전 궤도면 위에 있습니다."/>
+<text x="34" y="172" text-anchor="middle" font-size="24" font-weight="700" fill="#000" pointer-events="none">태양</text>
+<line x1="70" y1="165" x2="600" y2="165" stroke="#7c5cd6" stroke-width="2" stroke-dasharray="8 6"/>
+<line x1="70" y1="165" x2="600" y2="165" stroke="transparent" stroke-width="16" data-tip="지구의 공전 궤도면|옆에서 보면 평면이 선처럼 보입니다. 태양과 지구는 언제나 이 면 위에 있습니다."/>
+<text x="80" y="155" font-size="18" fill="#6a4cc4" font-weight="700" pointer-events="none">지구의 공전 궤도면</text>
+<polygon points="380,135 600,141 600,189 380,195" fill="#222" fill-opacity=".5" data-tip="지구의 그림자|망(보름달)일 때 달이 이 안에 들어가면 월식이 일어납니다."/>
+<polygon id="mSh" fill="#222" fill-opacity=".55" data-tip="달의 그림자|삭(신월)일 때 이 그림자가 지구에 닿으면 일식이 일어납니다."/>
+<g id="gBack"></g>
+<circle cx="380" cy="165" r="30" fill="#2f7fd0" stroke="#123" stroke-width="2" data-tip="지구|"/>
+<text x="380" y="172" text-anchor="middle" font-size="18" font-weight="700" fill="#fff" pointer-events="none">지구</text>
+<line id="hLine" stroke="#c62828" stroke-width="2" stroke-dasharray="4 3"/>
+<text id="hTxt" font-size="19" font-weight="700" fill="#c62828" stroke="#fff" stroke-width="5" paint-order="stroke"></text>
+<g id="gFront"><circle id="sMoon" r="10" stroke="#333" stroke-width="1.5" data-tip="달|"/></g>
+<text x="14" y="30" font-size="22" font-weight="700" fill="#222">옆에서 본 모습</text>
+<text x="586" y="30" font-size="16" fill="#888" text-anchor="end">위아래 높이는 과장했습니다</text>
+</svg>
+</div>
+<div class="count">
+<div class="cbox"><div class="lab">일식 횟수</div><div class="num"><span id="cSol">0</span> <small>/ 삭(신월) <span id="cNew">0</span>번</small></div></div>
+<div class="cbox"><div class="lab">월식 횟수</div><div class="num"><span id="cLun">0</span> <small>/ 망(보름달) <span id="cFull">0</span>번</small></div></div>
+</div>
+<div id="msg" aria-live="polite"></div>
+</div>
+</div>
+
+<div class="ctl">
+<div class="btns">
+<button type="button" id="play">▶ 1년 공전 시작</button>
+<button type="button" id="reset">↺ 처음부터</button>
+<select id="speed" aria-label="공전 속도"><option value="10">느리게</option><option value="24" selected>보통</option><option value="60">빠르게</option></select>
+</div>
+<div class="slider">
+<label for="time">날짜 <span id="timeTxt"></span></label>
+<input type="range" id="time" min="0" max="365" step="0.01" value="0">
+</div>
+<div class="rec"><svg id="rec" viewBox="0 0 900 112" role="img" aria-label="1년 동안의 삭(신월)과 망(보름달) 기록"></svg></div>
+<div class="legend"><span><i style="background:#111;border-color:#f0a030"></i>일식</span><span><i style="background:#b71c1c;border-color:#6a1010"></i>월식</span><span><i style="background:#e2e2e0"></i>식 없음 (✕)</span></div>
+</div>
+</main>
+<div id="tip"></div>
+
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+function rad(d){return d*Math.PI/180}
+function deg(r){return r*180/Math.PI}
+function sn(d){return Math.sin(rad(d))}
+function wrap(a){return((a+180)%360+360)%360-180}
+var TMAX=365,J0=2461041.5;           /* 출발 시각(아래에서 지구가 가장 왼쪽에 오는 날로 다시 맞춤) */
+var TILT=5.145,SOL=1.5,LUN=1.0;       /* 식이 일어나는 한계: 신월 때 1.5°, 보름달 때 1.0° 이내 */
+var mode='same',I=0,t=0,playing=false,last=0;
+
+/* ---------- 실제 신월·보름달 (Meeus, 『Astronomical Algorithms』 49장) ---------- */
+function syz(k,full){
+  var T=k/1236.85,E=1-0.002516*T,jd=2451550.09766+29.530588861*k+0.00015437*T*T;
+  var M=2.5534+29.10535670*k,Mp=201.5643+385.81693528*k,F=160.7108+390.67050284*k-0.0016118*T*T,Om=124.7746-1.56375588*k+0.0020672*T*T;
+  var c=full?[-0.40614,0.17302,0.01614,0.01043,0.00734,-0.00515,0.00209]:[-0.40720,0.17241,0.01608,0.01039,0.00739,-0.00514,0.00208];
+  jd+=c[0]*sn(Mp)+c[1]*E*sn(M)+c[2]*sn(2*Mp)+c[3]*sn(2*F)+c[4]*E*sn(Mp-M)+c[5]*E*sn(Mp+M)+c[6]*E*E*sn(2*M)-0.00111*sn(Mp-2*F)-0.00057*sn(Mp+2*F)+0.00056*E*sn(2*Mp+M)-0.00042*sn(3*Mp)+0.00042*E*sn(M+2*F)+0.00038*E*sn(M-2*F)-0.00024*E*sn(2*Mp-M)-0.00017*sn(Om);
+  return{d:jd-J0,full:full,F:F-0.02665*sn(Om)};   /* F: 달이 승교점에서 떨어진 각 */
+}
+var SY=[];for(var k=317;k<=337.01;k+=0.5)SY.push(syz(k,k%1!==0));
+function seg(t){for(var i=0;i<SY.length-1;i++)if(SY[i+1].d>t)return i;return SY.length-2}
+function Ph(t){var i=seg(t),a=SY[i],b=SY[i+1];return((a.full?180:0)+180*(t-a.d)/(b.d-a.d))%360}
+function Uarg(t){var i=seg(t),a=SY[i],b=SY[i+1];return a.F+(b.F-a.F)*(t-a.d)/(b.d-a.d)}
+function Sun(t){return 280.460+0.9856474*(J0+t-2451545)}
+function bAt(u){return deg(Math.asin(Math.sin(rad(I))*sn(u)))}
+function bet(t){return bAt(Uarg(t))}
+function ud(b){return b>0?'위':'아래'}
+function jdDate(jd){return new Date((jd-2440587.5)*864e5)}
+function dstr(t,yr){var d=jdDate(J0+t);return(yr?d.getUTCFullYear()+'년 ':'')+(d.getUTCMonth()+1)+'월 '+d.getUTCDate()+'일'}
+var events=[];
+function buildEvents(){
+  events=[];var nn=0,nf=0;
+  SY.forEach(function(s){if(s.d<0||s.d>=TMAX)return;var b=bAt(s.F);
+    events.push({k:s.full?'full':'new',n:s.full?++nf:++nn,t:s.d,b:b,e:Math.abs(b)<(s.full?LUN:SOL)})});
+}
+
+/* ---------- 비스듬히 위에서 본 모습 ---------- */
+var cv=$('cv'),ctx=cv.getContext('2d'),W=640,H=440,sc=1,hits=[];
+var S=212,RM=0.4,EL=rad(30),TV=26;
+var OMID,AZ;
+/* 교점선(두 궤도면이 만나는 선)이 앞뒤 방향이 되도록 바라봄 → 달 궤도면은 왼쪽이 높고 오른쪽이 낮음.
+   출발 날짜는 지구가 궤도의 가장 왼쪽에 오는 날로 맞춤 */
+for(var it=0;it<4;it++){
+  OMID=Sun(182)+Ph(182)-Uarg(182);AZ=rad(OMID+180);
+  var dl0=(((deg(AZ)-90-180-Sun(0))%360)+360)%360;if(dl0>180)dl0-=360;
+  var sh=dl0/0.9856474;J0+=sh;SY.forEach(function(q){q.d-=sh});
+}
+var rx=-Math.sin(AZ),ry=Math.cos(AZ),fx=-Math.cos(AZ)*Math.sin(EL),fy=-Math.sin(AZ)*Math.sin(EL),fz=Math.cos(EL);
+function P(x,y,z){var f=1/(1-0.16*(x*Math.cos(AZ)+y*Math.sin(AZ)));return[320+S*f*(x*rx+y*ry),196-S*f*(x*fx+y*fy+z*fz)]}  /* 원근감: 가까운 쪽이 더 크게 */
+function path(p,close){ctx.beginPath();p.forEach(function(q,i){i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])});if(close)ctx.closePath()}
+function ball(p,r,c0,c1,c2,st){var g=ctx.createRadialGradient(p[0]-r*.35,p[1]-r*.35,r*.1,p[0],p[1],r);g.addColorStop(0,c0);g.addColorStop(.6,c1);g.addColorStop(1,c2);ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.fillStyle=g;ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle=st;ctx.stroke()}
+function txt(s,x,y,size,col,align,bold){ctx.font=(bold?'700 ':'')+size+'px "Noto Sans KR",system-ui,sans-serif';ctx.fillStyle=col;ctx.textAlign=align||'center';ctx.fillText(s,x,y)}
+var STARS=[];(function(){var sd=7;function rnd(){sd=(sd*16807)%2147483647;return sd/2147483647}for(var i=0;i<170;i++)STARS.push([rnd()*640,rnd()*440,rnd()*1.3+.3,rnd()*.6+.3])})();
+var hx=Math.cos(AZ),hy=Math.sin(AZ);   /* 카메라 쪽 수평 방향 */
+function drawBall(p,r,c0,c1,c2,sunP){
+  var g=ctx.createRadialGradient(p[0]-r*.3,p[1]-r*.3,r*.1,p[0],p[1],r);g.addColorStop(0,c0);g.addColorStop(.6,c1);g.addColorStop(1,c2);
+  ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.fillStyle=g;ctx.fill();
+  var a=Math.atan2(sunP[1]-p[1],sunP[0]-p[0]);   /* 태양 반대쪽 절반은 밤 */
+  ctx.save();ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.clip();ctx.translate(p[0],p[1]);ctx.rotate(a);
+  var sh=ctx.createLinearGradient(-r*.15,0,r*.15,0);sh.addColorStop(0,'rgba(5,8,25,.78)');sh.addColorStop(1,'rgba(5,8,25,0)');
+  ctx.fillStyle=sh;ctx.fillRect(-r-1,-r-1,r*1.15+1,2*r+2);ctx.restore();
+  ctx.beginPath();ctx.arc(p[0],p[1],r,0,7);ctx.lineWidth=1;ctx.strokeStyle='rgba(255,255,255,.35)';ctx.stroke();
+}
+function arrowOn(q0,q1,col){var an=Math.atan2(q1[1]-q0[1],q1[0]-q0[0]);ctx.beginPath();ctx.moveTo(q1[0]+8*Math.cos(an),q1[1]+8*Math.sin(an));ctx.lineTo(q1[0]+8*Math.cos(an+2.5),q1[1]+8*Math.sin(an+2.5));ctx.lineTo(q1[0]+8*Math.cos(an-2.5),q1[1]+8*Math.sin(an-2.5));ctx.closePath();ctx.fillStyle=col;ctx.fill()}
+function cone(c,len,w,dx,dy){  /* 태양 반대 방향으로 뻗는 그림자 */
+  var nx=-dy,ny=dx,a=P(c[0]+nx*w,c[1]+ny*w,c[2]),b=P(c[0]-nx*w,c[1]-ny*w,c[2]),tip=P(c[0]+dx*len,c[1]+dy*len,c[2]),o=P(c[0],c[1],c[2]);
+  var g=ctx.createLinearGradient(o[0],o[1],tip[0],tip[1]);g.addColorStop(0,'rgba(0,0,8,.75)');g.addColorStop(1,'rgba(0,0,8,.1)');
+  path([a,tip,b],true);ctx.fillStyle=g;ctx.fill();
+}
+function draw(){
+  hits=[];
+  var bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#081538');bg.addColorStop(1,'#14408f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  STARS.forEach(function(s){ctx.fillStyle='rgba(255,255,255,'+s[3]+')';ctx.fillRect(s[0],s[1],s[2],s[2])});
+  var flat=I===0,iv=rad(flat?0:TV),L=Sun(t),th=rad(L+180),Ex=Math.cos(th),Ey=Math.sin(th);
+  var p=Ph(t),u=Uarg(t),Om=rad(L+p-u),b=bet(t);
+  var e1=[Math.cos(Om),Math.sin(Om),0],e2=[-Math.sin(Om)*Math.cos(iv),Math.cos(Om)*Math.cos(iv),Math.sin(iv)];
+  function W3(a,c){return[Ex+a*e1[0]+c*e2[0],Ey+a*e1[1]+c*e2[1],c*e2[2]]}
+  function op(a){return W3(RM*Math.cos(a),RM*Math.sin(a))}
+  function arc(a0,a1){var r=[];for(var j=0;j<=40;j++)r.push(P.apply(null,op(a0+(a1-a0)*j/40)));return r}
+  var s=RM*1.22,E=P(Ex,Ey,0),Sp=P(0,0,0);
+  var upQ=[W3(-s,0),W3(s,0),W3(s,s),W3(-s,s)].map(function(q){return P.apply(null,q)});
+  var loQ=[W3(-s,-s),W3(s,-s),W3(s,0),W3(-s,0)].map(function(q){return P.apply(null,q)});
+  var shQ=[W3(-s,-s),W3(s,-s),W3(s,s),W3(-s,s)].map(function(q){return P(q[0],q[1],0)});  /* 비스듬한 빛으로 생긴 그림자 */
+  var du=rad(wrap(u)),ua=Math.atan2(Math.sin(du),Math.cos(du)*Math.cos(iv));
+  var m3=op(ua),M=P.apply(null,m3),Mb=P(m3[0],m3[1],0),above=m3[2]>0.0005,below=m3[2]<-0.0005;
+  var nearNew=Math.abs(wrap(p))<4,nearFull=Math.abs(wrap(p-180))<4,dl=Math.hypot(Ex,Ey),dx=Ex/dl,dy=Ey/dl;
+  var showMoonCone=Math.abs(wrap(p))<45;
+  function moon(){
+    if(!flat){ctx.beginPath();ctx.moveTo(M[0],M[1]);ctx.lineTo(Mb[0],Mb[1]);ctx.setLineDash([3,3]);ctx.strokeStyle='#ff6b5b';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([])}
+    if(showMoonCone)cone(m3,0.5,0.022,dx,dy);
+    var red=nearFull&&Math.abs(b)<LUN;
+    drawBall(M,7,red?'#f0a080':'#fff',red?'#b4502e':'#ccc',red?'#6a2a1a':'#888',Sp);
+  }
+  /* 1. 달의 공전 궤도면 중 지구 공전 궤도면 아래쪽 (평면에 비쳐 보임) */
+  if(!flat){path(loQ,true);ctx.fillStyle='rgba(20,95,195,.95)';ctx.fill();
+    path(arc(Math.PI,2*Math.PI));ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);
+    if(below)moon();}
+  /* 2. 지구의 공전 궤도면 (네모난 평면) */
+  var A=1.13,fxh=-hx,fyh=-hy,rxh=rx,ryh=ry;
+  var pl=[[-A,-A],[A,-A],[A,A],[-A,A]].map(function(c){return P(c[0]*rxh+c[1]*fxh,c[0]*ryh+c[1]*fyh,0)});
+  path(pl,true);ctx.fillStyle='rgba(160,170,225,.62)';ctx.fill();
+  hits.push({poly:pl,tip:'지구의 공전 궤도면|지구가 태양 둘레를 도는 궤도(흰 타원)가 놓인 평면입니다. 태양과 지구는 언제나 이 평면 위에 있습니다.'});
+  var eo=[];for(var j=0;j<=90;j++)eo.push(P(Math.cos(j*Math.PI/45),Math.sin(j*Math.PI/45),0));
+  path(eo);ctx.lineWidth=2.5;ctx.strokeStyle='rgba(255,255,255,.95)';ctx.stroke();
+  [40,160,280].forEach(function(a){arrowOn(P(Math.cos(rad(a)),Math.sin(rad(a)),0),P(Math.cos(rad(a+5)),Math.sin(rad(a+5)),0),'#fff')});
+  /* 3. 기울어진 달 궤도면이 지구 공전 궤도면에 드리운 그림자 */
+  if(!flat){path(shQ,true);ctx.fillStyle='rgba(6,14,50,.42)';ctx.fill();}
+  /* 4. 태양과 태양-지구 선 */
+  var far=P(Ex*1.5,Ey*1.5,0);
+  ctx.beginPath();ctx.moveTo(Sp[0],Sp[1]);ctx.lineTo(far[0],far[1]);ctx.setLineDash([7,5]);ctx.strokeStyle='#ffe14d';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);
+  var gl=ctx.createRadialGradient(Sp[0],Sp[1],8,Sp[0],Sp[1],48);gl.addColorStop(0,'rgba(255,200,80,.9)');gl.addColorStop(1,'rgba(255,140,40,0)');ctx.fillStyle=gl;ctx.beginPath();ctx.arc(Sp[0],Sp[1],48,0,7);ctx.fill();
+  var sg=ctx.createRadialGradient(Sp[0]-8,Sp[1]-8,3,Sp[0],Sp[1],26);sg.addColorStop(0,'#fff3b0');sg.addColorStop(.5,'#ffb43a');sg.addColorStop(1,'#e8601c');ctx.fillStyle=sg;ctx.beginPath();ctx.arc(Sp[0],Sp[1],26,0,7);ctx.fill();
+  txt('태양',Sp[0]+30,Sp[1]+30,15,'#fff','left',true);
+  hits.push({c:Sp,r:30,tip:'태양|태양은 지구의 공전 궤도면 한가운데에 있습니다.'});
+  /* 5. 지구의 그림자 */
+  cone([Ex,Ey,0],0.5,0.03,dx,dy);
+  /* 6. 달의 공전 궤도면 (위쪽, 또는 일치할 때는 전체) */
+  if(flat){path(shQ,true);ctx.fillStyle='rgba(120,190,245,.6)';ctx.fill();path(arc(0,2*Math.PI));ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();}
+  else{path(upQ,true);ctx.fillStyle='rgba(130,195,245,.68)';ctx.fill();path(arc(0,Math.PI));ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();}
+  arrowOn(P.apply(null,op(rad(60))),P.apply(null,op(rad(68))),'#fff');
+  drawBall(E,12,'#a8dcff','#2f7fd0','#1d4f8a',Sp);
+  if(!below)moon();
+  /* 식이 일어나는 순간 */
+  if((nearNew&&Math.abs(b)<SOL)||(nearFull&&Math.abs(b)<LUN)){
+    var lb=nearNew?'일식!':'월식!';ctx.font='700 22px "Noto Sans KR",sans-serif';
+    var w=ctx.measureText(lb).width+22,x=Math.min(Math.max(E[0]-w/2,8),W-w-8),y=Math.max(56,E[1]-RM*S*.8-46);
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,34,17):ctx.rect(x,y,w,34);ctx.fill();
+    ctx.setLineDash([4,3]);ctx.strokeStyle='#f28c28';ctx.lineWidth=2.5;ctx.stroke();ctx.setLineDash([]);
+    txt(lb,x+w/2,y+24,21,nearNew?'#111':'#b71c1c','center',true);
+  }
+  hits.unshift({c:E,r:14,tip:'지구|지구는 태양 둘레를 시계 반대 방향으로 공전합니다(북극 쪽에서 볼 때). 태양 반대쪽으로 지구의 그림자가 생깁니다.'});
+  hits.unshift({c:M,r:10,tip:'달|달은 지구 둘레를 시계 반대 방향으로 공전합니다. '+(flat?'달이 언제나 지구의 공전 궤도면 위에 있습니다.':(Math.abs(b)<0.05?'지금 달은 지구의 공전 궤도면 위에 있습니다.':'지금 달은 지구의 공전 궤도면보다 '+Math.abs(b).toFixed(1)+'° '+ud(b)+'에 있습니다.'))});
+  hits.push({poly:flat?shQ:upQ,tip:'달의 공전 궤도면|달이 지구 둘레를 도는 궤도(흰 타원)가 놓인 평면입니다.'+(flat?' 이 탭에서는 지구의 공전 궤도면과 일치한다고 가정했습니다.':' 지구의 공전 궤도면보다 위로 올라간 부분입니다. 실제로는 약 5° 기울어져 있습니다(그림은 기울기를 과장했습니다).')});
+  if(!flat){hits.push({poly:loQ,tip:'달의 공전 궤도면 (아래쪽)|지구의 공전 궤도면보다 아래로 내려간 부분이라 진하게 비쳐 보입니다.'});
+    hits.push({poly:shQ,tip:'달 궤도면의 그림자|기울어진 달의 공전 궤도면을 지구의 공전 궤도면에 비춘 모습입니다. 그림자와 판이 어긋난 만큼 기울어져 있습니다.'});}
+  hits.sort(function(a,b){return(a.c?0:1)-(b.c?0:1)});
+  txt('비스듬히 위에서 본 모습',14,26,17,'#fff','left',true);
+  txt('북극 쪽에서 비스듬히 봄 · 크기·거리'+(flat?'':'·기울기')+'는 과장했습니다',14,46,13,'#b9c6e8','left');
+  var ly=428;ctx.fillStyle='rgba(160,170,225,.85)';ctx.fillRect(14,ly-11,22,13);txt('지구의 공전 궤도면',42,ly,14,'#fff','left');
+  ctx.fillStyle='rgba(130,195,245,.9)';ctx.fillRect(176,ly-11,22,13);txt('달의 공전 궤도면',204,ly,14,'#fff','left');
+  if(!flat){ctx.beginPath();ctx.moveTo(330,ly-4);ctx.lineTo(350,ly-4);ctx.setLineDash([3,3]);ctx.strokeStyle='#ff6b5b';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);txt('달의 높이',356,ly,14,'#fff','left');}
+}
+function resize(){var w=cv.clientWidth||640,d=window.devicePixelRatio||1;sc=w/W;cv.width=Math.round(w*d);cv.height=Math.round(w*H/W*d);ctx.setTransform(d*sc,0,0,d*sc,0,0);draw()}
+function inPoly(x,y,p){var c=false;for(var i=0,j=p.length-1;i<p.length;j=i++){if((p[i][1]>y)!==(p[j][1]>y)&&x<(p[j][0]-p[i][0])*(y-p[i][1])/(p[j][1]-p[i][1])+p[i][0])c=!c}return c}
+function canvasTip(ev){var r=cv.getBoundingClientRect(),x=(ev.clientX-r.left)/sc,y=(ev.clientY-r.top)/sc;
+  for(var i=0;i<hits.length;i++){var h=hits[i];if(h.c&&Math.hypot(x-h.c[0],y-h.c[1])<h.r)return h.tip;if(h.poly&&inPoly(x,y,h.poly))return h.tip}return null}
+
+/* ---------- 옆에서 본 모습 ---------- */
+var EX=380,CY=165,ER=30,D=170,K=19,MR=10;
+function renderSide(){
+  var p=Ph(t),b=bet(t),mx=EX-D*Math.cos(rad(p)),my=CY-b*K,mo=$('sMoon');
+  mo.setAttribute('cx',mx);mo.setAttribute('cy',my);
+  /* 시계 반대 방향 공전: 신월 뒤에는 보는 사람 쪽(앞)으로 지나감 */
+  (Math.sin(rad(p))>0?$('gFront'):$('gBack')).appendChild(mo);
+  var w=wrap(p),nf=Math.abs(wrap(p-180))<4,red=nf&&Math.abs(b)<LUN;
+  mo.setAttribute('fill',red?'#a3442a':(Math.abs(w)<20?'#888':'#eeeee4'));
+  if(Math.abs(w)<20){
+    var hit=Math.abs(b*K)<ER+MR,end=hit?EX:600;
+    $('mSh').setAttribute('points',[mx+','+(my-MR),end+','+(my-MR),end+','+(my+MR),mx+','+(my+MR)].join(' '));$('mSh').style.display='';
+  }else $('mSh').style.display='none';
+  var show=Math.abs(b)>=0.05;
+  $('hLine').style.display=show?'':'none';$('hTxt').style.display=show?'':'none';
+  $('hLine').setAttribute('x1',mx);$('hLine').setAttribute('x2',mx);$('hLine').setAttribute('y1',CY);$('hLine').setAttribute('y2',my);
+  var ht=$('hTxt'),left=mx>480;ht.setAttribute('x',left?mx-12:mx+12);ht.setAttribute('text-anchor',left?'end':'start');ht.setAttribute('y',(CY+my)/2+7);
+  ht.textContent=Math.abs(b).toFixed(1)+'° '+ud(b);
+  mo.setAttribute('data-tip','달|'+(I===0?'달이 언제나 지구의 공전 궤도면 위에 있습니다.':(show?'지구의 공전 궤도면보다 '+Math.abs(b).toFixed(1)+'° '+ud(b)+'에 있습니다.':'지구의 공전 궤도면 위에 있습니다.')));
+}
+
+/* ---------- 횟수와 메시지 ---------- */
+function evName(e){return dstr(e.t)+' '+(e.k==='new'?'삭(신월)':'망(보름달)')}
+function evText(e){
+  if(e.e)return evName(e)+': <b class="yes">'+(e.k==='new'?'일식':'월식')+'이 일어났습니다.</b>'+(I===0?' 달이 지구의 공전 궤도면 위에 있어 태양·달·지구가 일직선이 되었습니다.':' 달이 지구의 공전 궤도면 가까이에 있어 태양·달·지구가 거의 일직선이 되었습니다.');
+  return evName(e)+': <b class="no">'+(e.k==='new'?'일식':'월식')+'이 일어나지 않았습니다.</b> 달이 지구의 공전 궤도면보다 '+Math.abs(e.b).toFixed(1)+'° '+ud(e.b)+'로 비껴 지나갔습니다.';
+}
+function renderCount(){
+  var ns=0,ne=0,fs=0,fe=0,lastE=null;
+  events.forEach(function(e){if(e.t<=t+1e-6){lastE=e;if(e.k==='new'){ns++;if(e.e)ne++}else{fs++;if(e.e)fe++}}});
+  $('cNew').textContent=ns;$('cSol').textContent=ne;$('cFull').textContent=fs;$('cLun').textContent=fe;
+  var h;
+  if(t>=TMAX-0.01)h='<b>1년이 지났습니다.</b> '+(I===0?'두 궤도면이 일치하면 삭(신월)마다 일식이, 망(보름달)마다 월식이 일어납니다. 이제 일치하지 않는 경우와 비교해 보세요.':'실제로도 이 기간에는 2026년 2월 17일과 8월 12일에 일식이, 3월 3일과 8월 28일에 월식이 일어납니다.');
+  else if(lastE)h='<span style="color:var(--muted);font-size:.85rem">가장 최근</span><br>'+evText(lastE);
+  else h='<span style="color:var(--muted)">▶ 1년 공전 시작을 눌러 보세요. 삭(신월)과 망(보름달)이 될 때마다 식이 일어나는지 기록됩니다.</span>';
+  $('msg').innerHTML=h;
+  $('timeTxt').textContent=dstr(Math.min(t,TMAX-0.001),true);
+  recMarks.forEach(function(r){var e=r.e,done=e.t<=t+1e-6;
+    r.el.setAttribute('fill',!done?'#fff':(e.e?(e.k==='new'?'#111':'#b71c1c'):'#e2e2e0'));
+    r.el.setAttribute('stroke',!done?'#bbb':(e.e?(e.k==='new'?'#f0a030':'#6a1010'):'#999'));
+    r.el.setAttribute('stroke-width',done&&e.e?3:1.4);
+    r.el.setAttribute('stroke-dasharray',done?'':'3 3');
+    r.x.style.display=done&&!e.e?'':'none';
+    r.el.setAttribute('data-tip',evName(e)+'|'+(!done?'아직 오지 않았습니다.':(e.e?(e.k==='new'?'일식':'월식')+'이 일어났습니다.':'식 없음: 달이 '+Math.abs(e.b).toFixed(1)+'° '+ud(e.b)+'로 비껴감')));
+  });
+  $('marker').setAttribute('transform','translate('+(76+t/TMAX*800)+',0)');
+}
+
+/* ---------- 1년 기록 ---------- */
+var NS='http://www.w3.org/2000/svg',recMarks=[];
+function el(tag,a,p){var e=document.createElementNS(NS,tag);for(var k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e}
+function buildRec(){
+  var s=$('rec');while(s.firstChild)s.removeChild(s.firstChild);recMarks=[];
+  el('rect',{width:900,height:112,fill:'#fff'},s);
+  var t1=el('text',{x:10,y:40,'font-size':15,'font-weight':700,fill:'#333'},s);t1.textContent='삭(朔)';el('text',{x:10,y:55,'font-size':11,fill:'#777'},s).textContent='신월';
+  var t2=el('text',{x:10,y:80,'font-size':15,'font-weight':700,fill:'#333'},s);t2.textContent='망(望)';el('text',{x:10,y:95,'font-size':11,fill:'#777'},s).textContent='보름달';
+  var d0=jdDate(J0);
+  for(var m=1;m<=12;m++){var md=new Date(Date.UTC(d0.getUTCFullYear(),d0.getUTCMonth()+m,1)),dd=md.getTime()/864e5+2440587.5-J0;if(dd>TMAX)break;var x=76+dd/TMAX*800;
+    el('line',{x1:x,y1:96,x2:x,y2:101,stroke:'#aaa'},s);
+    var tx=el('text',{x:x+3,y:110,'font-size':12,fill:'#777'},s);tx.textContent=(md.getUTCMonth()===0?md.getUTCFullYear()+'년 ':'')+(md.getUTCMonth()+1)+'월';}
+  events.forEach(function(e){
+    var x=76+e.t/TMAX*800,y=e.k==='new'?39:79;
+    var c=el('circle',{cx:x,cy:y,r:11},s);
+    var xx=el('path',{d:'M'+(x-4)+','+(y-4)+'L'+(x+4)+','+(y+4)+'M'+(x+4)+','+(y-4)+'L'+(x-4)+','+(y+4),stroke:'#888','stroke-width':2,'pointer-events':'none'},s);
+    c.addEventListener('click',function(){stop();t=e.t;render();$('play').textContent='▶ 계속'});
+    recMarks.push({e:e,el:c,x:xx});
+  });
+  var m=el('g',{id:'marker','pointer-events':'none'},s);
+  el('line',{x1:0,y1:16,x2:0,y2:94,stroke:'#c62828','stroke-width':2.5},m);
+  el('polygon',{points:'-6,8 6,8 0,16',fill:'#c62828'},m);
+}
+
+/* ---------- 전체 ---------- */
+function render(){draw();renderSide();renderCount();$('time').value=t}
+function stop(){playing=false;$('play').textContent=t>=TMAX-0.01?'▶ 다시 1년 공전':'▶ 1년 공전 시작'}
+function frame(ts){
+  if(!playing)return;
+  var dt=Math.min(.05,(ts-last)/1000);last=ts;
+  var v=+$('speed').value,p=Ph(t),nr=Math.min(Math.abs(wrap(p)),Math.abs(wrap(p-180)));
+  if(nr<12)v=v/8;
+  t+=v*dt;if(t>=TMAX){t=TMAX;render();stop();return}
+  render();requestAnimationFrame(frame);
+}
+$('play').addEventListener('click',function(){
+  if(playing){stop();$('play').textContent='▶ 계속';return}
+  if(t>=TMAX-0.01)t=0;
+  playing=true;$('play').textContent='❚❚ 멈춤';last=performance.now();requestAnimationFrame(frame);
+});
+$('reset').addEventListener('click',function(){stop();t=0;render();stop()});
+$('time').addEventListener('input',function(){stop();t=+this.value;render();if(t<TMAX-0.01)$('play').textContent='▶ 계속'});
+
+var INTRO={
+  same:'만약 달의 공전 궤도면이 지구의 공전 궤도면과 일치한다면, 일식과 월식은 얼마나 자주 일어날까요?',
+  tilt:'달의 공전 궤도면은 지구의 공전 궤도면에 대해 약 5° 기울어져 있습니다. 이 경우 일식과 월식은 얼마나 자주 일어날까요?'
+};
+function setMode(m){
+  mode=m;I=m==='same'?0:TILT;
+  $('tabSame').setAttribute('aria-selected',String(m==='same'));$('tabTilt').setAttribute('aria-selected',String(m==='tilt'));
+  $('intro').innerHTML=INTRO[m];
+  try{history.replaceState(null,'','#'+m)}catch(e){}
+  buildEvents();buildRec();t=0;stop();render();
+}
+// 탭을 바꿀 때만 그림이 살짝 떠오르며 나타나게 함
+function fadeViews(){var v=document.querySelector('.views');v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter')}
+$('tabSame').addEventListener('click',function(){setMode('same');fadeViews()});
+$('tabTilt').addEventListener('click',function(){setMode('tilt');fadeViews()});
+
+/* ---------- 설명 말풍선 ---------- */
+var tip=$('tip');
+function showTip(ev){
+  var e=document.elementFromPoint(ev.clientX,ev.clientY),s=null;
+  if(e===cv)s=canvasTip(ev);else{var z=e&&e.closest?e.closest('svg [data-tip]'):null;if(z)s=z.getAttribute('data-tip')}
+  if(!s){tip.style.opacity=0;return}
+  var p=s.split('|');tip.innerHTML='<b>'+p[0]+'</b>'+(p[1]||'');tip.style.opacity=1;
+  var touch=ev.pointerType==='touch',w=tip.offsetWidth,h=tip.offsetHeight;
+  var x=touch?ev.clientX-w/2:ev.clientX+18,y=touch?ev.clientY-h-40:ev.clientY+18;
+  if(!touch&&y+h>innerHeight-4)y=ev.clientY-h-14;
+  tip.style.left=Math.max(6,Math.min(x,innerWidth-w-6))+'px';tip.style.top=Math.max(6,y)+'px';
+}
+document.addEventListener('pointermove',showTip);
+document.addEventListener('pointerdown',showTip);
+window.addEventListener('scroll',function(){tip.style.opacity=0},{passive:true});
+window.addEventListener('resize',resize);
+
+resize();setMode(location.hash==='#tilt'?'tilt':'same');
+})();
+</script>
+
+</body></html>

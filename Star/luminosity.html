@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>별의 광도</title>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{--bg:#fff;--fg:#1b1f2a;--sub:#5a6070;--card:#f3f4f8;--bd:#d5d8e2;--bline:#d9d9d6;--bcard:#fff;--bfg:#1c1c1c;--acc:#5468d4;--acc-bg:#eef0fc;--acc-bd:#c3caf2;--on-acc:#fff;--frame:transparent;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247;--bg:#14161d;--fg:#e8eaf2;--sub:#a3a9bb;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee}}
+:root[data-theme="dark"]{--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247;--bg:#14161d;--fg:#e8eaf2;--sub:#a3a9bb;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
+button,input{font-family:inherit}
+/* 수식 변수(기울임꼴): 기울어진 글자가 옆 글자와 겹치지 않도록 좌우에 작은 여백 */
+i.v{font-family:"Times New Roman",Cambria,serif;font-style:italic;font-size:1.12em;line-height:1;padding:0 .09em 0 .03em}
+main{max-width:960px;margin:0 auto;padding:14px 16px}
+h1{font-size:1.3rem;margin:4px 0 10px}
+.back{display:inline-block;margin:0 0 14px;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--bline)}
+/* 모서리: 큰 판(그림판·카드) 14px, 버튼·입력 10px, 결론·안내 띠 10px / 세로 간격: 판 사이 12px */
+svg{width:100%;height:auto;display:block;border-radius:14px;background:#111729;box-shadow:0 0 0 1px var(--frame)}
+.qbox .row label,.qbox .row button{background:var(--bg);border-color:transparent;border-radius:10px;box-shadow:0 1px 2px rgba(20,25,45,.08)}
+.qbox .row button:hover:not(:disabled){border-color:var(--acc)}
+.real{margin:12px 0;padding:16px 18px;border-radius:14px;background:var(--card)}
+.real summary{cursor:pointer;font-weight:700;color:var(--acc)}
+.real p{margin:10px 0;font-size:.93rem;line-height:1.6}
+.real small{color:var(--sub)}
+.tbl{overflow-x:auto}
+.tbl table{width:100%;border-collapse:collapse;font-size:.9rem;white-space:nowrap}
+.tbl th,.tbl td{padding:6px 10px;border-bottom:1px solid var(--bd);text-align:right}
+.tbl th{font-weight:700;line-height:1.3;vertical-align:bottom}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl td:last-child{font-weight:700;color:var(--acc)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.row button{padding:8px 14px;font-size:.9rem;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.row button:disabled{opacity:.4;cursor:default}
+.row button.k{font-weight:700}
+.row label{display:flex;align-items:center;gap:8px;font-size:.9rem;padding:6px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);flex:1;min-width:260px}
+.row label input{flex:1;min-width:100px}
+.row label b{min-width:92px;text-align:right}
+.cap{font-size:.85rem;color:var(--sub);margin:12px 0 2px}
+.steps{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.steps button{flex:1;min-width:140px;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);font-size:.95rem;cursor:pointer}
+.steps button.on{background:var(--acc);color:var(--on-acc);border-color:var(--acc);font-weight:700}
+.qbox{margin:12px 0;padding:16px 18px;border-radius:14px;background:var(--card)}
+.qbox h3{margin:0 0 6px;font-size:1.05rem;color:var(--acc)}
+.intro{font-size:.98rem;line-height:1.75}
+.intro small{color:var(--sub)}
+.q{margin-top:14px;padding-top:12px;border-top:1px dashed var(--bd);font-size:1rem;font-weight:600}
+.opts{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px}
+.opts button{flex:1;min-width:120px;padding:11px 8px;font-size:1.08rem;border:1.5px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--fg);cursor:pointer;font-family:inherit}
+.opts button:hover:not(:disabled){border-color:var(--acc)}
+.opts button.ok{background:#1f9d55;color:#fff;border-color:#1f9d55;opacity:1}
+.opts button.no{border-color:#e5484d;background:rgba(229,72,77,.1);text-decoration:line-through}
+.opts button:disabled{cursor:default}
+.fb{padding:9px 12px;border-radius:8px;margin:6px 0;font-size:.95rem;font-weight:400}
+.fb:empty{display:none}
+.fb.ok{background:rgba(31,157,85,.12);border-left:4px solid #1f9d55}
+.fb.no{background:rgba(229,72,77,.1);border-left:4px solid #e5484d}
+.fb .reveal{margin-left:8px;padding:3px 9px;font-size:.82rem;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--fg);cursor:pointer}
+.done{margin-top:12px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--acc);background:var(--bg);line-height:1.75}
+.formula{font-size:1.7rem;font-weight:800;text-align:center;margin:6px 0;letter-spacing:.02em}
+.done .go{display:block;margin-top:10px;padding:9px 14px;border:none;border-radius:8px;background:var(--acc);color:#fff;font-size:.95rem;font-weight:700;cursor:pointer}
+.flow{stroke-dasharray:7 9;animation:flow .9s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-16}}
+.ring{transform-box:fill-box;transform-origin:center;animation:ring 2.6s linear infinite}
+@keyframes ring{from{transform:scale(1);opacity:.55}to{transform:scale(2.3);opacity:0}}
+.spin{transform-origin:90px 92px;animation:spin 4s steps(60) infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.flow,.ring,.spin{animation:none}}
+/* 단계를 바꿀 때 내용이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+.row input:disabled{opacity:.35}
+/* 실험실 안내·결과 문구: 상자 없이 글로만 (테두리 상자는 결론 카드에만 씀). 문장이 바뀌어도 아래가 움직이지 않게 높이 고정 */
+.msgbox,#msg{min-height:3.2em;margin:10px 0 0;padding:2px 2px;font-size:.95rem;line-height:1.6}
+.qbox>.cap:first-of-type{margin-top:6px}
+/* ---- 세련된 색감 / 탭 ① 보정 ---- */
+svg{background:radial-gradient(130% 100% at 50% 0%,#1c2340 0%,#111729 55%,#0b0f1c 100%)!important}
+.qbox h3{color:var(--fg);font-size:1.08rem;display:flex;align-items:center;gap:10px}
+.seg span{font-size:.92rem;margin-right:4px}
+.seg b{margin-left:8px;color:var(--acc)}
+.row.seg button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.think.inline{width:auto;max-height:none;margin-top:10px;padding:0;border:0;background:none;box-shadow:none}
+.thtag{display:inline-block;margin-right:10px;padding:4px 12px;border-radius:8px;background:var(--acc);color:#fff;font-size:.9rem;font-weight:700;vertical-align:1px}
+.sum{margin-top:14px;padding:12px 16px;border:1px solid var(--acc-bd);border-radius:12px;background:var(--acc-bg);color:var(--fg);font-weight:600;font-size:1.08rem;line-height:1.7}
+.sum .key{color:var(--acc);font-weight:800}
+svg.arw{display:inline-block;width:1.35em;height:.9em;vertical-align:-.08em;margin-right:.35em;border-radius:0;background:none!important;box-shadow:none}
+.thbar{display:flex;justify-content:flex-start;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--bd)}
+.open-think{font-size:.92rem;font-weight:700;color:#fff;background:var(--acc);border:1px solid var(--acc);border-radius:8px;padding:6px 14px;cursor:pointer;font-family:inherit}
+.okc{color:#1b7f45;font-weight:700}.badc{color:#b3341f;font-weight:700}.cue{color:var(--acc);font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .okc{color:#5fd08a}:root:not([data-theme="light"]) .badc{color:#ff8f7d}}
+:root[data-theme="dark"] .okc{color:#5fd08a}:root[data-theme="dark"] .badc{color:#ff8f7d}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.think{background:var(--bg);width:min(640px,100%);max-height:100%;overflow:auto;padding:12px 16px;border:1px solid var(--bd);border-radius:10px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center}
+.think-t{color:var(--acc);font-size:.95rem}
+.think .x{font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:3px 10px;cursor:pointer;color:var(--fg);font-family:inherit}
+.think .q p{margin:0;font-size:1rem;line-height:1.45}
+.think .q{margin:0;padding:0;border:0;font-weight:400}
+.think .q+.q{border-top:1px dashed var(--bd);padding-top:10px}
+.think .ch{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:8px 12px;margin:8px 0 0}
+@media (max-width:560px){.think .ch{grid-template-columns:repeat(2,1fr)}.think .ch button.chk{grid-column:1/-1;justify-self:end}}
+.think .ch button{font-size:.95rem;background:var(--bg);border:1px solid transparent;border-radius:10px;padding:7px 10px;cursor:pointer;color:var(--fg);font-family:inherit;box-shadow:0 1px 2px rgba(20,25,45,.08);transition:border-color .15s,background .15s}
+.think .ch button:hover{border-color:var(--acc)}
+.think .ch button.sel{border-color:var(--acc);background:var(--acc-bg);color:var(--acc);font-weight:700}
+.think .ch button.chk{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700;padding:7px 16px}
+.think .q .fb2{font-size:.95rem;margin-top:12px}
+.think .fb2:empty{display:none}
+.hl{color:var(--acc);font-weight:700}
+.badge{display:inline-block;padding:3px 11px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em}
+.opts button.ok{background:#2f9e78;border-color:#2f9e78}
+.opts button.no{border-color:#d9686a;background:rgba(217,104,106,.09)}
+.fb.ok{background:rgba(47,158,120,.11);border-left-color:#2f9e78}
+.fb.no{background:rgba(217,104,106,.09);border-left-color:#d9686a}
+.tick{transform-origin:95px 132px;animation:tick 2.6s ease-in-out infinite}
+@keyframes tick{0%,22%{transform:rotate(0);opacity:1}34%,84%{transform:rotate(6deg);opacity:1}92%{transform:rotate(6deg);opacity:0}93%{transform:rotate(0);opacity:0}100%{transform:rotate(0);opacity:1}}
+.t1{animation:t1 2.6s ease-in-out infinite}
+@keyframes t1{0%,26%{opacity:0}36%,84%{opacity:1}92%,100%{opacity:0}}
+.beam{animation:beam 1.6s ease-in-out infinite}
+@keyframes beam{0%,100%{opacity:.55}50%{opacity:1}}
+input[type=range]{accent-color:var(--acc)}
+.pho{animation:pho 1.35s ease-out infinite;opacity:0}
+@keyframes pho{0%{transform:translateX(0);opacity:0}15%{opacity:1}80%{opacity:.9}100%{transform:translateX(62px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.tick,.t1,.beam,.pho{animation:none}.t1{opacity:1}}
+</style></head><body><main>
+<a class="back" href="./Star_index.html">← [별의 물리량] 메뉴로 돌아가기</a>
+<h1>별의 광도</h1>
+<div class="steps"><button data-s="1">1. 광도란?</button><button data-s="2">2. 면적과 광도</button><button data-s="3">3. 온도와 광도</button><button data-s="4">4. 별의 광도</button><button data-s="5">5. 별의 광도 실험실</button></div>
+
+<section id="p1">
+<svg id="q1svg" viewBox="0 0 720 320"></svg>
+<div class="qbox" id="qb"></div>
+</section>
+
+<section id="p2" hidden>
+<svg id="lab" viewBox="0 0 720 300"></svg>
+<div class="qbox">
+<h3><span class="badge">5단계</span>별의 광도 실험실</h3>
+<div class="cap">2배씩 바꿔 보기 — 누르기 전에 광도가 몇 배가 될지 먼저 예측해 보세요</div>
+<div class="row">
+<button class="k" id="r2">반지름 ×2</button><button class="k" id="rh">반지름 ÷2</button>
+<button class="k" id="t2">온도 ×2</button><button class="k" id="th">온도 ÷2</button>
+<button id="r0">태양으로 되돌리기</button>
+</div>
+<div class="row"><label>반지름 <input id="rs" type="range" step="0.001"><b id="rv"></b></label></div>
+<div class="row"><label>표면 온도 <input id="ts" type="range" step="0.001"><b id="tv"></b></label></div>
+<div id="msg">슬라이더나 버튼으로 별의 반지름과 온도를 바꿔 보세요.</div>
+</div>
+<details class="real">
+<summary>실제 별과 비교해 보기</summary>
+<p>실제 별은 크기 차이가 너무 커서 그림 대신 표로 비교합니다. <small>(대략적인 값이며 자료마다 조금씩 다릅니다)</small></p>
+<div class="tbl"><table><thead><tr><th>별</th><th>반지름<br><small>(R☉)</small></th><th>표면 온도<br><small>(K)</small></th><th>반지름 효과<br><small>(R/R☉)²</small></th><th>온도 효과<br><small>(T/T☉)⁴</small></th><th>광도<br><small>(L☉)</small></th></tr></thead><tbody id="real"></tbody></table></div>
+<p><b>생각해 보기:</b> 베텔게우스는 태양보다 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 반면 시리우스 B는 태양보다 훨씬 뜨거운데도 훨씬 어둡습니다. 왜 그럴까요?</p>
+</details>
+</section>
+<div class="row"><button id="pv">◀ 이전 단계</button><button id="nx" class="k">다음 단계 ▶</button></div>
+
+<script>
+const NS="http://www.w3.org/2000/svg",TS=5772;
+const LB=document.getElementById('lab'),rs=document.getElementById('rs'),ts=document.getElementById('ts');
+let R=1,T=TS,raf=0;
+// 태양을 같은 크기로 그대로 둔 채 비교할 수 있는 범위: 태양에서 ÷2, ×2를 두세 번 할 수 있는 정도
+const RMIN=.5,RMAX=4,TMIN=TS/2,TMAX=TS*2;
+const lum=(r=R,t=T)=>r*r*(t/TS)**4;
+const sup=n=>String(n).replace(/[-0-9]/g,c=>'⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)]);
+// 수식의 변수 L, R, T, E를 기울임꼴(교과서 수식 글꼴)로 바꿈. 앞뒤가 영문자이거나 뒤에 ☉가 붙은 기호(R☉ 등)는 그대로 둠
+// 기울어진 글자가 옆 글자(위첨자 ², ⁴ 등)와 붙어 보이지 않도록 HTML은 좌우 여백, SVG는 뒤에 아주 좁은 공백(U+200A)을 둠
+function mathify(root){
+ const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),ns=[];while(w.nextNode())ns.push(w.currentNode);
+ ns.forEach(n=>{const p=n.parentNode;if(!p||p.closest('.v,[data-v],style,script'))return;
+  const svg=p.namespaceURI===NS;
+  // 식이 =, ×, ∝ 앞뒤에서 줄바꿈되어 끊기지 않도록 그 양옆 공백을 줄바꿈 없는 공백으로
+  if(!svg)n.nodeValue=n.nodeValue.replace(/ ([=×∝]) /g,' $1 ');
+  const s=n.nodeValue,isV=i=>'LRTE'.includes(s[i])&&!/[A-Za-z]/.test(s[i-1]||'')&&!/[A-Za-z☉]/.test(s[i+1]||'');
+  let out=[],last=0;for(let i=0;i<s.length;i++)if(isV(i)){out.push(s.slice(last,i),[s[i]]);last=i+1}
+  if(!out.length)return;out.push(s.slice(last));
+  const f=document.createDocumentFragment();
+  out.forEach(x=>{if(typeof x=='string'){if(x)f.appendChild(document.createTextNode(x));return}
+   if(svg){const t=document.createElementNS(NS,'tspan');t.setAttribute('data-v','');t.setAttribute('style',"font-family:'Times New Roman',Cambria,serif;font-style:italic;font-size:1.12em");t.textContent=x[0];f.appendChild(t);f.appendChild(document.createTextNode(' '))}
+   else{const v=document.createElement('i');v.className='v';v.textContent=x[0];f.appendChild(v)}});
+  p.replaceChild(f,n)})}
+function fmt(x){
+ if(x>=0.01&&x<10000)return Number(x.toPrecision(3)).toLocaleString('ko-KR',{maximumFractionDigits:4});
+ const e=Math.floor(Math.log10(x)),m=x/10**e;return m.toFixed(2)+'×10'+sup(e)}
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e}
+function txt(p,x,y,s,o={}){const e=el('text',Object.assign({x,y,fill:'#fff','font-size':14,'text-anchor':'middle'},o),p);e.textContent=s;return e}
+// 온도 → 별의 색 (흑체 색 근사)
+function tcol(T){const t=T/100;let r,g,b;
+ r=t<=66?255:329.7*Math.pow(t-60,-.1332);
+ g=t<=66?99.47*Math.log(t)-161.12:288.12*Math.pow(t-60,-.0755);
+ b=t>=66?255:t<=19?0:138.52*Math.log(t-10)-305.04;
+ return[r,g,b].map(v=>Math.round(Math.max(0,Math.min(255,v))))}
+const rgb=(c,k=1)=>'rgb('+c.map(v=>Math.round(v*k+(k>1?0:0))).map(v=>Math.min(255,v)).join(',')+')';
+const mixW=(c,a)=>'rgb('+c.map(v=>Math.round(v+(255-v)*a)).join(',')+')';
+// 그림판 색: en = 에너지·별빛(값 강조), acc = 기본 강조(면적·반지름 등), txt/sub = 글씨, ink = 별 표면 위 글씨
+const C={en:'#f5b942',acc:'#a5b1ff',txt:'#e9ecf5',sub:'#aab2cc',ink:'#4a2e12'};
+
+// 모든 단계에서 같은 방식으로 그리는 별: 밝은 중심 → 온도에 따른 색 → 어둡고 붉은 가장자리(주연 감광) + 은은한 빛 번짐
+function sphere(svg,d,id,cx,cy,r,T,glow=1.35){
+ const c=tcol(T),wk=Math.max(0,Math.min(1,(9000-T)/3000))*.45,
+  lim=c.map((v,i)=>Math.round((v*(1-wk)+[240,150,60][i]*wk)*.93)),e=1/glow;
+ const g=el('radialGradient',{id:id+'b',cx:'42%',cy:'38%',r:'66%'},d);
+ [[0,'#fffef9'],[.4,mixW(c,.25)],[.8,rgb(lim)],[1,rgb(lim,.86)]].forEach(([o,s])=>el('stop',{offset:o,'stop-color':s},g));
+ const h=el('radialGradient',{id:id+'g'},d);
+ [[e*.95,rgb(lim),.55],[e+(1-e)*.35,rgb(lim),.18],[1,rgb(lim),0]].forEach(([o,s,a])=>el('stop',{offset:o,'stop-color':s,'stop-opacity':a},h));
+ el('circle',{cx,cy,r:r*glow,fill:`url(#${id}g)`},svg);el('circle',{cx,cy,r,fill:`url(#${id}b)`},svg)}
+// 그림판 배경의 옅은 별밭 (항상 같은 위치에 찍히도록 고정된 난수)
+function starfield(svg,w,h){let s=7;const rnd=()=>(s=s*16807%2147483647)/2147483647,g=el('g',{fill:'#dfe5ff'},svg);
+ for(let i=0;i<Math.round(w*h/5200);i++)el('circle',{cx:(rnd()*w).toFixed(1),cy:(rnd()*h).toFixed(1),r:(.5+rnd()*.9).toFixed(2),opacity:(.15+rnd()*.4).toFixed(2)},g)}
+
+// 5단계 실험실: 왼쪽은 태양(고정 크기)과 실험 별을 같은 비율로, 오른쪽은 광도 계산
+function drawLab(){
+ LB.innerHTML='';const d=el('defs',{},LB),U=30,cy=150,a=R*R,b=(T/TS)**4,L=a*b;
+ starfield(LB,720,300);
+ // 실험 별: 광도가 클수록 빛 번짐을 조금 더 넓게
+ const r=U*R,sx=250;sphere(LB,d,'xs',sx,cy,r,T,Math.max(1.12,Math.min(1.6,1.3+.12*Math.log10(L))));
+ sphere(LB,d,'sun',60,cy,U,TS,1.3);
+ txt(LB,60,cy+U+22,'태양 (기준)',{'font-size':13,'font-weight':700,fill:C.en});
+ txt(LB,60,cy+U+40,'1 R☉ · 5,772 K',{'font-size':11,fill:C.sub});
+ txt(LB,sx,Math.min(cy+r+22,293),'실험 별',{'font-size':13,'font-weight':700,fill:mixW(tcol(T),.3)});
+ el('line',{x1:395,y1:24,x2:395,y2:276,stroke:'#ffffff',opacity:.12},LB);
+ const X=555,lab=(y,s)=>txt(LB,X,y,s,{'font-size':12.5,fill:C.sub}),big=(y,s,fill)=>txt(LB,X,y,s,{'font-size':22,'font-weight':800,fill});
+ lab(34,'반지름 효과 (R/R☉)²');big(62,`(${fmt(R)})² = ${fmt(a)}`,C.acc);
+ txt(LB,X,90,'×',{'font-size':20,'font-weight':700,fill:C.sub});
+ lab(116,'온도 효과 (T/T☉)⁴');big(144,`(${fmt(T/TS)})⁴ = ${fmt(b)}`,C.en);
+ txt(LB,X,172,'=',{'font-size':20,'font-weight':700,fill:C.sub});
+ lab(198,'광도 L/L☉');
+ el('rect',{x:X-125,y:208,width:250,height:44,rx:22,fill:'rgba(245,185,66,.12)',stroke:C.en,'stroke-width':1.3},LB);
+ big(238,`태양의 ${fmt(L)}배`,C.en);
+ txt(LB,X,280,'L/L☉ = (R/R☉)² × (T/T☉)⁴',{'font-size':12,fill:C.sub});
+}
+
+function render(){
+ rs.value=Math.log10(R);ts.value=Math.log10(T);
+ document.getElementById('rv').textContent=fmt(R)+' R☉';
+ document.getElementById('tv').textContent=Math.round(T).toLocaleString('ko-KR')+' K';
+ drawLab();mathify(LB);
+ r2.disabled=R*2>RMAX*1.001;rh.disabled=R/2<RMIN*.999;
+ t2.disabled=T*2>TMAX*1.001;th.disabled=T/2<TMIN*.999;
+}
+const msg=document.getElementById('msg');
+function tween(R2,T2,done){cancelAnimationFrame(raf);
+ const a0=Math.log10(R),a1=Math.log10(R2),t0=T,s=performance.now(),D=600;
+ const f=now=>{let p=Math.min(1,(now-s)/D),e=p<.5?2*p*p:1-(-2*p+2)**2/2;
+  R=10**(a0+(a1-a0)*e);T=t0+(T2-t0)*e;render();
+  if(p<1)raf=requestAnimationFrame(f);else{R=R2;T=T2;render();done&&done()}};
+ raf=requestAnimationFrame(f)}
+function dbl(kind,k){const L0=lum();msg.textContent='광도가 몇 배가 될까요? …';
+ const R2=kind=='R'?R*k:R,T2=kind=='T'?T*k:T;
+ tween(R2,T2,()=>{const q=lum()/L0,w=kind=='R'?'반지름':'온도',p=kind=='R'?2:4,up=k>1;
+  msg.innerHTML=`<b>${w}${kind=='R'?'을':'를'} ${up?'2배로 늘리면':'절반으로 줄이면'}</b> → 광도는 ${w}${kind=='R'?'의 제곱':'의 네제곱'}에 비례하므로 2${sup(p)} = ${2**p}, 즉 `+
+  `광도는 <b>${up?fmt(q)+'배':'1/'+fmt(1/q)+'배'}</b>가 됩니다.`})}
+r2.onclick=()=>dbl('R',2);rh.onclick=()=>dbl('R',.5);t2.onclick=()=>dbl('T',2);th.onclick=()=>dbl('T',.5);
+r0.onclick=()=>{tween(1,TS,()=>{msg.textContent='태양과 같은 별로 되돌렸습니다. 반지름 효과와 온도 효과가 모두 1입니다.'})};
+rs.min=Math.log10(RMIN);rs.max=Math.log10(RMAX);ts.min=Math.log10(TMIN);ts.max=Math.log10(TMAX);
+rs.oninput=()=>{cancelAnimationFrame(raf);R=10**(+rs.value);render();msg.textContent='반지름을 바꾸는 중입니다. 별의 크기와 반지름 효과가 어떻게 변하나요?'};
+ts.oninput=()=>{cancelAnimationFrame(raf);T=10**(+ts.value);render();msg.textContent='온도를 바꾸는 중입니다. 별의 색과 온도 효과를 함께 살펴보세요.'};
+// 실제 별 비교 표
+const REAL=[['태양',1,5772,'기준 별'],['시리우스 A',1.71,9940,'밤하늘에서 가장 밝게 보이는 별'],['시리우스 B',0.0084,25000,'백색 왜성'],['프록시마 센타우리',0.154,3040,'적색 왜성, 태양에서 가장 가까운 별'],['알데바란',44,3900,'적색 거성'],['리겔',79,12100,'청색 초거성'],['베텔게우스',760,3600,'적색 초거성']];
+document.getElementById('real').innerHTML=REAL.map(([n,r,t,s])=>{const a=r*r,b=(t/TS)**4;
+ return `<tr><td><b>${n}</b><br><small>${s}</small></td><td>${r}</td><td>${t.toLocaleString('ko-KR')}</td><td>${fmt(a)}</td><td>${fmt(b)}</td><td>${fmt(a*b)}</td></tr>`}).join('');
+mathify(document.querySelector('.real'));
+render();
+
+/* ===== 탭 ① 광도 식 유도하기 (4단계 문답) ===== */
+const QS=document.getElementById('q1svg'),qb=document.getElementById('qb');
+let st1=1,nSide=2,gid=0;
+// 결론 앞에 붙이는 속이 채워진 두꺼운 화살표
+const ARW='<svg class="arw" viewBox="0 0 24 16" aria-hidden="true"><path d="M1 5.5h12.5V1L23 8l-9.5 7v-4.5H1z" fill="currentColor"/></svg>';
+const STEP={
+1:{title:'광도란?',intro:'<b>광도(L)</b>란 별이 <b class="hl">단위 시간(1초) 동안</b> <b class="hl">표면 전체에서</b> 사방으로 방출하는 <b class="hl">에너지의 총량</b>입니다. 참고로, 태양의 광도는 약 <b>3.8×10²⁶ W</b>로, 1초에 3.8×10²⁶ J의 에너지를 사방으로 내보냅니다. 광도는 별 자체가 내보내는 에너지의 총량이므로 관측하는 위치(거리)와 관계없이 같은 값을 가집니다. 광도는 거리에 따라 달라지는 밝기와는 다른 개념입니다.',qs:[],
+ done:''},
+2:{title:'면적과 광도',intro:'',
+ qs:[{q:'<b>온도가 동일한</b> 광원이 가로와 세로의 길이가 <b>2배</b>로 커진다면 광도는 몇 배가 될까요?',opts:['1배','2배','4배','8배'],ans:2,
+  hints:['광원이 커졌는데 에너지가 그대로일까요? 1 m × 1 m 조각이 몇 개 들어가는지 생각해 보세요.','가로만 2배가 된 것이 아니에요. 가로와 세로가 모두 2배이면 면적은 몇 배일까요?','','면적은 2 m × 2 m = 4 m²입니다. 1 m × 1 m 조각이 몇 개인지 세어 보세요.'],
+  ok:'정답! 커진 광원은 1 m × 1 m 조각 <b>4개</b>로 나눌 수 있습니다. 면적이 <b>4배</b>이므로 광도도 <b>4배</b>가 됩니다.'}],
+ done:'온도가 동일한 경우, 광도는 광원의 면적에 비례합니다. → <span class="key">L ∝ 면적</span>',sum:true},
+3:{title:'온도와 광도',intro:'',
+ qs:[{q:'<b>1 m²</b>의 표면이 1초 동안 방출하는 에너지는 <b>E = σT⁴</b>입니다(슈테판–볼츠만 법칙). 광원 <b>B</b>의 온도가 광원 <b>A</b>의 <b>2배</b>라면, E<sub>B</sub>는 E<sub>A</sub>의 몇 배인가요?',opts:['2배','4배','8배','16배'],ans:3,
+  hints:['방출 에너지는 온도에 그냥 비례하지 않아요. σT⁴의 T 자리에 2T를 넣어 보세요.','(2T)²이 아니라 (2T)⁴입니다. 2를 네 번 곱하면?','2를 세 번이 아니라 네 번 곱해야 해요. 2×2×2×2 = ?',''],
+  ok:'정답! E<sub>B</sub> = σ(2T)⁴ = 2⁴ × σT⁴ = <b>16σT⁴</b>, 즉 E<sub>A</sub>의 <b>16배</b>입니다.'}],
+ done:'면적이 동일한 경우, 광도는 온도의 네제곱에 비례합니다. → <span class="key">L ∝ T⁴</span><br>1 m²의 광원이 방출하는 에너지는 σT⁴입니다<span style="white-space:nowrap">(슈테판–볼츠만 법칙).</span><span class="key" style="display:block;margin-top:.9rem">'+ARW+'2단계 결론 + 3단계 결론: <span style="white-space:nowrap">광도 L = 면적 × σT⁴</span></span>',sum:true},
+4:{title:'별의 광도',intro:'',
+ qs:[{q:'별은 <b>구형</b>입니다. 반지름이 <b>R</b>, 표면 온도가 <b>T</b>인 별의 광도는 어떻게 표현될까요?',opts:['πR²σT⁴','2πR²σT⁴','4πR²σT⁴','(4/3)πR³σT⁴'],ans:2,
+  hints:['πR²은 원의 면적이에요. 별은 구형이므로 구의 표면적을 곱해야 합니다.','2πR²은 반구의 표면적이에요. 별은 표면 전체에서 사방으로 빛을 냅니다.','','(4/3)πR³은 구의 부피예요. 빛은 별의 표면에서 나오므로 표면적을 곱해야 합니다.'],
+  ok:'정답! 3단계에서 광도 L = 면적 × σT⁴였습니다. 구의 표면적은 <b>4πR²</b>이므로 <b>L = 4πR²σT⁴</b>입니다.'}],
+ done:'<span class="key">'+ARW+'별의 광도 L = 4πR²σT⁴</span>',sum:true}
+};
+const solved={1:[],2:[false],3:[false],4:[false]};
+const allSolved=s=>solved[s].every(Boolean);
+
+function grad(d,id,type,attrs,stops){const g=el(type,Object.assign({id},attrs),d);stops.forEach(([o,c,a=1])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},g));return g}
+function mk(d,id,color){const m=el('marker',{id,viewBox:'0 0 10 10',refX:6,refY:5,markerWidth:4.5,markerHeight:4.5,orient:'auto'},d);el('path',{d:'M1,1L9,5L1,9',fill:'none',stroke:color,'stroke-width':2,'stroke-linecap':'round','stroke-linejoin':'round'},m)}
+function baseDefs(){const d=el('defs',{},QS);const f=el('filter',{id:'bl',x:'-60%',y:'-60%',width:'220%',height:'220%'},d);el('feGaussianBlur',{stdDeviation:11},f);
+ grad(d,'blk','linearGradient',{x1:0,y1:0,x2:0,y2:1},[[0,'#f6c77f'],[1,'#e0963d']]);return d}
+function panel(d,cx,cy,s,T,o={}){
+ const c=tcol(T),id='pg'+(gid++),ray=o.ray||18,rw=o.rw||2,rc=mixW(c,.25),mid='m'+id;mk(d,mid,rc);
+ grad(d,id,'linearGradient',{x1:0,y1:0,x2:1,y2:1},[[0,mixW(c,.6)],[1,rgb(c,.9)]]);
+ const x=cx-s/2,y=cy-s/2;
+ el('rect',{x:x-4,y:y-4,width:s+8,height:s+8,rx:4,fill:rgb(c),opacity:.45,filter:'url(#bl)'},QS);
+ const pos=s>110?[.15,.38,.62,.85]:[.22,.5,.78];
+ if(!o.noRay)pos.forEach(t=>{const a=x+s*t,b=y+s*t;
+  [[a,y-5,a,y-5-ray],[a,y+s+5,a,y+s+5+ray],[x-5,b,x-5-ray,b],[x+s+5,b,x+s+5+ray,b]].forEach(([x1,y1,x2,y2])=>
+   el('line',{x1,y1,x2,y2,stroke:rc,'stroke-width':rw,'stroke-linecap':'round','marker-end':`url(#${mid})`,opacity:.85},QS))});
+ el('rect',{x,y,width:s,height:s,rx:3,fill:`url(#${id})`,stroke:'rgba(255,255,255,.55)'},QS);
+ const n=o.n||1;
+ if(n>1)for(let i=1;i<n;i++){el('line',{x1:x+s*i/n,y1:y,x2:x+s*i/n,y2:y+s,stroke:'rgba(90,50,10,.5)','stroke-width':1.3},QS);el('line',{x1:x,y1:y+s*i/n,x2:x+s,y2:y+s*i/n,stroke:'rgba(90,50,10,.5)','stroke-width':1.3},QS)}
+ if(o.cell)for(let i=0;i<n;i++)for(let j=0;j<n;j++)txt(QS,x+s*(i+.5)/n,y+s*(j+.5)/n+5,o.cell,{'font-size':12.5,'font-weight':700,fill:C.ink});
+ if(o.label)txt(QS,cx,22,o.label,{'font-size':13.5,'font-weight':600,fill:C.txt});
+ if(o.dim){const dc='rgba(233,236,245,.6)',ln=(x1,y1,x2,y2)=>el('line',{x1,y1,x2,y2,stroke:dc,'stroke-width':1.1},QS);
+  ln(x,y-12,x+s,y-12);ln(x,y-17,x,y-7);ln(x+s,y-17,x+s,y-7);
+  ln(x-12,y,x-12,y+s);ln(x-17,y,x-7,y);ln(x-17,y+s,x-7,y+s);
+  txt(QS,cx,y-19,o.dim,{'font-size':11.5,'font-weight':600,fill:C.txt});
+  txt(QS,x-20,cy+4,o.dim,{'font-size':11.5,'font-weight':600,fill:C.txt,'text-anchor':'end'})}
+ if(o.temp){if(o.cell)txt(QS,x+s-6,y+s-7,o.temp,{'font-size':10,'font-weight':600,fill:C.ink,'text-anchor':'end',opacity:.7});
+  else txt(QS,cx,cy+4,o.temp,{'font-size':12,'font-weight':700,fill:C.ink})}
+}
+function blocks(cx,y,n,per=8){const sz=13,gp=4;
+ for(let i=0;i<n;i++){const row=Math.floor(i/per),inRow=Math.min(per,n-row*per),w=inRow*sz+(inRow-1)*gp,c0=i%per;
+  el('rect',{x:cx-w/2+c0*(sz+gp),y:y+row*(sz+gp),width:sz,height:sz,rx:3,fill:'url(#blk)'},QS)}}
+function legend(t='= σT⁴',y=300){el('rect',{x:18,y,width:11,height:11,rx:2.5,fill:'url(#blk)'},QS);
+ txt(QS,36,y+10,t,{'text-anchor':'start','font-size':12,fill:C.sub})}
+const cap=(x,y,s,on=true)=>txt(QS,x,y,s,{'font-size':14.5,'font-weight':700,fill:on?C.en:C.txt});
+function lcap(x,y,sub,rhs,on=true,sym='L'){const t=el('text',{x,y,'text-anchor':'middle','font-size':15,'font-weight':700,fill:on?C.en:C.txt},QS);
+ const a=el('tspan',{},t);a.textContent=sym;const b=el('tspan',{dy:4,'font-size':10.5},t);b.textContent=sub;const c=el('tspan',{dy:-4},t);c.textContent=' = '+rhs}
+
+function draw1(){QS.innerHTML='';gid=0;const H=st1==2?258:st1==3?224:320;QS.setAttribute('viewBox',`0 0 720 ${H}`);const d=baseDefs();starfield(QS,720,H);
+ if(st1==1){const cx=360,cy=162,r=56,r0=r+14,len=74;
+  grad(d,'rayg','linearGradient',{gradientUnits:'userSpaceOnUse',x1:r0,y1:0,x2:r0+len,y2:0},[[0,'#fff3da',.95],[.65,'#f6d394',.7],[1,'#f0b45e',.35]]);
+  grad(d,'ph','radialGradient',{},[[0,'#ffffff',1],[.45,'#ffe7b0',.9],[1,'#f0b45e',0]]);
+  [0,.87,1.74].forEach(dl=>el('circle',{cx,cy,r:r+4,fill:'none',stroke:C.en,'stroke-width':1.4,class:'ring',style:`animation-delay:${dl}s`},QS));
+  for(let i=0;i<12;i++){const g=el('g',{transform:`translate(${cx},${cy}) rotate(${i*30-90})`},QS),e=r0+len;
+   el('line',{x1:r0,y1:0,x2:e-6,y2:0,stroke:'url(#rayg)','stroke-width':2.2,'stroke-linecap':'round'},g);
+   el('path',{d:`M${e-10},-5.2Q${e-6.5},0 ${e-10},5.2L${e+1},0Z`,fill:'#f3c97a',opacity:.9},g);
+   el('circle',{cx:r0,cy:0,r:5,fill:'url(#ph)',class:'pho',style:`animation-delay:${(i%3)*.45}s`},g)}
+  sphere(QS,d,'s1',cx,cy,r,TS,1.3);
+  // 스톱워치
+  const kx=95,ky=132,kr=40;
+  el('rect',{x:kx-7,y:ky-kr-12,width:14,height:8,rx:2,fill:'#cfd6ea'},QS);
+  el('circle',{cx:kx,cy:ky,r:kr,fill:'#141a2e',stroke:'#cfd6ea','stroke-width':2.5},QS);
+  for(let i=0;i<60;i++){const a=i*6*Math.PI/180,big=i%5==0,r1=kr-(big?8:5);
+   el('line',{x1:kx+Math.sin(a)*r1,y1:ky-Math.cos(a)*r1,x2:kx+Math.sin(a)*(kr-2.5),y2:ky-Math.cos(a)*(kr-2.5),stroke:i==1?C.en:'#8f99b8','stroke-width':i==1?2.4:big?1.6:.8},QS)}
+  el('path',{d:`M${kx},${ky}L${kx},${ky-kr+3}A${kr-3},${kr-3} 0 0 1 ${kx+Math.sin(Math.PI/30)*(kr-3)},${ky-Math.cos(Math.PI/30)*(kr-3)}Z`,fill:C.en,opacity:.45,class:'t1'},QS);
+  el('line',{x1:kx,y1:ky+6,x2:kx,y2:ky-kr+6,stroke:C.en,'stroke-width':2.4,'stroke-linecap':'round',class:'tick'},QS);
+  el('circle',{cx:kx,cy:ky,r:3.5,fill:C.en},QS);
+  txt(QS,kx+28,ky-kr-8,'+1초',{'font-size':13,'font-weight':700,fill:C.en,class:'t1'});
+  txt(QS,kx,ky+kr+26,'단위 시간(1초) 동안',{'font-size':13.5,'font-weight':600,fill:C.txt});
+  txt(QS,630,118,'모든 방향으로',{'font-size':13.5,fill:C.txt});txt(QS,630,138,'나간 에너지를',{'font-size':13.5,fill:C.txt});txt(QS,630,158,'모두 더하면',{'font-size':13.5,fill:C.txt});
+  el('rect',{x:568,y:174,width:124,height:34,rx:17,fill:'rgba(245,185,66,.12)',stroke:C.en,'stroke-width':1.2},QS);
+  txt(QS,630,196,'= 광도 L',{'font-size':15,'font-weight':700,fill:C.en});
+ }
+ if(st1==2){const ok=solved[2][0],n=ok?nSide:2,cell=64,s=n*cell,T0=5000;
+  const cy=96;
+  panel(d,170,cy,64,T0,{noRay:true,dim:'1 m',temp:'온도 T'});
+  panel(d,500,cy,s,T0,{noRay:true,dim:`${n} m`,temp:'온도 T',n:ok?n:1,cell:ok&&n>1?'1 m²':''});
+  const lab=(x,y,t)=>txt(QS,x,y,t,{'font-size':15,'font-weight':800,fill:C.txt});
+  lab(170,cy+32+20,'A');lab(500,cy+s/2+20,'B');
+  cap(170,208,'광도 L');blocks(170,218,1);
+  cap(500,208,ok?`광도 ${n*n}L`:'광도 ?',ok);
+  if(ok)blocks(500,218,n*n,9);
+  legend('= 1 m² 조각',238)}
+ if(st1==3){const ok=solved[3][0];mk(d,'ay',C.en);
+  panel(d,170,76,64,4500,{noRay:true,dim:'1 m',temp:'온도 T'});
+  panel(d,500,76,64,9000,{noRay:true,dim:'1 m',temp:'온도 2T'});
+  txt(QS,335,70,ok?'× 16':'× ?',{'font-size':24,'font-weight':800,fill:C.en});
+  el('line',{x1:285,y1:82,x2:385,y2:82,stroke:C.en,'stroke-width':1.8,'marker-end':'url(#ay)',opacity:.8},QS);
+  const lab=(x,y,t)=>txt(QS,x,y,t,{'font-size':15,'font-weight':800,fill:C.txt});
+  lab(170,128,'A');lab(500,128,'B');
+  lcap(170,158,'A','σT⁴',true,'E');blocks(170,168,1);
+  lcap(500,158,'B',ok?'σ(2T)⁴ = 16σT⁴':'?',ok,'E');
+  if(ok)blocks(500,168,16,16);
+  legend('= σT⁴',204)}
+ if(st1==4){const a1=solved[4][0],a2=a1,cx=190,cy=162,r=132,c=tcol(TS);
+  sphere(QS,d,'s4',cx,cy,r,TS,1.2);
+  // 구 표면의 점(위도 la, 경도 lo)을 화면에 투영: 적도 타원(ry=0.3r)과 같은 기울기로 위에서 내려다봄. 세 번째 값>0이면 앞면
+  const sa=.3,ca=Math.sqrt(1-sa*sa),DG=Math.PI/180;
+  const P=(la,lo)=>{la*=DG;lo*=DG;const x=Math.cos(la)*Math.sin(lo),y=Math.sin(la),z=Math.cos(la)*Math.cos(lo);return [cx+r*x,cy-r*(y*ca-z*sa),y*sa+z*ca]};
+  const front=pts=>{let s='',pen=false;pts.forEach(([x,y,v])=>{if(v>0){s+=(pen?'L':'M')+x.toFixed(1)+','+y.toFixed(1);pen=true}else pen=false});return s};
+  // 적도: 앞쪽 반은 실선, 뒤쪽 반은 점선 (수학 교과서의 구 그림 방식)
+  const eq=[];for(let lo=0;lo<=360;lo+=3)eq.push(P(0,lo));
+  el('path',{d:front(eq.map(([x,y,v])=>[x,y,-v])),fill:'none',stroke:'#5a2e0c','stroke-width':1.4,'stroke-dasharray':'5 4',opacity:.6},QS);
+  el('path',{d:front(eq),fill:'none',stroke:'#5a2e0c','stroke-width':1.8,opacity:.85},QS);
+  // 반지름 R: 중심 O에서 적도 위의 한 점까지 실선
+  const ink='#3b2410';
+  el('line',{x1:cx,y1:cy,x2:cx+r,y2:cy,stroke:ink,'stroke-width':2},QS);
+  el('circle',{cx,cy,r:3.4,fill:ink},QS);el('circle',{cx:cx+r,cy,r:3.4,fill:ink},QS);
+  txt(QS,cx-10,cy-8,'O',{'font-size':15,'font-weight':700,fill:ink,'font-style':'italic'});
+  txt(QS,cx+r/2,cy-9,'R',{'font-size':20,'font-weight':800,fill:ink,'font-style':'italic'});
+  grad(d,'z4','linearGradient',{x1:0,y1:0,x2:1,y2:1},[[0,mixW(c,.5)],[1,rgb(c,.9)]]);
+  // 1 m² 조각: 위도선 두 개와 경도선 두 개로 둘러싸인 구면 위의 조각
+  const L1=45,L2=60,O1=15,O2=30,bx=472,by=22,bw=84,acc='#4b5bd0',N=6,pt=[];
+  for(let i=0;i<=N;i++)pt.push(P(L1,O1+(O2-O1)*i/N));for(let i=1;i<=N;i++)pt.push(P(L1+(L2-L1)*i/N,O2));
+  for(let i=1;i<=N;i++)pt.push(P(L2,O2-(O2-O1)*i/N));for(let i=1;i<N;i++)pt.push(P(L2-(L2-L1)*i/N,O1));
+  [[P(L2,O1),bx,by],[P(L2,O2),bx+bw,by],[P(L1,O1),bx,by+bw],[P(L1,O2),bx+bw,by+bw]].forEach(([[x1,y1],x2,y2])=>el('line',{x1,y1,x2,y2,stroke:C.acc,'stroke-width':1.3,'stroke-dasharray':'4 3',opacity:.85},QS));
+  el('path',{d:'M'+pt.map(([x,y])=>x.toFixed(1)+','+y.toFixed(1)).join('L')+'Z',fill:acc,'fill-opacity':.35,stroke:acc,'stroke-width':2,'stroke-linejoin':'round'},QS);
+  el('rect',{x:bx,y:by,width:bw,height:bw,rx:3,fill:'url(#z4)',stroke:'rgba(255,255,255,.6)','stroke-width':1.2},QS);
+  txt(QS,bx+bw/2,by+bw/2+7,'1 m²',{'font-size':19,'font-weight':700,fill:C.ink});
+  const X=514;
+  txt(QS,X,134,'1 m²가 1초 동안 방출하는 에너지',{'font-size':12,fill:C.sub});
+  txt(QS,X,157,'σT⁴',{'font-size':19,'font-weight':800,fill:C.en});
+  txt(QS,X,192,'별의 면적 = 구의 표면적',{'font-size':12,fill:C.sub});
+  txt(QS,X,215,a1?'4πR²':'?',{'font-size':19,'font-weight':800,fill:a1?C.acc:C.txt});
+  txt(QS,X,250,'광도 L = 면적 × σT⁴',{'font-size':12,fill:C.sub});
+  if(a2){el('rect',{x:X-112,y:262,width:224,height:42,rx:21,fill:'rgba(245,185,66,.12)',stroke:C.en,'stroke-width':1.3},QS);
+   txt(QS,X,291,'L = 4πR² σT⁴',{'font-size':21,'font-weight':800,fill:C.en})}
+  else txt(QS,X,290,'L = ?',{'font-size':20,'font-weight':800,fill:C.txt});
+ }
+ mathify(QS);
+}
+
+function renderQ(){
+ const S=STEP[st1];qb.innerHTML=`<h3><span class="badge">${st1}단계</span>${S.title}</h3><div class="intro">${S.intro}</div>`;
+ if(S.qs.length){
+  const th=document.createElement('div');th.className='think inline';qb.appendChild(th);buildThink(th)}
+ if(allSolved(st1)&&S.done){const dn=document.createElement('div');dn.className=S.sum?'sum':'done';dn.innerHTML=S.done;qb.appendChild(dn)}
+ mathify(qb);
+}
+/* 생각해 보기 팝업 (복사 법칙 페이지와 같은 형식) */
+const NUM='①②③④';
+function buildThink(TH){
+ const S=STEP[st1];TH.innerHTML='';
+ for(let i=0;i<S.qs.length;i++){
+  if(i>0&&!solved[st1][i-1])break;
+  const Q=S.qs[i],q=document.createElement('div');q.className='q';
+  q.innerHTML=`<p>${Q.q}</p><div class="ch">${Q.opts.map((o,j)=>`<button type="button">${NUM[j]} ${o}</button>`).join('')}<button type="button" class="chk">정답 확인</button></div><p class="fb2"></p>`;
+  const bs=[...q.querySelectorAll('.ch button:not(.chk)')],fb=q.querySelector('.fb2');let sel=-1;
+  if(solved[st1][i]){sel=Q.ans;bs[Q.ans].classList.add('sel');fb.innerHTML='<span class="okc">✔ 정답입니다.</span> '+Q.ok.replace(/^정답!\s*/,'')}
+  bs.forEach((b,j)=>b.onclick=()=>{if(solved[st1][i])return;sel=j;bs.forEach((x,k)=>x.classList.toggle('sel',k==j));fb.textContent=''});
+  q.querySelector('.chk').onclick=()=>{
+   if(solved[st1][i])return;
+   if(sel<0){fb.innerHTML='<span class="cue">먼저 보기를 하나 골라 보세요.</span>';return}
+   if(sel==Q.ans){solved[st1][i]=true;draw1();renderQ()}
+   else fb.innerHTML='<span class="badc">✘ 다시 생각해 보세요.</span> '+(Q.hints[sel]||'')};
+  TH.appendChild(q)}
+}
+// 1~4단계는 식 유도(p1), 5단계는 실험실(p2)
+const P1=document.getElementById('p1'),P2=document.getElementById('p2');
+function renderAll(){const lab=st1==5,sec=lab?P2:P1;P1.hidden=lab;P2.hidden=!lab;
+ if(!lab){draw1();renderQ()}
+ sec.classList.remove('enter');void sec.offsetWidth;sec.classList.add('enter');
+ document.querySelectorAll('.steps button').forEach(b=>b.classList.toggle('on',+b.dataset.s==st1));
+ pv.disabled=st1==1;nx.disabled=st1==5}
+function go1(s){st1=s;renderAll()}
+document.querySelectorAll('.steps button').forEach(b=>b.onclick=()=>go1(+b.dataset.s));
+pv.onclick=()=>go1(st1-1);nx.onclick=()=>go1(st1+1);
+go1(1);
+</script></main></body></html>
