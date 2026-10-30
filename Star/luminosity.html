@@ -131,6 +131,12 @@ input[type=range]{accent-color:var(--acc)}
 .pnum{display:block;width:fit-content;margin:0 0 6px;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.04em}
 .titlebar .pnum{margin:0;flex:none}
 .titlebar h1,header .titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;padding:0;border:0;text-wrap:balance}
+/* 패드 등 세로가 짧은 화면에서도 한 화면에 들어오도록 그림판 높이를 화면 높이에 맞춰 제한
+   (폭은 그대로, 그림만 가운데에서 작아짐. 실험실은 '실제 별과 비교해 보기'를 접은 상태 기준) */
+#q1svg{max-height:max(240px,calc(100vh - 370px))}
+#q1svg{max-height:max(240px,calc(100dvh - 370px))}
+#lab{max-height:max(220px,calc(100vh - 480px))}
+#lab{max-height:max(220px,calc(100dvh - 480px))}
 </style></head><body><main>
 <div class="titlebar"><p class="pnum">탐구 03</p><h1>별의 광도</h1><a class="back" href="./Star_index.html">← [별의 물리량] 메뉴로 돌아가기</a></div>
 <div class="steps"><button data-s="1">광도란?</button><button data-s="2">면적과 광도</button><button data-s="3">온도와 광도</button><button data-s="4">별의 광도</button><button data-s="5">별의 광도 실험실</button></div>
@@ -150,8 +156,7 @@ input[type=range]{accent-color:var(--acc)}
 <button class="k" id="t2">온도 ×2</button><button class="k" id="th">온도 ÷2</button>
 <button id="r0">태양으로 되돌리기</button>
 </div>
-<div class="row"><label>반지름 <input id="rs" type="range" step="0.001"><b id="rv"></b></label></div>
-<div class="row"><label>표면 온도 <input id="ts" type="range" step="0.001"><b id="tv"></b></label></div>
+<div class="row"><label>반지름 <input id="rs" type="range" step="0.001"><b id="rv"></b></label><label>표면 온도 <input id="ts" type="range" step="0.001"><b id="tv"></b></label></div>
 <div id="msg">슬라이더나 버튼으로 별의 반지름과 온도를 바꿔 보세요.</div>
 </div>
 <details class="real">
