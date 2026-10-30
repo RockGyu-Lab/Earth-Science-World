@@ -69,17 +69,32 @@ button,select{border-radius:10px}
 @keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .enter{animation:enter .28s ease-out}
 @media (prefers-reduced-motion:reduce){.enter{animation:none}}
-/* 자료 제목: 학습실 메뉴 카드와 같은 '탐구 NN' 꼬리표 + 강조색 세로줄로 제목을 눈에 띄게 */
+/* 제목 줄: [탐구 NN] 제목 …… [← 메뉴로 돌아가기]를 한 줄에 두어 세로 공간을 아낌 (좁은 화면에서는 줄바꿈) */
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 10px}
+.titlebar .back{margin:0 0 0 auto;flex:none}
 .pnum{display:block;width:fit-content;margin:0 0 6px;padding:2px 10px;border-radius:999px;background:var(--tab);color:var(--tabfg);font-size:.8rem;font-weight:700;letter-spacing:.04em}
-h1,header h1{font-size:1.6rem;font-weight:800;line-height:1.35;margin:0 0 8px;padding-left:12px;border-left:5px solid var(--tab);text-wrap:balance}
+.titlebar .pnum{margin:0;flex:none}
+.titlebar h1,header .titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;padding:0;border:0;text-wrap:balance}
+/* 패드 등 세로가 짧은 화면에서도 한 화면에 들어오도록:
+   위아래 여백을 줄이고, 기록 범례는 버튼 줄 오른쪽에, 날짜 슬라이더는 이름과 한 줄에 둠.
+   화면 높이에 맞춰 전체 폭(그림 크기)을 1000px에서 800px까지 줄임
+   (800px보다 좁히면 오른쪽 칸이 길어져 오히려 높이가 늘어남) */
+main{padding-block:12px 16px}
+.ctl{gap:8px;padding-block:10px}
+.btns .legend{margin-left:auto}
+.slider{display:flex;align-items:center;gap:14px}
+.slider label{flex:none}
+.slider input{flex:1;min-width:0}
+.col{gap:8px}
+#msg{height:7.8em}  /* 가장 긴 안내 글(4줄)이 스크롤 없이 들어가는 높이 */
+main{max-width:max(800px,min(1000px,calc(100vh*1.85 - 473px)))}
+main{max-width:max(800px,min(1000px,calc(100dvh*1.85 - 473px)))}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 
 <main>
-<a class="back" href="./Eclipse_index.html">← [일식과 월식] 메뉴로 돌아가기</a>
-<p class="pnum">탐구 04</p>
-<h1>일식과 월식이 매달 일어나지 않는 이유</h1>
+<div class="titlebar"><p class="pnum">탐구 04</p><h1>일식과 월식이 매달 일어나지 않는 이유</h1><a class="back" href="./Eclipse_index.html">← [일식과 월식] 메뉴로 돌아가기</a></div>
 <div class="tabs" role="tablist">
 <button type="button" role="tab" id="tabSame" aria-selected="true">지구와 달의 공전 궤도면이 일치하는 경우</button>
 <button type="button" role="tab" id="tabTilt" aria-selected="false">지구와 달의 공전 궤도면이 일치하지 않는 경우(실제)</button>
@@ -122,13 +137,13 @@ h1,header h1{font-size:1.6rem;font-weight:800;line-height:1.35;margin:0 0 8px;pa
 <button type="button" id="play">▶ 1년 공전 시작</button>
 <button type="button" id="reset">↺ 처음부터</button>
 <select id="speed" aria-label="공전 속도"><option value="10">느리게</option><option value="24" selected>보통</option><option value="60">빠르게</option></select>
+<div class="legend"><span><i style="background:#111;border-color:#f0a030"></i>일식</span><span><i style="background:#b71c1c;border-color:#6a1010"></i>월식</span><span><i style="background:#e2e2e0"></i>식 없음 (✕)</span></div>
 </div>
 <div class="slider">
 <label for="time">날짜 <span id="timeTxt"></span></label>
 <input type="range" id="time" min="0" max="365" step="0.01" value="0">
 </div>
 <div class="rec"><svg id="rec" viewBox="0 0 900 112" role="img" aria-label="1년 동안의 삭(신월)과 망(보름달) 기록"></svg></div>
-<div class="legend"><span><i style="background:#111;border-color:#f0a030"></i>일식</span><span><i style="background:#b71c1c;border-color:#6a1010"></i>월식</span><span><i style="background:#e2e2e0"></i>식 없음 (✕)</span></div>
 </div>
 </main>
 <div id="tip"></div>
