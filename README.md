@@ -6,10 +6,10 @@
 - `index.html`: 지구과학 World 메인 화면 (주제별 학습실 목록)
 - `Eclipses/`: 일식과 월식 학습실
   - `Eclipse_index.html`: 학습실 메뉴
-  - `shadow.html`: 체험 01 · 본그림자, 반그림자, 금환그림자
-  - `eclipses.html`: 체험 02 · 일식과 월식의 원리
-  - `solareclipse.html`: 체험 03 · 달의 그림자와 일식의 진행
-  - `orbit_eclipse.html`: 체험 04 · 일식과 월식이 매달 일어나지 않는 이유
+  - `shadow.html`: 탐구 01 · 본그림자, 반그림자, 금환그림자
+  - `eclipses.html`: 탐구 02 · 일식과 월식의 원리
+  - `solareclipse.html`: 탐구 03 · 달의 그림자와 일식의 진행
+  - `orbit_eclipse.html`: 탐구 04 · 일식과 월식이 매달 일어나지 않는 이유
   - `lib/world.js`: `solareclipse.html`이 쓰는 세계 지도 데이터 (ECharts 4.9.0, Apache License 2.0)
 - `Star/`: 별의 물리량 학습실
   - `Star_index.html`: 학습실 메뉴

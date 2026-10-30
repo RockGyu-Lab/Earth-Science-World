@@ -7,7 +7,7 @@
 index.html                 메인 화면 (학습실 카드 목록)
 README.md                  사용자용 설명서 (게시 방법, 자료 추가 방법)
 Eclipses/                  일식과 월식 학습실
-  Eclipse_index.html       학습실 메뉴 (체험 01~04 카드)
+  Eclipse_index.html       학습실 메뉴 (탐구 01~04 카드)
   shadow.html, eclipses.html, solareclipse.html, orbit_eclipse.html
   lib/world.js             solareclipse.html의 세계 지도 데이터 (오프라인용)
 Star/                      별의 물리량 학습실
@@ -31,7 +31,7 @@ Star/                      별의 물리량 학습실
 ### 3. 메뉴와 링크 연결을 항상 확인합니다
 HTML 파일을 추가하거나 고치거나 이름을 바꾸면 다음을 확인합니다.
 - **메인 화면 ↔ 학습실 메뉴:** `index.html`의 학습실 카드는 `./<폴더>/<폴더>_index.html`로 가고, 학습실 메뉴의 "← 지구과학 World"는 `../index.html`로 갑니다.
-- **학습실 메뉴 → 자료:** 메뉴에 자료 카드(`<a class="card" href="./파일.html">`)가 있고, 번호(체험/탐구 NN)가 차례대로 붙어 있어야 합니다.
+- **학습실 메뉴 → 자료:** 메뉴에 자료 카드(`<a class="card" href="./파일.html">`)가 있고, 번호(탐구 NN)가 차례대로 붙어 있어야 합니다.
 - **자료 → 학습실 메뉴:** 자료 상단의 돌아가기 링크는 메인 화면이 아니라 같은 폴더의 학습실 메뉴로 가야 합니다.
   예: `<a class="back" href="./Star_index.html">← [별의 물리량] 메뉴로 돌아가기</a>`
   버튼 문구 속 학습실 이름은 메뉴 제목과 같아야 합니다.
