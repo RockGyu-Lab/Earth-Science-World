@@ -130,6 +130,19 @@ svg{border-radius:14px;box-shadow:0 0 0 1px var(--frame)}
  .slab b{font-size:.92rem}.slab small{font-size:.6rem;white-space:normal}.slab small.cn{display:block;font-size:.66rem}
  #stqrow .qmsg{flex-basis:100%}
 }
+/* 패드 등 세로가 짧은 화면: 분광형 이름·색·온도를 한 줄로 쓰고 스펙트럼 띠를 얇게 하여 한 화면에 들어오게 함
+   ('분광형 이름에 숨은 이야기' 버튼은 설명 상자 오른쪽 위로) */
+@media (min-width:641px) and (max-height:900px){
+ .srow,.axisrow{grid-template-columns:225px 1fr}
+ .srow{padding:1px 6px}
+ .srow canvas{height:20px}.srow.on canvas{height:38px}
+ .dot{width:22px;height:22px}
+ .slab small{display:inline;margin-left:3px}
+ .istar{width:64px}.istar .dot{width:60px;height:60px}
+ #stinfo{margin-top:8px}
+ #note{position:relative}
+ #note .story{position:absolute;top:8px;right:12px;margin:0}
+}
 dialog{max-width:min(560px,calc(100vw - 32px));border:0;border-radius:14px;padding:0;background:var(--bg);color:var(--fg);box-shadow:0 12px 40px rgba(0,0,0,.35)}
 dialog::backdrop{background:rgba(10,14,30,.55)}
 dialog h2{font-size:1.1rem;margin:0 0 8px;color:var(--acc)}
