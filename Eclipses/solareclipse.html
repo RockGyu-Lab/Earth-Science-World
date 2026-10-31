@@ -612,7 +612,7 @@ function drawSkies(t) {
       const mx = cx + m.x * scale, my = cy - m.y * scale;
       g.beginPath(); g.arc(mx, my, rs * K, 0, Math.PI * 2); g.fillStyle = rgb(mix([14, 16, 26], [52, 60, 82], light * 0.4)); g.fill();
       g.fillStyle = 'rgba(255,255,255,0.88)'; g.font = '600 ' + (rs * 0.16) + 'px "Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.fillText('달 그림자', mx, my);
+      g.fillText('달', mx, my);
     }
     // 방위 표시
     const yb = Sh - S * 0.08;
