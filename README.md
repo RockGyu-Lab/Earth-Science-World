@@ -14,7 +14,7 @@
 - `Star/`: 별의 물리량 학습실
   - `Star_index.html`: 학습실 메뉴
   - `radiation.html`: 탐구 01 · 복사 법칙
-  - `spectrum.html`: 탐구 02 · 여러 가지 스펙트럼
+  - `spectrum.html`: 탐구 02 · 스펙트럼과 별의 분광형 (연속·방출·흡수 스펙트럼, 별의 스펙트럼, 별의 분광형 탭)
   - `luminosity.html`: 탐구 03 · 별의 광도
 
 ## 페이지 연결
