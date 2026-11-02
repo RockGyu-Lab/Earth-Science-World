@@ -40,7 +40,9 @@ button,input{font-family:inherit}
 :root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
 :root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
-#selrow button{background:var(--sub-bg);border-color:var(--sub-bd);color:var(--sub-tx);font-weight:600}
+/* 일식 위치 선택 단추: 위쪽 탭과 구분되도록 작게, 내용 폭만큼만 */
+#selrow{justify-content:flex-start}
+#selrow button{flex:none;padding:5px 14px;font-size:.88rem;background:var(--sub-bg);border-color:var(--sub-bd);color:var(--sub-tx);font-weight:600}
 #selrow button:hover:not(.on){border-color:var(--sub)}
 #selrow button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub);font-weight:700}
 svg{border-radius:14px;box-shadow:0 0 0 1px var(--frame)}
@@ -61,9 +63,13 @@ svg{border-radius:14px;box-shadow:0 0 0 1px var(--frame)}
 main{max-width:max(560px,min(960px,calc((100vh - 270px)*900/545)))}
 main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 /* 심화 질문 단추 (월식 탭에서만 보임, 조작 줄 오른쪽 끝) + 답 팝업 */
-.row #deep{margin-left:auto;display:flex;align-items:center;gap:8px;padding:4px 12px 4px 5px;border-color:var(--acc);background:var(--bg);color:var(--fg);font-size:.88rem;font-weight:600}
-.row #deep:hover{background:var(--card)}
-#deep .tag{padding:2px 9px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.78rem;font-weight:700}
+/* 심화 질문 줄 (월식 탭에서만, 다른 자료의 '생각해 보기'와 같은 형식: 꼬리표 + 질문 + 답 보기) */
+.deeprow{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin:0 0 10px;font-size:.95rem}
+.deeprow .q{font-weight:600}
+.deeprow button{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer}
+.deeprow button:hover{background:var(--card)}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em}
+.pop-h b{display:flex;align-items:center;gap:8px}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .ov[hidden]{display:none}
 .ov .pop{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
@@ -87,12 +93,13 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 <span id="legAn"><i style="background:#ff9f1c"></i>금환그림자 (Antumbra)</span>
 </div>
 <div class="ctl">
+<div class="deeprow" id="deep"><span class="tag">심화</span><span class="q">개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</span><button type="button" id="deepA">답 보기</button></div>
 <div class="tabs" id="selrow"><button id="b1" class="on">개기일식 위치 (달이 가까울 때)</button><button id="b0">금환일식 위치 (달이 멀 때)</button></div>
-<div class="row"><button id="go">▶ 달 공전 시작</button><button id="rst" disabled>■ 처음으로</button><label>공전 속도 <input id="sp" type="range" min="0.3" max="3" step="0.1" value="1"><b id="spv">1.0배</b></label><button id="deep" type="button"><span class="tag">심화</span>개기월식 때 달이 붉은색으로 보이는 이유는?</button></div>
+<div class="row"><button id="go">▶ 달 공전 시작</button><button id="rst" disabled>■ 처음으로</button><label>공전 속도 <input id="sp" type="range" min="0.3" max="3" step="0.1" value="1"><b id="spv">1.0배</b></label></div>
 </div>
 <div id="tip"></div>
-<div class="ov" id="deepOv" hidden><div class="pop" role="dialog" aria-modal="true" aria-label="심화: 개기월식 때 달이 붉은색으로 보이는 이유">
- <div class="pop-h"><b>심화 · 개기월식 때 달이 붉은색으로 보이는 이유는?</b><button type="button" class="x" id="deepX">닫기 ✕</button></div>
+<div class="ov" id="deepOv" hidden><div class="pop" role="dialog" aria-modal="true" aria-label="심화: 개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?">
+ <div class="pop-h"><b><span class="tag">심화</span>개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</b><button type="button" class="x" id="deepX">닫기 ✕</button></div>
  <p class="ans">지구 대기를 통과한 붉은빛이 굴절되어 본그림자 속의 달을 비추기 때문입니다.</p>
  <svg viewBox="0 0 640 270" role="img" aria-label="햇빛이 지구 대기를 지나며 파란빛은 흩어지고 붉은빛은 굴절되어 본그림자 속 달을 비추는 모습">
   <defs>
@@ -344,8 +351,8 @@ sv.addEventListener('pointermove',show);sv.addEventListener('pointerdown',show);
 sv.addEventListener('pointerleave',()=>tip.style.display='none');
 setup(1);
 // 심화 질문 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-deep.onclick=()=>{deepOv.hidden=false;deepX.focus()};
-deepX.onclick=()=>{deepOv.hidden=true;deep.focus()};
+deepA.onclick=()=>{deepOv.hidden=false;deepX.focus()};
+deepX.onclick=()=>{deepOv.hidden=true;deepA.focus()};
 deepOv.addEventListener('click',e=>{if(e.target===deepOv)deepX.onclick()});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!deepOv.hidden)deepX.onclick()});
 </script></main><script src="../copyright.js"></script>
