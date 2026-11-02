@@ -99,6 +99,18 @@ body{word-break:keep-all}
 .picker button:hover{border-color:var(--accent)}
 .picker button[aria-pressed="true"]{color:var(--on-acc)}
 .picker button[aria-pressed="true"] small{color:var(--on-acc);opacity:.85}
+/* 선택 단추(같은 그림 안에서 보기를 고르는 단추)는 연보라, 실행 단추(재생·시작 등)와 위쪽 탭은 남색 */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+.seg button{background:var(--sub-bg);border-color:var(--sub-bd);color:var(--sub-tx);box-shadow:none;font-weight:600}
+.seg button:hover{border-color:var(--sub)}
+.seg button[aria-pressed="true"]{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub);font-weight:700}
+.picker button{background:var(--sub-bg);border-color:var(--sub-bd);color:var(--sub-tx)}
+.picker button small{color:var(--sub-tx);opacity:.8}
+.picker button:hover{border-color:var(--sub)}
+.picker button[aria-pressed="true"]{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+.picker button[aria-pressed="true"] small{color:var(--on-sub);opacity:.85}
 .globe-box{border-radius:14px;box-shadow:0 0 0 1px var(--frame)}
 /* 제목 줄: [탐구 NN] 제목 …… [← 메뉴로 돌아가기]를 한 줄에 두어 세로 공간을 아낌 (좁은 화면에서는 줄바꿈) */
 .titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 10px}

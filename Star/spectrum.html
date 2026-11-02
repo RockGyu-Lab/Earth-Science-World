@@ -61,6 +61,13 @@ svg{width:100%;height:auto;display:block;border-radius:12px;background:#0b1026;t
 body{font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;word-break:keep-all}
 button,input{font-family:inherit}
 .tabs button.on{background:var(--acc);color:var(--on-acc);border-color:var(--acc);font-weight:700}
+/* 선택 단추(같은 그림 안에서 보기를 고르는 단추)는 연보라, 실행 단추(재생·시작 등)와 위쪽 탭은 남색 */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+#gasrow button{background:var(--sub-bg);border-color:var(--sub-bd);color:var(--sub-tx);font-weight:600}
+#gasrow button:hover:not(.on){border-color:var(--sub)}
+#gasrow button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub);font-weight:700}
 svg{border-radius:14px;box-shadow:0 0 0 1px var(--frame)}
 .note,#trow,#qrow{border:0;border-radius:14px;background:var(--card)}
 .note .nh{color:var(--acc)}
