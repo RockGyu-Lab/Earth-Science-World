@@ -20,7 +20,7 @@ p.sub{margin:0 0 14px;color:var(--muted);font-size:.95rem}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;position:relative}
 svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 .zone{cursor:pointer;transition:opacity .15s}
-.dim .zone:not(.active){opacity:.35}
+/* 그림자에 마우스를 올려도 색은 그대로 둠 (설명과 관찰 지점만 바뀜) */
 #tip{position:absolute;pointer-events:none;background:#fff;color:#111;border:2px solid #111;border-radius:8px;padding:6px 10px;font-size:.95rem;font-weight:700;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .ctl{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px}
 .ctl label{font-weight:700;display:block;margin-bottom:6px}
@@ -65,7 +65,7 @@ body{font-family:"Pretendard Variable",Pretendard,"Noto Sans KR",system-ui,-appl
 <stop offset="0" stop-color="#f1f1f1"/><stop offset=".5" stop-color="#555"/><stop offset="1" stop-color="#f1f1f1"/>
 </linearGradient>
 <linearGradient id="antG" gradientUnits="userSpaceOnUse" x1="1000" y1="0" x2="1400" y2="0">
-<stop offset="0" stop-color="#151515"/><stop offset="1" stop-color="#7a7a7a"/>
+<stop offset="0" stop-color="#3a3a3a"/><stop offset="1" stop-color="#5a5a5a"/>
 </linearGradient>
 <clipPath id="clip"><rect width="970" height="550"/></clipPath>
 <radialGradient id="lightG" cx=".38" cy=".33" r=".85"><stop offset="0" stop-color="#ffffd0"/><stop offset=".55" stop-color="#ffff99"/><stop offset="1" stop-color="#e3d84f"/></radialGradient>
