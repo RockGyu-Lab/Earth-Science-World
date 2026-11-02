@@ -40,9 +40,9 @@ button,input{font-family:inherit}
 :root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
 :root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
-/* 일식 위치 선택 단추: 위쪽 탭과 구분되도록 작게, 내용 폭만큼만 */
+/* 일식 위치 선택 단추: 위쪽 탭과 구분되도록 폭과 높이를 줄임 */
 #selrow{justify-content:flex-start}
-#selrow button{flex:none;padding:5px 14px;font-size:.88rem;background:var(--sub-bg);border-color:var(--sub-bd);color:var(--sub-tx);font-weight:600}
+#selrow button{flex:0 1 330px;padding:7px 14px;font-size:.93rem;background:var(--sub-bg);border-color:var(--sub-bd);color:var(--sub-tx);font-weight:600}
 #selrow button:hover:not(.on){border-color:var(--sub)}
 #selrow button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub);font-weight:700}
 svg{border-radius:14px;box-shadow:0 0 0 1px var(--frame)}
@@ -64,7 +64,7 @@ main{max-width:max(560px,min(960px,calc((100vh - 270px)*900/545)))}
 main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 /* 심화 질문 단추 (월식 탭에서만 보임, 조작 줄 오른쪽 끝) + 답 팝업 */
 /* 심화 질문 줄 (월식 탭에서만, 다른 자료의 '생각해 보기'와 같은 형식: 꼬리표 + 질문 + 답 보기) */
-.deeprow{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin:0 0 10px;font-size:.95rem}
+.deeprow{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin:10px 0 0;font-size:.95rem}
 .deeprow .q{font-weight:600}
 .deeprow button{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer}
 .deeprow button:hover{background:var(--card)}
@@ -77,10 +77,11 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 .pop-h b{color:var(--acc);font-size:1rem}
 .pop .x{font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg)}
 .pop .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
-.pop svg{border-radius:12px;margin:4px 0 4px;touch-action:auto}
+.pop svg{border-radius:12px 12px 0 0;margin:4px 0 0;touch-action:auto}
+/* 그림 바로 아래, 그림과 같은 어두운 바탕에 밝은 글씨로 보충 설명 */
+.pop .figcap{margin:0 0 6px;padding:8px 14px 10px;border-radius:0 0 12px 12px;background:#1a2246;color:#cfd6ea;font-size:.8rem;line-height:1.55}
 .pop ol{margin:8px 0 0;padding-left:1.3em;font-size:.93rem}
 .pop li{margin:4px 0}
-.pop .sm{margin:6px 0 0;font-size:.8rem;opacity:.75}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -93,59 +94,65 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 <span id="legAn"><i style="background:#ff9f1c"></i>금환그림자 (Antumbra)</span>
 </div>
 <div class="ctl">
-<div class="deeprow" id="deep"><span class="tag">심화</span><span class="q">개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</span><button type="button" id="deepA">답 보기</button></div>
 <div class="tabs" id="selrow"><button id="b1" class="on">개기일식 위치 (달이 가까울 때)</button><button id="b0">금환일식 위치 (달이 멀 때)</button></div>
 <div class="row"><button id="go">▶ 달 공전 시작</button><button id="rst" disabled>■ 처음으로</button><label>공전 속도 <input id="sp" type="range" min="0.3" max="3" step="0.1" value="1"><b id="spv">1.0배</b></label></div>
+<div class="deeprow" id="deep"><span class="tag">심화</span><span class="q">개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</span><button type="button" id="deepA">답 보기</button></div>
 </div>
 <div id="tip"></div>
 <div class="ov" id="deepOv" hidden><div class="pop" role="dialog" aria-modal="true" aria-label="심화: 개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?">
  <div class="pop-h"><b><span class="tag">심화</span>개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</b><button type="button" class="x" id="deepX">닫기 ✕</button></div>
  <p class="ans">지구 대기를 통과한 붉은빛이 굴절되어 본그림자 속의 달을 비추기 때문입니다.</p>
- <svg viewBox="0 0 640 270" role="img" aria-label="햇빛이 지구 대기를 지나며 파란빛은 흩어지고 붉은빛은 굴절되어 본그림자 속 달을 비추는 모습">
+ <svg class="fig" viewBox="0 0 640 270" role="img" aria-label="햇빛이 지구 대기를 지나며 파란빛은 흩어지고 붉은빛은 굴절되어 본그림자 속 달을 비추는 모습">
   <defs>
-   <marker id="ahY" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#ffd54a"/></marker>
-   <marker id="ahR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#ff5a3c"/></marker>
-   <marker id="ahB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" fill="#5fb4ff"/></marker>
+   <marker id="ahY" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M1,1L9,5L1,9L3.5,5z" fill="#ffd54a"/></marker>
+   <marker id="ahR" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M1,1L9,5L1,9L3.5,5z" fill="#ff6a4a"/></marker>
+   <marker id="ahB" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto"><path d="M1,1L9,5L1,9L3.5,5z" fill="#5fb4ff"/></marker>
    <radialGradient id="dpE" cx="40%" cy="38%" r="65%"><stop offset="0" stop-color="#4aa0f0"/><stop offset=".7" stop-color="#2468c8"/><stop offset="1" stop-color="#0e3a85"/></radialGradient>
    <radialGradient id="dpM" cx="40%" cy="38%" r="65%"><stop offset="0" stop-color="#d9773a"/><stop offset=".6" stop-color="#a8381c"/><stop offset="1" stop-color="#6a2312"/></radialGradient>
   </defs>
-  <rect width="640" height="270" fill="#0b1026"/>
-  <!-- 본그림자 -->
-  <polygon points="230,67 610,108 610,152 230,193" fill="#000" opacity=".55"/>
-  <text x="430" y="182" fill="#cfd6ea" font-size="13" text-anchor="middle">본그림자</text>
-  <!-- 대기를 비껴가는 햇빛 (그림자 밖으로 곧게 지나감) -->
-  <line x1="18" y1="34" x2="600" y2="34" stroke="#ffd54a" stroke-width="2" opacity=".55" marker-end="url(#ahY)"/>
-  <line x1="18" y1="236" x2="600" y2="236" stroke="#ffd54a" stroke-width="2" opacity=".55" marker-end="url(#ahY)"/>
-  <!-- 대기를 지나는 햇빛: 붉은빛은 굴절되어 본그림자 안으로 -->
-  <line x1="18" y1="60" x2="228" y2="60" stroke="#ffd54a" stroke-width="3"/>
-  <line x1="18" y1="210" x2="228" y2="210" stroke="#ffd54a" stroke-width="3"/>
-  <path d="M228,60 Q262,60 290,66 L508,122" fill="none" stroke="#ff5a3c" stroke-width="3" marker-end="url(#ahR)"/>
-  <path d="M228,210 Q262,210 290,204 L508,148" fill="none" stroke="#ff5a3c" stroke-width="3" marker-end="url(#ahR)"/>
+  <rect width="640" height="270" fill="#1a2246"/>
+  <!-- 본그림자: 햇빛을 나란하게 그렸으므로 그림자도 지구의 위아래 끝에서 나란하게 (경계는 점선) -->
+  <rect x="230" y="73" width="410" height="124" fill="#04060d" opacity=".85"/>
+  <line x1="230" y1="73" x2="640" y2="73" stroke="#9aa8d0" stroke-width="1.2" stroke-dasharray="5 4" opacity=".7"/>
+  <line x1="230" y1="197" x2="640" y2="197" stroke="#9aa8d0" stroke-width="1.2" stroke-dasharray="5 4" opacity=".7"/>
+  <text x="380" y="140" fill="#cfd6ea" font-size="13" text-anchor="middle">본그림자</text>
+  <!-- 햇빛 (모두 같은 굵기·색): 대기 밖을 지나는 빛은 곧게, 대기를 지나는 빛은 대기층의 가운데를 통과 -->
+  <g stroke="#ffd54a" stroke-width="2.5" fill="none">
+   <line x1="18" y1="34" x2="622" y2="34" marker-end="url(#ahY)"/>
+   <line x1="18" y1="236" x2="622" y2="236" marker-end="url(#ahY)"/>
+   <line x1="18" y1="66" x2="201" y2="66"/>
+   <line x1="18" y1="204" x2="201" y2="204"/>
+  </g>
+  <!-- 대기를 통과한 붉은빛: 굴절되어 본그림자 안의 달로 -->
+  <g stroke="#ff6a4a" stroke-width="2.5" fill="none" stroke-linecap="round">
+   <path d="M201,66 Q236,66 262,74 L504,129" marker-end="url(#ahR)"/>
+   <path d="M201,204 Q236,204 262,196 L504,141" marker-end="url(#ahR)"/>
+  </g>
   <!-- 파란빛은 대기에서 산란되어 흩어짐 -->
-  <g stroke="#5fb4ff" stroke-width="2" marker-end="url(#ahB)">
-   <line x1="232" y1="58" x2="214" y2="38"/><line x1="236" y1="57" x2="240" y2="34"/><line x1="240" y1="58" x2="262" y2="40"/>
-   <line x1="232" y1="212" x2="214" y2="232"/><line x1="236" y1="213" x2="240" y2="236"/><line x1="240" y1="212" x2="262" y2="230"/>
+  <g stroke="#5fb4ff" stroke-width="1.8" stroke-linecap="round">
+   <line x1="210" y1="63" x2="198" y2="47" marker-end="url(#ahB)"/><line x1="220" y1="62" x2="221" y2="44" marker-end="url(#ahB)"/><line x1="230" y1="63" x2="244" y2="48" marker-end="url(#ahB)"/>
+   <line x1="210" y1="207" x2="198" y2="223" marker-end="url(#ahB)"/><line x1="220" y1="208" x2="221" y2="226" marker-end="url(#ahB)"/><line x1="230" y1="207" x2="244" y2="222" marker-end="url(#ahB)"/>
   </g>
   <!-- 지구와 대기 (대기 두께는 크게 과장) -->
-  <circle cx="230" cy="135" r="75" fill="#8fd0ff" opacity=".25"/>
+  <circle cx="230" cy="135" r="75" fill="#8fd0ff" opacity=".22"/>
   <circle cx="230" cy="135" r="62" fill="url(#dpE)"/>
   <text x="230" y="141" fill="#fff" font-size="17" font-weight="700" text-anchor="middle">지구</text>
-  <text x="150" y="128" fill="#bfe4ff" font-size="12" text-anchor="end">대기</text>
-  <line x1="153" y1="124" x2="160" y2="118" stroke="#bfe4ff" stroke-width="1.2"/>
+  <text x="140" y="112" fill="#bfe4ff" font-size="12" text-anchor="end">대기</text>
+  <line x1="143" y1="108" x2="163" y2="102" stroke="#bfe4ff" stroke-width="1.2"/>
   <!-- 달 -->
   <circle cx="530" cy="135" r="22" fill="url(#dpM)"/>
-  <text x="530" y="175" fill="#ffb59a" font-size="13" font-weight="700" text-anchor="middle">달 (붉게 보임)</text>
+  <text x="530" y="178" fill="#ffb59a" font-size="13" font-weight="700" text-anchor="middle">달 (붉게 보임)</text>
   <!-- 설명 글 -->
   <text x="18" y="22" fill="#ffe28a" font-size="13" font-weight="700">햇빛</text>
-  <text x="270" y="22" fill="#9fd2ff" font-size="12.5">파란빛은 대기에서 많이 흩어짐(산란)</text>
-  <text x="318" y="66" fill="#ffad99" font-size="12.5" transform="rotate(14.4 318 66)">붉은빛은 굴절되어 그림자 안으로</text>
+  <text x="262" y="22" fill="#9fd2ff" font-size="12.5">파란빛은 대기에서 많이 흩어짐(산란)</text>
+  <text x="300" y="76" fill="#ffb3a0" font-size="12.5" transform="rotate(12.8 300 76)">붉은빛은 굴절되어 그림자 안으로</text>
  </svg>
+ <p class="figcap">그림은 대기의 두께와 빛이 휘는 정도를 크게 과장했습니다. 햇빛을 나란하게 그렸으므로 본그림자도 나란하게 그렸습니다(실제 본그림자는 지구에서 멀어질수록 아주 조금씩 좁아집니다). 대기 중의 먼지나 구름이 많을수록 달은 더 어둡게 보입니다.</p>
  <ol>
   <li>햇빛이 지구 대기를 지날 때, 파장이 짧은 <b>파란빛</b>은 공기 분자에 많이 <b>산란</b>되어 흩어지고, 파장이 긴 <b>붉은빛</b>은 상대적으로 많이 통과합니다. (해 질 녘 노을이 붉게 보이는 것과 같은 까닭입니다.)</li>
   <li>대기를 통과한 빛은 <b>굴절</b>되어 지구의 본그림자 안쪽으로 휘어 들어갑니다.</li>
   <li>그래서 본그림자 속에 들어간 달은 완전히 어두워지지 않고, 이 붉은빛을 받아 <b>어두운 붉은색(구릿빛)</b>으로 보입니다.</li>
  </ol>
- <p class="sm">그림은 대기의 두께와 빛이 휘는 정도를 크게 과장했습니다. 대기 중의 먼지나 구름이 많을수록 달은 더 어둡게 보입니다.</p>
 </div></div>
 <script>
 const NS="http://www.w3.org/2000/svg",sv=document.getElementById('sv'),tip=document.getElementById('tip');
