@@ -136,9 +136,14 @@ input[type=range]{accent-color:var(--acc)}
 .titlebar .pnum{margin:0;flex:none}
 .titlebar h1,header .titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;padding:0;border:0;text-wrap:balance}
 /* 패드 등 세로가 짧은 화면에서도 한 화면에 들어오도록 그림판 높이를 화면 높이에 맞춰 제한
-   (폭은 그대로, 그림만 가운데에서 작아짐. 생각해 보기는 답하기 전 기준) */
+   (폭은 그대로, 그림만 가운데에서 작아짐) */
 #q1svg{max-height:max(240px,calc(100vh - 320px))}
 #q1svg{max-height:max(240px,calc(100dvh - 320px))}
+/* 생각해 보기 탭은 정답을 맞혀 아래에 풀이·정리가 펼쳐진 상태에서도 한 화면에 들어오도록 그림을 더 줄임 (탭마다 아래 글 높이가 다름) */
+body[data-step="2"] #q1svg,body[data-step="4"] #q1svg{max-height:max(180px,calc(100vh - 402px))}
+body[data-step="2"] #q1svg,body[data-step="4"] #q1svg{max-height:max(180px,calc(100dvh - 402px))}
+body[data-step="3"] #q1svg{max-height:max(160px,calc(100vh - 505px))}
+body[data-step="3"] #q1svg{max-height:max(160px,calc(100dvh - 505px))}
 #lab{max-height:max(220px,calc(100vh - 410px))}
 #lab{max-height:max(220px,calc(100dvh - 410px))}
 </style></head><body><main>
@@ -169,8 +174,8 @@ input[type=range]{accent-color:var(--acc)}
 <div class="think-h"><b class="think-t">실제 별과 비교해 보기</b><button type="button" class="x" id="realX">닫기 ✕</button></div>
 <p>실제 별은 크기 차이가 너무 커서 그림 대신 표로 비교합니다. <small>(대략적인 값이며 자료마다 조금씩 다릅니다)</small></p>
 <div class="tbl"><table><thead><tr><th>별</th><th>반지름<br><small>(R☉)</small></th><th>표면 온도<br><small>(K)</small></th><th>반지름 효과<br><small>(R/R☉)²</small></th><th>온도 효과<br><small>(T/T☉)⁴</small></th><th>광도<br><small>(L☉)</small></th></tr></thead><tbody id="real"></tbody></table></div>
-<p><span class="badge">생각해 보기</span> 베텔게우스는 태양보다 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 반면 시리우스 B는 태양보다 훨씬 뜨거운데도 훨씬 어둡습니다. 왜 그럴까요? <button type="button" class="ansbtn" id="realA">답 보기</button></p>
-<p class="ans" id="realAns" hidden>광도는 <b>반지름의 제곱</b>과 <b>표면 온도의 네제곱</b>에 비례합니다(L ∝ R²T⁴). 베텔게우스는 온도 효과가 태양의 약 0.15배로 작지만, 반지름이 태양의 약 760배라 반지름 효과가 약 58만 배나 되어 광도가 매우 큽니다. 시리우스 B는 온도 효과가 약 350배로 크지만, 반지름이 태양의 0.0084배(지구 정도)밖에 되지 않아 반지름 효과가 약 0.00007배에 그쳐 광도가 태양의 약 0.025배입니다. 즉, 별의 광도는 온도만으로 정해지지 않고 <b>크기(반지름)</b>의 영향도 매우 큽니다.</p>
+<p><span class="badge">생각해 보기</span> 베텔게우스는 태양보다 표면 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 왜 그럴까요? <button type="button" class="ansbtn" id="realA">답 보기</button></p>
+<p class="ans" id="realAns" hidden>광도는 <b>반지름의 제곱</b>과 <b>표면 온도의 네제곱</b>에 비례합니다(L ∝ R²T⁴). 베텔게우스는 표면 온도가 낮아 온도 효과는 태양의 약 0.15배에 불과하지만, 반지름이 태양의 약 760배라 반지름 효과가 약 58만 배나 됩니다. 그래서 둘을 곱한 광도는 태양의 약 9만 배가 됩니다. 즉, 별의 광도는 온도만으로 정해지지 않고 <b>크기(반지름)</b>의 영향도 매우 큽니다.</p>
 </div></div>
 
 <script>
@@ -460,7 +465,7 @@ function buildThink(TH){
 }
 // 앞의 네 탭은 식 유도(p1), 마지막 탭은 실험실(p2)
 const P1=document.getElementById('p1'),P2=document.getElementById('p2');
-function renderAll(){const lab=st1==5,sec=lab?P2:P1;P1.hidden=lab;P2.hidden=!lab;
+function renderAll(){const lab=st1==5,sec=lab?P2:P1;document.body.dataset.step=st1;P1.hidden=lab;P2.hidden=!lab;
  if(!lab){draw1();renderQ()}
  sec.classList.remove('enter');void sec.offsetWidth;sec.classList.add('enter');
  document.querySelectorAll('.steps button').forEach(b=>b.classList.toggle('on',+b.dataset.s==st1));
