@@ -345,18 +345,16 @@ function loadWorld(json) {
   return land.length > 0;
 }
 
-// ---- 지구는 멈춘 모습(11:18 무렵)으로 그리고, 그림자는 실제 지표 경로를 따라 이동 ----
+// ---- 지구는 멈춘 모습(11:18 무렵)으로 그리고, 그림자는 시각 t에 실제로 덮는 지표를 그 위에 옮겨 그림 ----
 const TV = 11.3, RV = rot(TV);
-function groundOff(t) {
-  const a = axis(t); if (a[0] * a[0] + a[1] * a[1] >= 0.998) return null;
-  const ll = unproj(a[0], a[1], t), u = unit(ll[0], ll[1]), o = projV(u[0], u[1], u[2], RV[0], RV[1], [0, 0, 0]);
-  return [o[0] - a[0], o[1] - a[1]];
-}
-let tA = T1, tB = T0;
-for (let t = T0; t <= T1; t += 1 / 240) if (groundOff(t)) { tA = Math.min(tA, t); tB = Math.max(tB, t); }
-function shadowScreen(t) {
-  const a = axis(t), d = groundOff(Math.min(tB, Math.max(tA, t))) || [0, 0];
-  return [a[0] + d[0], a[1] + d[1]];
+// 시각 t에 태양 쪽에서 본 그림자 속 한 점(그림자 중심에서 dx, dy) → 그 점이 떨어지는 지표 → 멈춘 지구 그림의 화면 좌표
+// (하늘 그림·가림 정도 선과 같은 계산이므로, 그림자 가장자리가 닿는 순간 그 지점에서 일식이 시작됨)
+function shadowPt(t, dx, dy, out) {
+  const a = axis(t); let x = a[0] + dx, y = a[1] + dy; const r2 = x * x + y * y;
+  if (r2 > 0.9999) { const k = 0.99995 / Math.sqrt(r2); x *= k; y *= k; } // 지구 밖으로 나간 부분은 해가 뜨고 지는 경계로
+  const ll = unproj(x, y, t), u = unit(ll[0], ll[1]); projV(u[0], u[1], u[2], RV[0], RV[1], out);
+  if (out[2] < 0) { const k = 1 / Math.hypot(out[0], out[1]); out[0] *= k; out[1] *= k; }
+  out[0] = CX + R * out[0]; out[1] = CY - R * out[1]; return out;
 }
 
 // ---- 그리기 ----
@@ -454,10 +452,16 @@ function draw() {
     ctx.setLineDash([7, 5]); ctx.strokeStyle = 'rgba(255,240,120,0.95)'; ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]);
     window.__eqLabel = lx === null ? null : [lx, ly]; }
   // 반그림자 (가려지는 정도만큼 어둡게)
-  const a = shadowScreen(t), AX = CX + R * a[0], AY = CY - R * a[1];
-  const pg = ctx.createRadialGradient(AX, AY, 0, AX, AY, R * RP);
-  for (let q = 0; q <= 20; q++) { const f = q / 20; pg.addColorStop(f, 'rgba(3,4,16,' + (f >= 1 ? 0.12 : 0.12 + 0.8 * Math.pow(obscD(f * RP), 0.45)).toFixed(3) + ')'); }
-  ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(AX, AY, R * RP, 0, Math.PI * 2); ctx.fill();
+  const a = axis(t), aIn = a[0] * a[0] + a[1] * a[1] < 0.9999;
+  const sp = [0, 0, 0], ringPath = rr => { for (let q = 0; q <= 72; q++) { const th = q / 72 * 2 * Math.PI; shadowPt(t, rr * Math.cos(th), rr * Math.sin(th), sp); q ? ctx.lineTo(sp[0], sp[1]) : ctx.moveTo(sp[0], sp[1]); } ctx.closePath(); };
+  shadowPt(t, 0, 0, sp); const AX = sp[0], AY = sp[1];
+  const NB = 30; // 가운데로 갈수록 진한 띠 여러 겹
+  for (let q = 0; q < NB; q++) {
+    const f0 = q / NB, f1 = (q + 1) / NB;
+    ctx.beginPath(); ringPath(f1 * RP); if (q) ringPath(f0 * RP);
+    ctx.fillStyle = 'rgba(3,4,16,' + (0.12 + 0.8 * Math.pow(obscD((f0 + f1) / 2 * RP), 0.45)).toFixed(3) + ')'; ctx.fill('evenodd');
+  }
+  ctx.beginPath(); ringPath(RP);
   ctx.setLineDash([5, 5]); ctx.strokeStyle = 'rgba(230,215,255,0.75)'; ctx.lineWidth = 1.2; ctx.stroke(); ctx.setLineDash([]);
   // 선들
   if (showLines) {
@@ -478,8 +482,10 @@ function draw() {
       if (ok) { ctx.closePath(); ctx.fill(); } }
   }
   // 본그림자
-  ctx.beginPath(); ctx.arc(AX, AY, Math.max(3.5, R * RU), 0, Math.PI * 2); ctx.fillStyle = '#000'; ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 1; ctx.stroke();
+  if (aIn) {
+    ctx.beginPath(); if (R * RU >= 3.5) ringPath(RU); else ctx.arc(AX, AY, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#000'; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 1; ctx.stroke();
+  }
   // 입체감
   const sh = ctx.createRadialGradient(CX - R * 0.3, CY - R * 0.3, R * 0.2, CX, CY, R * 1.02);
   sh.addColorStop(0, 'rgba(255,255,255,0.12)'); sh.addColorStop(0.75, 'rgba(255,255,255,0)'); sh.addColorStop(1, 'rgba(0,10,40,0.35)');
@@ -515,8 +521,8 @@ function draw() {
   if (a[0] * a[0] + a[1] * a[1] < 0.97) {
     labelAt('본그림자', AX - 8, AY + fs * 1.4, { size: fs * 1.05, weight: 600, align: 'right', color: '#ffe7a0' });
   }
-  { const ang = -2.3, ex = a[0] + RP * 0.92 * Math.cos(ang), ey = a[1] + RP * 0.92 * Math.sin(ang);
-    if (ex * ex + ey * ey < 0.9) labelAt('반그림자', CX + R * ex, CY - R * ey, { size: fs * 1.05, weight: 600, color: '#e8d7ff' }); }
+  { const ang = -2.3, dx = RP * 0.92 * Math.cos(ang), dy = RP * 0.92 * Math.sin(ang), ex = a[0] + dx, ey = a[1] + dy;
+    if (ex * ex + ey * ey < 0.9) { shadowPt(t, dx, dy, sp); labelAt('반그림자', sp[0], sp[1], { size: fs * 1.05, weight: 600, color: '#e8d7ff' }); } }
   if (window.__eqLabel) labelAt('적도', window.__eqLabel[0] + R * 0.07, window.__eqLabel[1] - fs * 0.9, { size: fs, weight: 600, color: '#fff3a0' });
   // 북극점
   { const u = unit(0, 90); projV(u[0], u[1], u[2], cl, sl, tmp);
@@ -611,7 +617,7 @@ function drawSkies(t) {
       // 달 (화면 밖에서부터 자연스럽게 들어옴)
       const mx = cx + m.x * scale, my = cy - m.y * scale;
       g.beginPath(); g.arc(mx, my, rs * K, 0, Math.PI * 2); g.fillStyle = rgb(mix([14, 16, 26], [52, 60, 82], light * 0.4)); g.fill();
-      g.fillStyle = 'rgba(255,255,255,0.88)'; g.font = '600 ' + (rs * 0.16) + 'px "Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillStyle = 'rgba(255,255,255,0.88)'; g.font = '700 ' + (rs * 0.36) + 'px "Noto Sans KR",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
       g.fillText('달', mx, my);
     }
     // 방위 표시

@@ -119,6 +119,8 @@ function earthMap(x,y,r){
  label(x+dx/n*15,y+dy/n*15+4,'북극',11);
 }
 function compass(cx,cy,R){[['동',cx-R-18],['서',cx+R+18]].forEach(([s,x])=>{const t=el('text',{x,y:cy+5,fill:'#fff','font-size':16,'font-weight':700,'text-anchor':'middle'});t.textContent=s})}
+// 하늘 그림의 아래쪽 가운데에 바라보는 방향 표시 (동이 왼쪽, 서가 오른쪽 = 남쪽 하늘)
+function south(cx,cy,R,p){const t=el('text',{x:cx,y:cy+R-12,fill:'#fff','fill-opacity':.85,'font-size':13,'font-weight':600,'text-anchor':'middle'},p);t.textContent='남쪽 하늘'}
 function title(cx,s){const t=el('text',{x:cx,y:214,fill:'#fff','font-size':14,'text-anchor':'middle'});t.textContent=s}
 function penF(){const Ew=S.E-SX,per=sel?180:0,e=.2,r0=150*(1-e*e)/(1+e*Math.cos((180-per)*rad)),m0=Ew-r0,x0=Ew-S.Rr,P0=-Rs+(Rs+S.Ro)*x0/m0;
  return (sel?.54:.57)*S.Rr/P0}   // 지구에 맺히는 반그림자 반지름을 실제 값(지구 반지름의 약 0.55배)에 맞추는 배율
@@ -157,6 +159,8 @@ function skyView(L){
  el('circle',{cx,cy,r:R,fill:'rgb('+col+')'},g);
  el('circle',{cx,cy,r:rs,fill:'#ffc933'},g);
  el('circle',{cx:cx+off,cy,r:rm,fill:'#20222b'},g);
+ const mt=el('text',{x:cx+off,y:cy+1,fill:'#fff','fill-opacity':.88,'font-size':rs*.36,'font-weight':700,'text-anchor':'middle','dominant-baseline':'central'},g);mt.textContent='달';
+ south(cx,cy,R,g);
  el('circle',{cx,cy,r:R+1,fill:'none',stroke:'#fff',opacity:.5});
  compass(cx,cy,R);title(cx,'지구에서 본 태양의 모습');
 }
@@ -176,8 +180,10 @@ function skyMoon(L){
  const g2=el('g',{'clip-path':'url(#cm)'},g);
  el('circle',{cx:cx+off,cy,r:rp,fill:'url(#pg)'},g2);
  if(ru>0){const gk=Math.max(0,Math.min(1,(ft-.85)/.15));   // 달이 본그림자에 85% 이상 들어가야 붉은색이 나타남
-  if(gk<1)el('circle',{cx:cx+off,cy,r:ru,fill:'#05081a',opacity:1-gk},g2);
+  // 본그림자 속 어두운 부분: 밤하늘과 같은 색으로 덮되, 달 모양으로 자르지 않아 달 테두리가 비쳐 보이지 않게 함
+  if(gk<1)el('circle',{cx:cx+off,cy,r:ru,fill:'#05081a',opacity:1-gk},g);
   if(gk>0)el('circle',{cx:cx+off,cy,r:ru,fill:'url(#ug)',opacity:gk},g2);}
+ south(cx,cy,R,g);
  el('circle',{cx,cy,r:R+1,fill:'none',stroke:'#fff',opacity:.5});
  compass(cx,cy,R);title(cx,'지구에서 본 달의 모습');
 }

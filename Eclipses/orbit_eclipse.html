@@ -112,7 +112,7 @@ main{max-width:max(800px,min(1000px,calc(100dvh*1.85 - 473px)))}
 <line x1="70" y1="165" x2="600" y2="165" stroke="#7c5cd6" stroke-width="2" stroke-dasharray="8 6"/>
 <line x1="70" y1="165" x2="600" y2="165" stroke="transparent" stroke-width="16" data-tip="지구의 공전 궤도면|옆에서 보면 평면이 선처럼 보입니다. 태양과 지구는 언제나 이 면 위에 있습니다."/>
 <text x="80" y="155" font-size="18" fill="#6a4cc4" font-weight="700" pointer-events="none">지구의 공전 궤도면</text>
-<polygon points="380,135 600,141 600,189 380,195" fill="#222" fill-opacity=".5" data-tip="지구의 그림자|망(보름달)일 때 달이 이 안에 들어가면 월식이 일어납니다."/>
+<polygon points="380,135 600,159.6 600,170.4 380,195" fill="#222" fill-opacity=".5" data-tip="지구의 그림자|망(보름달)일 때 달이 이 안에 들어가면 월식이 일어납니다."/>
 <polygon id="mSh" fill="#222" fill-opacity=".55" data-tip="달의 그림자|삭(신월)일 때 이 그림자가 지구에 닿으면 일식이 일어납니다."/>
 <g id="gBack"></g>
 <circle cx="380" cy="165" r="30" fill="#2f7fd0" stroke="#123" stroke-width="2" data-tip="지구|"/>
@@ -183,6 +183,9 @@ function buildEvents(){
   SY.forEach(function(s){if(s.d<0||s.d>=TMAX)return;var b=bAt(s.F);
     events.push({k:s.full?'full':'new',n:s.full?++nf:++nn,t:s.d,b:b,e:Math.abs(b)<(s.full?LUN:SOL)})});
 }
+/* 지금(t)과 가장 가까운 삭('new') 또는 망('full')에 식이 일어나는지: 그림들도 아래 기록과 똑같이
+   삭·망이 되는 순간의 달 높이로 판정함 (그 전후 몇 시간 동안 달이 궤도면에 더 가까워도 식으로 치지 않음) */
+function ecl(t,k){var best=null,bd=2;events.forEach(function(e){var d=Math.abs(e.t-t);if(e.k===k&&d<bd){bd=d;best=e}});return!!(best&&best.e)}
 
 /* ---------- 비스듬히 위에서 본 모습 ---------- */
 var cv=$('cv'),ctx=cv.getContext('2d'),W=640,H=440,sc=1,hits=[];
@@ -238,7 +241,7 @@ function draw(){
   function moon(){
     if(!flat){ctx.beginPath();ctx.moveTo(M[0],M[1]);ctx.lineTo(Mb[0],Mb[1]);ctx.setLineDash([3,3]);ctx.strokeStyle='#ff6b5b';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([])}
     if(showMoonCone)cone(m3,0.5,0.022,dx,dy);
-    var red=nearFull&&Math.abs(b)<LUN;
+    var red=nearFull&&ecl(t,'full');
     drawBall(M,7,red?'#f0a080':'#fff',red?'#b4502e':'#ccc',red?'#6a2a1a':'#888',Sp);
   }
   /* 1. 달의 공전 궤도면 중 지구 공전 궤도면 아래쪽 (평면에 비쳐 보임) */
@@ -271,7 +274,7 @@ function draw(){
   drawBall(E,12,'#a8dcff','#2f7fd0','#1d4f8a',Sp);
   if(!below)moon();
   /* 식이 일어나는 순간 */
-  if((nearNew&&Math.abs(b)<SOL)||(nearFull&&Math.abs(b)<LUN)){
+  if((nearNew&&ecl(t,'new'))||(nearFull&&ecl(t,'full'))){
     var lb=nearNew?'일식!':'월식!';ctx.font='700 22px "Noto Sans KR",sans-serif';
     var w=ctx.measureText(lb).width+22,x=Math.min(Math.max(E[0]-w/2,8),W-w-8),y=Math.max(56,E[1]-RM*S*.8-46);
     ctx.fillStyle='#fff';ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w,34,17):ctx.rect(x,y,w,34);ctx.fill();
@@ -296,17 +299,18 @@ function canvasTip(ev){var r=cv.getBoundingClientRect(),x=(ev.clientX-r.left)/sc
   for(var i=0;i<hits.length;i++){var h=hits[i];if(h.c&&Math.hypot(x-h.c[0],y-h.c[1])<h.r)return h.tip;if(h.poly&&inPoly(x,y,h.poly))return h.tip}return null}
 
 /* ---------- 옆에서 본 모습 ---------- */
-var EX=380,CY=165,ER=30,D=170,K=19,MR=10;
+/* K: 달 높이 1°를 21px로. 달 그림자(끝이 뾰족한 삼각형)가 지구에 닿는 높이 ≈ 1.5°(일식 한계),
+   달이 지구의 본그림자에 걸치는 높이 = 1.0°(월식 한계)가 되도록 그림자 크기를 맞춤 */
+var EX=380,CY=165,ER=30,D=170,K=21,MR=10;
 function renderSide(){
   var p=Ph(t),b=bet(t),mx=EX-D*Math.cos(rad(p)),my=CY-b*K,mo=$('sMoon');
   mo.setAttribute('cx',mx);mo.setAttribute('cy',my);
   /* 시계 반대 방향 공전: 신월 뒤에는 보는 사람 쪽(앞)으로 지나감 */
   (Math.sin(rad(p))>0?$('gFront'):$('gBack')).appendChild(mo);
-  var w=wrap(p),nf=Math.abs(wrap(p-180))<4,red=nf&&Math.abs(b)<LUN;
+  var w=wrap(p),nf=Math.abs(wrap(p-180))<4,red=nf&&ecl(t,'full');
   mo.setAttribute('fill',red?'#a3442a':(Math.abs(w)<20?'#888':'#eeeee4'));
   if(Math.abs(w)<20){
-    var hit=Math.abs(b*K)<ER+MR,end=hit?EX:600;
-    $('mSh').setAttribute('points',[mx+','+(my-MR),end+','+(my-MR),end+','+(my+MR),mx+','+(my+MR)].join(' '));$('mSh').style.display='';
+    $('mSh').setAttribute('points',[mx+','+(my-MR),EX+','+my,mx+','+(my+MR)].join(' '));$('mSh').style.display='';
   }else $('mSh').style.display='none';
   var show=Math.abs(b)>=0.05;
   $('hLine').style.display=show?'':'none';$('hTxt').style.display=show?'':'none';
