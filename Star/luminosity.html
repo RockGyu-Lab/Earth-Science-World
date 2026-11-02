@@ -21,9 +21,13 @@ h1{font-size:1.3rem;margin:4px 0 10px}
 svg{width:100%;height:auto;display:block;border-radius:14px;background:#111729;box-shadow:0 0 0 1px var(--frame)}
 .qbox .row label,.qbox .row button{background:var(--bg);border-color:transparent;border-radius:10px;box-shadow:0 1px 2px rgba(20,25,45,.08)}
 .qbox .row button:hover:not(:disabled){border-color:var(--acc)}
-.real{margin:12px 0;padding:16px 18px;border-radius:14px;background:var(--card)}
-.real summary{cursor:pointer;font-weight:700;color:var(--acc)}
-.real p{margin:10px 0;font-size:.93rem;line-height:1.6}
+.real p{margin:0;font-size:.93rem;line-height:1.6}
+.real .badge{margin-right:6px}
+.ov .think.real{width:min(780px,100%)}
+.real .ans{padding:10px 12px;border-radius:10px;background:var(--card)}
+.ansbtn{margin-left:6px;padding:3px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:8px;background:var(--bg);color:var(--acc);cursor:pointer;font-family:inherit}
+/* 실험실 조작 줄 오른쪽 끝의 '실제 별과 비교해 보기' 단추 (누르면 팝업) */
+.row button.realbtn{margin-left:auto;border-color:var(--acc);background:var(--bg);color:var(--acc);font-weight:700}
 .real small{color:var(--sub)}
 .tbl{overflow-x:auto}
 .tbl table{width:100%;border-collapse:collapse;font-size:.9rem;white-space:nowrap}
@@ -132,11 +136,11 @@ input[type=range]{accent-color:var(--acc)}
 .titlebar .pnum{margin:0;flex:none}
 .titlebar h1,header .titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;padding:0;border:0;text-wrap:balance}
 /* 패드 등 세로가 짧은 화면에서도 한 화면에 들어오도록 그림판 높이를 화면 높이에 맞춰 제한
-   (폭은 그대로, 그림만 가운데에서 작아짐. 실험실은 '실제 별과 비교해 보기'를 접은 상태 기준) */
-#q1svg{max-height:max(240px,calc(100vh - 370px))}
-#q1svg{max-height:max(240px,calc(100dvh - 370px))}
-#lab{max-height:max(220px,calc(100vh - 480px))}
-#lab{max-height:max(220px,calc(100dvh - 480px))}
+   (폭은 그대로, 그림만 가운데에서 작아짐. 생각해 보기는 답하기 전 기준) */
+#q1svg{max-height:max(240px,calc(100vh - 320px))}
+#q1svg{max-height:max(240px,calc(100dvh - 320px))}
+#lab{max-height:max(220px,calc(100vh - 410px))}
+#lab{max-height:max(220px,calc(100dvh - 410px))}
 </style></head><body><main>
 <div class="titlebar"><p class="pnum">탐구 03</p><h1>별의 광도</h1><a class="back" href="./Star_index.html">← [별의 물리량] 메뉴로 돌아가기</a></div>
 <div class="steps"><button data-s="1">광도란?</button><button data-s="2">면적과 광도</button><button data-s="3">온도와 광도</button><button data-s="4">별의 광도</button><button data-s="5">별의 광도 실험실</button></div>
@@ -149,24 +153,25 @@ input[type=range]{accent-color:var(--acc)}
 <section id="p2" hidden>
 <svg id="lab" viewBox="0 0 720 300"></svg>
 <div class="qbox">
-<h3><span class="badge">5단계</span>별의 광도 실험실</h3>
+<h3>별의 광도 실험실</h3>
 <div class="cap">2배씩 바꿔 보기 — 누르기 전에 광도가 몇 배가 될지 먼저 예측해 보세요</div>
 <div class="row">
 <button class="k" id="r2">반지름 ×2</button><button class="k" id="rh">반지름 ÷2</button>
 <button class="k" id="t2">온도 ×2</button><button class="k" id="th">온도 ÷2</button>
-<button id="r0">태양으로 되돌리기</button>
+<button id="r0">태양으로 되돌리기</button><button id="realBtn" class="realbtn">실제 별과 비교해 보기</button>
 </div>
 <div class="row"><label>반지름 <input id="rs" type="range" step="0.001"><b id="rv"></b></label><label>표면 온도 <input id="ts" type="range" step="0.001"><b id="tv"></b></label></div>
 <div id="msg">슬라이더나 버튼으로 별의 반지름과 온도를 바꿔 보세요.</div>
 </div>
-<details class="real">
-<summary>실제 별과 비교해 보기</summary>
+</section>
+<!-- 실제 별과 비교해 보기 (팝업) -->
+<div class="ov" id="realOv" hidden><div class="think real" role="dialog" aria-modal="true" aria-label="실제 별과 비교해 보기">
+<div class="think-h"><b class="think-t">실제 별과 비교해 보기</b><button type="button" class="x" id="realX">닫기 ✕</button></div>
 <p>실제 별은 크기 차이가 너무 커서 그림 대신 표로 비교합니다. <small>(대략적인 값이며 자료마다 조금씩 다릅니다)</small></p>
 <div class="tbl"><table><thead><tr><th>별</th><th>반지름<br><small>(R☉)</small></th><th>표면 온도<br><small>(K)</small></th><th>반지름 효과<br><small>(R/R☉)²</small></th><th>온도 효과<br><small>(T/T☉)⁴</small></th><th>광도<br><small>(L☉)</small></th></tr></thead><tbody id="real"></tbody></table></div>
-<p><b>생각해 보기:</b> 베텔게우스는 태양보다 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 반면 시리우스 B는 태양보다 훨씬 뜨거운데도 훨씬 어둡습니다. 왜 그럴까요?</p>
-</details>
-</section>
-<div class="row"><button id="pv">◀ 이전 단계</button><button id="nx" class="k">다음 단계 ▶</button></div>
+<p><span class="badge">생각해 보기</span> 베텔게우스는 태양보다 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 반면 시리우스 B는 태양보다 훨씬 뜨거운데도 훨씬 어둡습니다. 왜 그럴까요? <button type="button" class="ansbtn" id="realA">답 보기</button></p>
+<p class="ans" id="realAns" hidden>광도는 <b>반지름의 제곱</b>과 <b>표면 온도의 네제곱</b>에 비례합니다(L ∝ R²T⁴). 베텔게우스는 온도 효과가 태양의 약 0.15배로 작지만, 반지름이 태양의 약 760배라 반지름 효과가 약 58만 배나 되어 광도가 매우 큽니다. 시리우스 B는 온도 효과가 약 350배로 크지만, 반지름이 태양의 0.0084배(지구 정도)밖에 되지 않아 반지름 효과가 약 0.00007배에 그쳐 광도가 태양의 약 0.025배입니다. 즉, 별의 광도는 온도만으로 정해지지 않고 <b>크기(반지름)</b>의 영향도 매우 큽니다.</p>
+</div></div>
 
 <script>
 const NS="http://www.w3.org/2000/svg",TS=5772;
@@ -273,6 +278,13 @@ const REAL=[['태양',1,5772,'기준 별'],['시리우스 A',1.71,9940,'밤하�
 document.getElementById('real').innerHTML=REAL.map(([n,r,t,s])=>{const a=r*r,b=(t/TS)**4;
  return `<tr><td><b>${n}</b><br><small>${s}</small></td><td>${r}</td><td>${t.toLocaleString('ko-KR')}</td><td>${fmt(a)}</td><td>${fmt(b)}</td><td>${fmt(a*b)}</td></tr>`}).join('');
 mathify(document.querySelector('.real'));
+// 실제 별 비교 팝업: 단추로 열고, 닫기·바깥 누르기·Esc로 닫음. 생각해 보기 답은 [답 보기]로 펼침
+const realOv=document.getElementById('realOv'),realBtn=document.getElementById('realBtn'),realX=document.getElementById('realX');
+realBtn.onclick=()=>{realOv.hidden=false;realX.focus()};
+realX.onclick=()=>{realOv.hidden=true;realBtn.focus()};
+realOv.addEventListener('click',e=>{if(e.target===realOv)realX.onclick()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!realOv.hidden)realX.onclick()});
+document.getElementById('realA').onclick=e=>{const a=document.getElementById('realAns');a.hidden=!a.hidden;e.target.textContent=a.hidden?'답 보기':'답 닫기'};
 render();
 
 /* ===== 탭 ① 광도 식 유도하기 (4단계 문답) ===== */
@@ -292,11 +304,11 @@ const STEP={
  qs:[{q:'<b>1 m²</b>의 표면이 1초 동안 방출하는 에너지는 <b>E = σT⁴</b>입니다(슈테판–볼츠만 법칙). 광원 <b>B</b>의 온도가 광원 <b>A</b>의 <b>2배</b>라면, E<sub>B</sub>는 E<sub>A</sub>의 몇 배인가요?',opts:['2배','4배','8배','16배'],ans:3,
   hints:['방출 에너지는 온도에 그냥 비례하지 않아요. σT⁴의 T 자리에 2T를 넣어 보세요.','(2T)²이 아니라 (2T)⁴입니다. 2를 네 번 곱하면?','2를 세 번이 아니라 네 번 곱해야 해요. 2×2×2×2 = ?',''],
   ok:'정답! E<sub>B</sub> = σ(2T)⁴ = 2⁴ × σT⁴ = <b>16σT⁴</b>, 즉 E<sub>A</sub>의 <b>16배</b>입니다.'}],
- done:'면적이 동일한 경우, 광도는 온도의 네제곱에 비례합니다. → <span class="key">L ∝ T⁴</span><br>1 m²의 광원이 방출하는 에너지는 σT⁴입니다<span style="white-space:nowrap">(슈테판–볼츠만 법칙).</span><span class="key" style="display:block;margin-top:.9rem">'+ARW+'2단계 결론 + 3단계 결론: <span style="white-space:nowrap">광도 L = 면적 × σT⁴</span></span>',sum:true},
+ done:'면적이 동일한 경우, 광도는 온도의 네제곱에 비례합니다. → <span class="key">L ∝ T⁴</span><br>1 m²의 광원이 방출하는 에너지는 σT⁴입니다<span style="white-space:nowrap">(슈테판–볼츠만 법칙).</span><span class="key" style="display:block;margin-top:.9rem">'+ARW+'두 결론을 합치면: <span style="white-space:nowrap">광도 L = 면적 × σT⁴</span></span>',sum:true},
 4:{title:'별의 광도',intro:'',
  qs:[{q:'별은 <b>구형</b>입니다. 반지름이 <b>R</b>, 표면 온도가 <b>T</b>인 별의 광도는 어떻게 표현될까요?',opts:['πR²σT⁴','2πR²σT⁴','4πR²σT⁴','(4/3)πR³σT⁴'],ans:2,
   hints:['πR²은 원의 면적이에요. 별은 구형이므로 구의 표면적을 곱해야 합니다.','2πR²은 반구의 표면적이에요. 별은 표면 전체에서 사방으로 빛을 냅니다.','','(4/3)πR³은 구의 부피예요. 빛은 별의 표면에서 나오므로 표면적을 곱해야 합니다.'],
-  ok:'정답! 3단계에서 광도 L = 면적 × σT⁴였습니다. 구의 표면적은 <b>4πR²</b>이므로 <b>L = 4πR²σT⁴</b>입니다.'}],
+  ok:'정답! 광도 L = 면적 × σT⁴이고, 구의 표면적은 <b>4πR²</b>이므로 <b>L = 4πR²σT⁴</b>입니다.'}],
  done:'<span class="key">'+ARW+'별의 광도 L = 4πR²σT⁴</span>',sum:true}
 };
 const solved={1:[],2:[false],3:[false],4:[false]};
@@ -422,7 +434,7 @@ function draw1(){QS.innerHTML='';gid=0;const H=st1==2?258:st1==3?224:320;QS.setA
 }
 
 function renderQ(){
- const S=STEP[st1];qb.innerHTML=`<h3><span class="badge">${st1}단계</span>${S.title}</h3><div class="intro">${S.intro}</div>`;
+ const S=STEP[st1];qb.innerHTML=`<h3>${S.qs.length?'<span class="badge">생각해 보기</span>':''}${S.title}</h3><div class="intro">${S.intro}</div>`;
  if(S.qs.length){
   const th=document.createElement('div');th.className='think inline';qb.appendChild(th);buildThink(th)}
  if(allSolved(st1)&&S.done){const dn=document.createElement('div');dn.className=S.sum?'sum':'done';dn.innerHTML=S.done;qb.appendChild(dn)}
@@ -446,16 +458,16 @@ function buildThink(TH){
    else fb.innerHTML='<span class="badc">✘ 다시 생각해 보세요.</span> '+(Q.hints[sel]||'')};
   TH.appendChild(q)}
 }
-// 1~4단계는 식 유도(p1), 5단계는 실험실(p2)
+// 앞의 네 탭은 식 유도(p1), 마지막 탭은 실험실(p2)
 const P1=document.getElementById('p1'),P2=document.getElementById('p2');
 function renderAll(){const lab=st1==5,sec=lab?P2:P1;P1.hidden=lab;P2.hidden=!lab;
  if(!lab){draw1();renderQ()}
  sec.classList.remove('enter');void sec.offsetWidth;sec.classList.add('enter');
  document.querySelectorAll('.steps button').forEach(b=>b.classList.toggle('on',+b.dataset.s==st1));
- pv.disabled=st1==1;nx.disabled=st1==5}
+ }
 function go1(s){st1=s;renderAll()}
 document.querySelectorAll('.steps button').forEach(b=>b.onclick=()=>go1(+b.dataset.s));
-pv.onclick=()=>go1(st1-1);nx.onclick=()=>go1(st1+1);
+
 go1(1);
 </script></main><script src="../copyright.js"></script>
 </body></html>
