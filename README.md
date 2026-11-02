@@ -4,6 +4,7 @@
 
 ## 폴더 구성
 - `index.html`: 지구과학 World 메인 화면 (주제별 학습실 목록)
+- `copyright.js`: 모든 페이지 오른쪽 아래에 작게 표시하는 저작권 문구 (문구를 바꿀 때는 이 파일만 고치면 됨)
 - `Eclipses/`: 일식과 월식 학습실
   - `Eclipse_index.html`: 학습실 메뉴
   - `shadow.html`: 탐구 01 · 본그림자, 반그림자, 금환그림자
@@ -39,6 +40,7 @@
 1. 해당 학습실 폴더(`Eclipses/` 또는 `Star/`)에 HTML 파일을 넣습니다.
 2. 자료 상단에 학습실 메뉴로 돌아가는 링크를 둡니다. 예: `<a class="back" href="./Star_index.html">← [별의 물리량] 메뉴로 돌아가기</a>`
 3. 학습실 메뉴 파일에 카드(`<a class="card" href="./새파일.html">…</a>`)를 추가합니다.
+4. `</body>` 바로 앞에 저작권 표시를 넣습니다: `<script src="../copyright.js"></script>`
 
 새 학습실을 만들 때는 폴더와 메뉴 파일을 만들고, 루트 `index.html`의 `subject-list`에 카드를 추가합니다.
 
