@@ -84,18 +84,19 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 .pop li{margin:4px 0}
 /* '실제 진행 모습' 단추: 그림(900×545) 안 '지구에서 본 태양의 모습' 제목 오른쪽에 겹쳐 두고, 그림 폭에 맞춰 크기가 함께 줄어듦 */
 .figwrap{position:relative;container-type:inline-size}
-#realB{position:absolute;left:71.6%;top:38.3%;transform:translateY(-50%);font-size:max(1.5cqw,10px);padding:.25em .8em;border:0;border-radius:.7em;background:var(--acc);color:var(--on-acc);font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.4)}
-#realB:hover{filter:brightness(1.1)}
+#realB,#real2B{position:absolute;left:71.6%;top:38.3%;transform:translateY(-50%);font-size:max(1.5cqw,10px);padding:.25em .8em;border:0;border-radius:.7em;background:var(--acc);color:var(--on-acc);font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+#real2B{left:59.6%}   /* 월식 탭: '지구에서 본 달의 모습' 제목 오른쪽 */
+#realB:hover,#real2B:hover{filter:brightness(1.1)}
 .ov .pop.wide{width:min(900px,100%)}
-#realOv .row{margin:8px 0 0}
-#realOv .row label{flex:1;min-width:220px}
-#realOv .row input{flex:1;width:auto}
+#realOv .row,#real2Ov .row{margin:8px 0 0}
+#realOv .row label,#real2Ov .row label{flex:1;min-width:220px}
+#realOv .row input,#real2Ov .row input{flex:1;width:auto}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
 <div class="titlebar"><p class="pnum">탐구 02</p><h1>일식과 월식의 원리</h1><a class="back" href="./Eclipse_index.html">← [일식과 월식] 메뉴로 돌아가기</a></div>
 <div class="tabs"><button id="t1" class="on">일식: 태양–달–지구(삭 일때)</button><button id="t2">월식: 태양–지구–달(망 일때)</button></div>
-<div class="figwrap"><svg id="sv" viewBox="0 0 900 545"></svg><button type="button" id="realB">실제 진행 모습</button></div>
+<div class="figwrap"><svg id="sv" viewBox="0 0 900 545"></svg><button type="button" id="realB">실제 진행 모습</button><button type="button" id="real2B">실제 진행 모습</button></div>
 <div class="legend">
 <span><i style="background:#e5484d"></i>본그림자 (Umbra)</span>
 <span><i style="background:#8b6cff"></i>반그림자 (Penumbra)</span>
@@ -172,6 +173,19 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
   <li>달도 일주 운동으로 동쪽에서 서쪽으로 움직이지만, 하루에 약 12°씩 동쪽으로 공전하는 움직임 때문에 결과적으로 <b>태양보다 느리게</b> 일주 운동을 하게 됩니다. 그래서 태양을 기준으로 보면 달은 <b>서쪽에서 동쪽으로</b> 이동하면서 태양의 서쪽(오른쪽) 가장자리부터 가리기 시작합니다.</li>
   <li>개기일식이 되면 하늘이 갑자기 어두워지고, 태양 둘레의 <b>코로나</b>와 밝은 별·행성이 보이며, 지평선 근처는 노을처럼 밝게 보입니다. 개기일식은 길어야 몇 분 정도입니다.</li>
   <li>※ 실제 일식은 맨눈이나 선글라스로 보면 안 되고, 반드시 일식 관측용 필터로 보아야 합니다.</li>
+ </ol>
+</div></div>
+<div class="ov" id="real2Ov" hidden><div class="pop wide" role="dialog" aria-modal="true" aria-label="실제 밤하늘에서 본 개기월식의 진행 모습">
+ <div class="pop-h"><b>실제 밤하늘에서 본 개기월식의 진행 모습</b><button type="button" class="x" id="real2X">닫기 ✕</button></div>
+ <svg id="rv2" viewBox="0 0 900 450" role="img" aria-label="남쪽 밤하늘에서 달과 지구 그림자가 동에서 서로 움직이는 동안, 그림자보다 느리게 움직이는 달이 동쪽 가장자리부터 지구 그림자에 들어가 개기월식이 일어나는 모습"></svg>
+ <p class="figcap">춘분 무렵 서울(북위 약 37.5°)에서 자정쯤 개기월식이 일어난다고 가정한 가상의 예입니다. 지구 그림자는 실제로 보이지 않으므로 점선으로 나타냈습니다. 달과 지구 그림자의 크기, 그리고 그림자에 대해 달이 움직이는 거리는 보기 쉽게 크게 과장했습니다(실제 달의 시지름은 약 0.5°, 본그림자의 지름은 달 지름의 약 2.7배).</p>
+ <div class="row"><button type="button" id="rv2Go">▶ 재생</button><button type="button" id="rv2R">■ 처음으로</button><label>시각 <input id="rv2T" type="range" min="0" max="1000" step="1" value="0"><b id="rv2C">21:00</b></label></div>
+ <ol>
+  <li>망일 때 달은 태양의 반대쪽에 있어서, 해가 질 무렵 동쪽에서 떠올라 자정 무렵 남쪽 하늘을 지나 새벽에 서쪽으로 집니다(<b>일주 운동</b>).</li>
+  <li>지구의 그림자도 늘 태양의 반대쪽을 향하므로 태양과 같은 빠르기로 동쪽에서 서쪽으로 일주 운동을 합니다. 달은 하루에 약 12°씩 동쪽으로 공전하는 움직임 때문에 결과적으로 <b>지구 그림자보다 느리게</b> 일주 운동을 하게 됩니다. 그래서 지구 그림자를 기준으로 보면 달은 <b>서쪽에서 동쪽으로</b> 이동하면서 달의 동쪽(왼쪽) 가장자리부터 그림자에 들어갑니다.</li>
+  <li>달이 반그림자에 들어가면 조금 어두워질 뿐이라 알아차리기 어렵고, 본그림자에 들어간 부분이 뚜렷하게 어두워집니다(<b>부분월식</b>).</li>
+  <li>달 전체가 본그림자에 들어가면(<b>개기월식</b>) 달은 사라지지 않고 어두운 붉은색으로 보이며, 달빛이 약해져 주변에 별이 더 많이 보입니다. 개기월식은 1시간 넘게 이어지기도 합니다.</li>
+  <li>※ 월식은 일식과 달리 맨눈으로 보아도 안전합니다.</li>
  </ol>
 </div></div>
 <script>
@@ -354,7 +368,7 @@ function stopRun(){cancelAnimationFrame(raf);run=0;paused=0;startState();
 function setup(k){M=k;S=modes[k];SX=S.SX||70;Rs=S.Rs||60;sel=1;stopRun();
  t1.className=k==1?'on':'';t2.className=k==2?'on':'';
  b0.className='';b1.className='on';
- selrow.style.display=k==1?'':'none';legAn.style.display=k==1?'':'none';deep.style.display=k==2?'':'none';realB.style.display=k==1?'':'none';
+ selrow.style.display=k==1?'':'none';legAn.style.display=k==1?'':'none';deep.style.display=k==2?'':'none';realB.style.display=k==1?'':'none';real2B.style.display=k==2?'':'none';
  upd()}
 function upd(){orbitPos();draw()}
 function step(now){const dt=Math.min(now-last,50);last=now;P+=dt*(+sp.value)/10000;
@@ -381,34 +395,54 @@ setup(1);
 deepA.onclick=()=>{deepOv.hidden=false;deepX.focus()};
 deepX.onclick=()=>{deepOv.hidden=true;deepA.focus()};
 deepOv.addEventListener('click',e=>{if(e.target===deepOv)deepX.onclick()});
-addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!deepOv.hidden)deepX.onclick();if(!realOv.hidden)realX.onclick()});
+addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!deepOv.hidden)deepX.onclick();if(!realOv.hidden)realX.onclick();if(!real2Ov.hidden)real2X.onclick()});
 
-// ---- '실제 진행 모습' 팝업: 남쪽 하늘을 바라볼 때 태양과 달이 움직이며 개기일식이 일어나는 모습 ----
-// 춘분 무렵(적위 0°) 북위 37.5°에서 식의 한가운데가 오전 11시인 경우. 가로·세로 모두 1° = 5px로 펼침 (왼쪽 끝 = 동, 가운데 = 남, 오른쪽 끝 = 서)
-// 달은 태양과 같은 길을 따라 일주 운동을 하되, 태양에 대해 동쪽으로 일정하게 밀려남 (속도와 크기는 과장)
+// ---- '실제 진행 모습' 팝업 공통: 남쪽 하늘을 바라본 풍경 ----
+// 춘분 무렵(적위 0°) 북위 37.5°. 가로·세로 모두 1° = 5px로 펼침 (왼쪽 끝 = 동, 가운데 = 남, 오른쪽 끝 = 서)
+const HZ=370,K=5,LAT=37.5*rad;
+const sky=H=>{const h=H*rad,alt=Math.asin(Math.cos(LAT)*Math.cos(h)),A=Math.atan2(Math.sin(h),Math.sin(LAT)*Math.cos(h));return[450+A/rad*K,HZ-alt/rad*K]};   // 시간각 H(°) → 그림 위치
+const tree=(x,y,h,c)=>`<rect x="${x-h*.045}" y="${y-h*.5}" width="${h*.09}" height="${h*.5}" fill="#5b3e28"/>`+[[0,-.68,.26],[-.2,-.55,.2],[.2,-.56,.21],[-.1,-.82,.18],[.12,-.8,.17]].map(([a,b,r])=>`<circle cx="${x+a*h}" cy="${y+b*h}" r="${r*h}" fill="${c}"/>`).join('');
+const pine=(x,y,h,c)=>`<rect x="${x-h*.03}" y="${y-h*.25}" width="${h*.06}" height="${h*.25}" fill="#4f3522"/>`+[[.15,.5,.3],[.38,.75,.24],[.6,1,.17]].map(([a,b,w])=>`<polygon points="${x-w*h},${y-a*h} ${x+w*h},${y-a*h} ${x},${y-b*h}" fill="${c}"/>`).join('');
+const txt=(x,y,s,a)=>`<text x="${x}" y="${y}" fill="#fff" stroke="#0b1026" stroke-width="3" paint-order="stroke" font-weight="700" ${a||''}>${s}</text>`;
+// 일주 운동 경로(점선)와 진행 방향 꺾쇠
+const skyPath=Hs=>{const p=[];for(let H=-90;H<=90;H+=3)p.push(sky(H).map(v=>v.toFixed(1)).join(','));
+ return`<polyline points="${p.join(' ')}" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round" opacity=".7"/>`+
+  Hs.map(H=>{const a=sky(H-1),b=sky(H+1),[x,y]=sky(H);return`<path d="M-6,-5L2,0L-6,5" fill="none" stroke="#fff" stroke-width="2" opacity=".75" transform="translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${(Math.atan2(b[1]-a[1],b[0]-a[0])/rad).toFixed(1)})"/>`}).join('')};
+// 땅(먼 산, 언덕, 들판, 나무)과 방위 표시. 땅은 id+'Dim' 필터로 밝기를 바꿈 (feFunc의 class = id+'F')
+const skyLand=id=>`<defs><linearGradient id="${id}Gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6aa04f"/><stop offset="1" stop-color="#3f7231"/></linearGradient>`+
+ `<filter id="${id}Dim"><feComponentTransfer>${'RGB'.split('').map(c=>`<feFunc${c} class="${id}F" type="linear" slope="1"/>`).join('')}</feComponentTransfer></filter></defs>`+
+ `<g filter="url(#${id}Dim)">`+
+ `<path d="M0,${HZ}V350Q70,334 140,346Q210,330 290,348Q360,340 420,352Q520,336 610,350Q700,332 790,346Q850,338 900,348V${HZ}Z" fill="#8aa9bf"/>`+
+ `<path d="M0,${HZ}V358Q120,348 240,360Q380,352 520,362Q680,350 800,358Q860,354 900,360V${HZ}Z" fill="#6f9a72"/>`+
+ [300,318,333,452,470,488,505,600,622,640].map((x,i)=>i%3?tree(x,HZ+2,16+(i%4)*3,'#3e6b44'):pine(x,HZ+2,22,'#355f3c')).join('')+
+ `<rect y="${HZ}" width="900" height="${450-HZ}" fill="url(#${id}Gr)"/>`+
+ '<path d="M0,450V405Q150,388 300,402Q450,414 600,398Q760,384 900,400V450Z" fill="#4c8338"/>'+
+ tree(55,432,190,'#2f6b35')+pine(140,428,150,'#2a5a30')+tree(205,420,70,'#3a7d3f')+
+ pine(780,430,165,'#2a5a30')+tree(862,434,205,'#2f6b35')+tree(700,418,60,'#3a7d3f')+'</g>'+
+ [['동',10,'start'],['남동',225,'middle'],['남',450,'middle'],['남서',675,'middle'],['서',890,'end']].map(([d,x,a])=>
+  `<line x1="${x==10?3:x==890?897:x}" y1="${HZ-6}" x2="${x==10?3:x==890?897:x}" y2="${HZ+6}" stroke="#fff" stroke-width="2"/>`+txt(x,HZ+24,d,`font-size="15" text-anchor="${a}"`)).join('')+
+ txt(14,26,'남쪽 하늘을 바라본 모습 (왼쪽이 동, 오른쪽이 서)','font-size="13" fill-opacity=".92"')+
+ txt(886,28,'',`id="${id}St" font-size="15" text-anchor="end"`);
+const skyClock=h=>{const m=(Math.round(h*60)%1440+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')};
+const skyMix=(a,b,k)=>'rgb('+a.map((v,i)=>Math.round(v+(b[i]-v)*k)).join(',')+')';
+
+// ---- 일식 팝업: 남쪽 하늘을 바라볼 때 태양과 달이 움직이며 개기일식이 일어나는 모습 ----
+// 식의 한가운데가 오전 11시인 경우. 달은 태양과 같은 길을 따라 일주 운동을 하되, 태양에 대해 동쪽으로 일정하게 밀려남 (속도와 크기는 과장)
 (()=>{
- const rv=document.getElementById('rv'),HZ=370,K=5,LAT=37.5*rad,RS=22,RM=23.2,T0=-1.75,T1=1.75,TM=11,VR=(RS+RM)/1.4;   // 식의 시작~끝 약 2.8시간
- const sky=H=>{const h=H*rad,alt=Math.asin(Math.cos(LAT)*Math.cos(h)),A=Math.atan2(Math.sin(h),Math.sin(LAT)*Math.cos(h));return[450+A/rad*K,HZ-alt/rad*K]};
- const tree=(x,y,h,c)=>`<rect x="${x-h*.045}" y="${y-h*.5}" width="${h*.09}" height="${h*.5}" fill="#5b3e28"/>`+[[0,-.68,.26],[-.2,-.55,.2],[.2,-.56,.21],[-.1,-.82,.18],[.12,-.8,.17]].map(([a,b,r])=>`<circle cx="${x+a*h}" cy="${y+b*h}" r="${r*h}" fill="${c}"/>`).join('');
- const pine=(x,y,h,c)=>`<rect x="${x-h*.03}" y="${y-h*.25}" width="${h*.06}" height="${h*.25}" fill="#4f3522"/>`+[[.15,.5,.3],[.38,.75,.24],[.6,1,.17]].map(([a,b,w])=>`<polygon points="${x-w*h},${y-a*h} ${x+w*h},${y-a*h} ${x},${y-b*h}" fill="${c}"/>`).join('');
- const txt=(x,y,s,a)=>`<text x="${x}" y="${y}" fill="#fff" stroke="#0b1026" stroke-width="3" paint-order="stroke" font-weight="700" ${a||''}>${s}</text>`;
- let path=[];for(let H=-90;H<=90;H+=3)path.push(sky(H).map(v=>v.toFixed(1)).join(','));
- const chev=[-70,32,62].map(H=>{const a=sky(H-1),b=sky(H+1),[x,y]=sky(H);return`<path d="M-6,-5L2,0L-6,5" fill="none" stroke="#fff" stroke-width="2" opacity=".75" transform="translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${(Math.atan2(b[1]-a[1],b[0]-a[0])/rad).toFixed(1)})"/>`}).join('');
+ const rv=document.getElementById('rv'),RS=22,RM=23.2,T0=-1.75,T1=1.75,TM=11,VR=(RS+RM)/1.4;   // 식의 시작~끝 약 2.8시간
  const stars=[[60,60,1.4],[150,120,1.2],[250,38,1.6],[420,48,1.3],[500,22,1.2],[610,95,1.6],[700,48,1.3],[820,110,1.5],[880,40,1.2],[560,215,1.3],[120,215,1.2],[760,250,1.4],[230,215,2.8]];
  let s='<defs><linearGradient id="rvSky" x1="0" y1="0" x2="0" y2="1"><stop id="rvS0" offset="0"/><stop id="rvS1" offset="1"/></linearGradient>'+
   '<linearGradient id="rvGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a4a" stop-opacity="0"/><stop offset="1" stop-color="#ffb066" stop-opacity=".8"/></linearGradient>'+
-  '<linearGradient id="rvGr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6aa04f"/><stop offset="1" stop-color="#3f7231"/></linearGradient>'+
   '<radialGradient id="rvSun"><stop offset="0" stop-color="#fffdf0"/><stop offset=".7" stop-color="#fff0a8"/><stop offset="1" stop-color="#ffd54a"/></radialGradient>'+
   '<radialGradient id="rvHalo"><stop offset=".3" stop-color="#fff8d6" stop-opacity=".9"/><stop offset="1" stop-color="#fff8d6" stop-opacity="0"/></radialGradient>'+
   '<radialGradient id="rvCor"><stop offset=".4" stop-color="#fff" stop-opacity=".95"/><stop offset=".55" stop-color="#eef2ff" stop-opacity=".55"/><stop offset="1" stop-color="#cfd8ff" stop-opacity="0"/></radialGradient>'+
   '<radialGradient id="rvRay"><stop offset="0" stop-color="#eef2ff" stop-opacity=".75"/><stop offset="1" stop-color="#eef2ff" stop-opacity="0"/></radialGradient>'+
   '<radialGradient id="rvDia"><stop offset="0" stop-color="#fff"/><stop offset=".3" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>'+
-  `<clipPath id="rvCs"><circle id="rvCsc" r="${RS}"/></clipPath>`+
-  '<filter id="rvDim"><feComponentTransfer><feFuncR class="rvF" type="linear" slope="1"/><feFuncG class="rvF" type="linear" slope="1"/><feFuncB class="rvF" type="linear" slope="1"/></feComponentTransfer></filter></defs>'+
+  `<clipPath id="rvCs"><circle id="rvCsc" r="${RS}"/></clipPath></defs>`+
   '<rect width="900" height="450" fill="url(#rvSky)"/>'+
   '<g id="rvStar">'+stars.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#fff"/>`).join('')+'</g>'+
   `<rect id="rvGl" y="250" width="900" height="${HZ-250}" fill="url(#rvGlow)"/>`+
-  `<polyline points="${path.join(' ')}" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round" opacity=".7"/>`+chev+
+  skyPath([-70,32,62])+
   txt(728,168,'태양이 지나는 길 (동 → 서)','font-size="13" fill-opacity=".9"')+
   // 코로나: 가운데 원 + 몇 갈래의 긴 줄기 (태양 위치에 맞춰 옮김)
   `<g id="rvCo"><circle r="${RS*2.7}" fill="url(#rvCor)"/>`+[[12,3.4,7],[70,2.6,5],[145,3.1,6],[105,2.2,4]].map(([a,l,w])=>`<ellipse rx="${RS*l}" ry="${w}" fill="url(#rvRay)" transform="rotate(${a})"/>`).join('')+'</g>'+
@@ -417,23 +451,10 @@ addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!deepOv.hidden)deep
   '<g id="rvDi"><circle r="17" fill="url(#rvDia)"/><path d="M-30,0H30M0,-22V22" stroke="#fff" stroke-width="1.4" opacity=".8"/></g>'+
   `<circle id="rvMo" r="${RM}" fill="none" stroke="#fff" stroke-width="1.6" stroke-dasharray="5 4"/>`+
   txt(0,0,'태양','id="rvLs" font-size="14" text-anchor="middle"')+txt(0,0,'달 (삭)','id="rvLm" font-size="14" text-anchor="middle"')+
-  // 땅: 먼 산, 가까운 언덕, 들판, 나무 (일식이 깊어지면 함께 어두워짐)
-  '<g filter="url(#rvDim)">'+
-  `<path d="M0,${HZ}V350Q70,334 140,346Q210,330 290,348Q360,340 420,352Q520,336 610,350Q700,332 790,346Q850,338 900,348V${HZ}Z" fill="#8aa9bf"/>`+
-  `<path d="M0,${HZ}V358Q120,348 240,360Q380,352 520,362Q680,350 800,358Q860,354 900,360V${HZ}Z" fill="#6f9a72"/>`+
-  [300,318,333,452,470,488,505,600,622,640].map((x,i)=>i%3?tree(x,HZ+2,16+(i%4)*3,'#3e6b44'):pine(x,HZ+2,22,'#355f3c')).join('')+
-  `<rect y="${HZ}" width="900" height="${450-HZ}" fill="url(#rvGr)"/>`+
-  '<path d="M0,450V405Q150,388 300,402Q450,414 600,398Q760,384 900,400V450Z" fill="#4c8338"/>'+
-  tree(55,432,190,'#2f6b35')+pine(140,428,150,'#2a5a30')+tree(205,420,70,'#3a7d3f')+
-  pine(780,430,165,'#2a5a30')+tree(862,434,205,'#2f6b35')+tree(700,418,60,'#3a7d3f')+'</g>'+
-  [['동',10,'start'],['남동',225,'middle'],['남',450,'middle'],['남서',675,'middle'],['서',890,'end']].map(([d,x,a])=>
-   `<line x1="${x==10?3:x==890?897:x}" y1="${HZ-6}" x2="${x==10?3:x==890?897:x}" y2="${HZ+6}" stroke="#fff" stroke-width="2"/>`+txt(x,HZ+24,d,`font-size="15" text-anchor="${a}"`)).join('')+
-  txt(14,26,'남쪽 하늘을 바라본 모습 (왼쪽이 동, 오른쪽이 서)','font-size="13" fill-opacity=".92"')+
-  txt(886,28,'','id="rvSt" font-size="15" text-anchor="end"');
+  skyLand('rv');   // 땅은 일식이 깊어지면 함께 어두워짐
  rv.innerHTML=s;
- const $=id=>document.getElementById(id),at=(e,o)=>{for(const k in o)e.setAttribute(k,o[k])};
+ const $=id=>document.getElementById(id),at=(e,o)=>{for(const k in o)e.setAttribute(k,o[k])},mix=skyMix;
  const E={S0:$('rvS0'),S1:$('rvS1'),St:$('rvStar'),Gl:$('rvGl'),Co:$('rvCo'),Ha:$('rvHa'),Su:$('rvSu'),Cs:$('rvCsc'),Mc:$('rvMc'),Md:$('rvMd'),Di:$('rvDi'),Mo:$('rvMo'),Ls:$('rvLs'),Lm:$('rvLm'),Tx:$('rvSt')},F=rv.querySelectorAll('.rvF');
- const mix=(a,b,k)=>'rgb('+a.map((v,i)=>Math.round(v+(b[i]-v)*k)).join(',')+')';
  let p=0,run=0,raf=0,last=0,g=9,tot=0;
  function draw(){
   const t=T0+(T1-T0)*p,H=(TM-12+t)*15,[sx,sy]=sky(H),a=sky(H-.2),b=sky(H+.2),n=Math.hypot(b[0]-a[0],b[1]-a[1]),wx=(b[0]-a[0])/n,wy=(b[1]-a[1])/n;
@@ -450,7 +471,7 @@ addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!deepOv.hidden)deep
   at(E.Ls,{x:sx,y:sy-RS-12});at(E.Lm,{x:mx,y:my+RM+20});
   E.Tx.textContent=tot?'개기일식: 태양이 완전히 가려짐':cov>0?`부분일식: 태양이 가려진 정도 ${Math.round(cov*100)}%`:t<0?'일식 시작 전':'일식이 끝남';
   E.Tx.setAttribute('fill',tot?'#ffe28a':'#fff');
-  const m=Math.round((TM+t)*60);rvC.textContent=String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+  rvC.textContent=skyClock(TM+t);
   rvT.value=Math.round(p*1000)}
  function step(now){const dt=Math.min(now-last,50);last=now;
   p+=dt/24000*(tot?.1:g<4?.35:1);   // 개기일식과 그 직전·직후는 천천히
@@ -463,6 +484,67 @@ addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!deepOv.hidden)deep
  realB.onclick=()=>{realOv.hidden=false;p=0;draw();play();realX.focus()};
  realX.onclick=()=>{stop();realOv.hidden=true;realB.focus()};
  realOv.addEventListener('click',e=>{if(e.target===realOv)realX.onclick()});
+ draw();
+})();
+
+// ---- 월식 팝업: 남쪽 밤하늘에서 달과 지구 그림자가 움직이며 개기월식이 일어나는 모습 ----
+// 식의 한가운데가 자정인 경우. 지구 그림자(태양의 반대쪽)는 태양과 같은 빠르기로 일주 운동을 하고, 달은 그림자에 대해 동쪽으로 일정하게 밀려남
+// 크기 비율: 본그림자 반지름 = 달의 2.7배, 반그림자 반지름 = 달의 4.8배 (크기와 속도는 과장)
+(()=>{
+ const rv=document.getElementById('rv2'),MR=19,U=MR*2.7,P=MR*4.8,B=MR*.35,T0=-3,T1=3,TM=0,VR=(U+MR)/1.75;   // 부분월식 시작~끝 약 3.5시간, B: 달이 그림자 중심에서 비켜 지나는 거리
+ let sd=7;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
+ const stars=Array.from({length:80},(_,i)=>[rnd()*900,rnd()*330,i<14?1.3+rnd()*.9:.6+rnd()*.7]);   // 앞의 14개는 늘 보이는 밝은 별
+ let s='<defs><linearGradient id="rv2Sky" x1="0" y1="0" x2="0" y2="1"><stop id="rv2S0" offset="0"/><stop id="rv2S1" offset="1"/></linearGradient>'+
+  '<radialGradient id="rv2Halo"><stop offset=".2" stop-color="#dfe8ff" stop-opacity=".55"/><stop offset="1" stop-color="#dfe8ff" stop-opacity="0"/></radialGradient>'+
+  `<radialGradient id="rv2Pg"><stop offset="0" stop-opacity=".5"/><stop offset="${(U/P).toFixed(3)}" stop-opacity=".5"/><stop offset="1" stop-opacity="0"/></radialGradient>`+
+  '<radialGradient id="rv2Ug">'+[[0,'#8f1c0e',.9],[.45,'#b5321a',.88],[.8,'#d0622a',.85],[.95,'#e2893e',.8],[1,'#e8a866',.5]].map(([o,c,a])=>`<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')+'</radialGradient>'+
+  `<clipPath id="rv2Cm"><circle id="rv2Cmc" r="${MR}"/></clipPath></defs>`+
+  '<rect width="900" height="450" fill="url(#rv2Sky)"/>'+
+  '<g>'+stars.slice(0,14).map(([x,y,r])=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="#fff"/>`).join('')+'</g>'+
+  '<g id="rv2Fs">'+stars.slice(14).map(([x,y,r])=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="#dfe6ff"/>`).join('')+'</g>'+
+  skyPath([-70,62])+
+  txt(14,48,'점선: 달과 지구 그림자가 지나는 길 (동 → 서)','font-size="12.5" fill-opacity=".85" font-weight="600"')+
+  `<circle id="rv2Ha" r="${MR*4}" fill="url(#rv2Halo)"/>`+
+  // 달: 바탕 + 바다(어두운 무늬). 그 위에 달 모양으로 자른 반그림자·본그림자 색
+  '<g id="rv2Mg"><circle r="'+MR+'" fill="#eceadf"/>'+[[-.32,-.25,.28],[.3,-.35,.18],[.22,.3,.3],[-.4,.38,.15],[.05,-.05,.15]].map(([a,b,r])=>`<circle cx="${a*MR}" cy="${b*MR}" r="${r*MR}" fill="#b9b5a6" opacity=".55"/>`).join('')+'</g>'+
+  '<g clip-path="url(#rv2Cm)">'+
+   `<circle id="rv2Pc" r="${P}" fill="url(#rv2Pg)"/><circle id="rv2Uk" r="${U}" fill="#22120f"/><circle id="rv2Ur" r="${U}" fill="url(#rv2Ug)"/></g>`+
+  // 지구 그림자: 실제로는 보이지 않으므로 점선으로 (색은 위쪽 그림의 반그림자·본그림자 색과 같은 계열)
+  `<circle id="rv2Po" r="${P}" fill="none" stroke="#b9a6ff" stroke-width="1.6" stroke-dasharray="6 5" opacity=".85"/>`+
+  `<circle id="rv2Uo" r="${U}" fill="none" stroke="#ff8a8a" stroke-width="1.6" stroke-dasharray="6 5" opacity=".9"/>`+
+  txt(0,0,'반그림자','id="rv2Lp" font-size="12.5" text-anchor="middle" fill="#d6caff"')+txt(0,0,'본그림자','id="rv2Lu" font-size="12.5" text-anchor="middle" fill="#ffb3b3"')+
+  txt(0,0,'달 (망)','id="rv2Lm" font-size="14" text-anchor="middle"')+
+  skyLand('rv2');   // 땅은 달빛을 받아 희미하게 보이고, 월식이 깊어지면 더 어두워짐
+ rv.innerHTML=s;
+ const $=id=>document.getElementById(id),at=(e,o)=>{for(const k in o)e.setAttribute(k,o[k])},mix=skyMix;
+ const E={S0:$('rv2S0'),S1:$('rv2S1'),Fs:$('rv2Fs'),Ha:$('rv2Ha'),Mg:$('rv2Mg'),Cm:$('rv2Cmc'),Pc:$('rv2Pc'),Uk:$('rv2Uk'),Ur:$('rv2Ur'),Po:$('rv2Po'),Uo:$('rv2Uo'),Lp:$('rv2Lp'),Lu:$('rv2Lu'),Lm:$('rv2Lm'),Tx:$('rv2St')},F=rv.querySelectorAll('.rv2F');
+ let p=0,run=0,raf=0,last=0;
+ function draw(){
+  const t=T0+(T1-T0)*p,H=(TM+t)*15,[cx,cy]=sky(H),a=sky(H-.2),b=sky(H+.2),n=Math.hypot(b[0]-a[0],b[1]-a[1]),wx=(b[0]-a[0])/n,wy=(b[1]-a[1])/n;
+  const nx=wy>0?wy:-wy,ny=wy>0?-wx:wx;   // 진행 방향에 수직이면서 위쪽(북쪽)을 향하는 방향
+  const sm=-VR*t,mx=cx+wx*sm+nx*B,my=cy+wy*sm+ny*B,d=Math.hypot(sm,B);   // sm>0: 달이 그림자의 서쪽(진행 방향 앞)에 있음
+  const A=Math.PI*MR*MR,fp=Math.min(1,ovl(MR,P,d)/A),ft=Math.min(1,ovl(MR,U,d)/A),tot=d<=U-MR;
+  const light=Math.max(.03,1-.3*(fp-ft)-.97*ft),dk=(1-light)/.97,gk=Math.max(0,Math.min(1,(ft-.85)/.15));   // gk: 본그림자에 85% 이상 들어가야 붉은색이 나타남
+  at(E.S0,{'stop-color':mix([16,28,62],[4,7,18],dk)});at(E.S1,{'stop-color':mix([36,54,94],[12,18,38],dk)});
+  E.Fs.setAttribute('opacity',.15+.85*dk);
+  const lv=.4+.6*light;[.3,.36,.55].forEach((k,i)=>F[i].setAttribute('slope',k*lv));   // 땅: 달빛 아래의 푸르스름하고 어두운 색 (R·G·B 밝기 배율)
+  at(E.Ha,{cx:mx,cy:my,opacity:light});at(E.Mg,{transform:`translate(${mx},${my})`});at(E.Cm,{cx:mx,cy:my});
+  [E.Pc,E.Uk,E.Ur,E.Po,E.Uo].forEach(e=>at(e,{cx,cy}));
+  E.Uk.setAttribute('opacity',.93*(1-gk));E.Ur.setAttribute('opacity',gk);
+  at(E.Lp,{x:cx,y:cy-P-7});at(E.Lu,{x:cx,y:cy-U-7});at(E.Lm,{x:mx,y:my+MR+19});
+  E.Tx.textContent=tot?'개기월식: 달 전체가 본그림자 속에 있음':ft>0?`부분월식: 달이 본그림자에 가려진 정도 ${Math.round(ft*100)}%`:fp>0?'반그림자 속: 달이 아주 조금 어두워짐':t<0?'월식 시작 전':'월식이 끝남';
+  E.Tx.setAttribute('fill',tot?'#ffb59a':'#fff');
+  rv2C.textContent=skyClock(TM+t);rv2T.value=Math.round(p*1000)}
+ function step(now){const dt=Math.min(now-last,50);last=now;p+=dt/30000;
+  if(p>=1){p=1;stop()}else raf=requestAnimationFrame(step);draw()}
+ function play(){if(p>=1)p=0;run=1;last=performance.now();rv2Go.textContent='⏸ 멈춤';raf=requestAnimationFrame(step)}
+ function stop(){run=0;cancelAnimationFrame(raf);rv2Go.textContent='▶ 재생'}
+ rv2Go.onclick=()=>run?stop():play();
+ rv2R.onclick=()=>{stop();p=0;draw()};
+ rv2T.oninput=()=>{stop();p=rv2T.value/1000;draw()};
+ real2B.onclick=()=>{real2Ov.hidden=false;p=0;draw();play();real2X.focus()};
+ real2X.onclick=()=>{stop();real2Ov.hidden=true;real2B.focus()};
+ real2Ov.addEventListener('click',e=>{if(e.target===real2Ov)real2X.onclick()});
  draw();
 })();
 </script></main><script src="../copyright.js"></script>
