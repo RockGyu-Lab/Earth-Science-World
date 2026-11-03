@@ -14,6 +14,9 @@ Eclipses/                  일식과 월식 학습실
 Star/                      별의 물리량 학습실
   Star_index.html          학습실 메뉴 (탐구 01~03 카드)
   radiation.html, spectrum.html, luminosity.html
+Evol/                      H-R 도와 별의 진화 학습실
+  Evol_index.html          학습실 메뉴 (탐구 01~02 카드)
+  HR-diagram.html, evolution.html
 ```
 - 빌드 도구나 패키지 없이, 각 자료는 CSS와 JS가 들어 있는 HTML 파일 하나입니다.
 - 학습실 메뉴 파일 이름은 `<폴더명>_index.html` 형식입니다(`Eclipse_index.html`은 예외로 단수형).

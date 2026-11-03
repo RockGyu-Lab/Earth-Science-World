@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>별의 진화</title>
+<style>
+/* HR-diagram.html(탐구 01)과 같은 규칙
+   색: 남색 하나를 기본 강조색으로, 온도 값은 호박색 / 상자: 옅은 회색 판 / 모서리: 판 14px, 버튼 10px / 그림판: 밤하늘 남색 */
+:root{--bg:#fff;--fg:#1b1f2a;--card:#f3f4f8;--bd:#d5d8e2;--bline:#d9d9d6;--bcard:#fff;--bfg:#1c1c1c;--acc:#5468d4;--acc-bg:#eef0fc;--acc-bd:#c3caf2;--on-acc:#fff;--en:#b36b00;--frame:transparent;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--en:#f5b942;--frame:#2c3247}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--en:#f5b942;--frame:#2c3247}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
+button,input{font-family:inherit}
+main{max-width:960px;margin:0 auto;padding:14px}
+/* 제목 줄: [탐구 NN] 제목 …… [← 메뉴로 돌아가기] (좁은 화면에서는 줄바꿈) */
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
+.pnum{margin:0;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;text-wrap:balance}
+.back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--bline)}
+.intro{margin:0 0 8px;font-size:.93rem}
+/* 학습 메뉴 탭 (radiation.html, HR-diagram.html과 같은 모양) */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.tabs button{flex:1 1 140px;padding:9px 8px;font-size:.95rem;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.note{margin-bottom:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem}
+.note .nh{font-weight:700;color:var(--acc)}
+.note p{margin:2px 0 0}
+/* 탭을 바꿀 때 내용이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+/* 그림판: 패드처럼 세로가 짧은 화면에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한 (위아래 칸이 약 300px) */
+svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
+section svg{max-height:max(300px,calc(100vh - 300px))}
+section svg{max-height:max(300px,calc(100dvh - 300px))}
+@media (max-width:640px){.tabs button{flex-basis:40%}}
+/* ① 전주계열 단계: 두 그림을 나란히 (좁은 화면에서는 위아래로), 아래에 조작 줄 */
+.duo{display:grid;grid-template-columns:500fr 560fr;gap:8px}
+.duo svg{max-height:max(260px,calc(100vh - 344px))}
+.duo svg{max-height:max(260px,calc(100dvh - 344px))}
+/* 생각해 보기: 정식 사이트(eclipses.html 심화 질문, luminosity.html)와 같은 형식
+   상자 없이 한 줄에 [꼬리표(남색)] 질문 [답 보기(남색 테두리)] → 누르면 팝업에 질문과 답 */
+.note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
+.note.ask p{margin:0;font-weight:600}
+.tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
+.open-think:hover{background:var(--card)}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
+.think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg);font-family:inherit}
+.think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
+.think .exp{margin:0;font-size:.93rem;line-height:1.6}
+/* 패드 세로 화면처럼 세로로 긴 화면: 두 그림을 위아래로 놓고 각각 남은 높이의 절반씩 */
+@media (max-aspect-ratio:4/5){.duo{grid-template-columns:1fr}.duo svg{max-height:max(220px,calc((100vh - 350px)/2))}.duo svg{max-height:max(220px,calc((100dvh - 350px)/2))}}
+#pnote{min-height:calc(3.1em + 18px)}
+.note .ex{font-weight:500;color:var(--fg);opacity:.75;font-size:.88rem}
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card)}
+.seg{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700}
+/* 탭 안에서 고르는 단추(질량, 반응 종류, 소메뉴)는 모두 라벤더(연보라) (위쪽 큰 탭의 남색과 구분) */
+.seg .bs{display:flex;flex-wrap:wrap;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
+.seg button{padding:6px 11px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.88rem;font-weight:600;cursor:pointer}
+.seg button+button{border-left:1px solid var(--sub-bd)}
+.seg button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
+.pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;min-width:5.6em}
+#prog{flex:1;min-width:140px;accent-color:var(--acc)}
+.chk{display:flex;align-items:center;gap:6px;font-size:.88rem;cursor:pointer}
+.chk input{accent-color:var(--acc);margin:0}
+.unit{font-size:.8rem;opacity:.75;white-space:nowrap}
+[data-s]{cursor:pointer}
+/* ② 주계열 단계: 왼쪽 정역학 평형(좁게), 오른쪽 수소 핵융합(넓게). 각 그림 아래에 조작 줄 */
+.duo2{display:grid;grid-template-columns:.78fr 1.22fr;gap:8px}
+.col{display:flex;flex-direction:column;gap:6px;min-width:0}
+.col svg{max-height:max(220px,calc(100vh - 330px))}
+.col svg{max-height:max(220px,calc(100dvh - 330px))}
+.side{background:var(--card);border-radius:14px;padding:6px 10px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;min-height:42px}
+.side .st{font-size:.88rem;color:var(--acc);white-space:nowrap}
+.sbtn{display:flex;gap:5px}
+.sbtn.row{flex-direction:row;flex-wrap:wrap}
+.sbtn button{padding:4px 9px;border:1px solid var(--sub-bd);border-radius:10px;background:var(--sub-bg);color:var(--sub-tx);font-size:.82rem;font-weight:600;cursor:pointer;line-height:1.3}
+.sbtn button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub);font-weight:700}
+.stp{display:flex;align-items:center;gap:6px;font-size:.84rem;white-space:nowrap}
+.stp button{width:30px;padding:3px 0;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer}
+.side .pb{padding:4px 12px;font-size:.84rem;min-width:0}
+.side .cap{font-size:.84rem;opacity:.85}
+@media (max-width:640px){.duo2{grid-template-columns:1fr}}
+/* ③ 후주계열 단계: 넓은 그림 하나 + 소메뉴와 단계 조작 줄 */
+#pmv{max-height:max(218px,calc(100vh - 430px))}
+#pmv{max-height:max(218px,calc(100dvh - 430px))}
+#pmnote{min-height:calc(3.1em + 18px)}
+/* 소메뉴를 바꿔도 아래 생각해 보기 자리가 같도록 조작 줄 높이를 '주계열 이후 변화'(단계 단추가 있는 줄)에 맞춤 */
+#p3 .ctl{min-height:50px}
+/* 거성과 초거성: 조작 줄에 두 별의 수명 비교를 한 줄로 */
+#pmhint{white-space:normal;font-size:.86rem;opacity:.9}
+/* 좁은 화면에서는 수명 설명이 두 줄이 되므로 조작 줄 높이를 그에 맞춤 */
+@media (max-width:900px){#p3 .ctl{min-height:57px}}
+/* 탭 안의 소메뉴 단추: 위쪽 큰 탭(남색)과 구분되는 라벤더(연보라) */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+.subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.subtabs button{padding:5px 14px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.88rem;font-weight:700;cursor:pointer}
+.subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+#pmv [data-n]{cursor:pointer}
+/* ④ 별의 진화와 순환 */
+#cyv{max-height:max(200px,calc(100vh - 328px))}
+#cyv{max-height:max(200px,calc(100dvh - 328px))}
+/* 그림 왼쪽 위에 겹쳐 놓는 작은 '순환 따라가기' 단추 (그림 안 위쪽 여백 자리) */
+.cyfig{position:relative}
+.cyb{position:absolute;left:10px;top:8px;display:flex;align-items:center;gap:10px}
+.cyb .pb{padding:3px 10px;font-size:.8rem;min-width:0}
+.cyb span{font-size:.78rem;font-weight:600;color:#a9b1cc}
+.ask2{margin-top:6px}
+#cyv [data-c]{cursor:pointer}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
+<div class="titlebar"><p class="pnum">탐구 02</p><h1>별의 진화</h1><a class="back" href="./Evol_index.html">← [H-R 도와 별의 진화] 메뉴로 돌아가기</a></div>
+<p class="intro">별은 성운에서 태어나 각 단계를 거치며 살아가는 동안 표면 온도와 광도가 변하며, 그에 따라 <b>H-R 도 위에서의 위치</b>도 달라집니다.</p>
+<div class="tabs" role="tablist" aria-label="학습 메뉴">
+ <button role="tab" id="tab1" aria-controls="p1" aria-selected="true">전주계열 단계</button>
+ <button role="tab" id="tab2" aria-controls="p2" aria-selected="false" tabindex="-1">주계열 단계</button>
+ <button role="tab" id="tab3" aria-controls="p3" aria-selected="false" tabindex="-1">후주계열 단계</button>
+ <button role="tab" id="tab4" aria-controls="p4" aria-selected="false" tabindex="-1">별의 진화와 순환</button>
+</div>
+
+<!-- ① 전주계열 단계: 왼쪽 별의 탄생 그림, 오른쪽 H-R 도 경로 (재생·슬라이더 하나로 함께 움직임) -->
+<section id="p1" role="tabpanel" aria-labelledby="tab1">
+ <div class="note" id="pnote"></div>
+ <div class="duo"><svg id="bv" viewBox="0 0 500 440"></svg><svg id="hv" viewBox="0 0 560 440"></svg></div>
+ <div class="ctl">
+  <div class="seg">질량<div class="bs" id="msel"></div></div>
+  <label class="chk"><input type="checkbox" id="allm"> 모두 보기</label>
+  <button id="play" class="pb">▶ 재생</button>
+  <input type="range" id="prog" min="0" max="1000" value="0" aria-label="진화 진행 정도">
+  <span class="unit" title="태양의 질량을 1로 나타낸 단위">M☉ = 태양 질량</span>
+ </div>
+ <!-- 생각해 보기: 꼬리표 + 질문 + [답 보기] → 팝업 (정식 사이트 eclipses.html 심화 질문과 같은 형식) -->
+ <div class="note ask"><span class="tag">생각해 보기</span><p>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요? (모두 보기 체크 후 재생)</p><button type="button" class="open-think" id="thb1">답 보기</button></div>
+ <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">질량이 클수록 짧아집니다.</p>
+  <p class="exp">질량이 큰 원시별일수록 빠르게 수축하여 중심부 온도가 빨리 올라가므로 주계열에 더 빨리 도달합니다. (15 M☉ 약 6만 년, 1 M☉ 약 5,000만 년)</p>
+ </div></div>
+</section>
+
+<!-- ② 주계열 단계: 위 정역학 평형, 아래 수소 핵융합 반응 -->
+<section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
+ <div class="note"><div class="nh">주계열 단계 <span class="ex">· 중심부에서 수소 핵융합 반응이 일어나며 크기가 일정하게 유지되는 단계</span></div><p>별이 일생의 대부분을 보내는 단계로, 중력과 기체 압력 차에 의한 힘이 평형을 이룹니다.</p></div>
+ <div class="duo2">
+  <div class="col"><svg id="eqv" viewBox="0 0 480 440"></svg>
+   <div class="side"><b class="st">정역학 평형</b><span class="cap">중력과 기체 압력 차에 의한 힘이 평형을 이룸</span></div></div>
+  <div class="col"><svg id="fuv" viewBox="0 0 640 380"></svg>
+   <div class="side"><div class="sbtn row" id="fmode"><button data-v="pp" class="on">p-p 연쇄</button><button data-v="cno">CNO 순환</button></div>
+    <div class="stp"><button id="fprev" aria-label="이전 단계">◀</button><b id="fstep"></b><button id="fnext" aria-label="다음 단계">▶</button></div>
+    <button class="pb" id="fplay">▶ 자동 진행</button></div></div>
+ </div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?</p><button type="button" class="open-think" id="thb2">답 보기</button></div>
+ <div class="ov" id="ov2" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?</b><button type="button" class="x" id="thx2" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">4H → He + 에너지</p>
+  <p class="exp">수소 원자핵 4개가 헬륨 원자핵 1개로 바뀌며, 이때 줄어든 질량(질량 결손)이 에너지로 방출됩니다(E = mc²). p-p 연쇄 반응과 CNO 순환 반응 모두 결과는 같습니다.</p>
+ </div></div>
+</section>
+
+<!-- ③ 후주계열 단계: 소메뉴 셋 (주계열 이후 변화 / 거성과 초거성의 내부 구조 / 질량에 따른 진화 경로) -->
+<section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
+ <div class="note" id="pmnote"></div>
+ <!-- 소메뉴: 위쪽 탭(남색)과 구분되도록 라벤더(연보라), 그림 위에 둠 -->
+ <div class="subtabs" id="pmsel"><button data-v="0" class="on">주계열 이후 변화</button><button data-v="1">거성과 초거성의 내부 구조</button><button data-v="2">질량에 따른 진화 경로</button></div>
+ <svg id="pmv" viewBox="0 0 960 360"></svg>
+ <div class="ctl">
+  <div class="stp" id="pmstp"><button id="pmprev" aria-label="이전 단계">◀</button><b id="pmstep"></b><button id="pmnext" aria-label="다음 단계">▶</button></div>
+  <button class="pb" id="pmplay">▶ 자동 진행</button>
+  <span class="unit" id="pmhint" hidden>그림의 각 단계를 눌러 보세요.</span>
+ </div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</p><button type="button" class="open-think" id="thb4">답 보기</button></div>
+ <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</b><button type="button" class="x" id="thx4" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">별의 내부에서 핵융합으로 만들어지고, 행성상 성운과 초신성 폭발로 우주에 퍼진 원소들입니다.</p>
+  <p class="exp">이 원소들이 성간 물질이 되었다가 다시 태양계와 지구, 생명체를 이루는 재료가 되었습니다.</p>
+ </div></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?</p><button type="button" class="open-think" id="thb3">답 보기</button></div>
+ <div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?</b><button type="button" class="x" id="thx3" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">질량이 태양 정도인 별은 적색 거성을 거쳐 행성상 성운과 백색 왜성이 되고, 질량이 매우 큰 별은 초거성을 거쳐 초신성 폭발 후 중성자별이나 블랙홀이 됩니다.</p>
+  <p class="exp">질량이 클수록 중심부 온도가 높아 더 무거운 원소까지 핵융합이 일어나고, 일생을 더 격렬하게 마칩니다.</p>
+ </div></div>
+</section>
+
+<!-- ④ 별의 진화와 순환: 성간 물질을 가운데 두고 두 고리(질량이 태양과 비슷한 별 / 매우 큰 별)가 8자 모양으로 순환 -->
+<section id="p4" role="tabpanel" aria-labelledby="tab4" hidden>
+ <!-- 위에서부터: 설명 → 별의 질량 고르기(라벤더) → 그림 (그림 왼쪽 위에 작은 '순환 따라가기' 단추, 그 아래에 단계 설명) -->
+ <div class="note"><div class="nh">별의 진화와 순환 <span class="ex">· 별은 성간 물질에서 태어나 일생을 마친 뒤, 만든 원소를 다시 성간 물질로 돌려보내 새로운 별을 만드는 재료가 된다.</span></div></div>
+ <div class="subtabs" id="cysel"><button data-v="sun" class="on">질량이 태양과 비슷한 별</button><button data-v="big">질량이 태양보다 매우 큰 별</button><button data-v="cmp">진화 속도 비교</button></div>
+ <div class="cyfig"><svg id="cyv" viewBox="0 0 960 500"></svg><div class="cyb" id="cytool"><button class="pb" id="cyplay">▶ 순환 따라가기</button><span id="cyhint">각 단계를 눌러도 설명을 볼 수 있습니다.</span></div></div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?</p><button type="button" class="open-think" id="thb5">답 보기</button></div>
+ <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">초신성 폭발 과정에서 만들어집니다.</p>
+  <p class="exp">별 내부의 핵융합 반응으로는 철까지만 만들어집니다. 철보다 무거운 원소(금, 우라늄 등)는 초신성이 폭발할 때 생기는 엄청난 에너지 속에서 원자핵이 많은 중성자를 흡수하여 만들어지고, 폭발과 함께 우주로 흩어집니다.</p>
+ </div></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?</p><button type="button" class="open-think" id="thb6">답 보기</button></div>
+ <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">질량이 클수록 별의 수명은 짧아집니다. 질량이 큰 별일수록 중심부 온도가 높아 핵융합 반응이 빠르게 일어나 수소를 빨리 소모하기 때문입니다.</p>
+  <p class="exp">질량이 큰 별은 수소를 더 많이 가지고 있지만, 그보다 훨씬 많은 에너지를 내보내므로 연료가 금방 바닥납니다. 질량이 태양과 비슷한 별은 약 100억 년, 질량이 태양의 약 10배 이상인 별은 수천만 년 이하를 삽니다. 그래서 질량이 큰 별이 만든 원소가 먼저 성간 물질로 돌아갑니다.</p>
+ </div></div>
+</section>
+
+<script>
+// 학습 메뉴 탭 (radiation.html과 같은 방식: 왼쪽·오른쪽 화살표 키로도 이동)
+const TABS=[tab1,tab2,tab3,tab4],PANES=[p1,p2,p3,p4];
+function openTab(i){TABS.forEach((t,j)=>{t.setAttribute('aria-selected',i==j);t.tabIndex=i==j?0:-1;PANES[j].hidden=i!=j});
+ PANES[i].classList.remove('enter');void PANES[i].offsetWidth;PANES[i].classList.add('enter');if(window.onTab)onTab(i)}
+TABS.forEach((t,i)=>{t.onclick=()=>openTab(i);t.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+(e.key=='ArrowRight'?1:TABS.length-1))%TABS.length;TABS[j].focus();openTab(j)}}});
+
+// ---- 공통: 그리기 도구, 별의 색 (HR-diagram.html과 같은 식) ----
+const NS="http://www.w3.org/2000/svg",lg=Math.log10;
+let S;
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||S).appendChild(e);return e}
+function lab(x,y,t,fs=15,an='middle',fill='#cfd6ea',w=600,p){const e=el('text',{x,y,fill,'font-size':fs,'text-anchor':an,'font-weight':w,stroke:'#0b1026','stroke-width':3,'paint-order':'stroke'},p);e.textContent=t;return e}
+const SC=[[4.6,[155,176,255]],[4.3,[170,191,255]],[4.0,[202,215,255]],[3.875,[248,247,255]],[3.78,[255,244,226]],[3.716,[255,229,180]],[3.6,[255,200,130]],[3.48,[255,160,100]]];
+const css=c=>`rgb(${c.map(Math.round).join(',')})`;
+function colA(t){if(t>=SC[0][0])return SC[0][1];for(let i=1;i<SC.length;i++)if(t>=SC[i][0]){const[a,p]=SC[i-1],[b,q]=SC[i],f=(t-b)/(a-b);return q.map((v,k)=>v+(p[k]-v)*f)}return SC[SC.length-1][1]}
+const col=t=>css(colA(t));
+// 캣멀-롬 곡선: 꼭짓점 사이를 부드럽게 이은 점들 (열린 곡선)
+function curve(P,n=14){const o=[];for(let i=0;i<P.length-1;i++){const a=P[i-1]||P[i],b=P[i],c=P[i+1],d=P[i+2]||P[i+1];
+ for(let k=0;k<n;k++){const t=k/n,t2=t*t,t3=t2*t;o.push([0,1].map(j=>.5*(2*b[j]+(-a[j]+c[j])*t+(2*a[j]-5*b[j]+4*c[j]-d[j])*t2+(-a[j]+3*b[j]-3*c[j]+d[j])*t3)))}}
+ o.push(P[P.length-1]);return o}
+
+// ---- ① 전주계열 단계 ----
+// 진행 정도 s (0~1): 0~0.2 성운, 0.2~0.4 중력 수축, 0.4~1 원시별(H-R 도 경로를 따라 이동), 1 주계열성
+const STG=[{n:'성운',s:0,d:'별이 태어나는 곳으로, 온도가 매우 낮고 밀도가 큰 기체와 먼지 구름입니다.'},
+ {n:'중력 수축',s:.2,d:'밀도가 큰 부분이 자체 중력으로 수축하면서 중심부의 밀도와 온도가 높아집니다.'},
+ {n:'원시별',s:.4,d:'중력 수축 에너지로 빛을 내며, 계속 수축하면서 중심부 온도가 올라갑니다.'},
+ {n:'주계열성',s:1,d:'중심부 온도가 약 1,000만 K에 이르면 수소 핵융합 반응이 시작되어 주계열성이 됩니다.'}];
+const stageOf=s=>s>=1?3:s>=.4?2:s>=.2?1:0;
+// 원시별의 H-R 도 경로 [log T, log L] (전주계열 진화 경로를 단순화한 모양) 과 주계열 도달 시간(년, 대략값)
+const MASS=[
+ {m:'0.5',yr:1.5e8,P:[[3.57,1.0],[3.575,.25],[3.58,-.45],[3.585,-1.0],[3.59,-1.35]]},
+ {m:'1',yr:5e7,P:[[3.6,1.6],[3.61,1.0],[3.62,.4],[3.635,-.2],[3.66,-.35],[3.72,-.25],[3.76,-.15]]},
+ {m:'3',yr:2.5e6,P:[[3.6,2.7],[3.62,2.2],[3.66,1.95],[3.8,1.95],[3.95,2.05],[4.08,2.0],[4.13,1.9]]},
+ {m:'5',yr:6e5,P:[[3.62,3.2],[3.63,2.85],[3.7,2.75],[3.85,2.85],[4.05,2.95],[4.18,2.9],[4.24,2.8]]},
+ {m:'15',yr:6e4,P:[[3.62,4.45],[3.75,4.5],[3.95,4.5],[4.2,4.45],[4.4,4.38],[4.49,4.3]]}];
+MASS.forEach(M=>{M.C=curve(M.P);let L=0;M.len=M.C.map((p,i)=>i?L+=Math.hypot(p[0]-M.C[i-1][0],(p[1]-M.C[i-1][1])/4):0)}); // 길이는 대략 화면 비율로
+function along(M,p){const tot=M.len[M.len.length-1],d=p*tot;let i=1;while(i<M.len.length-1&&M.len[i]<d)i++;
+ const f=(d-M.len[i-1])/((M.len[i]-M.len[i-1])||1);return[0,1].map(j=>M.C[i-1][j]+(M.C[i][j]-M.C[i-1][j])*f)}
+function fmtYr(y){if(y>=1e8){const v=Math.round(y/1e7)/10;return v+'억 년'}if(y>=1e4)return Math.round(y/1e4).toLocaleString('ko-KR')+'만 년';return(Math.round(y/100)*100).toLocaleString('ko-KR')+'년'}
+// 중심부 온도 (모식적인 대략값): 성운 약 10 K → 원시별이 되며 수천 K → 주계열 도달 때 약 1,000만 K
+const Tc=s=>10**(s<.2?1+s/.2*.3:s<.4?1.3+(s-.2)/.2*2:3.3+(s-.4)/.6*3.7);
+const fmtK=T=>T>=1e4?Math.round(T/1e4).toLocaleString('ko-KR')+'만 K':(Math.round(T/10)*10).toLocaleString('ko-KR')+' K';
+let ps=0,mi=3,playing=false,raf=0;
+
+// 왼쪽: 성운에서 별이 탄생하는 과정
+const BG=Array.from({length:60},(_,i)=>[(i*97)%430+10,(i*53)%330+10,(i%5==0)?1.3:.7]);
+const BLOB=[[0,0,1,'#6b5cd6'],[-60,-30,.7,'#c2588e'],[55,35,.75,'#4f7dd8'],[30,-55,.55,'#8f5fd0'],[-45,50,.6,'#5a6fd6'],[70,-10,.5,'#c0609a']];
+function drawBirth(s){S=bv;S.innerHTML='';const st=stageOf(s),M=MASS[mi],C=[220,195];
+ const d=el('defs',{});
+ BLOB.forEach(([,, ,c],i)=>{const g=el('radialGradient',{id:'bl'+i},d);el('stop',{offset:0,'stop-color':c,'stop-opacity':.85},g);el('stop',{offset:1,'stop-color':c,'stop-opacity':0},g)});
+ const gg=el('radialGradient',{id:'gw'},d);el('stop',{offset:0,'stop-color':'#fff'},gg);el('stop',{offset:.25,'stop-color':'#fff','stop-opacity':.9},gg);el('stop',{offset:1,'stop-color':'#fff','stop-opacity':0},gg);
+ const dg=el('linearGradient',{id:'dk',x1:0,x2:1},d);[[0,'#7a3d1c',0],[.35,'#d27a3a',.9],[.5,'#ffc27a',1],[.65,'#d27a3a',.9],[1,'#7a3d1c',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},dg));
+ BG.forEach(([x,y,r])=>el('circle',{cx:x,cy:y,r,fill:'#dfe5ff',opacity:.5}));
+ // 성운: 수축하면서 작아지고 중심이 짙어짐, 원시별 단계에서는 점점 사라짐
+ const k=s<.45?1-s/.45*.72:.28,op=s<.4?1:Math.max(0,1-(s-.4)/.35);
+ if(op>0)BLOB.forEach(([x,y,r],i)=>el('ellipse',{cx:C[0]+x*k*1.6,cy:C[1]+y*k*1.4,rx:150*r*k+20,ry:120*r*k+16,fill:`url(#bl${i})`,opacity:op*(.55+.45*Math.min(1,s/.4))}));
+ // 수축 화살표
+ const ao=s<.12?0:s<.2?(s-.12)/.08:s<.42?1:Math.max(0,1-(s-.42)/.08);
+ if(ao>0)for(let i=0;i<8;i++){const a=i*Math.PI/4+.3,R=150*k+30;const x1=C[0]+Math.cos(a)*R,y1=C[1]+Math.sin(a)*R*.85,x2=C[0]+Math.cos(a)*(R-38),y2=C[1]+Math.sin(a)*(R-38)*.85;
+  el('line',{x1,y1,x2,y2,stroke:'#ffe2a0','stroke-width':2.5,opacity:ao,'marker-end':'url(#ah)'})}
+ const mk=el('marker',{id:'ah',viewBox:'0 0 10 10',refX:6,refY:5,markerWidth:5,markerHeight:5,orient:'auto'},d);el('path',{d:'M0,0 L10,5 L0,10 z',fill:'#ffe2a0'},mk);
+ // 짙어지는 중심
+ if(s>.12&&s<.45){const c=Math.min(1,(s-.12)/.28);el('circle',{cx:C[0],cy:C[1],r:10+30*c,fill:'url(#gw)',opacity:.25+.35*c})}
+ // 원시별: 원반과 제트, 점점 밝아지는 중심 별
+ if(s>=.4){const q=(s-.4)/.6,now=colA(along(M,q)[0]); // 별의 색은 H-R 도 경로 위의 표면 온도를 따름
+  const dop=Math.max(0,1-q*1.15);
+  if(dop>0){el('ellipse',{cx:C[0],cy:C[1],rx:120-40*q,ry:20-6*q,fill:'url(#dk)',opacity:dop});
+   const jo=dop*.8;el('path',{d:`M${C[0]},${C[1]-16} l-8,-${90-30*q} l16,0 z`,fill:'#9fc3ff',opacity:jo*.45});el('path',{d:`M${C[0]},${C[1]+16} l-8,${90-30*q} l16,0 z`,fill:'#9fc3ff',opacity:jo*.45})}
+  // 별: 경계가 없는 부드러운 빛무리 + 가운데가 밝고 가장자리로 갈수록 별의 색이 짙어지는 공 (입체감, 단면이 아님)
+  const sc=css(now),lt=css(now.map(v=>v+(255-v)*.6)),dk=css(now.map(v=>v*.82)),r=13+7*q;
+  const hg=el('radialGradient',{id:'halo'},d);[[0,sc,.75],[.3,sc,.35],[.6,sc,.12],[1,sc,0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},hg));
+  const bg=el('radialGradient',{id:'ball',cx:'42%',cy:'40%',r:'62%'},d);[[0,'#fff',1],[.25,lt,1],[.7,sc,1],[1,dk,1]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},bg));
+  el('circle',{cx:C[0],cy:C[1],r:r*(3.4+.6*q),fill:'url(#halo)'});
+  el('circle',{cx:C[0],cy:C[1],r,fill:'url(#ball)'});
+  if(dop>0)el('ellipse',{cx:C[0],cy:C[1]+3,rx:120-40*q,ry:(20-6*q)*.55,fill:'url(#dk)',opacity:dop*.75}); // 원반의 앞쪽이 별을 살짝 가림
+  if(s>=1)lab(C[0],C[1]+r*3+18,'수소 핵융합 반응 시작!',17,'middle','#ffd166',800)}
+ lab(16,32,STG[st].n,22,'start','#fff',800);
+ if(s>=.4)lab(16,56,M.m+' M☉ (태양 질량의 '+M.m+'배)',14,'start','#cfd6ea',700);
+ // 중심부 온도계 (로그 눈금, 10 K ~ 1억 K)
+ const gx=462,gy0=330,gy1=100,gyOf=T=>gy0+(lg(T)-1)/7*(gy1-gy0),T=Tc(s);
+ el('rect',{x:gx-7,y:gy1-6,width:14,height:gy0-gy1+12,rx:7,fill:'#1b2244',stroke:'#4a5280'});
+ el('rect',{x:gx-4,y:gyOf(T),width:8,height:gy0-gyOf(T)+4,rx:4,fill:s>=1?'#ff7a5c':'#ffb36b'});
+ el('circle',{cx:gx,cy:gy0+12,r:11,fill:s>=1?'#ff7a5c':'#ffb36b',stroke:'#4a5280'});
+ const y7=gyOf(1e7);el('line',{x1:gx-16,x2:gx+12,y1:y7,y2:y7,stroke:'#ff7a8a','stroke-width':2});
+ lab(gx-20,y7-8,'1,000만 K',13,'end','#ff9aa8',700);lab(gx-20,y7+8,'핵융합 시작',12,'end','#ff9aa8',600);
+ lab(gx+8,gy1-44,'중심부 온도',13,'end','#cfd6ea',700);lab(gx+8,gy1-22,'약 '+fmtK(T),15,'end','#ffd166',800);
+ // 단계 표시줄 (누르면 그 단계로 이동)
+ const xs=[40,150,260,370],ty=412;el('line',{x1:xs[0],x2:xs[3],y1:ty,y2:ty,stroke:'#3a4260','stroke-width':2});
+ STG.forEach((g,i)=>{const on=i==st,G=el('g',{'data-s':g.s});el('circle',{cx:xs[i],cy:ty,r:on?8:6,fill:on?'#f5b942':i<st?'#8f9cf0':'#3a4260'},G);
+  lab(xs[i],ty-14,g.n,13,'middle',on?'#ffd166':'#cfd6ea',on?800:600,G);el('rect',{x:xs[i]-45,y:ty-30,width:90,height:44,fill:'transparent'},G)})}
+
+// 오른쪽: H-R 도 위에서 원시별이 주계열에 도달하는 경로
+const MSB=[[4.65,5.7],[4.6,5.3],[4.5,4.5],[4.4,3.75],[4.3,3.1],[4.2,2.6],[4.1,1.95],[4.0,1.45],[3.9,1.0],[3.86,.75],[3.8,.3],[3.761,0],[3.7,-.45],[3.65,-.85],[3.6,-1.15],[3.55,-1.6]];
+// 진행 상태: 질량마다 경로 위 위치 q (0~1, 원시별이 되기 전은 -1)
+//  · 한 질량만 볼 때: 고른 질량이 재생 시간 동안 경로를 끝까지 감
+//  · 모두 보기(경주): 다섯 질량이 같은 시계로 움직임. 시계는 1천 년 → 2억 년을 10배씩 같은 간격(로그 눈금)으로 흐르고,
+//    걸린 시간 = 도달 시간 × q² 로 두어 q = √(t / 도달 시간)
+const race=()=>allm.checked;
+function stateOf(){if(ps<.4)return{vs:ps,t:null,q:MASS.map(()=>-1)};
+ if(!race()){const q=(ps-.4)/.6;return{vs:ps,t:null,q:MASS.map((_,i)=>i==mi?q:-1)}}
+ const t=10**(3+(ps-.4)/.6*5.3),q=MASS.map(M=>Math.sqrt(Math.min(1,t/M.yr)));return{vs:.4+.6*q[mi],t,q}}
+function drawHR(G){S=hv;S.innerHTML='';const X0=78,X1=545,Y0=44,Y1=372,TA=4.62,TB=3.4,LA=5.3,LB=-2,
+ x=t=>X0+(TA-t)/(TA-TB)*(X1-X0),y=l=>Y0+(LA-l)/(LA-LB)*(Y1-Y0),q=G.q[mi];
+ el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0},el('clipPath',{id:'hc'},el('defs',{})));
+ [-2,0,2,4].forEach(p=>{const Y=y(p);el('line',{x1:X0,x2:X1,y1:Y,y2:Y,stroke:'#2a3156'});lab(X0-8,Y+5,(10**p).toLocaleString('ko-KR',{maximumFractionDigits:2}),14,'end')});
+ [30000,10000,5000,3000].forEach(T=>{const X=x(lg(T));el('line',{x1:X,x2:X,y1:Y0,y2:Y1,stroke:'#2a3156'});lab(X,Y1+22,T.toLocaleString('ko-KR'),14)});
+ lab(10,Y0-16,'광도 (태양 = 1)',15,'start','#e8eaf2',700);lab((X0+X1)/2,Y1+48,'표면 온도 (K)',15,'middle','#e8eaf2',700);
+ lab(X0,Y1+48,'← 고온',12,'start');lab(X1,Y1+48,'저온 →',12,'end');
+ el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0,fill:'none',stroke:'#4a5280'});
+ // 주계열 띠
+ const up=MSB.map(([t,l])=>[x(t),y(l+.45)]),dn=MSB.map(([t,l])=>[x(t),y(l-.35)]).reverse();
+ el('polygon',{points:up.concat(dn).map(p=>p.join(',')).join(' '),fill:'#7fb4ff','fill-opacity':.13,stroke:'#7fb4ff','stroke-opacity':.5,'stroke-dasharray':'5 5','clip-path':'url(#hc)'});
+ lab(x(4.47),y(2.9),'주계열',16,'middle','#7fb4ff',800); // 도착 시간 이름표와 겹치지 않도록 띠의 왼쪽 아래에
+ const path=C=>C.map((p,i)=>(i?'L':'M')+x(p[0]).toFixed(1)+','+y(p[1]).toFixed(1)).join('');
+ // 경로: 모두 보기면 다섯 질량, 아니면 고른 질량만. 고른 질량은 호박색으로 강조
+ const show=race()?MASS.map((_,i)=>i):[mi];
+ show.forEach(i=>{const M=MASS[i],me=i==mi,qi=G.q[i],c=me?'#f5b942':'#aab3d6',[t0,l0]=M.P[0],[t1,l1]=M.P[M.P.length-1];
+  el('path',{d:path(M.C),fill:'none',stroke:c,'stroke-width':me?2:1.6,'stroke-dasharray':'5 6',opacity:me?.55:.45});
+  lab(x(t0)+(me?8:6),y(l0)-(me?8:6),M.m+' M☉',me?15:13,'start',me?'#ffd166':'#cfd6ea',me?800:700);
+  if(qi>=0){const n=Math.max(2,Math.round(qi*(M.C.length-1))),pt=along(M,qi);
+   el('path',{d:path(M.C.slice(0,n).concat([pt])),fill:'none',stroke:c,'stroke-width':me?3.5:2.5,'stroke-linecap':'round'});
+   el('circle',{cx:x(pt[0]),cy:y(pt[1]),r:me?13:9,fill:col(pt[0]),opacity:.35});el('circle',{cx:x(pt[0]),cy:y(pt[1]),r:me?7:5,fill:col(pt[0]),stroke:'#fff','stroke-width':1.5});
+   // 주계열에 도착하면 도달 시간 표시
+   if(qi>=1)lab(x(t1),y(l1)+(me?20:18),(race()?'도착! ':'')+fmtYr(M.yr),me?13:12,'middle',me?'#ffd166':'#cfd6ea',me?800:600)}});
+ const M=MASS[mi];
+ if(q>=0){// 시간 상자: 한 질량이면 그 별이 걸린 시간, 경주면 공통 시계
+  const g=el('g',{}),bg=el('rect',{rx:10,fill:'#161c36',opacity:.92,stroke:'#3a4260'},g),bx=X0+12,by=Y1-70;
+  const row=(yy,k,v,fs=13)=>{const t=lab(bx+12,yy,k+'  ',fs,'start','#a9b1cc',600,g),ts=el('tspan',{fill:'#f5b942','font-weight':800},t);ts.textContent=v};
+  if(race()){lab(bx+12,by+24,'경과 시간  약 '+fmtYr(G.t),15,'start','#fff',800,g);
+   row(by+48,'주계열 도착',MASS.filter((_,i)=>G.q[i]>=1).map(m=>m.m).reverse().join(', ')+(G.q.some(v=>v>=1)?' M☉':'아직 없음'))}
+  else{lab(bx+12,by+24,M.m+' M☉ '+(q>=1?'주계열성':'원시별'),15,'start','#fff',800,g);
+   row(by+48,'걸린 시간','약 '+fmtYr(Math.max(M.yr*q*q,q>0?Math.min(M.yr,1000):0)))}
+  const b=g.getBBox();bg.setAttribute('x',bx);bg.setAttribute('y',by);bg.setAttribute('width',b.width+24);bg.setAttribute('height',60)}
+ else{lab((X0+X1)/2,Y0+26,'성운 단계는 온도가 매우 낮고 먼지에 가려 H-R 도에 나타내지 않습니다',13,'middle','#a9b1cc',600)}
+}
+
+function drawPre(){const G=stateOf(),st=stageOf(G.vs);
+ pnote.innerHTML=`<div class="nh">전주계열 단계 <span class="ex">· 성운에서 태어난 원시별이 주계열성이 되기 전까지의 단계</span></div><p><b>${STG[st].n}</b> ${STG[st].d}</p>`;
+ drawBirth(G.vs);drawHR(G);prog.value=Math.round(ps*1000)}
+function setS(v){ps=Math.max(0,Math.min(1,v));drawPre()}
+MASS.forEach((M,i)=>{const b=document.createElement('button');b.textContent=M.m+' M☉';b.onclick=()=>{mi=i;msel.querySelectorAll('button').forEach((x,j)=>x.classList.toggle('on',j==i));drawPre()};msel.appendChild(b)});
+msel.children[mi].classList.add('on');
+prog.oninput=()=>{stop();setS(prog.value/1000)};allm.onchange=drawPre;
+bv.addEventListener('click',e=>{const g=e.target.closest('[data-s]');if(g){stop();setS(+g.dataset.s)}});
+// 재생: 처음부터 끝까지 약 9초
+function stop(){playing=false;cancelAnimationFrame(raf);play.textContent='▶ 재생'}
+play.onclick=()=>{if(playing)return stop();if(ps>=1)ps=0;playing=true;play.textContent='❚❚ 멈춤';let last=performance.now();
+ const step=now=>{if(!playing)return;setS(ps+(now-last)/(race()?14000:9000));last=now;if(ps>=1)return stop();raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)};
+drawPre();
+
+// ---- ② 주계열 단계 ----
+// 화살표 끝 모양 (색마다 하나씩)
+function heads(d){[['r','#ff6b6b'],['b','#6bb6ff'],['w','#e8eaf2'],['y','#ffd166'],['p','#c9a7ff']].forEach(([k,c])=>{const m=el('marker',{id:'h'+k,viewBox:'0 0 10 10',refX:7,refY:5,markerWidth:4,markerHeight:4,orient:'auto'},d);el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m)})}
+function arrow(x1,y1,x2,y2,k,c,w=4){el('line',{x1,y1,x2,y2,stroke:c,'stroke-width':w,'stroke-linecap':'round','marker-end':`url(#h${k})`})}
+
+// 정역학 평형: 중력(안쪽)과 기체 압력 차에 의한 힘(바깥쪽)이 같은 크기로 평형을 이룬 모습
+// (수축·팽창 단추는 실제로 흔한 일처럼 보일 수 있어 뺌. 아래 k, net 식은 평형(s = 0)만 쓰므로 k = 1, net = 0)
+const eqS=0,eqT=1;
+function drawEq(){S=eqv;S.innerHTML='';const d=el('defs',{});heads(d);
+ const sg=el('radialGradient',{id:'stg'},d);[[0,'#fffbe8'],[.3,'#ffe08a'],[.75,'#ffb347'],[1,'#e8792e']].forEach(([o,c])=>el('stop',{offset:o,'stop-color':c},sg));
+ const cg=el('radialGradient',{id:'cog'},d);[[0,'#ffffff',1],[.6,'#fff3c4',.9],[1,'#fff3c4',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},cg));
+ const s=eqS,t=eqT,k=1-.15*s*Math.sin(Math.PI*t),net=s?-.35*s*Math.cos(Math.PI*t)*(1-t):0,Fg=1/(k*k),Fp=Fg+net,C=[240,196],R=120*k;
+ const hg=el('radialGradient',{id:'eqh'},d);[[.6,'#ffb347',.35],[1,'#ffb347',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},hg));
+ el('circle',{cx:C[0],cy:C[1],r:R*1.35,fill:'url(#eqh)'}); // 경계 없는 빛무리
+ el('circle',{cx:C[0],cy:C[1],r:R,fill:'url(#stg)'});
+ el('circle',{cx:C[0],cy:C[1],r:R*.3,fill:'url(#cog)'});
+ lab(C[0],C[1]+4,'중심핵',12,'middle','#7a3c00',800).setAttribute('stroke','none');
+ // 힘의 화살표: 표면 가까이 네 곳에 중력(안쪽, 빨강)과 기체 압력 차에 의한 힘(바깥쪽, 파랑)을 나란히
+ [45,135,225,315].forEach(a=>{const r=a*Math.PI/180,ux=Math.cos(r),uy=Math.sin(r),px=-uy*8,py=ux*8,m=R*.66,lg_=30*Fg,lp=30*Math.max(.2,Fp);
+  arrow(C[0]+ux*(m+lg_/2)+px,C[1]+uy*(m+lg_/2)+py,C[0]+ux*(m-lg_/2)+px,C[1]+uy*(m-lg_/2)+py,'r','#ff6b6b');
+  arrow(C[0]+ux*(m-lp/2)-px,C[1]+uy*(m-lp/2)-py,C[0]+ux*(m+lp/2)-px,C[1]+uy*(m+lp/2)-py,'b','#6bb6ff')});
+ // 범례(왼쪽 위), 반지름(오른쪽 위), 상태 설명(아래)
+ arrow(14,22,44,22,'r','#ff6b6b');lab(52,28,'중력 (안쪽으로)',15,'start','#ffb3b3',700);
+ arrow(14,48,44,48,'b','#6bb6ff');lab(52,54,'기체 압력 차에 의한 힘 (바깥쪽으로)',15,'start','#b3dcff',700);
+ lab(240,366,'정역학 평형',22,'middle','#8ff0b0',800);lab(240,394,'중력 = 기체 압력 차에 의한 힘',16,'middle','#e8eaf2',700);lab(240,420,'→ 별의 크기가 일정하게 유지됨',16,'middle','#e8eaf2',700)}
+
+// 수소 핵융합 반응: p-p 연쇄 반응(3단계), CNO 순환 반응(6단계)
+const NUC={'1H':[1,0,'¹H'],'2H':[1,1,'²H'],'3He':[2,1,'³He'],'4He':[2,2,'⁴He']};
+const PP=[{a:['1H','1H'],b:['2H','e','nu'],eq:'¹H + ¹H → ²H + e⁺ + ν',x:'(2번 일어남)'},
+ {a:['2H','1H'],b:['3He','g'],eq:'²H + ¹H → ³He + γ',x:'(2번 일어남)'},
+ {a:['3He','3He'],b:['4He','1H','1H'],eq:'³He + ³He → ⁴He + ¹H + ¹H',x:''}];
+const CN=[['¹²C','#aab3d6'],['¹³N','#7fd1a8'],['¹³C','#aab3d6'],['¹⁴N','#7fd1a8'],['¹⁵O','#ff9a9a'],['¹⁵N','#7fd1a8']];
+const CNO=[{in:1,out:['g'],eq:'¹²C + ¹H → ¹³N + γ'},{in:0,out:['e','nu'],eq:'¹³N → ¹³C + e⁺ + ν'},{in:1,out:['g'],eq:'¹³C + ¹H → ¹⁴N + γ'},
+ {in:1,out:['g'],eq:'¹⁴N + ¹H → ¹⁵O + γ'},{in:0,out:['e','nu'],eq:'¹⁵O → ¹⁵N + e⁺ + ν'},{in:1,out:['4He'],eq:'¹⁵N + ¹H → ¹²C + ⁴He'}];
+let fm='pp',fi=0,fT=1,fRaf=0,fPlay=false;
+// 원자핵(양성자 빨강, 중성자 회색), 가벼운 입자(양전자, 중성미자, 감마선)
+// z: 크기 배율 (p-p 연쇄 반응은 크게, CNO 순환 반응은 원 둘레에 맞게 작게)
+function nuc(x,y,t,o=1,z=1){const[p,n,l]=NUC[t],g=el('g',{opacity:o}),one=p+n==1,sp=one?[[0,0]]:[[-5,-4],[5,-4],[-5,5],[5,5]].slice(0,p+n);
+ sp.forEach(([dx,dy],i)=>el('circle',{cx:x+dx*z,cy:y+dy*z,r:(one?8:7)*z,fill:i<p?'#ff6b6b':'#9aa3c7',stroke:'#0b1026','stroke-width':1},g));
+ lab(x,y+(one?16:18)*z+8,l,14*Math.min(z,1.25),'middle','#e8eaf2',800,g)}
+// ang: 날아가는 방향(라디안). 감마선(γ)은 그 방향으로 물결치며 끝이 화살표
+function light(x,y,t,o=1,z=1,ang=0){const g=el('g',{opacity:o}),fs=14*Math.min(z,1.25);
+ if(t=='e'){el('circle',{cx:x,cy:y,r:5*z,fill:'#ffd166'},g);lab(x,y+12*z+8,'e⁺',fs,'middle','#ffd166',800,g)}
+ else if(t=='nu'){el('circle',{cx:x,cy:y,r:3.5*z,fill:'none',stroke:'#cfd6ea','stroke-width':1.5*z},g);lab(x,y+10*z+8,'ν',fs,'middle','#cfd6ea',800,g)}
+ else if(t=='g'){// 물결 끝에 좌우 대칭인 뾰족한 화살촉을 직접 그림 (진행 방향으로 회전)
+  const u=7*z,e=2.3*u,ah=6*z,aw=3.6*z,w=el('g',{transform:`translate(${x},${y}) rotate(${ang*180/Math.PI})`},g);
+  el('path',{d:`M${-2.5*u},0 q${u/2},-${u} ${u},0 t${u},0 t${u},0 t${u},0 L${e},0`,fill:'none',stroke:'#c9a7ff','stroke-width':2*z,'stroke-linecap':'round','stroke-linejoin':'round'},w);
+  el('polygon',{points:`${e+ah},0 ${e-1},${-aw} ${e-1},${aw}`,fill:'#c9a7ff'},w);
+  lab(x,y+12*z+12,'γ',fs,'middle','#c9a7ff',800,g)}
+ else nuc(x,y,t,o,z)}
+// 오른쪽 세로 칸: 반응 이름, 단계, 반응식(두 줄), 결과, 우세한 조건
+function sideCol(step,eq,note){const g=el('g',{}),X=414;el('rect',{x:400,y:8,width:234,height:364,rx:12,fill:'#161c36',stroke:'#3a4260'},g);
+ const[l,r]=eq.split(' → ');
+ [[fm=='pp'?'p-p 연쇄 반응':'CNO 순환 반응',21,'#ffd166',800,38],[step,16,'#cfd6ea',700,64],[l,23,'#fff',800,102],['→ '+r,23,'#fff',800,132],[note,13,'#a9b1cc',600,154]]
+  .forEach(([t,f,c,w,y])=>t&&lab(X,y+20,t,f,'start',c,w,g));
+ el('line',{x1:X,x2:620,y1:186,y2:186,stroke:'#3a4260'},g);
+ [['결과',18,'#ffd166',800,192],['수소 원자핵 4개 →',16,'#e8eaf2',700,216],['헬륨 원자핵 1개 + 에너지',16,'#e8eaf2',700,239],['질량 결손 → 에너지 (E = mc²)',14,'#a9b1cc',600,261],
+  ['중심부 온도 약 1,800만 K',15,'#8ff0b0',700,286],[fm=='pp'?'이하에서 우세 (예: 태양)':'이상에서 우세',15,'#8ff0b0',700,306],[fm=='pp'?'':'(예: 질량이 큰 주계열성)',15,'#8ff0b0',700,325]]
+  .forEach(([t,f,c,w,y])=>t&&lab(X,y+20,t,f,'start',c,w,g))}
+// 그림은 왼쪽(가로 0~400), 설명과 결과는 오른쪽 세로 칸
+// 왼쪽 위에 '수소 핵융합 반응' 제목을 두고, 그 아래(40만큼 내려서) 반응 그림을 그림
+function drawFu(){S=fuv;S.innerHTML='';const d=el('defs',{});heads(d);const t=fT;
+ lab(200,34,'수소 핵융합 반응',22,'middle','#ffffff',800);S=el('g',{transform:'translate(0,40)'});
+ if(fm=='pp'){const st=PP[fi],m=Math.min(1,t/.45),after=t>.5,q=Math.max(0,(t-.5)/.5),C=[200,170],Z=2.2; // Z: p-p 연쇄 반응의 입자 크기 배율
+  // 두 원자핵이 대각선 방향(왼쪽 위, 오른쪽 아래)에서 다가와 부딪치고, 가벼운 입자는 다른 대각선 방향으로 날아감
+  if(!after){nuc(55+(C[0]-34-55)*m,45+(C[1]-30-45)*m,st.a[0],1,Z);nuc(345-(345-C[0]-34)*m,295-(295-C[1]-30)*m,st.a[1],1,Z)}
+  if(t>.38&&t<.66)el('circle',{cx:C[0],cy:C[1]-4,r:58*(1-Math.abs(t-.52)/.14),fill:'#fff3c4',opacity:.6});
+  if(after){light(C[0],C[1],st.b[0],1,Z);
+   const fly=[[C[0]+125*q,C[1]-105*q],[C[0]-125*q,C[1]+95*q]],ang=[Math.atan2(-105,125),Math.atan2(95,-125)];
+   st.b.slice(1).forEach((p,i)=>light(fly[i][0],fly[i][1],p,1,Z,ang[i]))}
+  S=fuv;sideCol(`${fi+1}단계 ${st.x}`,st.eq,'')}
+ else{const st=CNO[fi],O=[200,162],Rr=112,P=i=>{const a=(-90+i*60)*Math.PI/180;return[O[0]+Rr*Math.cos(a),O[1]+Rr*Math.sin(a)]};
+  CN.forEach((_,i)=>{const[a,b]=[P(i),P((i+1)%6)],on=i==fi,dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),u=[dx/L,dy/L];
+   arrow(a[0]+u[0]*27,a[1]+u[1]*27,b[0]-u[0]*31,b[1]-u[1]*31,on?'y':'w',on?'#ffd166':'#5a6390',on?4:2.4)});
+  CN.forEach(([n,c],i)=>{const[x,y]=P(i),on=i==fi||i==(fi+1)%6;el('circle',{cx:x,cy:y,r:24,fill:c,opacity:on?1:.55,stroke:on?'#ffd166':'none','stroke-width':3});lab(x,y+6,n,16,'middle','#0b1026',800).setAttribute('stroke','none')});
+  lab(O[0],O[1]-4,'C·N·O는',15,'middle','#cfd6ea',700);lab(O[0],O[1]+16,'촉매 역할',15,'middle','#cfd6ea',700);
+  // 들어오는 ¹H와 나가는 입자는 고리의 바깥쪽으로 드나듦
+  const[a,b]=[P(fi),P((fi+1)%6)],mid=[(a[0]+b[0])/2,(a[1]+b[1])/2],ox=(mid[0]-O[0])/Rr,oy=(mid[1]-O[1])/Rr;
+  if(st.in&&t<.5){const m=Math.min(1,t/.45);nuc(mid[0]+ox*80*(1-m),mid[1]+oy*80*(1-m)-8,'1H',1,1.3)}
+  if(t>.5){const q=(t-.5)/.5;st.out.forEach((p,i)=>light(mid[0]+ox*(30+36*q)+(i?22*-oy:0),mid[1]+oy*(30+36*q)+(i?22*ox:0),p,1,1.3,Math.atan2(oy,ox)))}
+  S=fuv;sideCol(`${fi+1}단계 / 6`,st.eq,fi==5?'→ 다시 ¹²C로 돌아가 순환이 이어짐':'')}
+ fstep.textContent=`${fi+1} / ${fm=='pp'?3:6} 단계`}
+function runStep(then){cancelAnimationFrame(fRaf);fT=0;const t0=performance.now();const st=now=>{fT=Math.min(1,(now-t0)/1800);drawFu();if(fT<1)fRaf=requestAnimationFrame(st);else if(then)then()};fRaf=requestAnimationFrame(st)}
+// 자동 진행: 탭을 열거나 반응을 바꾸면 1단계부터 차례로 저절로 진행되고, 마지막 단계 뒤에는 처음부터 되풀이
+// (◀ ▶로 단계를 직접 고르면 자동 진행이 멈추고, '▶ 자동 진행'으로 다시 시작)
+let fTimer=0;
+function fstop(){fPlay=false;clearTimeout(fTimer);cancelAnimationFrame(fRaf);fplay.textContent='▶ 자동 진행'}
+const NST=()=>fm=='pp'?3:6;
+function fauto(from=0){fstop();fPlay=true;fplay.textContent='❚❚ 멈춤';fi=from;
+ const go=()=>runStep(()=>{if(!fPlay)return;fTimer=setTimeout(()=>{if(!fPlay)return;fi=(fi+1)%NST();go()},fi==NST()-1?1800:700)});go()}
+fmode.querySelectorAll('button').forEach(b=>b.onclick=()=>{fmode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));fm=b.dataset.v;fauto(0)});
+fprev.onclick=()=>{fstop();fi=(fi+NST()-1)%NST();runStep()};fnext.onclick=()=>{fstop();fi=(fi+1)%NST();runStep()};
+fplay.onclick=()=>fPlay?fstop():fauto(fT>=1?(fi+1)%NST():fi);
+// 주계열 단계 탭을 열면 자동 진행 시작, 다른 탭으로 가면 멈춤
+window.onTab=i=>{if(i==3)placeCyb();if(i==1)fauto(0);else fstop();if(i==2&&pv==0)pmAuto();else if(window.pmStop)pmStop();if(i!=3&&window.cyStop)cyStop()};
+drawEq();drawFu();fstop();
+
+// ---- ③ 후주계열 단계 ----
+let pv=0; // 소메뉴: 0 주계열 이후 변화, 1 내부 구조, 2 질량에 따른 진화 경로
+const PMH='후주계열 단계 <span class="ex">· 주계열 단계가 끝난 뒤 별이 거성이나 초거성이 되고 일생을 마치는 단계</span>';
+const mix=(a,b,f)=>a.map((v,k)=>v+(b[k]-v)*f);
+// ① 주계열 이후 변화 (질량이 태양 정도인 별): 단계마다 별의 모습(반지름 R, 핵 반지름 c, 껍질 연소 sh, 바깥층 색 oc, 핵 색 cc, 핵 수축 표시 ar, 헬륨 핵융합 he)과 H-R 도 위치 hr
+const PS=[
+ {n:'주계열 끝',d:'중심부의 수소가 헬륨으로 바뀌어 헬륨 핵이 생기고, 중심부의 수소 핵융합 반응이 멈춥니다.',R:92,c:30,sh:0,oc:[255,214,120],cc:[214,210,200],ar:0,he:0,hr:[810,222]},
+ {n:'헬륨 핵 수축',d:'에너지를 내지 못하는 헬륨 핵이 중력에 의해 수축하며, 핵의 온도가 높아집니다.',R:92,c:20,sh:0,oc:[255,214,120],cc:[255,240,200],ar:1,he:0,hr:[824,212]},
+ {n:'수소 껍질 연소',d:'뜨거워진 헬륨 핵을 둘러싼 껍질에서 수소 핵융합 반응이 일어나 에너지가 많아집니다.',R:104,c:20,sh:1,oc:[255,200,110],cc:[255,240,200],ar:0,he:0,hr:[850,198]},
+ {n:'바깥층 팽창',d:'바깥층이 크게 팽창하여 반지름은 커지고 표면 온도는 낮아져 붉은 적색 거성이 됩니다.',R:158,c:20,sh:1,oc:[255,140,90],cc:[255,240,200],ar:0,he:0,hr:[880,145]},
+ // 헬륨 핵융합 단계: 실제로는 별이 다시 작아지지만, 교과서 수준에 맞춰 크기와 H-R 도 위치는 적색 거성과 같게 둠
+ {n:'헬륨 핵융합',d:'헬륨 핵의 온도가 약 1억 K에 이르면 중심부에서 헬륨 핵융합 반응(헬륨 → 탄소)이 일어납니다.',R:158,c:20,sh:1,oc:[255,140,90],cc:[200,225,255],ar:0,he:1,hr:[880,145]}];
+let pi_=0,pT=1,pFrom=0,pRaf=0,pPlay=false,pTimer=0;
+function pmState(){const a=PS[pFrom],b=PS[pi_],f=pT<1?pT*pT*(3-2*pT):1,o={};
+ ['R','c','sh','ar','he'].forEach(k=>o[k]=a[k]+(b[k]-a[k])*f);o.oc=mix(a.oc,b.oc,f);o.cc=mix(a.cc,b.cc,f);o.hr=mix(a.hr,b.hr,f);return o}
+function drawPm0(){const d=el('defs',{});heads(d);const s=pmState(),C=[270,180];
+ const og=el('radialGradient',{id:'pmo'},d);[[0,css(mix(s.oc,[255,255,255],.45))],[.7,css(s.oc)],[1,css(mix(s.oc,[0,0,0],.25))]].forEach(([o,c])=>el('stop',{offset:o,'stop-color':c},og));
+ const hg=el('radialGradient',{id:'pmh'},d);[[.6,css(s.oc),.35],[1,css(s.oc),0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},hg));
+ el('circle',{cx:C[0],cy:C[1],r:s.R*1.18,fill:'url(#pmh)'});el('circle',{cx:C[0],cy:C[1],r:s.R,fill:'url(#pmo)'});
+ // 수소 껍질 연소: 헬륨 핵을 둘러싼 빛나는 고리
+ if(s.sh>0){el('circle',{cx:C[0],cy:C[1],r:s.c+9,fill:'none',stroke:'#ff7a2e','stroke-width':14,opacity:.85*s.sh});el('circle',{cx:C[0],cy:C[1],r:s.c+9,fill:'none',stroke:'#ffd166','stroke-width':5,opacity:.9*s.sh})}
+ el('circle',{cx:C[0],cy:C[1],r:s.c,fill:css(s.cc),stroke:'#8a7a60','stroke-width':1});
+ if(s.he>0)el('circle',{cx:C[0],cy:C[1],r:s.c*.75,fill:'#ffffff',opacity:.8*s.he});
+ // 헬륨 핵 수축 화살표
+ if(s.ar>.05)[0,90,180,270].forEach(a=>{const r=a*Math.PI/180,ux=Math.cos(r),uy=Math.sin(r);arrow(C[0]+ux*(s.c+30),C[1]+uy*(s.c+30),C[0]+ux*(s.c+6),C[1]+uy*(s.c+6),'r','#ff6b6b',3)});
+ // 이름표 (별 오른쪽, 지시선)
+ const tag=(y,r,t,c)=>{el('line',{x1:C[0]+r*.7,y1:C[1]-r*.7,x2:455,y2:y,stroke:'#cfd6ea','stroke-width':1,opacity:.7});lab(462,y+5,t,15,'start',c,800)};
+ tag(70,s.R,'바깥층 (수소)','#ffd9b0');
+ if(s.sh>.5)tag(120,s.c+9,'수소 껍질 연소','#ffb36b');
+ tag(170,s.c*.8,s.he>.5?'헬륨 핵융합 (→ 탄소)':'헬륨 핵','#e8eaf2');
+ lab(20,30,`${pi_+1}. ${PS[pi_].n}`,20,'start','#ffd166',800);
+ lab(20,345,'※ 핵과 껍질의 크기는 알아보기 쉽게 크게 그림',12,'start','#a9b1cc',600);
+ // H-R 도 위의 위치 (작은 그림)
+ const X0=610,X1=945,Y0=40,Y1=300;el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0,rx:8,fill:'#111836',stroke:'#3a4260'});
+ lab(X0,Y0-12,'H-R 도에서의 위치',14,'start','#cfd6ea',700);lab(X0+6,Y0+18,'광도 ↑',12,'start','#a9b1cc',600);lab(X1-6,Y1+18,'표면 온도 낮음 →',12,'end','#a9b1cc',600);
+ el('path',{d:`M${X0+20},${Y0+40} L${X0+130},${Y0+130} L${X0+230},${Y0+205} L${X1-20},${Y1-15}`,fill:'none',stroke:'#7fb4ff','stroke-width':18,opacity:.18,'stroke-linecap':'round'});
+ lab(X0+70,Y0+140,'주계열',13,'middle','#7fb4ff',700);
+ el('ellipse',{cx:880,cy:150,rx:42,ry:32,fill:'#ffb86b',opacity:.12});lab(880,108,'적색 거성',13,'middle','#ffb86b',700);
+ const tr=PS.slice(0,pi_+1).map(p=>p.hr).concat(pT<1?[s.hr]:[]);
+ el('path',{d:'M'+PS[0].hr.join(',')+PS.slice(1,pi_+1).map(p=>' L'+p.hr.join(',')).join(''),fill:'none',stroke:'#ffd166','stroke-width':2,'stroke-dasharray':'4 4',opacity:.8});
+ el('circle',{cx:s.hr[0],cy:s.hr[1],r:9,fill:css(s.oc),stroke:'#fff','stroke-width':2})}
+
+// ② 거성과 초거성의 내부 구조 (층의 두께는 실제 비율과 다름)
+const GI=[['수소 바깥층','#ff9a6b',1],['수소 핵융합','#ffb36b',.5],['헬륨 핵융합','#ffe08a',.34],['탄소 핵','#cfd6ea',.18]];
+const SG=[['H','수소','#ff8a8a',1],['He','헬륨','#ffb36b',.82],['C','탄소','#ffe08a',.66],['Ne','네온','#b6f0a0',.53],['O','산소','#8fd3ff',.41],['Si','규소','#c3a6ff',.29],['Fe','철','#9aa3c7',.16]];
+function drawPm1(){const g=[180,190],s=[640,190],R=130;
+ lab(g[0],30,'거성',20,'middle','#ffd166',800);lab(g[0],50,'(질량이 태양 정도인 별)',13,'middle','#cfd6ea',600);
+ GI.forEach(([n,c,f])=>el('circle',{cx:g[0],cy:g[1]+20,r:R*f*.85,fill:c,stroke:'#0b1026','stroke-width':1.5}));
+ // 이름표: 각 층의 가운데 지점에서 오른쪽 이름표까지 지시선
+ GI.forEach(([n,c,f],i)=>{const r=R*.85*(i<GI.length-1?(f+GI[i+1][2])/2:f*.45),a=(-50+i*28)*Math.PI/180,px=g[0]+r*Math.cos(a),py=g[1]+20+r*Math.sin(a),ly=110+i*42;
+  el('circle',{cx:px,cy:py,r:3,fill:'#0b1026'});el('line',{x1:px,y1:py,x2:g[0]+150,y2:ly,stroke:'#e8eaf2','stroke-width':1.2,opacity:.8});
+  lab(g[0]+156,ly+5,n,15,'start','#e8eaf2',800)});
+ lab(s[0],30,'초거성',20,'middle','#ffd166',800);lab(s[0],50,'(질량이 태양의 약 10배 이상인 별)',13,'middle','#cfd6ea',600);
+ SG.forEach(([e,n,c,f])=>el('circle',{cx:s[0],cy:s[1]+20,r:R*f,fill:c,stroke:'#0b1026','stroke-width':1.5}));
+ SG.forEach(([e,n,c,f],i)=>{const r=R*(i<SG.length-1?(f+SG[i+1][3])/2:0),y=s[1]+20-r;lab(s[0],y+5,e,i==SG.length-1?15:13,'middle','#0b1026',800).setAttribute('stroke','none')});
+ SG.forEach(([e,n,c],i)=>{el('rect',{x:800,y:96+i*24,width:14,height:14,rx:3,fill:c});lab(822,108+i*24,`${e} ${n}`,14,'start','#e8eaf2',700)});
+ lab(800,80,'바깥 → 중심',13,'start','#a9b1cc',600);
+ lab(g[0],348,'중심부: 헬륨 핵융합 · 그 바깥: 수소 핵융합',13,'middle','#cfd6ea',700);
+ lab(s[0],348,'중심으로 갈수록 무거운 원소 · 철(Fe)까지 핵융합 (양파 껍질 구조)',13,'middle','#cfd6ea',700);
+ lab(950,30,'※ 층의 두께는 실제 비율과 다름',12,'end','#a9b1cc',600)}
+
+// ③ 질량에 따른 진화 경로: 흐름도 (누르면 설명과 H-R 도 위치)
+const ND=[
+ // hr: H-R 도 위치 (없으면 H-R 도에 나타내지 않음), lo: H-R 도 이름표 위치 [dx, dy, 정렬]
+ // H-R 도 위치는 정확한 값이 아니라 모양을 보여 주는 대략적인 자리: 태양 정도인 별은 주계열 아래쪽에서 적색 거성으로,
+ // 질량이 큰 별은 주계열 위쪽에서 거의 수평으로 오른쪽(초거성)으로 이동하여, 초거성이 적색 거성보다 확실히 위에 오도록 함
+ {r:0,x:70,y:120,n:'주계열성',k:'ms1',d:'중심부에서 수소 핵융합 반응이 일어나는 안정한 단계로, 별의 일생에서 가장 긴 시간을 보냅니다.',hr:[790,207],lo:[12,22,'start']},
+ {r:0,x:205,y:120,n:'적색 거성',k:'rg',d:'헬륨 핵이 수축하고 바깥층이 팽창하여, 크고 표면 온도가 낮은 붉은 별이 됩니다.',hr:[836,137],lo:[12,5,'start']},
+ {r:0,x:345,y:120,n:'행성상 성운',k:'pn',d:'바깥층의 기체가 우주 공간으로 서서히 퍼져 나가, 중심의 별을 둘러싼 성운이 됩니다.',hr:[755,113],lo:[0,-14,'middle']},
+ {r:0,x:480,y:120,n:'백색 왜성',k:'wd',d:'남은 중심핵이 수축하여 된 지구 정도 크기의 작고 뜨거운 별로, 서서히 식어 갑니다.',hr:[706,266],lo:[-6,22,'end']},
+ {r:1,x:70,y:280,n:'주계열성',k:'ms2',d:'질량이 커서 중심부 온도가 높고, 수소를 빠르게 소모하여 주계열 단계가 짧습니다.',hr:[650,96],lo:[10,-14,'start']},
+ {r:1,x:205,y:280,n:'초거성',k:'sg',d:'중심부에서 철까지 핵융합 반응이 일어나 양파 껍질 같은 구조가 되고, 반지름이 매우 커집니다.',hr:[910,80],lo:[-4,-14,'end']},
+ // 초신성 폭발은 평형 상태의 별이 아니라 폭발하는 사건이므로 H-R 도에 점으로 나타내지 않음
+ {r:1,x:345,y:280,n:'초신성 폭발',k:'sn',d:'철로 된 중심핵이 급격히 붕괴한 뒤 바깥층이 폭발하며 매우 밝게 빛나고, 철보다 무거운 원소가 만들어집니다.',hr:null},
+ {r:1,x:480,y:240,n:'중성자별',k:'ns',d:'남은 중심핵이 중성자로 이루어진 매우 작고 밀도가 큰 별이 됩니다(지름 약 20 km).',hr:null},
+ {r:1,x:480,y:318,n:'블랙홀',k:'bh',d:'남은 중심핵의 질량이 매우 크면(태양의 약 3배 이상) 빛조차 빠져나올 수 없는 블랙홀이 됩니다.',hr:null}];
+let nsel=0;
+function icon(k,x,y,on){const g=el('g',{});
+ if(k=='ms1')el('circle',{cx:x,cy:y,r:14,fill:'#ffe08a'},g);
+ else if(k=='ms2')el('circle',{cx:x,cy:y,r:18,fill:'#b9ccff'},g);
+ else if(k=='rg'){el('circle',{cx:x,cy:y,r:34,fill:'#ff8a5c',opacity:.25},g);el('circle',{cx:x,cy:y,r:28,fill:'#ff8a5c'},g)}
+ else if(k=='sg'){el('circle',{cx:x,cy:y,r:44,fill:'#ff6b5c',opacity:.25},g);el('circle',{cx:x,cy:y,r:37,fill:'#ff6b5c'},g)}
+ else if(k=='pn'){el('circle',{cx:x,cy:y,r:28,fill:'none',stroke:'#5fd3c8','stroke-width':9,opacity:.75},g);el('circle',{cx:x,cy:y,r:28,fill:'none',stroke:'#ff9ad0','stroke-width':3,opacity:.8},g);el('circle',{cx:x,cy:y,r:4,fill:'#fff'},g)}
+ else if(k=='wd'){el('circle',{cx:x,cy:y,r:14,fill:'#dfe8ff',opacity:.25},g);el('circle',{cx:x,cy:y,r:6,fill:'#fff'},g)}
+ else if(k=='sn'){const p=[];for(let i=0;i<16;i++){const a=i*Math.PI/8,r=i%2?16:36;p.push((x+r*Math.cos(a)).toFixed(1)+','+(y+r*Math.sin(a)).toFixed(1))}el('polygon',{points:p.join(' '),fill:'#fff3c4'},g);el('circle',{cx:x,cy:y,r:12,fill:'#fff'},g)}
+ else if(k=='ns'){el('line',{x1:x-22,y1:y-14,x2:x+22,y2:y+14,stroke:'#9fd0ff','stroke-width':2,opacity:.8},g);el('circle',{cx:x,cy:y,r:10,fill:'#9fd0ff',opacity:.3},g);el('circle',{cx:x,cy:y,r:5,fill:'#e8f4ff'},g)}
+ else if(k=='bh'){el('ellipse',{cx:x,cy:y,rx:26,ry:8,fill:'none',stroke:'#ffb36b','stroke-width':4},g);el('circle',{cx:x,cy:y,r:12,fill:'#000',stroke:'#ffb36b','stroke-width':1.5},g)}
+ // 고른 단계는 이름표만 노란색으로 표시 (아이콘 둘레에 고리를 그리면 별의 일부처럼 보여 쓰지 않음)
+ return g}
+function drawPm2(){const d=el('defs',{});heads(d);
+ lab(20,40,'질량이 태양 정도인 별',15,'start','#ffd166',800);lab(20,212,'질량이 태양의 약 10배 이상인 별',15,'start','#ffd166',800);
+ const link=(a,b)=>{const A=ND[a],B=ND[b],dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy),u=[dx/L,dy/L];arrow(A.x+u[0]*42,A.y+u[1]*42,B.x-u[0]*40,B.y-u[1]*40,'w','#8a93b8',2.5)};
+ [[0,1],[1,2],[2,3],[4,5],[5,6],[6,7],[6,8]].forEach(([a,b])=>link(a,b));
+ ND.forEach((n,i)=>{const g=el('g',{'data-n':i});g.appendChild(icon(n.k,n.x,n.y,i==nsel));lab(n.x,n.y+(n.k=='sg'?60:n.k=='rg'||n.k=='sn'?54:n.r==1&&n.x==480?28:46),n.n,14,'middle',i==nsel?'#ffd166':'#e8eaf2',800,g);
+  el('rect',{x:n.x-55,y:n.y-45,width:110,height:110,fill:'transparent'},g)});
+ lab(480,290,'남은 핵의 질량에 따라',11,'middle','#a9b1cc',600);
+ // H-R 도에서의 진화 경로 (고른 별의 무리)
+ const X0=610,X1=945,Y0=40,Y1=300,row=ND[nsel].r;el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0,rx:8,fill:'#111836',stroke:'#3a4260'});
+ lab(X0,Y0-12,'H-R 도에서의 진화 경로',14,'start','#cfd6ea',700);lab(X0+6,Y0+18,'광도 ↑',12,'start','#a9b1cc',600);lab(X1-6,Y1+18,'표면 온도 낮음 →',12,'end','#a9b1cc',600);
+ el('path',{d:`M${X0+20},${Y0+40} L${X0+130},${Y0+130} L${X0+230},${Y0+205} L${X1-20},${Y1-15}`,fill:'none',stroke:'#7fb4ff','stroke-width':18,opacity:.18,'stroke-linecap':'round'});
+ lab(X0+70,Y0+140,'주계열',13,'middle','#7fb4ff',700);
+ // 질량이 태양 정도인 별: 교과서 그림의 경로 모양(A 주계열 → B 적색 거성 → 고리 → 위쪽을 왼쪽으로 → C 백색 왜성 → 오른쪽 아래로 식어 감)을
+ // 교과서 그림 좌표(TB)로 적고 작은 H-R 도 안으로 옮겨 그림 (A가 주계열성 자리 [790,207]에 오도록)
+ const TB=[[475,352],[474,318],[500,314],[535,300],[548,262],[573,197],[555,235],[505,268],[490,270],[500,250],[540,200],[562,160],[555,145],[480,142],[380,145],[280,165],[190,210],[135,270],[125,320],[150,385],[220,440],[297,483]],
+  tb=([x,y])=>[790+(x-475)*.47,207+(y-352)*.45],P=a=>a.map(v=>v.toFixed(1)).join(',');
+ const path=row?'M650,96 C740,94 840,88 910,80':'M'+curve(TB.map(tb),8).map(P).join(' L')+' L'+P(tb([455,550]));
+ el('path',{d:path,fill:'none',stroke:'#ffd166','stroke-width':2.5,'stroke-dasharray':'5 5',opacity:.45});
+ // 백색 왜성 뒤 식어 가는 방향(오른쪽 아래) 화살촉
+ if(!row){const a=tb([297,483]),b=tb([455,550]),g=Math.atan2(b[1]-a[1],b[0]-a[0]),c=Math.cos(g),s=Math.sin(g);
+  el('polygon',{points:`${b[0]+c*9},${b[1]+s*9} ${b[0]-s*5},${b[1]+c*5} ${b[0]+s*5},${b[1]-c*5}`,fill:'#ffd166',opacity:.7})}
+ // 고른 단계까지 같은 무리의 단계를 자취처럼 표시: 지난 단계는 흐리게, 고른 단계는 진하게 (점과 이름)
+ ND.forEach((n,i)=>{if(n.r!=row||i>nsel||!n.hr)return;const on=i==nsel,[x,y]=n.hr,[dx,dy,an]=n.lo;
+  el('circle',{cx:x,cy:y,r:on?9:6,fill:on?'#ffd166':'#cfd6ea',stroke:'#fff','stroke-width':on?2:1,opacity:on?1:.45});
+  lab(x+dx,y+dy,n.n,on?15:13,an,on?'#ffd166':'#cfd6ea',800).setAttribute('opacity',on?1:.55)});
+ const k=ND[nsel].k;
+ if(k=='sn')lab((X0+X1)/2,Y1-30,'초신성 폭발은 별이 폭발하는 사건이라 H-R 도에 나타내지 않음',12,'middle','#a9b1cc',600),lab((X0+X1)/2,Y1-13,'(폭발할 때는 잠시 태양의 수십억 배까지 밝아짐)',12,'middle','#a9b1cc',600);
+ else if(!ND[nsel].hr)lab((X0+X1)/2,Y1-14,'중성자별과 블랙홀은 H-R 도에 나타내지 않음',12,'middle','#a9b1cc',600)}
+
+function drawPm(){S=pmv;S.innerHTML='';[drawPm0,drawPm1,drawPm2][pv]();
+ const desc=pv==0?`<b>${PS[pi_].n}</b> ${PS[pi_].d}`:pv==1?'<b>거성과 초거성</b> 질량이 큰 별일수록 중심부 온도가 높아, 더 무거운 원소까지 핵융합 반응이 일어납니다.':`<b>${ND[nsel].n}</b> ${ND[nsel].d}`;
+ pmnote.innerHTML=`<div class="nh">${PMH}</div><p>${desc}</p>`;pmstep.textContent=`${pi_+1} / ${PS.length} 단계`;
+ pmstp.style.display=pmplay.style.display=pv!=0?'none':'';pmhint.hidden=pv==0;
+ pmhint.innerHTML=pv==1?'<b>수명</b> 질량이 큰 별일수록 핵융합 반응이 빨리 일어나 수명이 짧습니다. (질량이 태양 정도인 별 약 100억 년, 질량이 태양의 약 10배 이상인 별 수천만 년 이하)':'그림의 각 단계를 눌러 보세요.'}
+function pmGo(i,then){cancelAnimationFrame(pRaf);pFrom=pi_;pi_=i;pT=0;const t0=performance.now();
+ const st=now=>{pT=Math.min(1,(now-t0)/1300);drawPm();if(pT<1)pRaf=requestAnimationFrame(st);else if(then)then()};pRaf=requestAnimationFrame(st)}
+function pmStop(){pPlay=false;clearTimeout(pTimer);cancelAnimationFrame(pRaf);pT=1;pmplay.textContent='▶ 자동 진행'}
+function pmAuto(){pmStop();pPlay=true;pmplay.textContent='❚❚ 멈춤';pFrom=pi_=0;pT=1;drawPm();
+ const next=()=>{if(!pPlay)return;pTimer=setTimeout(()=>{if(!pPlay)return;if(pi_<PS.length-1)pmGo(pi_+1,next);else{pFrom=pi_=0;pT=1;drawPm();next()}},pi_==PS.length-1?2600:1900)};next()}
+pmsel.querySelectorAll('button').forEach(b=>b.onclick=()=>{pmsel.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));pv=+b.dataset.v;if(pv==0)pmAuto();else{pmStop();drawPm()}});
+pmprev.onclick=()=>{pmStop();pmGo((pi_+PS.length-1)%PS.length)};pmnext.onclick=()=>{pmStop();pmGo((pi_+1)%PS.length)};
+pmplay.onclick=()=>pPlay?pmStop():pmAuto();
+pmv.addEventListener('click',e=>{const g=e.target.closest('[data-n]');if(g&&pv==2){nsel=+g.dataset.n;drawPm()}});
+drawPm();
+
+// ---- ④ 별의 진화와 순환 ----
+// 두 고리: 왼쪽(질량이 태양과 비슷한 별)과 오른쪽(질량이 태양보다 매우 큰 별)이 가운데 성간 물질에서 만나는 8자 모양
+// 고리 위의 위치는 타원의 각도(도)로 나타냄. 왼쪽 고리는 0° → −360°(위로 올라가 시계 반대 방향), 오른쪽 고리는 180° → 540°(시계 방향)
+const LP={c:[300,195],rx:180,ry:135},RP={c:[660,195],rx:180,ry:135};
+const onE=(E,a)=>[E.c[0]+E.rx*Math.cos(a*Math.PI/180),E.c[1]+E.ry*Math.sin(a*Math.PI/180)];
+const CY=[
+ {id:'ism',lp:'both',n:'성간 물질',p:[480,195],d:'별과 별 사이에 있는 기체와 먼지로, 새로운 별이 태어나는 재료입니다.'},
+ {id:'pr1',lp:'sun',a:-35,n:'원시별',k:'pr',d:'성간 물질에서 밀도가 큰 부분이 중력 수축하여 만들어진, 별의 초기 단계입니다.'},
+ {id:'ms1',lp:'sun',a:-90,n:'주계열성',k:'ms1',d:'중심부에서 수소 핵융합 반응이 일어나는 안정한 단계로, 별의 일생에서 가장 긴 시간을 보냅니다.'},
+ {id:'rg',lp:'sun',a:-160,n:'거성',k:'rg',d:'헬륨 핵이 수축하고 바깥층이 팽창한, 크고 붉은 별입니다.'},
+ {id:'pn',lp:'sun',a:-225,n:'행성상 성운',k:'pn',d:'거성의 바깥층이 우주로 퍼져 나가, 헬륨·탄소·질소 등이 성간 물질로 돌아갑니다.'},
+ {id:'wd',lp:'sun',n:'백색 왜성',k:'wd',p:[300,382],d:'남은 중심핵이 수축한 작고 뜨거운 별로, 성간 물질로 돌아가지 않고 남습니다.'},
+ {id:'pr2',lp:'big',a:215,n:'원시별',k:'pr',d:'성간 물질에서 밀도가 큰 부분이 중력 수축하여 만들어진, 별의 초기 단계입니다.'},
+ {id:'ms2',lp:'big',a:270,n:'주계열성',k:'ms2',d:'질량이 커서 중심부 온도가 높고, 수소를 빠르게 소모하여 주계열 단계가 짧습니다.'},
+ {id:'sg',lp:'big',a:340,n:'초거성',k:'sg',d:'중심부에서 철까지 핵융합 반응이 일어나는, 반지름이 매우 큰 별입니다.'},
+ {id:'sn',lp:'big',a:400,n:'초신성 폭발',k:'sn',d:'별이 폭발하며 산소·규소·철과 철보다 무거운 원소(금, 우라늄 등)를 우주로 흩뿌립니다.'},
+ {id:'ns',lp:'big',n:'중성자별',k:'ns',p:[585,385],d:'초신성 폭발 뒤 남은 중심핵이 중성자로 이루어진 매우 작고 밀도가 큰 별이 됩니다.'},
+ {id:'bh',lp:'big',n:'블랙홀',k:'bh',p:[720,385],d:'남은 중심핵의 질량이 매우 크면 빛조차 빠져나올 수 없는 블랙홀이 됩니다.'}];
+CY.forEach(c=>{if(c.a!=null)c.p=onE(c.lp=='sun'?LP:RP,c.a)});
+let cyMode='sun',cySel=0,cyT=-1,cyRaf=0,cyPlay=false; // cyT: 따라가기 진행 정도 0~1 (−1이면 멈춤)
+function cyIcon(k,x,y){if(k=='pr'){const g=el('g',{});el('circle',{cx:x,cy:y,r:16,fill:'#dfe8ff',opacity:.25},g);
+  [0,45,90,135].forEach(a=>{const r=a*Math.PI/180;el('line',{x1:x-Math.cos(r)*16,y1:y-Math.sin(r)*16,x2:x+Math.cos(r)*16,y2:y+Math.sin(r)*16,stroke:'#fff',opacity:.5,'stroke-width':1.5},g)});el('circle',{cx:x,cy:y,r:7,fill:'#fff'},g);return g}
+ if(k=='ism'){const g=el('g',{});[[-22,-8,34,'#c0506a'],[18,-14,30,'#8f4a8a'],[4,16,36,'#b8563c'],[-14,18,24,'#6a4a9a']].forEach(([dx,dy,r,c])=>el('circle',{cx:x+dx,cy:y+dy,r,fill:c,opacity:.55},g));
+  for(let i=0;i<14;i++)el('circle',{cx:x+((i*37)%70)-35,cy:y+((i*23)%60)-30,r:1.3,fill:'#ffd9e8',opacity:.8},g);return g}
+ return icon(k,x,y,false)}
+// 순환 따라가기 (t: 0~1, 한 바퀴 14초)
+//  · 별(노란 점)이 고리를 따라 행성상 성운(또는 초신성 폭발)까지 감
+//  · 그 뒤 둘로 나뉨: 남은 중심핵은 작은 점이 되어 백색 왜성(또는 중성자별·블랙홀)으로 가고,
+//    퍼져 나간 물질은 성간 물질 같은 뿌연 구름이 되어 고리를 따라 성간 물질로 돌아감
+const SPL={sun:225/360,big:220/360}; // 행성상 성운·초신성 폭발에 닿는 때
+const cyAng=(lp,t)=>lp=='sun'?-360*t:180+360*t;
+const cyPos=(lp,t)=>onE(lp=='sun'?LP:RP,cyAng(lp,t));
+function cyStage(lp,t){const s=SPL[lp];
+ if(t<s){const ang=cyAng(lp,t);let best=0;CY.forEach((c,i)=>{if(c.lp!=lp||c.a==null)return;if(lp=='sun'?ang<=c.a:ang>=c.a)best=i});return best}
+ const q=(t-s)/(1-s);if(q<.3)return lp=='sun'?4:9;if(q<.62)return lp=='sun'?5:(q<.46?10:11);return 0} // 지금 설명할 단계
+function drawCy(){S=cyv;S.innerHTML='';const d=el('defs',{});heads(d);
+ const cmp=cyMode=='cmp',act=lp=>cmp||cyMode==lp,op=lp=>act(lp)?1:.22;
+ // 진화 속도 비교에서는 두 별의 지금 단계를 함께 강조 (단계를 눌러 설명을 볼 때는 그 단계만)
+ const onS=new Set(cmp?(cyPick?[cySel]:cmpR<0?[]:(G=>[cyStage('sun',G.ts),cyStage('big',G.tb)])(cmpState(cmpR))):[cySel]);
+ const cg=el('radialGradient',{id:'cyc'},d);[[0,'#f0a0c0',.85],[.55,'#a060b0',.5],[1,'#6a4a9a',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},cg));
+ // 위쪽 여백: 왼쪽 위의 '순환 따라가기' 단추와 안내(HTML) 아래에 지금 단계의 이름과 설명 (길면 두 줄)
+  {const c=cmp&&!cyPick?(([n,d])=>({n,d}))(cmpMsg()):CY[cySel],L=[''];(c.n+' '+c.d).split(' ').forEach(w=>{const s=L[L.length-1];if(s&&(s+' '+w).length>60)L.push(w);else L[L.length-1]=s?s+' '+w:w});
+  L.forEach((s,i)=>{const e=el('text',{x:20,y:70+i*21,'font-size':16,'font-weight':600,fill:'#e8eaf2'});
+   if(i==0){el('tspan',{fill:'#ffd166','font-weight':800},e).textContent=c.n;el('tspan',{},e).textContent=s.slice(c.n.length)}else e.textContent=s})}
+ S=el('g',{transform:cmp?'translate(120,90) scale(.75)':'translate(0,80)'}); // 순환 그림은 80만큼 아래로 (진화 속도 비교에서는 작게 줄이고 아래에 일생 막대)
+ // 고리 (화살표로 진행 방향 표시)
+ [['sun',LP,0,-360],['big',RP,180,540]].forEach(([lp,E,a0,a1])=>{const pts=[];for(let i=0;i<=120;i++)pts.push(onE(E,a0+(a1-a0)*i/120).map(v=>v.toFixed(1)).join(','));
+  const g=el('g',{opacity:op(lp)});el('polyline',{points:pts.join(' '),fill:'none',stroke:'#7f8bb3','stroke-width':5,opacity:.55},g);
+  [.12,.4,.62,.86].forEach(f=>{const p=onE(E,a0+(a1-a0)*f),q=onE(E,a0+(a1-a0)*(f+.01));const u=[q[0]-p[0],q[1]-p[1]],L=Math.hypot(...u);
+   el('polygon',{points:`${p[0]+u[0]/L*9},${p[1]+u[1]/L*9} ${p[0]-u[1]/L*7},${p[1]+u[0]/L*7} ${p[0]+u[1]/L*7},${p[1]-u[0]/L*7}`,fill:'#a9b4dc'},g)})});
+ // 가지: 행성상 성운 → 백색 왜성, 초신성 폭발 → 중성자별·블랙홀
+ const br=(a,b,lp)=>{const g=el('g',{opacity:op(lp)}),[x1,y1]=CY[a].p,[x2,y2]=CY[b].p,dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy);arrow(x1+dx/L*36,y1+dy/L*36,x2-dx/L*20,y2-dy/L*20,'w','#a9b4dc',2.5);S.lastChild&&g.appendChild(S.lastChild)};
+ br(4,5,'sun');br(9,10,'big');br(9,11,'big');
+ // 원소가 성간 물질로 돌아가는 길 표시
+ const ret=(x,y,t1,t2,lp)=>{const g=el('g',{opacity:op(lp)});lab(x,y,t1,13,'middle','#ffd9a0',700,g);lab(x,y+17,t2,13,'middle','#ffd9a0',700,g)};
+ ret(372,276,'원소가 성간 물질로','(헬륨, 탄소, 질소 등)','sun');ret(588,276,'원소가 성간 물질로','(산소, 철, 금, 우라늄 등)','big');
+ // 단계 아이콘과 이름
+ CY.forEach((c,i)=>{const g=el('g',{'data-c':i,opacity:c.lp=='both'?1:op(c.lp)}),[x,y]=c.p,on=onS.has(i);g.appendChild(cyIcon(c.k||'ism',x,y));
+  const big=c.k=='sg'||c.k=='sn'||c.id=='ism',dy=big?52:c.k=='rg'||c.k=='pn'?44:c.k=='bh'||c.k=='ns'||c.k=='wd'?26:30;
+  lab(x,y+dy,c.n,16,'middle',on?'#ffd166':'#e8eaf2',800,g);el('rect',{x:x-45,y:y-40,width:90,height:90,fill:'transparent'},g)});
+ // 고리 이름
+ lab(290,190,'질량이 태양과',16,'middle','#cfd6ea',700).setAttribute('opacity',op('sun'));lab(290,210,'비슷한 별',16,'middle','#cfd6ea',700).setAttribute('opacity',op('sun'));
+ lab(670,190,'질량이 태양보다',16,'middle','#cfd6ea',700).setAttribute('opacity',op('big'));lab(670,210,'매우 큰 별',16,'middle','#cfd6ea',700).setAttribute('opacity',op('big'));
+ // 따라가기: 별(노란 점) → 나뉜 뒤 남은 중심핵(작은 점)과 뿌연 구름
+ if(cmp){if(cmpR>=0){const G=cmpState(cmpR);cyTrace('sun',G.ts);cyTrace('big',G.tb)}S=cyv;cmpBars()}
+ else if(cyT>=0)cyTrace(cyMode,cyT);
+}
+function cyTrace(lp,t){const s=SPL[lp],dot=(x,y,r)=>{el('circle',{cx:x,cy:y,r:r*1.9,fill:'#ffd166',opacity:.3});el('circle',{cx:x,cy:y,r,fill:'#ffd166',stroke:'#fff','stroke-width':2})};
+  if(t<s){const[x,y]=cyPos(lp,t);dot(x,y,7)}
+  else{const q=(t-s)/(1-s),sp=cyPos(lp,s);
+   // 폭발·방출 순간의 퍼지는 고리
+   if(q<.2)el('circle',{cx:sp[0],cy:sp[1],r:12+120*q,fill:'none',stroke:lp=='sun'?'#7fe0d8':'#fff3c4','stroke-width':3,opacity:1-q/.2});
+   // 남은 중심핵: 작아지면서 백색 왜성(또는 중성자별·블랙홀)으로
+   const m=Math.min(1,q/.3),r=7-3*m;(lp=='sun'?[5]:[10,11]).forEach(i=>{const p=CY[i].p;dot(sp[0]+(p[0]-sp[0])*m,sp[1]+(p[1]-sp[1])*m,r)});
+   // 퍼져 나간 물질: 뿌연 구름이 되어 고리를 따라 성간 물질로 (끝에서 성간 물질에 섞이며 사라짐)
+   const u=Math.max(0,Math.min(1,(q-.08)/.84)),[cx,cy]=cyPos(lp,s+(1-s)*u),cr=12+12*u,co=u>.88?(1-u)/.12:1;
+   if(q>.08)el('circle',{cx,cy,r:cr,fill:'url(#cyc)',opacity:co})}
+}
+// ---- 진화 속도 비교: 두 별이 성간 물질에서 동시에 출발, 같은 시계로 움직임 ----
+// 시간(년)은 대략값. 질량이 태양과 비슷한 별: 주계열 도달 약 5천만 년, 주계열 약 100억 년, 거성을 거쳐 약 110억 년에 행성상 성운
+// 질량이 매우 큰 별(태양의 약 15배 예): 주계열 도달 약 6만 년, 주계열 약 1,300만 년, 초거성을 거쳐 약 1,500만 년에 초신성 폭발
+// 실제 비율로는 큰 별의 일생이 순식간에 지나가므로 시간 빠르기를 구간마다 바꿈 (cmpR: 재생한 실제 초, 0~22)
+//  0~8초: 0 → 4천만 년 / 8~16초: → 100억 년 / 16~19초: → 110억 년 / 19~22초: 남은 물질이 성간 물질로 돌아감
+let cmpR=-1,cyPick=false;
+const CMP_END=22,lerp=(a,b,f)=>a+(b-a)*Math.max(0,Math.min(1,f));
+function cmpState(r){
+ const Y=r<8?5e6*r:r<16?4e7+(r-8)*(1e10-4e7)/8:r<19?1e10+(r-16)*1e9/3:1.1e10,
+  rate=r<8?5e6:r<16?(1e10-4e7)/8:r<19?1e9/3:0;
+ const as=Y<5e7?lerp(0,-90,Y/5e7):Y<1e10?lerp(-90,-125,(Y-5e7)/(1e10-5e7)):lerp(-125,-225,(Y-1e10)/1e9),
+  ts=r<19?-as/360:SPL.sun+(1-SPL.sun)*Math.min(1,(r-19)/3);
+ const ab=Y<6e4?lerp(180,270,Y/6e4):Y<1.3e7?lerp(270,320,(Y-6e4)/(1.3e7-6e4)):lerp(320,400,(Y-1.3e7)/2e6),
+  tb=Y<1.5e7?(ab-180)/360:SPL.big+(1-SPL.big)*Math.min(1,(r-3)/3);
+ return{Y,rate,ts,tb}}
+function cmpMsg(){if(cmpR<0)return['동시에 출발','질량이 다른 두 별이 성간 물질에서 동시에 태어나면, 어느 별이 먼저 일생을 마칠까요?'];
+ const Y=cmpState(cmpR).Y;
+ if(Y<1.5e7)return['질량이 매우 큰 별','약 6만 년 만에 주계열성이 되고, 수소를 매우 빠르게 소모합니다.'];
+ if(Y<5e7)return['약 1,500만 년','질량이 매우 큰 별(예: 태양의 약 15배)은 초신성 폭발로 일생을 마칩니다. 이때 질량이 태양과 비슷한 별은 아직 주계열성에도 도달하지 못했습니다.'];
+ if(Y<1e10)return['주계열성','질량이 태양과 비슷한 별은 주계열성으로 약 100억 년을 머뭅니다. 별의 일생에서 가장 긴 단계입니다.'];
+ if(cmpR<19)return['거성','주계열을 벗어난 별은 바깥층이 팽창하여 거성이 됩니다.'];
+ return['약 110억 년','질량이 태양과 비슷한 별이 일생을 마칩니다. 질량이 매우 큰 별보다 수백 배 오래 삽니다.']}
+// 그림 아래: 같은 시간 눈금(0~120억 년)의 일생 막대. 지금까지 흐른 시간만큼 채워짐
+function cmpBars(){const X0=212,X1=920,YM=1.2e10,xs=y=>X0+(X1-X0)*Math.min(y,YM)/YM,G=cmpR<0?null:cmpState(cmpR),Y=G?G.Y:0;
+ lab(20,428,'흐른 시간',14,'start','#cfd6ea',700);lab(96,428,Y?fmtYr(Y):'0년',17,'start','#ffd166',800);
+ if(G&&G.rate)lab(X1,428,'시간 빠르기: 1초에 약 '+fmtYr(G.rate),13,'end','#a9b1cc',600);
+ [{n:'질량이 태양과 비슷한 별',y:438,end:1.1e10,e:'약 110억 년',seg:[[0,5e7,'#c9b6ff',''],[5e7,1e10,'#ffe08a','주계열성'],[1e10,1.1e10,'#ff8a5c','거성']]},
+  {n:'질량이 태양보다 매우 큰 별',y:462,end:1.5e7,e:'약 1,500만 년 (너무 짧아 거의 보이지 않음)',seg:[[0,6e4,'#c9b6ff',''],[6e4,1.3e7,'#9fc3ff',''],[1.3e7,1.5e7,'#ff6a6a','']]}].forEach(R=>{
+  lab(X0-10,R.y+13,R.n,13,'end','#e8eaf2',700);el('rect',{x:X0,y:R.y,width:X1-X0,height:16,rx:3,fill:'#1b2240',stroke:'#3a4370'});
+  R.seg.forEach(([a,b,c,t])=>{if(Y<=a)return;const x=xs(a),w=Math.max(R.end<1e8?3:0,xs(Math.min(b,Y))-x);el('rect',{x,y:R.y,width:w,height:16,fill:c});
+   if(t&&w>(t.length*13+8))lab(x+w/2,R.y+12.5,t,12,'middle','#1a1f36',800).setAttribute('stroke','none')});
+  if(Y>=R.end)lab(xs(R.end)+(R.end<1e8?8:6),R.y+12.5,R.e,12,'start','#ffd9a0',700)});
+ for(let v=0;v<=YM;v+=2e9){const x=xs(v);el('line',{x1:x,x2:x,y1:480,y2:484,stroke:'#7f8bb3'});lab(x,497,v?v/1e8+'억'+(v==YM?' 년':''):'0',11,'middle','#a9b1cc',600)}
+ if(G){const x=xs(Y);el('line',{x1:x,x2:x,y1:434,y2:482,stroke:'#ffd166','stroke-width':2})}
+}
+function cyStop(){cyPlay=false;cancelAnimationFrame(cyRaf);cyplay.textContent=cyMode!='cmp'?'▶ 순환 따라가기':cmpR>=CMP_END?'↺ 다시 출발':'▶ 동시에 출발'}
+cyplay.onclick=()=>{if(cyPlay)return cyStop();cyPlay=true;cyplay.textContent='❚❚ 멈춤';
+ if(cyMode=='cmp'){if(cmpR<0||cmpR>=CMP_END)cmpR=0;cyPick=false;const t0=performance.now()-cmpR*1000;
+  const st=now=>{if(!cyPlay)return;cmpR=Math.min(CMP_END,(now-t0)/1000);drawCy();if(cmpR>=CMP_END)cyStop();else cyRaf=requestAnimationFrame(st)};cyRaf=requestAnimationFrame(st);return}
+ let t0=performance.now()-Math.max(0,cyT)*14000;
+ const st=now=>{if(!cyPlay)return;cyT=((now-t0)/14000)%1;cySel=cyStage(cyMode,cyT);drawCy();cyRaf=requestAnimationFrame(st)};cyRaf=requestAnimationFrame(st)};
+// 별의 질량(또는 진화 속도 비교)을 바꾸면 따라가기를 처음부터
+cysel.querySelectorAll('button').forEach(b=>b.onclick=()=>{cysel.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));cyMode=b.dataset.v;
+ cyhint.textContent=cyMode=='cmp'?'시간이 흐르는 빠르기를 바꾸어 나타냈습니다.':'각 단계를 눌러도 설명을 볼 수 있습니다.';
+ const was=cyPlay;cyStop();cyT=-1;cySel=0;cmpR=-1;cyPick=false;cyStop();drawCy();if(was)cyplay.onclick()});
+// 그림이 높이에 맞춰 줄면 좌우에 빈 띠가 생기므로, 단추를 그림 내용의 왼쪽 위에 맞춤
+function placeCyb(){const r=cyv.getBoundingClientRect();if(!r.width)return;const s=Math.min(r.width/960,r.height/500);cytool.style.left=((r.width-960*s)/2+10)+'px'}
+addEventListener('resize',placeCyb);
+cyv.addEventListener('click',e=>{const g=e.target.closest('[data-c]');if(g){cyStop();cyT=-1;cySel=+g.dataset.c;cyPick=true;drawCy()}});
+drawCy();
+
+// 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
+[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+ const closeTh=()=>{ov.hidden=true;btn.focus()};
+ btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
+ ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})});
+</script></main><script src="../copyright.js"></script>
+</body></html>
