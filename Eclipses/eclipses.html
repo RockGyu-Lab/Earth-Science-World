@@ -171,7 +171,7 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
  <div class="pop-h"><b>실제 하늘에서 본 개기일식의 진행 모습</b><button type="button" class="x" id="realX">닫기 ✕</button></div>
  <svg id="rv" viewBox="0 0 900 450" role="img" aria-label="남쪽 하늘에서 태양이 동에서 서로 움직이는 동안, 태양보다 느리게 움직이는 달이 태양을 서쪽 가장자리부터 가려 개기일식이 일어나는 모습"></svg>
  <p class="figcap">춘분 무렵 서울(북위 약 37.5°)에서 오전 11시쯤 개기일식이 일어난다고 가정한 가상의 예입니다. 해와 달의 크기, 그리고 태양에 대해 달이 움직이는 거리는 보기 쉽게 크게 과장했습니다(실제 시지름은 둘 다 약 0.5°). 개기일식 순간은 천천히 보여 줍니다.</p>
- <div class="row"><button type="button" id="rvGo">▶ 재생</button><button type="button" id="rvR">■ 처음으로</button><label>시각 <input id="rvT" type="range" min="0" max="1000" step="1" value="0"><b id="rvC">09:15</b></label></div>
+ <div class="row"><button type="button" id="rvGo">▶ 재생</button><button type="button" id="rvR">■ 처음으로</button><label>시각 <input id="rvT" type="range" min="0" max="1000" step="1" value="0"><b id="rvC">09:00</b></label></div>
  <ol>
   <li>태양은 지구의 자전 때문에 동쪽 하늘에서 떠서 남쪽 하늘을 지나 서쪽으로 집니다(<b>일주 운동</b>).</li>
   <li>달도 일주 운동으로 동쪽에서 서쪽으로 움직이지만, 하루에 약 12°씩 동쪽으로 공전하는 움직임 때문에 결과적으로 <b>태양보다 느리게</b> 일주 운동을 하게 됩니다. 그래서 <span class="hl">태양을 기준으로 보면 달은 <b>서쪽에서 동쪽으로</b> 이동하면서 태양의 서쪽(오른쪽) 가장자리부터 가리기 시작합니다.</span></li>
@@ -431,9 +431,11 @@ const skyClock=h=>{const m=(Math.round(h*60)%1440+1440)%1440;return String(Math.
 const skyMix=(a,b,k)=>'rgb('+a.map((v,i)=>Math.round(v+(b[i]-v)*k)).join(',')+')';
 
 // ---- 일식 팝업: 남쪽 하늘을 바라볼 때 태양과 달이 움직이며 개기일식이 일어나는 모습 ----
-// 식의 한가운데가 오전 11시인 경우. 달은 태양과 같은 길을 따라 일주 운동을 하되, 태양에 대해 동쪽으로 일정하게 밀려남 (속도와 크기는 과장)
+// 식의 한가운데가 오전 11시인 경우. 달은 태양과 같은 일주 운동 길을 따라 움직이되, 태양보다 느려서 태양에 대해 동쪽으로 일정하게 밀려남
+// (시간각 차이가 일정하게 줄어듦, 속도와 크기는 과장)
 (()=>{
- const rv=document.getElementById('rv'),RS=22,RM=23.2,T0=-1.75,T1=1.75,TM=11,VR=(RS+RM)/1.4;   // 식의 시작~끝 약 2.8시간
+ const rv=document.getElementById('rv'),RS=22,RM=23.2,T0=-2,T1=1.75,TM=11;
+ const VD=(RS+RM)/1.4/Math.hypot(...sky(-24.5).map((v,i)=>v-sky(-25.5)[i]));   // 달이 태양에 대해 한 시간에 밀려나는 시간각(°): 식의 시작~끝이 약 3시간이 되도록 (오전에는 1°가 짧게 그려지므로 식 시작 무렵 위치의 1° 길이로 계산)
  const stars=[[60,60,1.4],[150,120,1.2],[250,38,1.6],[420,48,1.3],[500,22,1.2],[610,95,1.6],[700,48,1.3],[820,110,1.5],[880,40,1.2],[560,215,1.3],[120,215,1.2],[760,250,1.4],[230,215,2.8]];
  let s='<defs><linearGradient id="rvSky" x1="0" y1="0" x2="0" y2="1"><stop id="rvS0" offset="0"/><stop id="rvS1" offset="1"/></linearGradient>'+
   '<linearGradient id="rvGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a4a" stop-opacity="0"/><stop offset="1" stop-color="#ffb066" stop-opacity=".8"/></linearGradient>'+
@@ -461,8 +463,8 @@ const skyMix=(a,b,k)=>'rgb('+a.map((v,i)=>Math.round(v+(b[i]-v)*k)).join(',')+')
  const E={S0:$('rvS0'),S1:$('rvS1'),St:$('rvStar'),Gl:$('rvGl'),Co:$('rvCo'),Ha:$('rvHa'),Su:$('rvSu'),Cs:$('rvCsc'),Mc:$('rvMc'),Md:$('rvMd'),Di:$('rvDi'),Mo:$('rvMo'),Ls:$('rvLs'),Lm:$('rvLm'),Tx:$('rvSt')},F=rv.querySelectorAll('.rvF');
  let p=0,run=0,raf=0,last=0,g=9,tot=0;
  function draw(){
-  const t=T0+(T1-T0)*p,H=(TM-12+t)*15,[sx,sy]=sky(H),a=sky(H-.2),b=sky(H+.2),n=Math.hypot(b[0]-a[0],b[1]-a[1]),wx=(b[0]-a[0])/n,wy=(b[1]-a[1])/n;
-  const sm=-VR*t,mx=sx+wx*sm,my=sy+wy*sm,d=Math.abs(sm);   // sm>0: 달이 태양의 서쪽(진행 방향 앞)에 있음
+  const t=T0+(T1-T0)*p,H=(TM-12+t)*15,[sx,sy]=sky(H);
+  const [mx,my]=sky(H-VD*t),d=Math.hypot(mx-sx,my-sy);   // 달은 같은 길 위에서 태양보다 시간각이 VD·(-t)만큼 큼 (t<0: 달이 태양의 서쪽에 있음)
   const cov=Math.min(1,ovl(RS,RM,d)/(Math.PI*RS*RS));g=d-(RM-RS);tot=g<=0;
   const dk=tot?1:.8*Math.pow(Math.max(0,(cov-.7)/.3),2.2),cv=Math.max(0,Math.min(1,1-g/3)),df=g>0&&g<4?1-g/4:0;   // dk: 하늘이 어두워진 정도, cv: 코로나, df: 다이아몬드 반지
   at(E.S0,{'stop-color':mix([70,130,220],[10,16,44],dk)});at(E.S1,{'stop-color':mix([182,216,242],[48,58,100],dk)});
@@ -470,7 +472,7 @@ const skyMix=(a,b,k)=>'rgb('+a.map((v,i)=>Math.round(v+(b[i]-v)*k)).join(',')+')
   F.forEach(f=>f.setAttribute('slope',1-.78*dk));
   at(E.Co,{transform:`translate(${sx},${sy})`,opacity:cv});at(E.Ha,{cx:sx,cy:sy,opacity:(1-cov)*.85});at(E.Su,{cx:sx,cy:sy});at(E.Cs,{cx:sx,cy:sy});
   at(E.Mc,{cx:mx,cy:my});at(E.Md,{cx:mx,cy:my,opacity:cv});at(E.Mo,{cx:mx,cy:my,opacity:.85*(1-cv)});
-  const ux=d?-wx*Math.sign(sm):0,uy=d?-wy*Math.sign(sm):0;   // 마지막으로 남은 햇빛은 달 반대쪽 태양 가장자리
+  const ux=d?(sx-mx)/d:0,uy=d?(sy-my)/d:0;   // 마지막으로 남은 햇빛은 달 반대쪽 태양 가장자리
   at(E.Di,{transform:`translate(${sx+ux*RS},${sy+uy*RS}) scale(${.6+.6*df})`,opacity:df});
   at(E.Ls,{x:sx,y:sy-RS-12});at(E.Lm,{x:mx,y:my+RM+20});
   E.Tx.textContent=tot?'개기일식: 태양이 완전히 가려짐':cov>0?`부분일식: 태양이 가려진 정도 ${Math.round(cov*100)}%`:t<0?'일식 시작 전':'일식이 끝남';
