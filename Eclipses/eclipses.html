@@ -91,6 +91,10 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 #realOv .row,#real2Ov .row{margin:8px 0 0}
 #realOv .row label,#real2Ov .row label{flex:1;min-width:220px}
 #realOv .row input,#real2Ov .row input{flex:1;width:auto}
+/* 팝업 설명에서 강조할 문장 (빨간 글씨) */
+.pop .hl{color:#d62828;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pop .hl{color:#ff7a7a}}
+:root[data-theme="dark"] .pop .hl{color:#ff7a7a}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -170,7 +174,7 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
  <div class="row"><button type="button" id="rvGo">▶ 재생</button><button type="button" id="rvR">■ 처음으로</button><label>시각 <input id="rvT" type="range" min="0" max="1000" step="1" value="0"><b id="rvC">09:15</b></label></div>
  <ol>
   <li>태양은 지구의 자전 때문에 동쪽 하늘에서 떠서 남쪽 하늘을 지나 서쪽으로 집니다(<b>일주 운동</b>).</li>
-  <li>달도 일주 운동으로 동쪽에서 서쪽으로 움직이지만, 하루에 약 12°씩 동쪽으로 공전하는 움직임 때문에 결과적으로 <b>태양보다 느리게</b> 일주 운동을 하게 됩니다. 그래서 태양을 기준으로 보면 달은 <b>서쪽에서 동쪽으로</b> 이동하면서 태양의 서쪽(오른쪽) 가장자리부터 가리기 시작합니다.</li>
+  <li>달도 일주 운동으로 동쪽에서 서쪽으로 움직이지만, 하루에 약 12°씩 동쪽으로 공전하는 움직임 때문에 결과적으로 <b>태양보다 느리게</b> 일주 운동을 하게 됩니다. 그래서 <span class="hl">태양을 기준으로 보면 달은 <b>서쪽에서 동쪽으로</b> 이동하면서 태양의 서쪽(오른쪽) 가장자리부터 가리기 시작합니다.</span></li>
   <li>개기일식이 되면 하늘이 갑자기 어두워지고, 태양 둘레의 <b>코로나</b>와 밝은 별·행성이 보이며, 지평선 근처는 노을처럼 밝게 보입니다. 개기일식은 길어야 몇 분 정도입니다.</li>
   <li>※ 실제 일식은 맨눈이나 선글라스로 보면 안 되고, 반드시 일식 관측용 필터로 보아야 합니다.</li>
  </ol>
@@ -182,7 +186,7 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
  <div class="row"><button type="button" id="rv2Go">▶ 재생</button><button type="button" id="rv2R">■ 처음으로</button><label>시각 <input id="rv2T" type="range" min="0" max="1000" step="1" value="0"><b id="rv2C">21:00</b></label></div>
  <ol>
   <li>망일 때 달은 태양의 반대쪽에 있어서, 해가 질 무렵 동쪽에서 떠올라 자정 무렵 남쪽 하늘을 지나 새벽에 서쪽으로 집니다(<b>일주 운동</b>).</li>
-  <li>지구의 그림자도 늘 태양의 반대쪽을 향하므로 태양과 같은 빠르기로 동쪽에서 서쪽으로 일주 운동을 합니다. 달은 하루에 약 12°씩 동쪽으로 공전하는 움직임 때문에 결과적으로 <b>지구 그림자보다 느리게</b> 일주 운동을 하게 됩니다. 그래서 지구 그림자를 기준으로 보면 달은 <b>서쪽에서 동쪽으로</b> 이동하면서 달의 동쪽(왼쪽) 가장자리부터 그림자에 들어갑니다.</li>
+  <li>지구의 그림자도 늘 태양의 반대쪽을 향하므로 태양과 같은 빠르기로 동쪽에서 서쪽으로 일주 운동을 합니다. 달은 하루에 약 12°씩 동쪽으로 공전하는 움직임 때문에 결과적으로 <b>지구 그림자보다 느리게</b> 일주 운동을 하게 됩니다. 그래서 <span class="hl">지구 그림자를 기준으로 보면 달은 <b>서쪽에서 동쪽으로</b> 이동하면서 달의 동쪽(왼쪽) 가장자리부터 그림자에 들어갑니다.</span></li>
   <li>달이 반그림자에 들어가면 조금 어두워질 뿐이라 알아차리기 어렵고, 본그림자에 들어간 부분이 뚜렷하게 어두워집니다(<b>부분월식</b>).</li>
   <li>달 전체가 본그림자에 들어가면(<b>개기월식</b>) 달은 사라지지 않고 어두운 붉은색으로 보이며, 달빛이 약해져 주변에 별이 더 많이 보입니다. 개기월식은 1시간 넘게 이어지기도 합니다.</li>
   <li>※ 월식은 일식과 달리 맨눈으로 보아도 안전합니다.</li>
