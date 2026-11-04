@@ -242,7 +242,7 @@ function draw(){
     if(!flat){ctx.beginPath();ctx.moveTo(M[0],M[1]);ctx.lineTo(Mb[0],Mb[1]);ctx.setLineDash([3,3]);ctx.strokeStyle='#ff6b5b';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([])}
     if(showMoonCone)cone(m3,0.5,0.022,dx,dy);
     var red=nearFull&&ecl(t,'full');
-    drawBall(M,7,red?'#f0a080':'#fff',red?'#b4502e':'#ccc',red?'#6a2a1a':'#888',Sp);
+    drawBall(M,7,red?'#b0553a':'#fff',red?'#7a2414':'#ccc',red?'#3e0f08':'#888',Sp);
   }
   /* 1. 달의 공전 궤도면 중 지구 공전 궤도면 아래쪽 (평면에 비쳐 보임) */
   if(!flat){path(loQ,true);ctx.fillStyle='rgba(20,95,195,.95)';ctx.fill();
@@ -308,7 +308,7 @@ function renderSide(){
   /* 시계 반대 방향 공전: 신월 뒤에는 보는 사람 쪽(앞)으로 지나감 */
   (Math.sin(rad(p))>0?$('gFront'):$('gBack')).appendChild(mo);
   var w=wrap(p),nf=Math.abs(wrap(p-180))<4,red=nf&&ecl(t,'full');
-  mo.setAttribute('fill',red?'#a3442a':(Math.abs(w)<20?'#888':'#eeeee4'));
+  mo.setAttribute('fill',red?'#7a2414':(Math.abs(w)<20?'#888':'#eeeee4'));
   if(Math.abs(w)<20){
     $('mSh').setAttribute('points',[mx+','+(my-MR),EX+','+my,mx+','+(my+MR)].join(' '));$('mSh').style.display='';
   }else $('mSh').style.display='none';

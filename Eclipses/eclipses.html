@@ -121,7 +121,7 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
    <marker id="ahR" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M1,1L9,5L1,9L3.5,5z" fill="#ff6a4a"/></marker>
    <marker id="ahB" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto"><path d="M1,1L9,5L1,9L3.5,5z" fill="#5fb4ff"/></marker>
    <radialGradient id="dpE" cx="40%" cy="38%" r="65%"><stop offset="0" stop-color="#4aa0f0"/><stop offset=".7" stop-color="#2468c8"/><stop offset="1" stop-color="#0e3a85"/></radialGradient>
-   <radialGradient id="dpM" cx="40%" cy="38%" r="65%"><stop offset="0" stop-color="#d9773a"/><stop offset=".6" stop-color="#a8381c"/><stop offset="1" stop-color="#6a2312"/></radialGradient>
+   <radialGradient id="dpM" cx="40%" cy="38%" r="65%"><stop offset="0" stop-color="#9a3a1e"/><stop offset=".6" stop-color="#6e1c0e"/><stop offset="1" stop-color="#3e0f08"/></radialGradient>
   </defs>
   <rect width="640" height="270" fill="#1a2246"/>
   <!-- 본그림자: 햇빛을 나란하게 그렸으므로 그림자도 지구의 위아래 끝에서 나란하게 (경계는 점선) -->
@@ -294,7 +294,7 @@ function skyMoon(L){
  el('circle',{cx,cy,r:R+5,fill:'#0b1026'});
  const d=el('defs',{}),cp=el('clipPath',{id:'cv'},d);el('circle',{cx,cy,r:R},cp);
  const mp=el('clipPath',{id:'cm'},d);el('circle',{cx,cy,r:mr},mp);
- const ug=el('radialGradient',{id:'ug'},d);[[0,'#a31f10',.88],[.45,'#c0341a',.86],[.8,'#d96a24',.83],[.95,'#eb913f',.78],[1,'#ecb06a',.45]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},ug));
+ const ug=el('radialGradient',{id:'ug'},d);[[0,'#5a120a',.92],[.45,'#6e1a0e',.9],[.8,'#8a2c14',.88],[.95,'#a2421e',.82],[1,'#b8663a',.5]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},ug));
  const pg=el('radialGradient',{id:'pg'},d);[[0,.55],[Math.min(.99,ru/rp),.55],[1,0]].forEach(([o,a])=>el('stop',{offset:o,'stop-color':'#000','stop-opacity':a},pg));
  const g=el('g',{'clip-path':'url(#cv)'});
  el('circle',{cx,cy,r:R,fill:'#05081a'},g);
@@ -527,7 +527,7 @@ const skyPanel=(id,title,inner,legend)=>`<rect x="900" width="200" height="450" 
  let s='<defs><linearGradient id="rv2Sky" x1="0" y1="0" x2="0" y2="1"><stop id="rv2S0" offset="0"/><stop id="rv2S1" offset="1"/></linearGradient>'+
   '<radialGradient id="rv2Halo"><stop offset=".2" stop-color="#dfe8ff" stop-opacity=".55"/><stop offset="1" stop-color="#dfe8ff" stop-opacity="0"/></radialGradient>'+
   `<radialGradient id="rv2Pg"><stop offset="0" stop-opacity=".5"/><stop offset="${(U/P).toFixed(3)}" stop-opacity=".5"/><stop offset="1" stop-opacity="0"/></radialGradient>`+
-  '<radialGradient id="rv2Ug">'+[[0,'#8f1c0e',.9],[.45,'#b5321a',.88],[.8,'#d0622a',.85],[.95,'#e2893e',.8],[1,'#e8a866',.5]].map(([o,c,a])=>`<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')+'</radialGradient>'+
+  '<radialGradient id="rv2Ug">'+[[0,'#5a120a',.92],[.45,'#6e1a0e',.9],[.8,'#8a2c14',.88],[.95,'#a2421e',.82],[1,'#b8663a',.5]].map(([o,c,a])=>`<stop offset="${o}" stop-color="${c}" stop-opacity="${a}"/>`).join('')+'</radialGradient>'+
   `<clipPath id="rv2Cm"><circle id="rv2Cmc" r="${MR}"/></clipPath></defs>`+
   '<rect width="900" height="450" fill="url(#rv2Sky)"/>'+
   '<g>'+stars.slice(0,14).map(([x,y,r])=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="#fff"/>`).join('')+'</g>'+
