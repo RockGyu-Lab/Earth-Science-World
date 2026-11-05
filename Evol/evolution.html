@@ -116,6 +116,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .cyb span{font-size:.78rem;font-weight:600;color:#a9b1cc}
 .ask2{margin-top:6px}
 #cyv [data-c]{cursor:pointer}
+/* 학생에게 할 일을 알려 주는 말(실행 요청): 남색 굵은 글씨로 설명과 구분 */
+.go{color:var(--acc);font-weight:700}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -176,7 +178,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="ctl">
   <div class="stp" id="pmstp"><button id="pmprev" aria-label="이전 단계">◀</button><b id="pmstep"></b><button id="pmnext" aria-label="다음 단계">▶</button></div>
   <button class="pb" id="pmplay">▶ 자동 진행</button>
-  <span class="unit" id="pmhint" hidden>그림의 각 단계를 눌러 보세요.</span>
+  <span class="unit" id="pmhint" hidden><span class="go">그림의 각 단계를 눌러 보세요.</span></span>
  </div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</p><button type="button" class="open-think" id="thb4">답 보기</button></div>
  <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?">
@@ -581,7 +583,7 @@ function drawPm(){S=pmv;S.innerHTML='';[drawPm0,drawPm1,drawPm2][pv]();
  const desc=pv==0?`<b>${PS[pi_].n}</b> ${PS[pi_].d}`:pv==1?'<b>거성과 초거성</b> 질량이 큰 별일수록 중심부 온도가 높아, 더 무거운 원소까지 핵융합 반응이 일어납니다.':`<b>${ND[nsel].n}</b> ${ND[nsel].d}`;
  pmnote.innerHTML=`<div class="nh">${PMH}</div><p>${desc}</p>`;pmstep.textContent=`${pi_+1} / ${PS.length} 단계`;
  pmstp.style.display=pmplay.style.display=pv!=0?'none':'';pmhint.hidden=pv==0;
- pmhint.innerHTML=pv==1?'<b>수명</b> 질량이 큰 별일수록 핵융합 반응이 빨리 일어나 수명이 짧습니다. (질량이 태양 정도인 별 약 100억 년, 질량이 태양의 약 10배 이상인 별 수천만 년 이하)':'그림의 각 단계를 눌러 보세요.'}
+ pmhint.innerHTML=pv==1?'<b>수명</b> 질량이 큰 별일수록 핵융합 반응이 빨리 일어나 수명이 짧습니다. (질량이 태양 정도인 별 약 100억 년, 질량이 태양의 약 10배 이상인 별 수천만 년 이하)':'<span class="go">그림의 각 단계를 눌러 보세요.</span>'}
 function pmGo(i,then){cancelAnimationFrame(pRaf);pFrom=pi_;pi_=i;pT=0;const t0=performance.now();
  const st=now=>{pT=Math.min(1,(now-t0)/1300);drawPm();if(pT<1)pRaf=requestAnimationFrame(st);else if(then)then()};pRaf=requestAnimationFrame(st)}
 function pmStop(){pPlay=false;clearTimeout(pTimer);cancelAnimationFrame(pRaf);pT=1;pmplay.textContent='▶ 자동 진행'}

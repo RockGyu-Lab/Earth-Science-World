@@ -169,6 +169,8 @@ dialog li{margin:4px 0}
 .abc span.keep{opacity:1;color:#1b1f2a}
 .down{margin:2px 0 2px 4px;font-size:.84rem;font-weight:700;color:var(--acc)}
 .close{display:block;margin:14px 0 0 auto;padding:8px 18px;border:0;border-radius:10px;background:var(--acc);color:var(--on-acc);font-weight:700;cursor:pointer}
+/* 학생에게 할 일을 알려 주는 말(실행 요청): 남색 굵은 글씨로 설명과 구분 */
+.qmsg.go{color:var(--acc);font-weight:700}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -180,9 +182,9 @@ dialog li{margin:4px 0}
 <label id="glab"><input type="checkbox" id="guide"> 선의 위치 맞춰 보기</label>
 </div></div>
 <div class="ctl">
-<div class="row" id="trow"><span class="qmsg">광원(뜨거운 고체)의 온도를 바꿔 보세요.</span><span class="tend">3000 K</span><input id="tp" type="range" min="3000" max="12000" step="100" value="6000"><span class="tend">12000 K</span><b id="tpv">6000 K</b></div>
+<div class="row" id="trow"><span class="qmsg go">광원(뜨거운 고체)의 온도를 바꿔 보세요.</span><span class="tend">3000 K</span><input id="tp" type="range" min="3000" max="12000" step="100" value="6000"><span class="tend">12000 K</span><b id="tpv">6000 K</b></div>
 <div class="gaswrap" id="gaswrap"><div class="gpl"><b id="gpl"></b><span class="arr">▶</span></div><div class="tabs" id="gasrow"><button data-g="H" class="on">수소</button><button data-g="He">헬륨</button><button data-g="Ca">칼슘</button><button data-g="Fe">철</button><button data-g="?">혼합 기체 ?</button></div></div>
-<div class="row" id="qrow"><span class="qmsg">혼합 기체의 종류를 추정한 후 정답을 확인해 보세요.</span><button id="chk">정답 확인</button><button id="nxt">다른 혼합 기체로 바꾸기</button><b id="ans"></b></div>
+<div class="row" id="qrow"><span class="qmsg go">혼합 기체의 종류를 추정한 후 정답을 확인해 보세요.</span><button id="chk">정답 확인</button><button id="nxt">다른 혼합 기체로 바꾸기</button><b id="ans"></b></div>
 </div>
 <!-- 별의 분광형 탭 -->
 <div id="stype" style="display:none">
@@ -191,7 +193,7 @@ dialog li{margin:4px 0}
 <div class="note" id="stinfo"></div>
 <div id="stqrow">
  <span class="qmsg" id="stmn"></span>
- <span class="qmsg">표면 온도가 높은 순서대로 눌러 보세요.</span>
+ <span class="qmsg go">표면 온도가 높은 순서대로 눌러 보세요.</span>
  <div class="tiles" id="sttiles"></div>
  <button id="stshuf">다시 섞기</button>
  <span id="stmsg"></span>

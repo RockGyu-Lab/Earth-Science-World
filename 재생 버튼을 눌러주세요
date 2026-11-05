@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- 시험용 사이트: 검색 엔진에 싣지 않음. 정식 사이트로 옮길 때 이 줄을 지울 것 -->
+<meta name="robots" content="noindex">
+<title>허블-르메트르 법칙과 우주 팽창</title>
+<style>
+/* evolution.html, HR-diagram.html과 같은 규칙
+   색: 남색 하나를 기본 강조색으로 / 상자: 옅은 회색 판 / 모서리: 판 14px, 버튼 10px / 그림판: 밤하늘 남색 */
+:root{--bg:#fff;--fg:#1b1f2a;--card:#f3f4f8;--bd:#d5d8e2;--bline:#d9d9d6;--bcard:#fff;--bfg:#1c1c1c;--acc:#5468d4;--acc-bg:#eef0fc;--acc-bd:#c3caf2;--on-acc:#fff;--frame:transparent;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}
+/* 탭 안에서 고르는 단추는 라벤더(연보라) (위쪽 큰 탭의 남색과 구분) */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
+button,input{font-family:inherit}
+main{max-width:960px;margin:0 auto;padding:14px}
+/* 제목 줄: 제목 …… [← 돌아가기] (좁은 화면에서는 줄바꿈) */
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
+.pnum{margin:0;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;text-wrap:balance}
+.back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--bline)}
+.intro{margin:0 0 8px;font-size:.93rem}
+/* 학습 메뉴 탭 (evolution.html과 같은 모양) */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.tabs button{flex:1 1 140px;padding:9px 8px;font-size:.95rem;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.note{margin-bottom:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem}
+.note .nh{font-weight:700;color:var(--acc)}
+.note .ex{font-weight:500;color:var(--fg);opacity:.75;font-size:.88rem}
+/* 탭을 바꿀 때 내용이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+/* 그림판: 패드에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한 */
+svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
+section svg{max-height:max(300px,calc(100vh - 300px))}
+section svg{max-height:max(300px,calc(100dvh - 300px))}
+@media (max-width:640px){.tabs button{flex-basis:40%}}
+/* 그림 아래 조작 줄 */
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
+#p1 .ctl{min-height:60px}
+#p1 .lc .hint{flex-basis:120px}
+.ctl[hidden],.seg[hidden]{display:none}
+.unit{font-size:.85rem;opacity:.75}
+.hint{flex:1 1 260px;font-size:.86rem;line-height:1.45}
+.pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
+/* 탭 안에서 고르는 단추: 라벤더(연보라) */
+.subtabs{display:flex;flex-wrap:wrap;gap:6px}
+.subtabs button{padding:5px 16px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:700;cursor:pointer}
+.subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+.seg{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700}
+.seg .bs{display:flex;flex-wrap:wrap;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
+.seg .bs button{padding:6px 11px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.88rem;font-weight:600;cursor:pointer}
+.seg .bs button+button{border-left:1px solid var(--sub-bd)}
+.seg .bs button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
+.sl{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700}
+.sl input{width:170px;accent-color:var(--acc)}
+.sl b{min-width:5.5em;color:var(--acc)}
+/* ① 정적 우주와 팽창 우주: 왼쪽 1/3 벤틀리의 질문(문제) | 오른쪽 2/3 세 과학자의 해결 아이디어(골라 보기)
+   두 칸의 설명·그림·조작 줄이 같은 높이에 오도록 격자로 배치. 좁은 화면에서는 위아래로 쌓음 */
+.duo{display:grid;grid-template-columns:2fr 3fr;grid-template-rows:auto 1fr auto auto;gap:8px 12px;align-items:start}
+.duo>.lq{grid-column:1;grid-row:1/3;align-self:stretch}
+.duo>.rh{grid-column:2;grid-row:1/3;align-self:stretch}
+#snote{margin-top:8px;padding-top:6px;border-top:1px solid var(--bd)}
+.duo>.lv{grid-column:1;grid-row:3}
+.duo>.rv{grid-column:2;grid-row:3}
+.duo>.lc{grid-column:1;grid-row:4;align-self:stretch}
+.duo>.rc{grid-column:2;grid-row:4;align-self:stretch}
+.duo .note,.duo .ctl{margin:0}
+.duo .note p{margin:2px 0 0}
+/* 벤틀리의 질문: 줄 쳐진 편지 모양 (본문 끝에 보낸 사람을 오른쪽으로) */
+/* 편지지: 크림색 종이, 파란 줄, 왼쪽 붉은 여백선 */
+:root{--paper:#fffaee;--pline:#c9d8ee;--pmar:#eeaaaa;--pbd:#eadfc6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#29271f;--pline:#3c475c;--pmar:#7a4040;--pbd:#3d3a2e}}
+:root[data-theme="dark"]{--paper:#29271f;--pline:#3c475c;--pmar:#7a4040;--pbd:#3d3a2e}
+.duo>.lq{display:flex;flex-direction:column;padding:10px 14px 8px 40px;background:linear-gradient(90deg,transparent 27px,var(--pmar) 27px 28px,transparent 28px 30px,var(--pmar) 30px 31px,transparent 31px),var(--paper);border:1px solid var(--pbd);border-radius:6px;box-shadow:0 2px 6px rgba(60,40,0,.12)}
+.lq .body{flex:1;margin:4px 0 0;line-height:1.75;background:repeating-linear-gradient(transparent 0 calc(1.75em - 1px),var(--pline) calc(1.75em - 1px) 1.75em)}
+.aside{opacity:.72;font-size:.9em}
+.lq .from{display:block;text-align:right;padding-right:.5em}
+.srow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+/* 왼쪽·오른쪽 그림판의 높이를 똑같이 맞춤 (화면 높이에 따라 정하고, 그림은 가운데에 맞춰 그림) */
+.duo svg{height:min(270px,max(190px,calc(100vh - 508px)));max-height:none}
+.duo svg{height:min(270px,max(190px,calc(100dvh - 508px)))}
+.pb:disabled{opacity:.4;cursor:default}
+/* ② 도플러 효과: 작은 학습 화면 단추 + 설명 + 그림판 + 조작 줄 */
+#hnote p{margin:2px 0 0}
+#hv{max-height:max(240px,calc(100vh - 365px))}
+#hv{max-height:max(240px,calc(100dvh - 365px))}
+/* 소리의 도플러 효과: 위아래 두 그림판이 함께 화면 높이에 맞춰 줄어듦 */
+#sview{display:flex;flex-direction:column;gap:8px}
+#sview[hidden],svg[hidden]{display:none}
+.dwrap{position:relative}
+#ambv{max-height:max(140px,calc((100vh - 360px)*.56))}
+#ambv{max-height:max(140px,calc((100dvh - 360px)*.56))}
+#duckv{max-height:max(110px,calc((100vh - 360px)*.44))}
+#duckv{max-height:max(110px,calc((100dvh - 360px)*.44))}
+/* 그림판 귀퉁이의 소리 켬·끔 단추 (연보라) */
+.sndb{position:absolute;top:8px;right:8px;padding:4px 12px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.85rem;font-weight:700;cursor:pointer}
+.sndb.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+@media (max-width:820px){.duo{grid-template-columns:1fr;grid-template-rows:none}.duo>*{grid-column:1!important;grid-row:auto!important}.duo svg,.duo svg{height:26vh}.duo>.rh{margin-top:10px}}
+/* 생각해 보기: 정식 사이트(eclipses.html 심화 질문, luminosity.html)와 같은 형식
+   상자 없이 한 줄에 [꼬리표(남색)] 질문 [답 보기(남색 테두리)] → 누르면 팝업에 질문과 답 */
+.note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
+.note.ask p{margin:0;font-weight:600}
+.ask2{margin-top:6px!important}
+.tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
+.open-think:hover{background:var(--card)}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
+.think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg);font-family:inherit}
+.think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
+.think .exp{margin:0;font-size:.93rem;line-height:1.6}
+.think .exp+.exp{margin-top:6px}
+/* 세 사람의 생각 비교 표 */
+.cmp{width:100%;border-collapse:collapse;font-size:.9rem;line-height:1.45}
+.cmp th,.cmp td{border:1px solid var(--bd);padding:7px 9px;text-align:left;vertical-align:top}
+.cmp thead th{background:var(--acc-bg);color:var(--acc);text-align:center}
+.cmp tbody th{background:var(--card);white-space:nowrap}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
+<!-- 학습실과 탐구 번호가 정해지면 제목 앞에 <p class="pnum">탐구 NN</p>을 넣고, 돌아가기 링크를 그 학습실 메뉴로 바꿀 것 -->
+<div class="titlebar"><h1>허블-르메트르 법칙과 우주 팽창</h1><a class="back" href="./index.html">← Earth Test Lab</a></div>
+<p class="intro">정적 우주와 팽창 우주를 비교하고, <b>허블-르메트르 법칙</b>으로 우주가 팽창한다는 것을 탐구합니다.</p>
+<div class="tabs" role="tablist" aria-label="학습 메뉴">
+ <button role="tab" id="tab1" aria-controls="p1" aria-selected="true">정적 우주와 팽창 우주</button>
+ <button role="tab" id="tab2" aria-controls="p2" aria-selected="false" tabindex="-1">도플러 효과</button>
+ <button role="tab" id="tab3" aria-controls="p3" aria-selected="false" tabindex="-1">허블-르메트르 법칙</button>
+ <button role="tab" id="tab4" aria-controls="p4" aria-selected="false" tabindex="-1">팽창하는 우주</button>
+</div>
+
+<!-- 화살표 머리 (두 그림판이 함께 씀) -->
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;box-shadow:none"><defs>
+ <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffb066"/></marker>
+ <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#6fd3ff"/></marker>
+ <marker id="ay" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffd76b"/></marker>
+ <marker id="av" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#7be08f"/></marker>
+ <marker id="aw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffd76b"/></marker>
+</defs></svg>
+
+<!-- ① 정적 우주와 팽창 우주: 왼쪽 [벤틀리의 질문] 별들이 서로 끌어당기면 한곳에 모임 | 오른쪽 뉴턴, 아인슈타인, 프리드만의 해결 아이디어를 골라 봄 -->
+<section id="p1" role="tabpanel" aria-labelledby="tab1">
+ <div class="duo">
+  <!-- 왼쪽 1/3: 문제 -->
+  <div class="note lq"><div class="nh">벤틀리의 질문 (1692년) <span class="ex">· 편지 내용</span></div>
+   <p class="body">존경하는 뉴턴 선생님께<br>선생님의 만유인력 법칙에 따르면 질량을 가진 모든 물체는 서로 끌어당깁니다. 그렇다면 우주의 별들도 서로 끌려가 결국 한곳에 모이지 않을까요?<span class="from">벤틀리 드림</span></p>
+  </div>
+  <svg id="bv" class="lv" viewBox="0 0 400 340"></svg>
+  <div class="ctl lc">
+   <button class="pb" id="bplay">▶ 재생</button><button class="pb" id="breset">↺ 처음으로</button>
+   <span class="hint" id="bhint"></span>
+  </div>
+  <!-- 오른쪽 2/3: 해결 아이디어 -->
+  <div class="note rh"><div class="nh">어떤 과학자의 생각을 볼까요?</div>
+   <div class="srow" style="margin-top:6px">
+    <div class="subtabs" id="psel"><button data-v="n">뉴턴</button><button data-v="e">아인슈타인</button><button data-v="f">프리드만</button></div>
+    <button type="button" class="open-think" id="cmpb">세 사람의 생각 비교</button>
+   </div>
+   <div id="snote"></div>
+  </div>
+  <svg id="sv" class="rv" viewBox="0 0 720 330"></svg>
+  <div class="ctl rc">
+   <button class="pb" id="splay">▶ 재생</button><button class="pb" id="sreset">↺ 처음으로</button>
+   <span class="hint" id="shint"></span>
+  </div>
+ </div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>뉴턴, 아인슈타인, 프리드만의 생각을 정적 우주와 팽창 우주로 구분해 보세요.</p><button type="button" class="open-think" id="thb3">답 보기</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?</p><button type="button" class="open-think" id="thb1">답 보기</button></div>
+
+ <div class="ov" id="ovc" hidden><div class="think" role="dialog" aria-modal="true" aria-label="세 사람의 생각 비교">
+  <div class="think-h"><b class="think-t">세 사람의 생각 비교</b><button type="button" class="x" id="cxc" aria-label="닫기">닫기 ✕</button></div>
+  <table class="cmp">
+   <thead><tr><th></th><th>뉴턴</th><th>아인슈타인</th><th>프리드만</th></tr></thead>
+   <tbody>
+    <tr><th>생각한 우주</th><td>정적 우주</td><td>정적 우주</td><td>팽창(또는 수축)하는 우주</td></tr>
+    <tr><th>우주의 크기 변화</th><td>변하지 않음</td><td>변하지 않음</td><td>시간에 따라 변함</td></tr>
+    <tr><th>해결 아이디어</th><td>우주는 무한하고 별이 고르게 퍼져 있어 모든 방향의 힘이 상쇄된다.</td><td>중력과 반대로 밀어내는 우주 상수가 중력과 균형을 이룬다.</td><td>우주는 멈춰 있지 않고 팽창하고 있어서, 중력이 팽창을 늦출 뿐 별들이 한곳으로 모이지 않는다.</td></tr>
+   </tbody>
+  </table>
+ </div></div>
+ <div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 뉴턴, 아인슈타인, 프리드만의 생각을 정적 우주와 팽창 우주로 구분해 보세요.">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>뉴턴, 아인슈타인, 프리드만의 생각을 정적 우주와 팽창 우주로 구분해 보세요.</b><button type="button" class="x" id="thx3" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">정적 우주: 뉴턴, 아인슈타인 / 팽창 우주: 프리드만</p>
+  <p class="exp">뉴턴과 아인슈타인은 우주의 크기가 변하지 않는다고 보고, 별들이 한곳으로 모이지 않는 까닭을 각각 무한하고 균일한 별의 분포와 우주 상수로 설명했습니다. 프리드만은 우주가 멈춰 있을 필요가 없으며, 시간에 따라 팽창(또는 수축)할 수 있다고 보았습니다.</p>
+ </div></div>
+ <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">생각이나 계산만으로는 정할 수 없고, 실제 우주를 관측하여 우주의 크기가 변하지 않는지, 팽창하고 있는지를 확인해야 합니다.</p>
+  <p class="exp">두 사람은 같은 일반 상대성 이론의 방정식에서 출발했지만, 우주가 실제로 어떤 모습인지는 방정식만으로 정할 수 없습니다. 예를 들어 멀리 있는 은하들이 우리에게서 멀어지고 있는지를 관측하면 판단할 수 있습니다. 뒤의 탭에서 은하를 관측한 결과를 살펴봅시다.</p>
+ </div></div>
+</section>
+
+<!-- ② 도플러 효과: 작은 학습 화면 2개 [소리의 도플러 효과] [빛의 도플러 효과] (내용 준비 중) -->
+<section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
+ <div class="srow" style="margin-bottom:8px">
+  <div class="subtabs" id="hsel"><button data-v="s" class="on">소리의 도플러 효과</button><button data-v="l">빛의 도플러 효과</button></div>
+ </div>
+ <div class="note" id="hnote"></div>
+ <!-- 소리의 도플러 효과: 위 칸 구급차(소리), 아래 칸 오리(물결파) -->
+ <div id="sview">
+  <div class="dwrap"><svg id="ambv" viewBox="0 0 960 190"></svg><button type="button" class="sndb on" id="sndb" aria-pressed="true">🔊 소리 켬</button></div>
+  <svg id="duckv" viewBox="0 0 960 150"></svg>
+ </div>
+ <!-- 빛의 도플러 효과 (준비 중) -->
+ <svg id="hv" viewBox="0 0 960 340" hidden></svg>
+ <div class="ctl" id="dctl">
+  <button class="pb" id="dplay">▶ 재생</button><button class="pb" id="dreset">↺ 처음으로</button>
+  <div class="seg"><div class="bs" id="dmov"><button data-v="0" class="on">멈춰 있을 때</button><button data-v="1">움직일 때</button></div></div>
+  <span class="hint" id="dhint"></span>
+ </div>
+ <div class="ctl" id="lctl" hidden><span class="unit">조작 단추가 들어갈 자리</span></div>
+</section>
+
+<!-- ③ 허블-르메트르 법칙 (준비 중) -->
+<section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
+ <div class="note"><div class="nh">허블-르메트르 법칙 <span class="ex">· 내용 준비 중</span></div></div>
+ <svg viewBox="0 0 960 440"><text x="480" y="225" text-anchor="middle" fill="#a9b1cc" font-size="22">그림 준비 중: 허블-르메트르 법칙</text></svg>
+ <div class="ctl"><span class="unit">조작 단추가 들어갈 자리</span></div>
+</section>
+
+<!-- ④ 팽창하는 우주 (준비 중) -->
+<section id="p4" role="tabpanel" aria-labelledby="tab4" hidden>
+ <div class="note"><div class="nh">팽창하는 우주 <span class="ex">· 내용 준비 중</span></div></div>
+ <svg viewBox="0 0 960 440"><text x="480" y="225" text-anchor="middle" fill="#a9b1cc" font-size="22">그림 준비 중: 팽창하는 우주</text></svg>
+ <div class="ctl"><span class="unit">조작 단추가 들어갈 자리</span></div>
+</section>
+
+<script>
+// 학습 메뉴 탭 (evolution.html과 같은 방식: 왼쪽·오른쪽 화살표 키로도 이동)
+const TABS=[tab1,tab2,tab3,tab4],PANES=[p1,p2,p3,p4];
+function openTab(i){if(typeof dStop=="function")dStop();TABS.forEach((t,j)=>{t.setAttribute('aria-selected',i==j);t.tabIndex=i==j?0:-1;PANES[j].hidden=i!=j});
+ PANES[i].classList.remove('enter');void PANES[i].offsetWidth;PANES[i].classList.add('enter');
+ // 숨겨져 있던 그림판은 글자 배경 상자를 다시 그리기 위해 새로 그림
+ if(i==1&&hcur=='s')dDraw()}
+TABS.forEach((t,i)=>{t.onclick=()=>openTab(i);t.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+(e.key=='ArrowRight'?1:TABS.length-1))%TABS.length;TABS[j].focus();openTab(j)}}});
+
+// ---- 공통: 그리기 도구 ----
+const NS="http://www.w3.org/2000/svg";
+function mk(tag,at,par){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e}
+function txt(s,at,par){const e=mk('text',at,par);e.textContent=s;return e}
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function arrow(x1,y1,x2,y2,c,m,par){return mk('line',{x1,y1,x2,y2,stroke:c,'stroke-width':3,'marker-end':`url(#${m})`},par)}
+function label(s,x,y,par,anchor='start',col='#e8ecff',size=19){const g=mk('g',{},par);const t=txt(s,{x,y,'text-anchor':anchor,fill:col,'font-size':size,'font-weight':600},g);
+ const b=t.getBBox?t.getBBox():null;if(b&&b.width){g.insertBefore(mk('rect',{x:b.x-6,y:b.y-3,width:b.width+12,height:b.height+6,rx:6,fill:'#0b1026',opacity:.8}),t)}return g}
+// 별 배치: 반지름 SR인 둥근 영역 안에 거의 고르게(조금씩 불규칙하게) 놓인 별들 (처음에 멈춰 있음)
+const SR=120,SSP=22;
+function makeStars(){const r=rng(5),a=[];
+ for(let j=-6;j<=6;j++)for(let i=-6;i<=6;i++){const x=i*SSP+(r()-.5)*18,y=j*SSP+(r()-.5)*18;if(x*x+y*y<=SR*SR)a.push({x,y,vx:0,vy:0,m:1})}
+ return a}
+const fRad=m=>2.6*Math.pow(m,.4);
+
+// ==== 왼쪽: 벤틀리의 질문 (그림판 bv) ====
+// 이웃한 별끼리 먼저 작은 덩어리를 이루고, 덩어리들이 가운데로 모이며 합쳐져 결국 하나가 됨
+const BC={x:200,y:182},FG=600,FEPS2=16;
+let BS=[],bTime=0,bDone=false,braf=0,bG=null;
+function bStop(){cancelAnimationFrame(braf);braf=0;bplay.textContent='▶ 재생'}
+function finStep(dt){const n=BS.length,ax=new Float64Array(n),ay=new Float64Array(n);
+ for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const a=BS[i],b=BS[j],dx=b.x-a.x,dy=b.y-a.y,r2=dx*dx+dy*dy+FEPS2,f=FG/(r2*Math.sqrt(r2));
+  ax[i]+=f*b.m*dx;ay[i]+=f*b.m*dy;ax[j]-=f*a.m*dx;ay[j]-=f*a.m*dy}
+ BS.forEach((s,i)=>{s.vx+=ax[i]*dt;s.vy+=ay[i]*dt;s.x+=s.vx*dt;s.y+=s.vy*dt});
+ // 아주 가까워진 별은 하나로 합쳐짐 (질량과 운동량은 보존)
+ for(let i=0;i<BS.length;i++)for(let j=i+1;j<BS.length;j++){const a=BS[i],b=BS[j];
+  if(Math.hypot(b.x-a.x,b.y-a.y)<.8*(fRad(a.m)+fRad(b.m))){const m=a.m+b.m;
+   a.x=(a.x*a.m+b.x*b.m)/m;a.y=(a.y*a.m+b.y*b.m)/m;a.vx=(a.vx*a.m+b.vx*b.m)/m;a.vy=(a.vy*a.m+b.vy*b.m)/m;a.m=m;BS.splice(j,1);j=i}}}
+function bDraw(){if(bG)bG.remove();bG=mk('g',{},bv);
+ mk('circle',{cx:BC.x,cy:BC.y,r:SR+14,fill:'none',stroke:'#4a5694','stroke-dasharray':'6 6'},bG);
+ BS.forEach(s=>mk('circle',{cx:BC.x+s.x,cy:BC.y+s.y,r:fRad(s.m),fill:s.m>1?'#fff4d6':'#dfe5ff'},bG));
+ if(bTime==0){
+  // 처음 화면에만: 몇몇 별(가로·세로·대각선 방향)이 받는 힘. 가운데를 향하고, 가장자리일수록 큼
+  [0,1,2,3,4,5,6,7].forEach(k=>{const a=k*Math.PI/4;[50,100].forEach(d=>{const px=BC.x+Math.cos(a)*d,py=BC.y+Math.sin(a)*d,L=d*.24;
+   arrow(px-Math.cos(a)*4,py-Math.sin(a)*4,px-Math.cos(a)*(4+L),py-Math.sin(a)*(4+L),'#ffb066','ag',bG)})});
+  label('별들이 서로 끌어당김',200,28,bG,'middle','#ffb066')}
+ else label(bDone?'하나의 큰 덩어리가 됨':'뭉치면서 가운데로 모임',200,28,bG,'middle','#ffd76b');
+ label('단순화한 모형: 부딪힌 별은 합쳐진다고 가정',8,330,bG,'start','#a9b1cc',15)}
+function bLoop(){for(let k=0;k<4;k++)finStep(1/240);bTime+=1/60;
+ if(BS.length==1||bTime>15){bDone=BS.length==1;bDraw();bStop();
+  bhint.textContent='별들이 한 점으로 모입니다.';return}
+ bDraw();braf=requestAnimationFrame(bLoop)}
+function bInit(){bStop();BS=makeStars();bTime=0;bDone=false;bDraw();bhint.textContent='재생 버튼을 눌러주세요.'}
+bplay.onclick=()=>{if(braf){bStop();return}if(BS.length==1||bTime>15){BS=makeStars();bTime=0;bDone=false}bplay.textContent='⏸ 멈춤';bhint.textContent='';braf=requestAnimationFrame(bLoop)};
+breset.onclick=bInit;
+bInit();
+
+// ==== 오른쪽: 세 과학자의 해결 아이디어 (그림판 sv) ====
+const SN={
+ '':'<p>벤틀리의 질문처럼 별들이 한곳에 모이지 않으려면 어떻게 해야 할까요? 위에서 세 과학자 중 한 사람을 골라 그 사람의 생각을 알아보세요.</p>',
+ n:'<div class="nh">뉴턴의 해결 아이디어 <span class="ex">· 무한하고 균일한 정적 우주 (1692년)</span></div><p>우주가 끝없이 넓고 별이 균일하게 퍼져 있다면, 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룬다. 그래서 별들은 한곳으로 모이지 않는다. <span class="aside">(속마음: 거울 위에 바늘을 세우는 것처럼 아슬아슬한 평형이라, 사실 내 답변이 마음에 들지는 않아.)</span></p>',
+ e:'<div class="nh">아인슈타인의 해결 아이디어 <span class="ex">· 우주 상수로 지킨 정적 우주 (1917년)</span></div><p>중력만 있으면 우주는 그대로 있을 수 없다. 그래서 중력과 반대로 밀어내는 효과를 내는 <b>우주 상수</b>를 식에 넣어, 중력과 균형을 이루는 정적 우주를 만들었다. <span class="aside">(속마음: 우주가 팽창하거나 수축하며 변한다니, 그건 도저히 믿을 수 없어!)</span></p>',
+ f:'<div class="nh">프리드만의 해결 아이디어 <span class="ex">· 팽창하는 우주 (1922년)</span></div><p>아인슈타인의 방정식을 풀어 우주가 팽창하거나 수축할 수 있음을 보였다. 우주가 <b>팽창하고 있다면</b> 중력은 팽창을 늦출 뿐, 별들이 한곳으로 모이지 않는다. <span class="aside">(속마음: 방정식이 허락하는데, 우주가 꼭 멈춰 있어야 할 이유가 있을까?)</span></p>'};
+const RC={x:360,y:172};
+let who='',raf=0,nG=null,ES=[];
+function stopAll(){cancelAnimationFrame(raf);raf=0;splay.textContent='▶ 재생'}
+function pick(v){stopAll();who=v;psel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));
+ snote.innerHTML=SN[v];sv.innerHTML='';nG=null;splay.disabled=sreset.disabled=!v;({'':zInit,n:nInit,e:eInit,f:fInit})[v]()}
+psel.addEventListener('click',e=>{const b=e.target.closest('button');if(b)pick(b.dataset.v)});
+splay.onclick=()=>{if(raf){stopAll();return}({n:nPlay,e:ePlay,f:fPlay})[who]()};
+sreset.onclick=()=>pick(who);
+
+// 아직 아무도 고르지 않았을 때
+function zInit(){nG=mk('g',{},sv);
+ txt('위의 단추에서 세 과학자 중 한 사람을 골라 보세요',{x:360,y:175,'text-anchor':'middle',fill:'#a9b1cc','font-size':19,'font-weight':600},nG);
+ shint.textContent=''}
+
+// ---- 뉴턴: 무한하고 균일한 우주. 별을 무늬(pattern)로 끝없이 채움. 재생해도 별들은 움직이지 않음 ----
+const ISP=40;
+let selI=0,selJ=0;
+// 그림판에서 실제로 보이는 영역 (viewBox 좌표)
+function visBox(){const m=sv.getScreenCTM(),r=sv.getBoundingClientRect();if(!m||!r.width)return{x:0,y:0,w:720,h:330};const i=m.inverse(),a=new DOMPoint(r.left,r.top).matrixTransform(i),b=new DOMPoint(r.right,r.bottom).matrixTransform(i);return{x:a.x,y:a.y,w:b.x-a.x,h:b.y-a.y}}
+function infDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
+ const d=mk('defs',{},nG);
+ // 멀리 있는 별(작고 어두움)을 한 겹 더 깔아 깊이감을 줌
+ const p2=mk('pattern',{id:'lat2',patternUnits:'userSpaceOnUse',width:ISP,height:ISP,x:RC.x+ISP/2,y:RC.y+ISP/2},d);
+ [[0,0],[ISP,0],[0,ISP],[ISP,ISP]].forEach(([x,y])=>mk('circle',{cx:x,cy:y,r:1.4,fill:'#8f9ad0',opacity:.55},p2));
+ const p1=mk('pattern',{id:'lat1',patternUnits:'userSpaceOnUse',width:ISP,height:ISP,x:RC.x-ISP/2,y:RC.y-ISP/2},d);
+ mk('circle',{cx:ISP/2,cy:ISP/2,r:3,fill:'#dfe5ff'},p1);
+ // 그림판이 화면 비율 때문에 좌우·위아래로 넓어져도 빈 곳이 없도록 무늬를 넉넉히 넓게 깖
+ const V=visBox();
+ mk('rect',{x:V.x-50,y:V.y-50,width:V.w+100,height:V.h+100,fill:'url(#lat2)'},nG);
+ mk('rect',{x:V.x-50,y:V.y-50,width:V.w+100,height:V.h+100,fill:'url(#lat1)'},nG);
+ // 고른 별: 모든 방향에서 같은 크기로 당겨짐
+ const cx=RC.x+selI*ISP,cy=RC.y+selJ*ISP;
+ mk('circle',{cx,cy,r:7,fill:'#ffd76b'},nG);
+ for(let k=0;k<8;k++){const a=k*Math.PI/4,L=26;arrow(cx+Math.cos(a)*10,cy+Math.sin(a)*10,cx+Math.cos(a)*(10+L),cy+Math.sin(a)*(10+L),'#ffd76b','ay',nG)}
+ label('노란 별: 모든 방향에서 같은 크기로 당겨짐 → 힘의 평형',360,28,nG,'middle','#ffd76b');
+ // 화면 가장자리: 별이 바깥으로 끝없이 이어짐
+ label('◀ 끝없이',V.x+12,177,nG,'start','#cbd3ff',17);label('끝없이 ▶',V.x+V.w-12,177,nG,'end','#cbd3ff',17);
+ label('▼ 끝없이',360,320,nG,'middle','#cbd3ff',17)}
+function nInit(){selI=0;selJ=0;infDraw();shint.textContent='아무 별이나 눌러 보세요.'}
+function nPlay(){shint.textContent='시간이 지나도 별들은 움직이지 않습니다. 모든 별이 힘의 평형을 이루어 우주는 변하지 않습니다.'}
+// 화면 크기가 바뀌면 별 무늬를 다시 깖
+addEventListener('resize',()=>{if(who=='n')infDraw()});
+// 별을 누르면 그 별을 고름 (가장 가까운 별)
+sv.addEventListener('click',e=>{if(who!='n')return;const m=sv.getScreenCTM();if(!m)return;
+ const pt=new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse());
+ selI=Math.round((pt.x-RC.x)/ISP);selJ=Math.round((pt.y-RC.y)/ISP);infDraw();
+ shint.textContent='이 별도 모든 방향에서 같은 크기로 당겨집니다. 이제 재생 버튼을 눌러주세요.'});
+
+// 범례 한 줄: 화살표 + 글
+function legend(y,c,m,s,par){arrow(14,y,50,y,c,m,par);label(s,58,y+5,par,'start','#e8ecff',16)}
+
+// ---- 아인슈타인: 별마다 안쪽으로 당기는 중력과 우주 상수에 의한 척력의 크기가 같음 (둘 다 가운데에서 멀수록 큼) ----
+function eInit(){ES=makeStars();eqDraw();shint.textContent='재생 버튼을 눌러주세요.'}
+function eqDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
+ mk('circle',{cx:RC.x,cy:RC.y,r:SR+14,fill:'none',stroke:'#4a5694','stroke-dasharray':'6 6'},nG);
+ ES.forEach(s=>mk('circle',{cx:RC.x+s.x,cy:RC.y+s.y,r:fRad(s.m),fill:'#dfe5ff'},nG));
+ [0,1,2,3,4,5,6,7].forEach(k=>{const a=k*Math.PI/4+Math.PI/8,c=Math.cos(a),s=Math.sin(a);[55,100].forEach(d=>{const px=RC.x+c*d,py=RC.y+s*d,L=d*.24;
+  arrow(px-c*4,py-s*4,px-c*(4+L),py-s*(4+L),'#ffb066','ag',nG);arrow(px+c*4,py+s*4,px+c*(4+L),py+s*(4+L),'#6fd3ff','ar',nG)})});
+ label('중력과 척력이 균형을 이루어 우주의 크기가 변하지 않음',360,28,nG,'middle','#6fd3ff');
+ const lg=mk('g',{},nG);legend(66,'#ffb066','ag','중력 (끌어당김)',lg);legend(94,'#6fd3ff','ar','우주 상수에 의한',lg);label('척력 (밀어냄)',58,121,lg,'start','#e8ecff',16);
+ label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',10,322,nG,'start','#a9b1cc',15)}
+function ePlay(){shint.textContent='시간이 지나도 별들은 움직이지 않고 우주의 크기는 그대로입니다(정적 우주).'}
+
+// ---- 프리드만: 처음부터 팽창하고 있는 별 무리. 중력이 팽창을 늦추지만 한곳으로 모이지 않음 ----
+// 별 무리의 크기 a: a'' = -k/a² (중력), 처음 속도는 탈출 속도보다 조금 커서 느려지면서도 계속 팽창
+const FK=.012,FV0=.18;
+let fa=1,fv=FV0,fT=0;
+function frDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
+ mk('circle',{cx:RC.x,cy:RC.y,r:(SR+14)*fa,fill:'none',stroke:'#4a5694','stroke-dasharray':'6 6'},nG);
+ ES.forEach(s=>mk('circle',{cx:RC.x+s.x*fa,cy:RC.y+s.y*fa,r:3,fill:'#dfe5ff'},nG));
+ // 몇몇 곳의 화살표: 바깥으로 멀어지는 움직임(초록)과 안쪽으로 당기는 중력(주황). 가운데에서 멀수록 큼
+ [0,1,2,3,4,5,6,7].forEach(k=>{const an=k*Math.PI/4+Math.PI/8,c=Math.cos(an),s=Math.sin(an);[55,100].forEach(d=>{const px=RC.x+c*d*fa,py=RC.y+s*d*fa,
+  Lv=Math.min(60,d*fv*2.3),Lg=Math.min(60,d*FK/(fa*fa)*26);
+  arrow(px+c*4,py+s*4,px+c*(4+Lv),py+s*(4+Lv),'#7be08f','av',nG);arrow(px-c*4,py-s*4,px-c*(4+Lg),py-s*(4+Lg),'#ffb066','ag',nG)})});
+ label(fT==0?'우주가 처음부터 팽창하고 있다면?':'중력이 팽창을 늦출 뿐, 별들은 모이지 않고 멀어짐',360,28,nG,'middle','#7be08f');
+ const lg=mk('g',{},nG);legend(66,'#7be08f','av','멀어지는 움직임',lg);legend(94,'#ffb066','ag','중력 (끌어당김)',lg);
+ label(`우주의 크기: 처음의 ${fa.toFixed(2)}배`,708,71,nG,'end','#e8ecff',16);
+ label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',10,322,nG,'start','#a9b1cc',15)}
+function fInit(){ES=makeStars();fa=1;fv=FV0;fT=0;frDraw();shint.textContent='재생 버튼을 눌러주세요.'}
+function frLoop(){for(let k=0;k<4;k++){const dt=1/240;fv+=-FK/(fa*fa)*dt;fa+=fv*dt}fT+=1/60;
+ if(fa>1.75||fT>12){frDraw();stopAll();;return}
+ frDraw();raf=requestAnimationFrame(frLoop)}
+function fPlay(){if(fa>1.75||fT>12){fa=1;fv=FV0;fT=0}splay.textContent='⏸ 멈춤';shint.textContent='위로 던진 공이 올라가는 동안 떨어지지 않듯, 팽창하는 우주는 중력이 있어도 한곳으로 모이지 않습니다.';raf=requestAnimationFrame(frLoop)}
+pick('');
+
+// ---- 소리의 도플러 효과: 위 칸 [구급차] 사이렌 소리를 듣고 파면을 봄 / 아래 칸 [오리] 물결파의 파장을 봄 ----
+// 두 칸은 같은 조건(멈춰 있을 때 / 움직일 때)으로 함께 움직임
+// 파원은 일정한 시간 간격(T)마다 파면(마루)을 내보내고, 각 파면은 내보낸 자리에서 일정한 속력(c)으로 둥글게 퍼짐
+// 재생 전부터 소리가 나고 있었던 것으로 보고, 처음부터 파면이 그림판을 채운 채 시작함 (재생하자마자 소리가 들리도록)
+const DS={a:{c:300,v:90,T:.35,x0:-60,xs:250,y:60,R:950,m:54},
+          d:{c:160,v:80,T:.5,x0:60,xs:480,y:75,R:900,m:44}};
+const DEND=[10,13.5],OBS={x:480,y:184};
+let dmv=0,dsnd=1,dT=0,draf=0,dLast=0;
+const srcX=(P,te)=>dmv?P.x0+P.v*te:P.xs;
+const kMin=P=>-Math.ceil(P.R/P.c/P.T);
+
+// 관찰자에게 지금 들리는 소리: 이 순간 관찰자의 귀에 도착한 파면을 내보낸 때(te)와 자리를 찾아 진동수 배율을 구함
+// 배율 = 1 / (1 - (관찰자 쪽으로 다가오는 속력) / 소리 속력)
+const EAR={x:480,y:104};
+function heard(t){const P=DS.a;let te=t,d=0;
+ for(let i=0;i<30;i++){d=Math.hypot(EAR.x-srcX(P,te),EAR.y-P.y);te=t-d/P.c}
+ const ux=(EAR.x-srcX(P,te))/d,v=dmv?P.v:0;
+ return{te,f:1/(1-v*ux/P.c),vol:1/(1+d/260)}}
+
+// 사이렌 소리 (Web Audio). 높은음·낮은음을 번갈아 내며, 들리는 진동수 = 원래 진동수 × 배율
+let AC=null,osc=null,gn=null,aOn=false;
+function aStart(){try{if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();osc=AC.createOscillator();osc.type='sawtooth';
+ const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1800;gn=AC.createGain();gn.gain.value=0;
+ osc.connect(lp);lp.connect(gn);gn.connect(AC.destination);osc.start()}if(AC.state!='running')AC.resume()}catch(e){}}
+// 소리가 꺼져 있다가 켜질 때는 진동수를 미끄러지지 않고 바로 맞춤
+function aSet(f,v){if(!AC)return;const n=AC.currentTime;
+ if(f){if(!aOn){osc.frequency.cancelScheduledValues(n);osc.frequency.setValueAtTime(f,n)}else osc.frequency.setTargetAtTime(f,n,.008)}
+ gn.gain.setTargetAtTime(v,n,aOn||!v?.03:.005);aOn=v>0}
+const siren=te=>Math.floor((te+100)/.55)%2?770:960;
+
+// ---- 그림 조각 ----
+function ambulance(g,x,y,t){const b=mk('g',{transform:`translate(${x},${y})`},g);
+ mk('rect',{x:-48,y:-24,width:72,height:40,rx:4,fill:'#f4f6fb'},b);
+ mk('path',{d:'M22,-14L38,-14L48,0L48,16L22,16Z',fill:'#f4f6fb'},b);
+ mk('path',{d:'M27,-10L36,-10L43,-1L27,-1Z',fill:'#7fb3e6'},b);
+ mk('rect',{x:-48,y:2,width:96,height:5,fill:'#e0453a'},b);
+ mk('rect',{x:-25,y:-20,width:8,height:20,fill:'#e0453a'},b);mk('rect',{x:-31,y:-14,width:20,height:8,fill:'#e0453a'},b);
+ mk('rect',{x:-10,y:-30,width:20,height:6,rx:2,fill:Math.floor(t*4)%2?'#ff4a4a':'#4a8bff'},b);
+ [-30,32].forEach(cx=>mk('circle',{cx,cy:18,r:7,fill:'#222',stroke:'#999','stroke-width':2},b))}
+// 관찰자: 인도에 서 있는 사람 (발끝이 OBS)
+function observer(g){const b=mk('g',{transform:`translate(${OBS.x},${OBS.y})`},g),sk='#f2c9a5',sh='#3f7fd8';
+ mk('ellipse',{cx:-6,cy:-2,rx:7,ry:3.5,fill:'#222'},b);mk('ellipse',{cx:6,cy:-2,rx:7,ry:3.5,fill:'#222'},b);
+ mk('rect',{x:-10,y:-38,width:9,height:36,rx:3,fill:'#2f3b5c'},b);mk('rect',{x:1,y:-38,width:9,height:36,rx:3,fill:'#2f3b5c'},b);
+ mk('rect',{x:-20,y:-68,width:7,height:28,rx:3.5,fill:sh},b);mk('rect',{x:13,y:-68,width:7,height:28,rx:3.5,fill:sh},b);
+ mk('circle',{cx:-16.5,cy:-38,r:3.6,fill:sk},b);mk('circle',{cx:16.5,cy:-38,r:3.6,fill:sk},b);
+ mk('rect',{x:-14,y:-70,width:28,height:36,rx:7,fill:sh},b);
+ mk('rect',{x:-3,y:-74,width:6,height:6,fill:sk},b);
+ mk('circle',{cx:0,cy:-82,r:10,fill:sk},b);
+ mk('path',{d:'M-10.5,-82C-11,-96 11,-96 10.5,-82C8,-88 -8,-88 -10.5,-82Z',fill:'#3a2a1e'},b);
+ mk('circle',{cx:-10,cy:-81,r:2.6,fill:sk},b);mk('circle',{cx:10,cy:-81,r:2.6,fill:sk},b);
+ label('관찰자',26,-44,b,'start','#ffd76b',17)}
+// 오리(청둥오리)를 위에서 본 모습, 오른쪽을 향함
+function duck(g,x,y){const b=mk('g',{transform:`translate(${x},${y}) scale(1.25)`},g);
+ mk('path',{d:'M-30,-5L-41,0L-30,5Z',fill:'#2b2b2b'},b);
+ mk('path',{d:'M-30,0C-30,-14 -12,-17 6,-15C18,-13 24,-7 24,0C24,7 18,13 6,15C-12,17 -30,14 -30,0Z',fill:'#a3927b'},b);
+ mk('path',{d:'M-26,-2C-18,-13 0,-14 13,-9C4,-4 -10,-2 -26,-2Z',fill:'#6e6253'},b);
+ mk('path',{d:'M-26,2C-18,13 0,14 13,9C4,4 -10,2 -26,2Z',fill:'#6e6253'},b);
+ mk('ellipse',{cx:-6,cy:-8.5,rx:5,ry:1.6,fill:'#3a5fcd'},b);mk('ellipse',{cx:-6,cy:8.5,rx:5,ry:1.6,fill:'#3a5fcd'},b);
+ mk('ellipse',{cx:16,cy:0,rx:8,ry:10,fill:'#7a4a32'},b);
+ mk('circle',{cx:23,cy:0,r:7.5,fill:'#f4f4f0'},b);
+ mk('ellipse',{cx:29,cy:0,rx:9,ry:7.5,fill:'#1f6b3a'},b);
+ mk('ellipse',{cx:27,cy:-2.5,rx:4,ry:2,fill:'#3d9a5e',opacity:.8},b);
+ mk('path',{d:'M36,-3.2C44,-3 46,-1 46,0C46,1 44,3 36,3.2Z',fill:'#e8c43a'},b);
+ mk('circle',{cx:31,cy:-5.4,r:1.3,fill:'#111'},b);mk('circle',{cx:31,cy:5.4,r:1.3,fill:'#111'},b)}
+// 두 파면 사이의 간격(파장)을 양쪽 화살표로 표시
+function span(g,x1,x2,y,s){if(Math.max(x1,x2)<10||Math.min(x1,x2)>950)return;
+ mk('line',{x1,y1:y,x2,y2:y,stroke:'#ffd76b','stroke-width':3,'marker-start':'url(#aw)','marker-end':'url(#aw)'},g);
+ label(s,(x1+x2)/2,y-14,g,'middle','#ffd76b',16)}
+function spans(g,P,x,t){const kmax=Math.floor(t/P.T);let f=null,b=null;
+ for(let k=kmax;k>kMin(P);k--){const te=k*P.T,r=P.c*(t-te);
+  if(f==null&&srcX(P,te)+r>x+P.m)f=k;if(b==null&&srcX(P,te)-r<x-P.m)b=k;if(f!=null&&b!=null)break}
+ const pt=(k,s)=>srcX(P,k*P.T)+s*P.c*(t-k*P.T);
+ if(f!=null)span(g,pt(f,1),pt(f-1,1),P.y,dmv?'파장 짧음':'파장');
+ if(b!=null)span(g,pt(b,-1),pt(b-1,-1),P.y,dmv?'파장 김':'파장')}
+// 파면: 내보낸 지 오래된 것일수록 크고 흐림
+function fronts(g,P,t,col){for(let k=Math.floor(t/P.T);k>=kMin(P);k--){const te=k*P.T,r=P.c*(t-te);if(r>P.R)break;
+ mk('circle',{cx:srcX(P,te),cy:P.y,r:Math.max(r,.1),fill:'none',stroke:col,'stroke-width':2,opacity:Math.max(.1,1-r/P.R)},g)}}
+// 관찰자에게 들리는 소리의 높낮이 (원래 진동수의 몇 배인지)
+function gauge(g,h){const b=mk('g',{},g),x0=700,x1=940,y=136;
+ mk('rect',{x:684,y:96,width:270,height:90,rx:10,fill:'#0b1026',opacity:.85,stroke:'#4a5694'},b);
+ txt('관찰자에게 들리는 소리',{x:696,y:117,fill:'#e8ecff','font-size':16,'font-weight':700},b);
+ mk('line',{x1:x0,y1:y,x2:x1,y2:y,stroke:'#4a5694','stroke-width':6,'stroke-linecap':'round'},b);
+ [['낮음',x0,'start'],['원래',(x0+x1)/2,'middle'],['높음',x1,'end']].forEach(([s,x,a])=>txt(s,{x,y:y+20,'text-anchor':a,fill:'#a9b1cc','font-size':14},b));
+ mk('line',{x1:(x0+x1)/2,y1:y-8,x2:(x0+x1)/2,y2:y+8,stroke:'#a9b1cc','stroke-width':2},b);
+ const p=Math.max(0,Math.min(1,.5+Math.log(h.f)/(2*Math.log(1.5))));
+ mk('circle',{cx:x0+p*(x1-x0),cy:y,r:9,fill:h.f>1.02?'#ff8a7a':h.f<.98?'#6fd3ff':'#ffd76b'},b);
+ txt(`원래 진동수의 ${h.f.toFixed(2)}배`,{x:(x0+x1)/2,y:y+40,'text-anchor':'middle',fill:'#e8ecff','font-size':14,'font-weight':600},b)}
+
+function dDraw(){const t=dT;
+ // 위 칸: 구급차와 관찰자
+ let P=DS.a;ambv.innerHTML='';let g=mk('g',{},ambv);
+ mk('rect',{x:-3000,y:35,width:7000,height:50,fill:'#262c44'},g);
+ mk('line',{x1:-3000,y1:60,x2:4000,y2:60,stroke:'#a9b1cc','stroke-dasharray':'18 14',opacity:.45,'stroke-width':2},g);
+ fronts(g,P,t,'#8fd3ff');let x=srcX(P,t);spans(g,P,x,t);ambulance(g,x,P.y,t);observer(g);gauge(g,heard(t));
+ label('구급차의 사이렌 소리',12,22,g,'start','#e8ecff',16);
+ // 아래 칸: 연못의 오리 (위에서 본 모습)
+ P=DS.d;duckv.innerHTML='';g=mk('g',{},duckv);
+ mk('rect',{x:-3000,y:-1000,width:7000,height:3000,fill:'#103a5a'},g);
+ fronts(g,P,t,'#e6f4ff');x=srcX(P,t);spans(g,P,x,t);duck(g,x,P.y);
+ label('위에서 본 연못의 오리',12,22,g,'start','#e8ecff',16);
+ label('단순화한 모형: 차이가 잘 드러나도록 구급차는 소리 속력의 0.3배, 오리는 물결파 속력의 0.5배로 빠르게 나타냄',12,142,g,'start','#cfe3f5',14)}
+
+const DN='<div class="nh">소리의 도플러 효과</div><p>위는 구급차의 사이렌 소리, 아래는 헤엄치는 오리가 만드는 물결파입니다. <b>멈춰 있을 때</b>와 <b>움직일 때</b> 소리의 높낮이와 파면(물결) 사이의 간격을 비교해 보세요.</p>';
+const dInitMsg=()=>dmv?'▶ 재생을 누르면 구급차와 오리가 왼쪽에서 오른쪽으로 지나갑니다. 소리의 높낮이와 앞뒤 파장을 비교해 보세요.':'▶ 재생을 눌러 멈춰 있는 구급차의 사이렌 소리를 들어 보세요.';
+function dMsg(h){if(!dmv)return'멈춰 있을 때: 파면과 물결이 모든 방향으로 같은 간격(파장)으로 퍼져, 관찰자에게는 원래 높이의 소리가 들립니다.';
+ return h.f>1.02?'다가오는 동안: 관찰자 쪽 파장이 짧아져 원래보다 높은 소리가 들립니다. 오리의 물결도 앞쪽이 촘촘합니다.'
+  :h.f<.98?'멀어지는 동안: 관찰자 쪽 파장이 길어져 원래보다 낮은 소리가 들립니다. 오리의 물결도 뒤쪽이 성깁니다.'
+  :'구급차가 관찰자 앞을 지나는 순간: 소리의 높이가 바뀝니다.'}
+function dSetHint(s){if(dhint.textContent!=s)dhint.textContent=s}
+function dStop(){cancelAnimationFrame(draf);draf=0;dplay.textContent='▶ 재생';aSet(0,0)}
+function dSound(){const h=heard(dT);if(dsnd&&draf)aSet(siren(h.te)*h.f,.16*h.vol);else aSet(0,0);return h}
+function dLoop(now){dT+=Math.min(.05,(now-dLast)/1000);dLast=now;const end=DEND[dmv];
+ if(dT>=end){dT=end;dDraw();dStop();
+  dSetHint(dmv?'구급차가 다가올 때는 원래보다 높은 소리, 멀어질 때는 낮은 소리가 들립니다. 사이렌이 내는 소리 자체는 바뀌지 않았습니다.':dMsg(heard(dT)));return}
+ const h=dSound();dDraw();dSetHint(dMsg(h));draf=requestAnimationFrame(dLoop)}
+function dPlay(){if(draf){dStop();return}if(dT>=DEND[dmv])dT=0;if(dsnd)aStart();
+ dplay.textContent='⏸ 멈춤';dLast=performance.now();draf=1;dSound();draf=requestAnimationFrame(dLoop)}
+function dInit(){dStop();dT=0;hnote.innerHTML=DN;dDraw();dSetHint(dInitMsg())}
+function segPick(box,v){box.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v))}
+dplay.onclick=dPlay;dreset.onclick=dInit;
+dmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;dmv=+b.dataset.v;segPick(dmov,b.dataset.v);dInit()};
+sndb.onclick=()=>{dsnd=dsnd?0:1;sndb.classList.toggle('on',!!dsnd);sndb.textContent=dsnd?'🔊 소리 켬':'🔇 소리 끔';sndb.setAttribute('aria-pressed',!!dsnd);
+ if(dsnd&&draf){aStart();dSound()}if(!dsnd)aSet(0,0)};
+
+// ==== ② 도플러 효과: 작은 학습 화면 2개 [소리의 도플러 효과] [빛의 도플러 효과(준비 중)] ====
+const HN={
+ l:{t:'빛의 도플러 효과',d:'빛을 내는 천체가 다가오거나 멀어질 때 스펙트럼의 흡수선이 이동하는 현상(청색 편이, 적색 편이)을 살펴봅니다.'}};
+let hcur='s';
+function hpick(v){hcur=v;hsel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));
+ dStop();dctl.hidden=sview.hidden=v!='s';lctl.hidden=hv.hidden=v=='s';
+ if(v=='s'){dInit();return}
+ hnote.innerHTML=`<div class="nh">${HN[v].t} <span class="ex">· 내용 준비 중</span></div><p style="margin:2px 0 0">${HN[v].d}</p>`;
+ hv.innerHTML=`<text x="480" y="225" text-anchor="middle" fill="#a9b1cc" font-size="22">그림 준비 중: ${HN[v].t}</text>`}
+hsel.addEventListener('click',e=>{const b=e.target.closest('button');if(b)hpick(b.dataset.v)});
+hpick('s');
+
+// 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
+[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+ const closeTh=()=>{ov.hidden=true;btn.focus()};
+ btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
+ ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})});
+</script></main><script src="./copyright.js"></script>
+</body></html>

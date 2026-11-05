@@ -1,4 +1,6 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}/* 학생에게 할 일을 알려 주는 말(실행 요청): 남색 굵은 글씨로 설명과 구분 */
+.go{color:var(--tab);font-weight:700}
+</style></head><body>
 <title>일식과 월식이 매달 일어나지 않는 이유</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -333,7 +335,7 @@ function renderCount(){
   var h;
   if(t>=TMAX-0.01)h='<b>1년이 지났습니다.</b> '+(I===0?'두 궤도면이 일치하면 삭(신월)마다 일식이, 망(보름달)마다 월식이 일어납니다. 이제 일치하지 않는 경우와 비교해 보세요.':'실제로도 이 기간에는 2026년 2월 17일과 8월 12일에 일식이, 3월 3일과 8월 28일에 월식이 일어납니다.');
   else if(lastE)h='<span style="color:var(--muted);font-size:.85rem">가장 최근</span><br>'+evText(lastE);
-  else h='<span style="color:var(--muted)">▶ 1년 공전 시작을 눌러 보세요. 삭(신월)과 망(보름달)이 될 때마다 식이 일어나는지 기록됩니다.</span>';
+  else h='<span class="go">▶ 1년 공전 시작을 눌러 보세요.</span> <span style="color:var(--muted)">삭(신월)과 망(보름달)이 될 때마다 식이 일어나는지 기록됩니다.</span>';
   $('msg').innerHTML=h;
   $('timeTxt').textContent=dstr(Math.min(t,TMAX-0.001),true);
   recMarks.forEach(function(r){var e=r.e,done=e.t<=t+1e-6;

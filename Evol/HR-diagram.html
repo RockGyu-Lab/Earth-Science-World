@@ -86,6 +86,8 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
 .think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
 .think .exp{margin:0;font-size:.93rem;line-height:1.6}
 @media (max-width:640px){.stars .qmsg{flex-basis:100%}.chk{margin-left:0}.seg button{padding:5px 9px;font-size:.82rem}}
+/* 학생에게 할 일을 알려 주는 말(실행 요청): 남색 굵은 글씨로 설명과 구분 */
+.go{color:var(--acc);font-weight:700}.guide.go{opacity:1}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -101,7 +103,7 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
  <div class="bar">
   <div class="seg">세로축<div class="bs" id="ysel"><button data-v="L" class="on">광도</button><button data-v="M">절대등급</button></div></div>
   <div class="seg">가로축<div class="bs" id="xsel"><button data-v="S" class="on">분광형</button><button data-v="T">표면 온도</button></div></div>
-  <span class="guide">세로축과 가로축을 바꿔 보며, 축의 물리량이 어떻게 변하는지 확인해 보세요.</span>
+  <span class="guide go">세로축과 가로축을 바꿔 보며, 축의 물리량이 어떻게 변하는지 확인해 보세요.</span>
  </div>
  <svg id="sv1" viewBox="0 0 900 590"></svg>
  <div class="stars" id="stars"><span class="qmsg">유명한 별</span></div>
@@ -220,7 +222,7 @@ function pill(x,y,t,an){const w=t.length*9+16,bx=an=='end'?x-w:x-w/2;
 // ② H-R 도 상의 별의 분류: 왼쪽에 광도와 절대등급 두 축을 나란히 (그림판을 가로로 넓혀 패드 화면의 빈 곳을 씀)
 let G='all';
 const ALL='별들은 몇 개의 무리로 모여 있습니다.';
-const ASK='<span class="tag">생각해 보기</span>거성과 백색왜성은 왜 광도가 다를까요? ‘반지름이 같은 선’을 켜 보세요.<button type="button" class="open-think" id="thb">답 보기</button>';
+const ASK='<span class="tag">생각해 보기</span>거성과 백색왜성은 왜 광도가 다를까요? <span class="go">‘반지름이 같은 선’을 켜 보세요.</span><button type="button" class="open-think" id="thb">답 보기</button>';
 function draw2(){frame(sv2,200,975,44,500);const AL=112; // AL: 광도 축의 위치
  el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0},el('clipPath',{id:'pa'},el('defs',{})));
  for(let m=15;m>=-10;m-=5){const y=yOf((MSUN-m)/2.5);el('line',{x1:X0,x2:X1,y1:y,y2:y,stroke:'#2a3156'});lab(X0-8,y+5,mTick(m),15,'end')}
