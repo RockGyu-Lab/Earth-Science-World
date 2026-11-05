@@ -115,10 +115,11 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 <div class="ov" id="deepOv" hidden><div class="pop" role="dialog" aria-modal="true" aria-label="심화: 개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?">
  <div class="pop-h"><b><span class="tag">심화</span>개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</b><button type="button" class="x" id="deepX">닫기 ✕</button></div>
  <p class="ans">지구 대기를 통과한 붉은빛이 굴절되어 본그림자 속의 달을 비추기 때문입니다.</p>
- <svg class="fig" viewBox="0 0 640 270" role="img" aria-label="햇빛이 지구 대기를 지나며 파란빛은 흩어지고 붉은빛은 굴절되어 본그림자 속 달을 비추는 모습">
+ <svg class="fig" viewBox="0 0 640 270" role="img" aria-label="햇빛이 지구 대기를 지나며 파란빛은 흩어지고 붉은빛은 굴절되어 본그림자 속 달을 비추고, 달에서 반사된 붉은빛이 지구로 오는 모습">
   <defs>
    <marker id="ahY" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M1,1L9,5L1,9L3.5,5z" fill="#ffd54a"/></marker>
    <marker id="ahR" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M1,1L9,5L1,9L3.5,5z" fill="#ff6a4a"/></marker>
+   <marker id="ahR2" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M1,1L9,5L1,9L3.5,5z" fill="#ff9a7a"/></marker>
    <marker id="ahB" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="7" markerHeight="7" orient="auto"><path d="M1,1L9,5L1,9L3.5,5z" fill="#5fb4ff"/></marker>
    <radialGradient id="dpE" cx="40%" cy="38%" r="65%"><stop offset="0" stop-color="#4aa0f0"/><stop offset=".7" stop-color="#2468c8"/><stop offset="1" stop-color="#0e3a85"/></radialGradient>
    <radialGradient id="dpM" cx="40%" cy="38%" r="65%"><stop offset="0" stop-color="#9a3a1e"/><stop offset=".6" stop-color="#6e1c0e"/><stop offset="1" stop-color="#3e0f08"/></radialGradient>
@@ -128,7 +129,7 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
   <rect x="230" y="73" width="410" height="124" fill="#04060d" opacity=".85"/>
   <line x1="230" y1="73" x2="640" y2="73" stroke="#9aa8d0" stroke-width="1.2" stroke-dasharray="5 4" opacity=".7"/>
   <line x1="230" y1="197" x2="640" y2="197" stroke="#9aa8d0" stroke-width="1.2" stroke-dasharray="5 4" opacity=".7"/>
-  <text x="380" y="140" fill="#cfd6ea" font-size="13" text-anchor="middle">본그림자</text>
+  <text x="596" y="108" fill="#cfd6ea" font-size="13" text-anchor="middle">본그림자</text>
   <!-- 햇빛 (모두 같은 굵기·색): 대기 밖을 지나는 빛은 곧게, 대기를 지나는 빛은 대기층의 가운데를 통과 -->
   <g stroke="#ffd54a" stroke-width="2.5" fill="none">
    <line x1="18" y1="34" x2="622" y2="34" marker-end="url(#ahY)"/>
@@ -141,6 +142,12 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
    <path d="M201,66 Q236,66 262,74 L504,129" marker-end="url(#ahR)"/>
    <path d="M201,204 Q236,204 262,196 L504,141" marker-end="url(#ahR)"/>
   </g>
+  <!-- 달에서 반사된 붉은빛이 지구(밤인 쪽)로 -->
+  <g stroke="#ff9a7a" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="7 5">
+   <path d="M506,129 L298,117" marker-end="url(#ahR2)"/>
+   <path d="M506,141 L298,153" marker-end="url(#ahR2)"/>
+  </g>
+  <text x="398" y="139.5" fill="#ffb3a0" font-size="11.5" text-anchor="middle">달에서 반사된 붉은빛</text>
   <!-- 파란빛은 대기에서 산란되어 흩어짐 -->
   <g stroke="#5fb4ff" stroke-width="1.8" stroke-linecap="round">
    <line x1="210" y1="63" x2="198" y2="47" marker-end="url(#ahB)"/><line x1="220" y1="62" x2="221" y2="44" marker-end="url(#ahB)"/><line x1="230" y1="63" x2="244" y2="48" marker-end="url(#ahB)"/>
