@@ -23,7 +23,7 @@ p.sub{margin:0 0 14px;color:var(--muted);font-size:.95rem}
 svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 .zone{cursor:pointer;transition:opacity .15s}
 /* 그림자에 마우스를 올려도 색은 그대로 둠 (설명과 관찰 지점만 바뀜) */
-#tip{position:absolute;pointer-events:none;background:#fff;color:#111;border:2px solid #111;border-radius:8px;padding:6px 10px;font-size:.95rem;font-weight:700;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+#tip{position:absolute;pointer-events:none;background:#fff;color:#111;border:1.5px solid #111;border-radius:6px;padding:3px 7px;font-size:.85rem;line-height:1.3;font-weight:700;opacity:0;transition:opacity .12s;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .ctl{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px}
 .ctl label{font-weight:700;display:block;margin-bottom:6px}
 .ctl input[type=range]{width:100%;accent-color:#666}
@@ -154,7 +154,7 @@ body{font-family:"Pretendard Variable",Pretendard,"Noto Sans KR",system-ui,-appl
   var zones=svg.querySelectorAll('.zone');
   function show(k,ev){
     var m=data[k];
-    tip.textContent=m.ko+' ('+m.en+')';
+    tip.textContent=m.ko;
     tip.style.opacity=1;
     zones.forEach(function(z){z.classList.toggle('active',z.dataset.k===k)});
     svg.classList.add('dim');
@@ -222,10 +222,20 @@ body{font-family:"Pretendard Variable",Pretendard,"Noto Sans KR",system-ui,-appl
   }
   function move(ev){
     var rc=card.getBoundingClientRect();
-    var cy=ev.clientY-rc.top,touch=ev.pointerType==='touch',lower=!touch&&cy>rc.height/2,x=touch?ev.clientX-rc.left-tip.offsetWidth/2:ev.clientX-rc.left+30,y=touch?cy-95:(lower?cy+30:cy-68);
-    x=Math.min(Math.max(x,4),rc.width-tip.offsetWidth-4);
-    y=Math.max(Math.min(y,rc.height-tip.offsetHeight-4),4);
-    tip.style.left=x+'px';tip.style.top=y+'px';
+    // place the label beside the pointed spot so it never covers it (finger needs a wider gap than a mouse cursor)
+    var px=ev.clientX-rc.left,py=ev.clientY-rc.top,touch=ev.pointerType==='touch',g=touch?46:20,w=tip.offsetWidth,h=tip.offsetHeight,W=rc.width,H=rc.height;
+    function cx(x){return Math.min(Math.max(x,4),W-w-4)}
+    function cyy(y){return Math.min(Math.max(y,4),H-h-4)}
+    var c=touch?[[px-w/2,py-g-h,'v'],[px+g,py-h/2,'h'],[px-g-w,py-h/2,'h'],[px-w/2,py+g,'v']]
+               :[[px+g,py-g-h,'v'],[px+g,py+g,'v'],[px-g-w,py-g-h,'v'],[px-g-w,py+g,'v']];
+    var pick=null;
+    for(var i=0;i<c.length&&!pick;i++){
+      var x=c[i][0],y=c[i][1];
+      if(c[i][2]==='v'){if(y>=4&&y+h<=H-4&&(touch||(x>=4&&x+w<=W-4)))pick=[cx(x),y];}
+      else if(x>=4&&x+w<=W-4)pick=[x,cyy(y)];
+    }
+    if(!pick)pick=[cx(c[0][0]),cyy(c[0][1])];
+    tip.style.left=pick[0]+'px';tip.style.top=pick[1]+'px';
   }
   function hide(){
     tip.style.opacity=0;svg.classList.remove('dim');document.getElementById('vis').style.display='none';document.getElementById('skyObj').style.display='none';
