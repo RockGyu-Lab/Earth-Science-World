@@ -94,6 +94,14 @@ svg.arw{display:inline-block;width:1.35em;height:.9em;vertical-align:-.08em;marg
 .thbar{display:flex;justify-content:flex-start;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--bd)}
 .open-think{font-size:.92rem;font-weight:700;color:#fff;background:var(--acc);border:1px solid var(--acc);border-radius:8px;padding:6px 14px;cursor:pointer;font-family:inherit}
 .okc{color:#1b7f45;font-weight:700}.badc{color:#b3341f;font-weight:700}.cue{color:var(--acc);font-weight:600}
+/* 실험실의 배수 선택 단추(연보라): 이 파일은 --sub를 흐린 글씨색으로 쓰므로 --lil-* 이름을 씀 */
+:root{--lil:#7c5cd6;--on-lil:#fff;--lil-bg:#efeafd;--lil-bd:#cdbff3;--lil-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--lil:#b9a6ff;--on-lil:#1e1640;--lil-bg:#221c3a;--lil-bd:#4a3f80;--lil-tx:#cbbcff}}
+:root[data-theme="dark"]{--lil:#b9a6ff;--on-lil:#1e1640;--lil-bg:#221c3a;--lil-bd:#4a3f80;--lil-tx:#cbbcff}
+.pick .pl{min-width:9em;font-weight:700}.pick .pl small{color:var(--sub);font-weight:400}
+.qbox .pick button{min-width:64px;background:var(--lil-bg);border:1px solid var(--lil-bd);color:var(--lil-tx);font-weight:600;box-shadow:none}
+.qbox .pick button:hover{border-color:var(--lil)}
+.qbox .pick button.on{background:var(--lil);border-color:var(--lil-tx);color:var(--on-lil);font-weight:700}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .okc{color:#5fd08a}:root:not([data-theme="light"]) .badc{color:#ff8f7d}}
 :root[data-theme="dark"] .okc{color:#5fd08a}:root[data-theme="dark"] .badc{color:#ff8f7d}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
@@ -159,14 +167,11 @@ body[data-step="3"] #q1svg{max-height:max(160px,calc(100dvh - 505px))}
 <svg id="lab" viewBox="0 0 720 300"></svg>
 <div class="qbox">
 <h3>별의 광도 실험실</h3>
-<div class="cap">2배씩 바꿔 보기 — 누르기 전에 광도가 몇 배가 될지 먼저 예측해 보세요</div>
-<div class="row">
-<button class="k" id="r2">반지름 ×2</button><button class="k" id="rh">반지름 ÷2</button>
-<button class="k" id="t2">온도 ×2</button><button class="k" id="th">온도 ÷2</button>
-<button id="r0">태양으로 되돌리기</button><button id="realBtn" class="realbtn">실제 별과 비교해 보기</button>
-</div>
-<div class="row"><label>반지름 <input id="rs" type="range" step="0.001"><b id="rv"></b></label><label>표면 온도 <input id="ts" type="range" step="0.001"><b id="tv"></b></label></div>
-<div id="msg"><span class="cue">슬라이더나 버튼으로 별의 반지름과 온도를 바꿔 보세요.</span></div>
+<div class="cap">반지름과 온도를 골라 보기 — 누르기 전에 광도가 몇 배가 될지 먼저 예측해 보세요</div>
+<div class="row pick" id="rPick"><span class="pl">반지름 <small>(태양의)</small></span><button data-v="2">2배</button><button data-v="3">3배</button><button data-v="4">4배</button></div>
+<div class="row pick" id="tPick"><span class="pl">표면 온도 <small>(태양의)</small></span><button data-v="2">2배</button><button data-v="3">3배</button><button data-v="4">4배</button></div>
+<div class="row"><button id="r0">태양으로 되돌리기</button><button id="realBtn" class="realbtn">실제 별과 비교해 보기</button></div>
+<div id="msg"><span class="cue">반지름과 표면 온도의 배수를 골라 보세요.</span></div>
 </div>
 </section>
 <!-- 실제 별과 비교해 보기 (팝업) -->
@@ -180,10 +185,8 @@ body[data-step="3"] #q1svg{max-height:max(160px,calc(100dvh - 505px))}
 
 <script>
 const NS="http://www.w3.org/2000/svg",TS=5772;
-const LB=document.getElementById('lab'),rs=document.getElementById('rs'),ts=document.getElementById('ts');
+const LB=document.getElementById('lab');
 let R=1,T=TS,raf=0;
-// 태양을 같은 크기로 그대로 둔 채 비교할 수 있는 범위: 태양에서 ÷2, ×2를 두세 번 할 수 있는 정도
-const RMIN=.5,RMAX=4,TMIN=TS/2,TMAX=TS*2;
 const lum=(r=R,t=T)=>r*r*(t/TS)**4;
 const sup=n=>String(n).replace(/[-0-9]/g,c=>'⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)]);
 // 수식의 변수 L, R, T, E를 기울임꼴(교과서 수식 글꼴)로 바꿈. 앞뒤가 영문자이거나 뒤에 ☉가 붙은 기호(R☉ 등)는 그대로 둠
@@ -205,6 +208,8 @@ function mathify(root){
 function fmt(x){
  if(x>=0.01&&x<10000)return Number(x.toPrecision(3)).toLocaleString('ko-KR',{maximumFractionDigits:4});
  const e=Math.floor(Math.log10(x)),m=x/10**e;return m.toFixed(2)+'×10'+sup(e)}
+// 정수(배수를 고른 뒤의 결과)는 반올림하지 않고 그대로 보여 줌 (예: 9 × 256 = 2,304)
+const fmtI=x=>Math.abs(x-Math.round(x))<1e-6&&x>=1?Math.round(x).toLocaleString('ko-KR'):fmt(x);
 function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e}
 function txt(p,x,y,s,o={}){const e=el('text',Object.assign({x,y,fill:'#fff','font-size':14,'text-anchor':'middle'},o),p);e.textContent=s;return e}
 // 온도 → 별의 색 (흑체 색 근사)
@@ -249,18 +254,11 @@ function drawLab(){
  txt(LB,X,172,'=',{'font-size':20,'font-weight':700,fill:C.sub});
  lab(198,'광도 L/L☉');
  el('rect',{x:X-125,y:208,width:250,height:44,rx:22,fill:'rgba(245,185,66,.12)',stroke:C.en,'stroke-width':1.3},LB);
- big(238,`태양의 ${fmt(L)}배`,C.en);
+ big(238,`태양의 ${fmtI(L)}배`,C.en);
  txt(LB,X,280,'L/L☉ = (R/R☉)² × (T/T☉)⁴',{'font-size':12,fill:C.sub});
 }
 
-function render(){
- rs.value=Math.log10(R);ts.value=Math.log10(T);
- document.getElementById('rv').textContent=fmt(R)+' R☉';
- document.getElementById('tv').textContent=Math.round(T).toLocaleString('ko-KR')+' K';
- drawLab();mathify(LB);
- r2.disabled=R*2>RMAX*1.001;rh.disabled=R/2<RMIN*.999;
- t2.disabled=T*2>TMAX*1.001;th.disabled=T/2<TMIN*.999;
-}
+function render(){drawLab();mathify(LB)}
 const msg=document.getElementById('msg');
 function tween(R2,T2,done){cancelAnimationFrame(raf);
  const a0=Math.log10(R),a1=Math.log10(R2),t0=T,s=performance.now(),D=600;
@@ -268,16 +266,18 @@ function tween(R2,T2,done){cancelAnimationFrame(raf);
   R=10**(a0+(a1-a0)*e);T=t0+(T2-t0)*e;render();
   if(p<1)raf=requestAnimationFrame(f);else{R=R2;T=T2;render();done&&done()}};
  raf=requestAnimationFrame(f)}
-function dbl(kind,k){const L0=lum();msg.textContent='광도가 몇 배가 될까요? …';
- const R2=kind=='R'?R*k:R,T2=kind=='T'?T*k:T;
- tween(R2,T2,()=>{const q=lum()/L0,w=kind=='R'?'반지름':'온도',p=kind=='R'?2:4,up=k>1;
-  msg.innerHTML=`<b>${w}${kind=='R'?'을':'를'} ${up?'2배로 늘리면':'절반으로 줄이면'}</b> → 광도는 ${w}${kind=='R'?'의 제곱':'의 네제곱'}에 비례하므로 2${sup(p)} = ${2**p}, 즉 `+
-  `광도는 <b>${up?fmt(q)+'배':'1/'+fmt(1/q)+'배'}</b>가 됩니다.`})}
-r2.onclick=()=>dbl('R',2);rh.onclick=()=>dbl('R',.5);t2.onclick=()=>dbl('T',2);th.onclick=()=>dbl('T',.5);
-r0.onclick=()=>{tween(1,TS,()=>{msg.textContent='태양과 같은 별로 되돌렸습니다. 반지름 효과와 온도 효과가 모두 1입니다.'})};
-rs.min=Math.log10(RMIN);rs.max=Math.log10(RMAX);ts.min=Math.log10(TMIN);ts.max=Math.log10(TMAX);
-rs.oninput=()=>{cancelAnimationFrame(raf);R=10**(+rs.value);render();msg.textContent='반지름을 바꾸는 중입니다. 별의 크기와 반지름 효과가 어떻게 변하나요?'};
-ts.oninput=()=>{cancelAnimationFrame(raf);T=10**(+ts.value);render();msg.textContent='온도를 바꾸는 중입니다. 별의 색과 온도 효과를 함께 살펴보세요.'};
+// 반지름·표면 온도를 태양의 2, 3, 4배 중에서 골라 광도를 계산 (고르지 않은 쪽은 태양과 같은 1배)
+let rk=1,tk=1;
+const rPick=[...document.querySelectorAll('#rPick button')],tPick=[...document.querySelectorAll('#tPick button')];
+function syncPick(){rPick.forEach(b=>b.classList.toggle('on',+b.dataset.v==rk));tPick.forEach(b=>b.classList.toggle('on',+b.dataset.v==tk))}
+function pick(kind,k){
+ if(kind=='R')rk=k;else tk=k;syncPick();msg.textContent='광도가 몇 배가 될까요? …';
+ tween(rk,TS*tk,()=>{const a=rk*rk,b=tk**4;
+  msg.innerHTML=`반지름 <b>${rk}배</b> → 반지름 효과 ${rk}² = ${a}, 표면 온도 <b>${tk}배</b> → 온도 효과 ${tk}⁴ = ${fmtI(b)}<br>`+
+  `광도는 ${a} × ${fmtI(b)} = <b>태양의 ${fmtI(a*b)}배</b>가 됩니다.`})}
+rPick.forEach(b=>b.onclick=()=>pick('R',+b.dataset.v));
+tPick.forEach(b=>b.onclick=()=>pick('T',+b.dataset.v));
+r0.onclick=()=>{rk=tk=1;syncPick();tween(1,TS,()=>{msg.textContent='태양과 같은 별로 되돌렸습니다. 반지름 효과와 온도 효과가 모두 1입니다.'})};
 // 실제 별 비교 표
 const REAL=[['태양',1,5772,'기준 별'],['시리우스 A',1.71,9940,'밤하늘에서 가장 밝게 보이는 별'],['시리우스 B',0.0084,25000,'백색 왜성'],['프록시마 센타우리',0.154,3040,'적색 왜성, 태양에서 가장 가까운 별'],['알데바란',44,3900,'적색 거성'],['리겔',79,12100,'청색 초거성'],['베텔게우스',760,3600,'적색 초거성']];
 document.getElementById('real').innerHTML=REAL.map(([n,r,t,s])=>{const a=r*r,b=(t/TS)**4;
