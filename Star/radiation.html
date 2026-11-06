@@ -41,7 +41,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--fg);outline-off
 
 .grid{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:900px) and (orientation:landscape){.grid{grid-template-columns:minmax(0,1.9fr) minmax(250px,1fr);align-items:center}}
-@media (min-width:900px) and (orientation:landscape){.grid.top{align-items:start}}
+/* 빈·슈테판-볼츠만: 오른쪽 그림을 왼쪽 그래프의 세로 가운데에 맞춤. 결론 식이 나타날 때 위치가 흔들리지 않도록 숨겨 둔 식의 자리를 미리 잡아 둠 */
+@media (min-width:900px) and (orientation:landscape){.grid.top .formula[hidden]{display:block !important;visibility:hidden}}
+/* 플랑크 곡선: 오른쪽 막대그래프 카드의 위·아래를 왼쪽 그래프에 맞춤 (높이는 스크립트가 왼쪽 그래프 높이로 맞춤) */
+@media (min-width:900px) and (orientation:landscape){#p1 .grid{align-items:start}#r1{display:flex;flex-direction:column;justify-content:center;box-sizing:border-box}}
 .stack,.side{display:flex;flex-direction:column;gap:6px;min-width:0}
 @media (min-width:700px) and (orientation:portrait){.side.row2{flex-direction:row;align-items:flex-start}.side.row2>*{flex:1 1 0;min-width:0}}
 .card{border:1px solid var(--grid);border-radius:12px;padding:12px 14px;min-width:0}
@@ -227,7 +230,7 @@ var+sup{margin-left:.03em}
       <svg id="c3b" viewBox="0 0 340 128" role="img" aria-label="온도에 따른 최대 에너지 파장. 온도가 높을수록 파장이 짧아진다"></svg>
       <div class="card tight-card">
         <table class="tb tight"><thead><tr><th><var>T</var><br>(온도)</th><th><var>λ</var><sub>max</sub><br>(최대 에너지 파장)</th><th><var>T</var> × <var>λ</var><sub>max</sub><br>(온도 × 최대 에너지 파장)</th></tr></thead><tbody id="tb3"></tbody></table>
-        <div class="formula" id="fm3" aria-live="polite" hidden><var>T</var> × <var>λ</var><sub>max</sub> = 일정<br>∴ <var>λ</var><sub>max</sub> ∝ <span class="frac"><span>1</span><span><var>T</var></span></span><br><span class="final"><var>λ</var><sub>max</sub> = <span class="frac"><span><var>a</var></span><span><var>T</var></span></span></span> <small>(<var>a</var> ≈ 2.90×10⁶ nm·K)</small></div>
+        <div class="formula" id="fm3" aria-live="polite" hidden><var>T</var> × <var>λ</var><sub>max</sub> = 일정<br>∴ <span class="final"><var>λ</var><sub>max</sub> = <span class="frac"><span><var>a</var></span><span><var>T</var></span></span></span> <small>(<var>a</var> ≈ 2.90×10⁶ nm·K)</small></div>
       </div>
     </div>
   </div>
@@ -565,6 +568,13 @@ document.querySelectorAll('.think .q').forEach((q) => {
     fb.innerHTML = (ok ? '<span class="ok">✔ 정답입니다.</span> ' : '<span class="bad">✘ 다시 생각해 보세요.</span> 정답: <b>' + bs[+q.dataset.ans].textContent.replace(/^[①-④]\s*/, '') + '</b>. ') + (ok ? '' : '') + q.dataset.exp;
   });
 });
+
+/* 플랑크 곡선: 두 칸으로 놓일 때 오른쪽 카드 높이를 왼쪽 그래프 높이와 같게 (위·아래 맞춤) */
+(() => {
+  const wide = matchMedia('(min-width:900px) and (orientation:landscape)'), g = $('c1'), card = $('r1');
+  const fit = () => { card.style.minHeight = wide.matches && g.clientHeight ? g.clientHeight + 'px' : ''; };
+  new ResizeObserver(fit).observe(g); wide.addEventListener('change', fit); addEventListener('resize', fit); fit();
+})();
 
 </script>
 <script src="../copyright.js"></script>

@@ -26,8 +26,16 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#111729;b
 .ov .think.real{width:min(780px,100%)}
 .real .ans{padding:10px 12px;border-radius:10px;background:var(--card)}
 .ansbtn{margin-left:6px;padding:3px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:8px;background:var(--bg);color:var(--acc);cursor:pointer;font-family:inherit}
-/* 실험실 조작 줄 오른쪽 끝의 '실제 별과 비교해 보기' 단추 (누르면 팝업) */
-.row button.realbtn{margin-left:auto;border-color:var(--acc);background:var(--bg);color:var(--acc);font-weight:700}
+/* 실험실 아래 판: 왼쪽은 반지름·온도 고르기, 오른쪽은 '실제 별과 비교해 보기'(누르면 그 자리에 표가 펼쳐짐) */
+.labbox{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+@media (min-width:820px){.labbox{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);align-items:start}.labr{border-left:1px dashed var(--bd);padding-left:16px}}
+.labcue{margin:0}
+.realbtn{padding:8px 14px;font-size:.9rem;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);font-weight:700;cursor:pointer;font-family:inherit}
+.realbtn.on{background:var(--acc);color:var(--on-acc)}
+#realBox{margin-top:10px}
+#realBox .tbl table{font-size:.82rem}
+#realBox .tbl th,#realBox .tbl td{padding:4px 6px}
+.real p.rnote{margin:4px 0 8px}
 .real small{color:var(--sub)}
 .tbl{overflow-x:auto}
 .tbl table{width:100%;border-collapse:collapse;font-size:.9rem;white-space:nowrap}
@@ -83,6 +91,8 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#111729;b
 /* ---- 세련된 색감 / 탭 ① 보정 ---- */
 svg{background:radial-gradient(130% 100% at 50% 0%,#1c2340 0%,#111729 55%,#0b0f1c 100%)!important}
 .qbox h3{color:var(--fg);font-size:1.08rem;display:flex;align-items:center;gap:10px}
+.qbox h3.hq{align-items:baseline;font-size:1rem;font-weight:400;line-height:1.45}.qbox h3.hq .badge{flex:none}
+.qbox h3.hq b{font-weight:700}
 .seg span{font-size:.92rem;margin-right:4px}
 .seg b{margin-left:8px;color:var(--acc)}
 .row.seg button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
@@ -98,8 +108,8 @@ svg.arw{display:inline-block;width:1.35em;height:.9em;vertical-align:-.08em;marg
 :root{--lil:#7c5cd6;--on-lil:#fff;--lil-bg:#efeafd;--lil-bd:#cdbff3;--lil-tx:#5b3fbf}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--lil:#b9a6ff;--on-lil:#1e1640;--lil-bg:#221c3a;--lil-bd:#4a3f80;--lil-tx:#cbbcff}}
 :root[data-theme="dark"]{--lil:#b9a6ff;--on-lil:#1e1640;--lil-bg:#221c3a;--lil-bd:#4a3f80;--lil-tx:#cbbcff}
-.pick .pl{min-width:9em;font-weight:700}.pick .pl small{color:var(--sub);font-weight:400}
-.qbox .pick button{min-width:64px;background:var(--lil-bg);border:1px solid var(--lil-bd);color:var(--lil-tx);font-weight:600;box-shadow:none}
+.pick{flex-wrap:nowrap}.pick .pl{width:5.2em;flex:none;font-weight:700;line-height:1.25}.pick .pl small{display:block;color:var(--sub);font-weight:400}
+.qbox .pick button{flex:1 1 0;min-width:0;max-width:72px;padding:8px 6px;background:var(--lil-bg);border:1px solid var(--lil-bd);color:var(--lil-tx);font-weight:600;box-shadow:none}
 .qbox .pick button:hover{border-color:var(--lil)}
 .qbox .pick button.on{background:var(--lil);border-color:var(--lil-tx);color:var(--on-lil);font-weight:700}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .okc{color:#5fd08a}:root:not([data-theme="light"]) .badc{color:#ff8f7d}}
@@ -165,23 +175,26 @@ body[data-step="3"] #q1svg{max-height:max(160px,calc(100dvh - 505px))}
 
 <section id="p2" hidden>
 <svg id="lab" viewBox="0 0 720 300"></svg>
-<div class="qbox">
-<h3>별의 광도 실험실</h3>
-<div class="cap">반지름과 온도를 골라 보기 — 누르기 전에 광도가 몇 배가 될지 먼저 예측해 보세요</div>
-<div class="row pick" id="rPick"><span class="pl">반지름 <small>(태양의)</small></span><button data-v="2">2배</button><button data-v="3">3배</button><button data-v="4">4배</button></div>
-<div class="row pick" id="tPick"><span class="pl">표면 온도 <small>(태양의)</small></span><button data-v="2">2배</button><button data-v="3">3배</button><button data-v="4">4배</button></div>
-<div class="row"><button id="r0">태양으로 되돌리기</button><button id="realBtn" class="realbtn">실제 별과 비교해 보기</button></div>
-<div id="msg"><span class="cue">반지름과 표면 온도의 배수를 골라 보세요.</span></div>
+<div class="qbox labbox">
+<div class="labl">
+<p class="cue labcue">별의 반지름과 표면 온도를 골라 보세요.</p>
+<div class="cap">누르기 전에 광도가 몇 배가 될지 먼저 예측해 보세요.</div>
+<div class="row pick" id="rPick"><span class="pl">반지름 <small>(태양의)</small></span><button data-v="1">1배</button><button data-v="2">2배</button><button data-v="3">3배</button><button data-v="4">4배</button></div>
+<div class="row pick" id="tPick"><span class="pl">표면 온도 <small>(태양의)</small></span><button data-v="1">1배</button><button data-v="2">2배</button><button data-v="3">3배</button><button data-v="4">4배</button></div>
+<div id="msg"></div>
 </div>
-</section>
-<!-- 실제 별과 비교해 보기 (팝업) -->
-<div class="ov" id="realOv" hidden><div class="think real" role="dialog" aria-modal="true" aria-label="실제 별과 비교해 보기">
-<div class="think-h"><b class="think-t">실제 별과 비교해 보기</b><button type="button" class="x" id="realX">닫기 ✕</button></div>
-<p>실제 별은 크기 차이가 너무 커서 그림 대신 표로 비교합니다. <small>(대략적인 값이며 자료마다 조금씩 다릅니다)</small></p>
+<!-- 실제 별과 비교해 보기: 팝업 없이 오른쪽 칸에 바로 펼침 -->
+<div class="labr real">
+<button type="button" id="realBtn" class="realbtn" aria-expanded="false" aria-controls="realBox">실제 별과 비교해 보기</button>
+<div id="realBox" hidden>
 <div class="tbl"><table><thead><tr><th>별</th><th>반지름<br><small>(R☉)</small></th><th>표면 온도<br><small>(K)</small></th><th>반지름 효과<br><small>(R/R☉)²</small></th><th>온도 효과<br><small>(T/T☉)⁴</small></th><th>광도<br><small>(L☉)</small></th></tr></thead><tbody id="real"></tbody></table></div>
+<p class="rnote"><small>대략적인 값이며 자료마다 조금씩 다릅니다.</small></p>
 <p><span class="badge">생각해 보기</span> 베텔게우스는 태양보다 표면 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 왜 그럴까요? <button type="button" class="ansbtn" id="realA">답 보기</button></p>
 <p class="ans" id="realAns" hidden>광도는 <b>반지름의 제곱</b>과 <b>표면 온도의 네제곱</b>에 비례합니다(L ∝ R²T⁴). 베텔게우스는 표면 온도가 낮아 온도 효과는 태양의 약 0.15배에 불과하지만, 반지름이 태양의 약 760배라 반지름 효과가 약 58만 배나 됩니다. 그래서 둘을 곱한 광도는 태양의 약 9만 배가 됩니다. 즉, 별의 광도는 온도만으로 정해지지 않고 <b>크기(반지름)</b>의 영향도 매우 큽니다.</p>
-</div></div>
+</div>
+</div>
+</div>
+</section>
 
 <script>
 const NS="http://www.w3.org/2000/svg",TS=5772;
@@ -189,7 +202,7 @@ const LB=document.getElementById('lab');
 let R=1,T=TS,raf=0;
 const lum=(r=R,t=T)=>r*r*(t/TS)**4;
 const sup=n=>String(n).replace(/[-0-9]/g,c=>'⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)]);
-// 수식의 변수 L, R, T, E를 기울임꼴(교과서 수식 글꼴)로 바꿈. 앞뒤가 영문자이거나 뒤에 ☉가 붙은 기호(R☉ 등)는 그대로 둠
+// 수식의 변수 L, R, T, E를 기울임꼴(교과서 수식 글꼴)로 바꿈. 앞뒤가 영문자인 경우만 그대로 두고, 태양 기호가 붙은 R☉, T☉, L☉의 R, T, L도 물리량이므로 기울임꼴로 통일
 // 기울어진 글자가 옆 글자(위첨자 ², ⁴ 등)와 붙어 보이지 않도록 HTML은 좌우 여백, SVG는 뒤에 아주 좁은 공백(U+200A)을 둠
 function mathify(root){
  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),ns=[];while(w.nextNode())ns.push(w.currentNode);
@@ -197,7 +210,7 @@ function mathify(root){
   const svg=p.namespaceURI===NS;
   // 식이 =, ×, ∝ 앞뒤에서 줄바꿈되어 끊기지 않도록 그 양옆 공백을 줄바꿈 없는 공백으로
   if(!svg)n.nodeValue=n.nodeValue.replace(/ ([=×∝]) /g,' $1 ');
-  const s=n.nodeValue,isV=i=>'LRTE'.includes(s[i])&&!/[A-Za-z]/.test(s[i-1]||'')&&!/[A-Za-z☉]/.test(s[i+1]||'');
+  const s=n.nodeValue,isV=i=>'LRTE'.includes(s[i])&&!/[A-Za-z]/.test(s[i-1]||'')&&!/[A-Za-z]/.test(s[i+1]||'');
   let out=[],last=0;for(let i=0;i<s.length;i++)if(isV(i)){out.push(s.slice(last,i),[s[i]]);last=i+1}
   if(!out.length)return;out.push(s.slice(last));
   const f=document.createDocumentFragment();
@@ -266,29 +279,27 @@ function tween(R2,T2,done){cancelAnimationFrame(raf);
   R=10**(a0+(a1-a0)*e);T=t0+(T2-t0)*e;render();
   if(p<1)raf=requestAnimationFrame(f);else{R=R2;T=T2;render();done&&done()}};
  raf=requestAnimationFrame(f)}
-// 반지름·표면 온도를 태양의 2, 3, 4배 중에서 골라 광도를 계산 (고르지 않은 쪽은 태양과 같은 1배)
+// 반지름·표면 온도를 태양의 1, 2, 3, 4배 중에서 골라 광도를 계산
 let rk=1,tk=1;
 const rPick=[...document.querySelectorAll('#rPick button')],tPick=[...document.querySelectorAll('#tPick button')];
 function syncPick(){rPick.forEach(b=>b.classList.toggle('on',+b.dataset.v==rk));tPick.forEach(b=>b.classList.toggle('on',+b.dataset.v==tk))}
+function showMsg(){const a=rk*rk,b=tk**4;
+ msg.innerHTML=`반지름 <b>${rk}배</b> → 반지름 효과 ${rk}² = ${a}, 표면 온도 <b>${tk}배</b> → 온도 효과 ${tk}⁴ = ${fmtI(b)}<br>`+
+ (a*b==1?'광도는 1 × 1 = <b>태양과 같은 1배</b>입니다.':`광도는 ${a} × ${fmtI(b)} = <b>태양의 ${fmtI(a*b)}배</b>가 됩니다.`)}
 function pick(kind,k){
  if(kind=='R')rk=k;else tk=k;syncPick();msg.textContent='광도가 몇 배가 될까요? …';
- tween(rk,TS*tk,()=>{const a=rk*rk,b=tk**4;
-  msg.innerHTML=`반지름 <b>${rk}배</b> → 반지름 효과 ${rk}² = ${a}, 표면 온도 <b>${tk}배</b> → 온도 효과 ${tk}⁴ = ${fmtI(b)}<br>`+
-  `광도는 ${a} × ${fmtI(b)} = <b>태양의 ${fmtI(a*b)}배</b>가 됩니다.`})}
+ tween(rk,TS*tk,showMsg)}
 rPick.forEach(b=>b.onclick=()=>pick('R',+b.dataset.v));
 tPick.forEach(b=>b.onclick=()=>pick('T',+b.dataset.v));
-r0.onclick=()=>{rk=tk=1;syncPick();tween(1,TS,()=>{msg.textContent='태양과 같은 별로 되돌렸습니다. 반지름 효과와 온도 효과가 모두 1입니다.'})};
-// 실제 별 비교 표
-const REAL=[['태양',1,5772,'기준 별'],['시리우스 A',1.71,9940,'밤하늘에서 가장 밝게 보이는 별'],['시리우스 B',0.0084,25000,'백색 왜성'],['프록시마 센타우리',0.154,3040,'적색 왜성, 태양에서 가장 가까운 별'],['알데바란',44,3900,'적색 거성'],['리겔',79,12100,'청색 초거성'],['베텔게우스',760,3600,'적색 초거성']];
+syncPick();showMsg();
+// 실제 별 비교 표 (몇 개의 별만 간단히)
+const REAL=[['시리우스 A',1.71,9940,'주계열성'],['시리우스 B',0.0084,25000,'백색 왜성'],['리겔',79,12100,'청색 초거성'],['베텔게우스',760,3600,'적색 초거성']];
 document.getElementById('real').innerHTML=REAL.map(([n,r,t,s])=>{const a=r*r,b=(t/TS)**4;
  return `<tr><td><b>${n}</b><br><small>${s}</small></td><td>${r}</td><td>${t.toLocaleString('ko-KR')}</td><td>${fmt(a)}</td><td>${fmt(b)}</td><td>${fmt(a*b)}</td></tr>`}).join('');
 mathify(document.querySelector('.real'));
-// 실제 별 비교 팝업: 단추로 열고, 닫기·바깥 누르기·Esc로 닫음. 생각해 보기 답은 [답 보기]로 펼침
-const realOv=document.getElementById('realOv'),realBtn=document.getElementById('realBtn'),realX=document.getElementById('realX');
-realBtn.onclick=()=>{realOv.hidden=false;realX.focus()};
-realX.onclick=()=>{realOv.hidden=true;realBtn.focus()};
-realOv.addEventListener('click',e=>{if(e.target===realOv)realX.onclick()});
-addEventListener('keydown',e=>{if(e.key==='Escape'&&!realOv.hidden)realX.onclick()});
+// 실제 별 비교: 팝업 없이 단추 아래에 펼치고 접음. 생각해 보기 답은 [답 보기]로 펼침
+const realBtn=document.getElementById('realBtn'),realBox=document.getElementById('realBox');
+realBtn.onclick=()=>{realBox.hidden=!realBox.hidden;realBtn.setAttribute('aria-expanded',!realBox.hidden);realBtn.classList.toggle('on',!realBox.hidden)};
 document.getElementById('realA').onclick=e=>{const a=document.getElementById('realAns');a.hidden=!a.hidden;e.target.textContent=a.hidden?'답 보기':'답 닫기'};
 render();
 
@@ -439,7 +450,8 @@ function draw1(){QS.innerHTML='';gid=0;const H=st1==2?258:st1==3?224:320;QS.setA
 }
 
 function renderQ(){
- const S=STEP[st1];qb.innerHTML=`<h3>${S.qs.length?'<span class="badge">생각해 보기</span>':''}${S.title}</h3><div class="intro">${S.intro}</div>`;
+ // 문제가 있는 단계는 [생각해 보기] 옆에 탭 이름 대신 첫 문제를 바로 씀
+ const S=STEP[st1];qb.innerHTML=S.qs.length?`<h3 class="hq"><span class="badge">생각해 보기</span><span>${S.qs[0].q}</span></h3>`:`<h3>${S.title}</h3><div class="intro">${S.intro}</div>`;
  if(S.qs.length){
   const th=document.createElement('div');th.className='think inline';qb.appendChild(th);buildThink(th)}
  if(allSolved(st1)&&S.done){const dn=document.createElement('div');dn.className=S.sum?'sum':'done';dn.innerHTML=S.done;qb.appendChild(dn)}
@@ -452,7 +464,7 @@ function buildThink(TH){
  for(let i=0;i<S.qs.length;i++){
   if(i>0&&!solved[st1][i-1])break;
   const Q=S.qs[i],q=document.createElement('div');q.className='q';
-  q.innerHTML=`<p>${Q.q}</p><div class="ch">${Q.opts.map((o,j)=>`<button type="button">${NUM[j]} ${o}</button>`).join('')}<button type="button" class="chk">정답 확인</button></div><p class="fb2"></p>`;
+  q.innerHTML=`${i>0?`<p>${Q.q}</p>`:''}<div class="ch">${Q.opts.map((o,j)=>`<button type="button">${NUM[j]} ${o}</button>`).join('')}<button type="button" class="chk">정답 확인</button></div><p class="fb2"></p>`;
   const bs=[...q.querySelectorAll('.ch button:not(.chk)')],fb=q.querySelector('.fb2');let sel=-1;
   if(solved[st1][i]){sel=Q.ans;bs[Q.ans].classList.add('sel');fb.innerHTML='<span class="okc">✔ 정답입니다.</span> '+Q.ok.replace(/^정답!\s*/,'')}
   bs.forEach((b,j)=>b.onclick=()=>{if(solved[st1][i])return;sel=j;bs.forEach((x,k)=>x.classList.toggle('sel',k==j));fb.textContent=''});
