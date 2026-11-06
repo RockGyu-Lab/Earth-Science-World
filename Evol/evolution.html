@@ -71,6 +71,9 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .chk{display:flex;align-items:center;gap:6px;font-size:.88rem;cursor:pointer}
 .chk input{accent-color:var(--acc);margin:0}
 .unit{font-size:.8rem;opacity:.75;white-space:nowrap}
+/* 물리량 기호는 기울임꼴, 태양 기호 ☉는 아래첨자 (예: M☉) */
+i.v{font-family:"Times New Roman",Cambria,serif;font-style:italic;font-size:1.1em;line-height:1;padding:0 .06em 0 .02em}
+sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
 [data-s]{cursor:pointer}
 /* ② 주계열 단계: 왼쪽 정역학 평형(좁게), 오른쪽 수소 핵융합(넓게). 각 그림 아래에 조작 줄 */
 .duo2{display:grid;grid-template-columns:.78fr 1.22fr;gap:8px}
@@ -139,14 +142,14 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <label class="chk"><input type="checkbox" id="allm"> 모두 보기</label>
   <button id="play" class="pb">▶ 재생</button>
   <input type="range" id="prog" min="0" max="1000" value="0" aria-label="진화 진행 정도">
-  <span class="unit" title="태양의 질량을 1로 나타낸 단위">M☉ = 태양 질량</span>
+  <span class="unit" title="태양의 질량을 1로 나타낸 단위"><i class="v">M</i><sub class="sun">☉</sub> = 태양 질량</span>
  </div>
  <!-- 생각해 보기: 꼬리표 + 질문 + [답 보기] → 팝업 (정식 사이트 eclipses.html 심화 질문과 같은 형식) -->
  <div class="note ask"><span class="tag">생각해 보기</span><p>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요? (모두 보기 체크 후 재생)</p><button type="button" class="open-think" id="thb1">답 보기</button></div>
  <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">질량이 클수록 짧아집니다.</p>
-  <p class="exp">질량이 큰 원시별일수록 빠르게 수축하여 중심부 온도가 빨리 올라가므로 주계열에 더 빨리 도달합니다. (15 M☉ 약 6만 년, 1 M☉ 약 5,000만 년)</p>
+  <p class="exp">질량이 큰 원시별일수록 빠르게 수축하여 중심부 온도가 빨리 올라가므로 주계열에 더 빨리 도달합니다. (15 <i class="v">M</i><sub class="sun">☉</sub> 약 6만 년, 1 <i class="v">M</i><sub class="sun">☉</sub> 약 5,000만 년)</p>
  </div></div>
 </section>
 
@@ -225,7 +228,15 @@ TABS.forEach((t,i)=>{t.onclick=()=>openTab(i);t.onkeydown=e=>{if(e.key=='ArrowRi
 const NS="http://www.w3.org/2000/svg",lg=Math.log10;
 let S;
 function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||S).appendChild(e);return e}
-function lab(x,y,t,fs=15,an='middle',fill='#cfd6ea',w=600,p){const e=el('text',{x,y,fill,'font-size':fs,'text-anchor':an,'font-weight':w,stroke:'#0b1026','stroke-width':3,'paint-order':'stroke'},p);e.textContent=t;return e}
+function lab(x,y,t,fs=15,an='middle',fill='#cfd6ea',w=600,p){const e=el('text',{x,y,fill,'font-size':fs,'text-anchor':an,'font-weight':w,stroke:'#0b1026','stroke-width':3,'paint-order':'stroke'},p);e.textContent=t;if(t.includes('☉'))sunify(e);return e}
+// 태양 기호가 붙은 물리량(M☉, R☉, L☉): 물리량 글자는 기울임꼴, ☉는 아래첨자로 (교과서·논문 표기)
+function sunify(e){const SUB=.28;
+ [...e.childNodes].forEach(n=>{if(n.nodeType==1){sunify(n);return}
+  const ps=n.nodeValue.split(/([MRL])☉/);if(ps.length<2)return;
+  const f=document.createDocumentFragment(),ts=(s,a)=>{const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');for(const k in a)t.setAttribute(k,a[k]);t.textContent=s;f.appendChild(t)};let back=false;
+  ps.forEach((s,i)=>{if(i%2){ts(s,{style:"font-family:'Times New Roman',Cambria,serif;font-style:italic;font-size:1.1em"});ts('☉',{dy:(SUB/.7)+'em','font-size':'.7em'});back=true}
+   else if(back){ts(' '+s,{dy:-SUB+'em'});back=false}else if(s)f.appendChild(document.createTextNode(s))});
+  n.replaceWith(f)})}
 const SC=[[4.6,[155,176,255]],[4.3,[170,191,255]],[4.0,[202,215,255]],[3.875,[248,247,255]],[3.78,[255,244,226]],[3.716,[255,229,180]],[3.6,[255,200,130]],[3.48,[255,160,100]]];
 const css=c=>`rgb(${c.map(Math.round).join(',')})`;
 function colA(t){if(t>=SC[0][0])return SC[0][1];for(let i=1;i<SC.length;i++)if(t>=SC[i][0]){const[a,p]=SC[i-1],[b,q]=SC[i],f=(t-b)/(a-b);return q.map((v,k)=>v+(p[k]-v)*f)}return SC[SC.length-1][1]}
@@ -341,7 +352,7 @@ function drawHR(G){S=hv;S.innerHTML='';const X0=78,X1=545,Y0=44,Y1=372,TA=4.62,T
  const M=MASS[mi];
  if(q>=0){// 시간 상자: 한 질량이면 그 별이 걸린 시간, 경주면 공통 시계
   const g=el('g',{}),bg=el('rect',{rx:10,fill:'#161c36',opacity:.92,stroke:'#3a4260'},g),bx=X0+12,by=Y1-70;
-  const row=(yy,k,v,fs=13)=>{const t=lab(bx+12,yy,k+'  ',fs,'start','#a9b1cc',600,g),ts=el('tspan',{fill:'#f5b942','font-weight':800},t);ts.textContent=v};
+  const row=(yy,k,v,fs=13)=>{const t=lab(bx+12,yy,k+'  ',fs,'start','#a9b1cc',600,g),ts=el('tspan',{fill:'#f5b942','font-weight':800},t);ts.textContent=v;sunify(t)};
   if(race()){lab(bx+12,by+24,'경과 시간  약 '+fmtYr(G.t),15,'start','#fff',800,g);
    row(by+48,'주계열 도착',MASS.filter((_,i)=>G.q[i]>=1).map(m=>m.m).reverse().join(', ')+(G.q.some(v=>v>=1)?' M☉':'아직 없음'))}
   else{lab(bx+12,by+24,M.m+' M☉ '+(q>=1?'주계열성':'원시별'),15,'start','#fff',800,g);
@@ -354,7 +365,7 @@ function drawPre(){const G=stateOf(),st=stageOf(G.vs);
  pnote.innerHTML=`<div class="nh">전주계열 단계 <span class="ex">· 성운에서 태어난 원시별이 주계열성이 되기 전까지의 단계</span></div><p><b>${STG[st].n}</b> ${STG[st].d}</p>`;
  drawBirth(G.vs);drawHR(G);prog.value=Math.round(ps*1000)}
 function setS(v){ps=Math.max(0,Math.min(1,v));drawPre()}
-MASS.forEach((M,i)=>{const b=document.createElement('button');b.textContent=M.m+' M☉';b.onclick=()=>{mi=i;msel.querySelectorAll('button').forEach((x,j)=>x.classList.toggle('on',j==i));drawPre()};msel.appendChild(b)});
+MASS.forEach((M,i)=>{const b=document.createElement('button');b.innerHTML=M.m+' <i class="v">M</i><sub class="sun">☉</sub>';b.onclick=()=>{mi=i;msel.querySelectorAll('button').forEach((x,j)=>x.classList.toggle('on',j==i));drawPre()};msel.appendChild(b)});
 msel.children[mi].classList.add('on');
 prog.oninput=()=>{stop();setS(prog.value/1000)};allm.onchange=drawPre;
 bv.addEventListener('click',e=>{const g=e.target.closest('[data-s]');if(g){stop();setS(+g.dataset.s)}});

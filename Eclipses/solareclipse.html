@@ -359,14 +359,14 @@ function loadWorld(json) {
   return land.length > 0;
 }
 
-// ---- 지구는 멈춘 모습(11:18 무렵)으로 그리고, 그림자는 시각 t에 실제로 덮는 지표를 그 위에 옮겨 그림 ----
-const TV = 11.3, RV = rot(TV);
-// 시각 t에 태양 쪽에서 본 그림자 속 한 점(그림자 중심에서 dx, dy) → 그 점이 떨어지는 지표 → 멈춘 지구 그림의 화면 좌표
+// ---- 지구는 시각 t에 태양 쪽에서 본 모습(자전하는 모습)으로 그리고, 그림자는 그 위에 그대로 그림 ----
+// (지구를 한 시각에 멈춰 그리면 이른·늦은 시각의 그림자가 원판 가장자리까지 닿지 않으므로, 지구도 함께 돌림)
+// 시각 t에 태양 쪽에서 본 그림자 속 한 점(그림자 중심에서 dx, dy) → 그 점이 떨어지는 지표 → 지구 그림의 화면 좌표
 // (하늘 그림·가림 정도 선과 같은 계산이므로, 그림자 가장자리가 닿는 순간 그 지점에서 일식이 시작됨)
 function shadowPt(t, dx, dy, out) {
   const a = axis(t); let x = a[0] + dx, y = a[1] + dy; const r2 = x * x + y * y;
-  if (r2 > 0.9999) { const k = 0.99995 / Math.sqrt(r2); x *= k; y *= k; } // 지구 밖으로 나간 부분은 해가 뜨고 지는 경계로
-  const ll = unproj(x, y, t), u = unit(ll[0], ll[1]); projV(u[0], u[1], u[2], RV[0], RV[1], out);
+  if (r2 > 0.9999) { const k = 0.99995 / Math.sqrt(r2); x *= k; y *= k; } // 지구 밖으로 나간 부분은 지구 가장자리(해가 뜨고 지는 경계)로
+  const rv = rot(t), ll = unproj(x, y, t), u = unit(ll[0], ll[1]); projV(u[0], u[1], u[2], rv[0], rv[1], out);
   if (out[2] < 0) { const k = 1 / Math.hypot(out[0], out[1]); out[0] *= k; out[1] *= k; }
   out[0] = CX + R * out[0]; out[1] = CY - R * out[1]; return out;
 }
@@ -446,7 +446,7 @@ function labelAt(text, X, Y, opt) {
 }
 
 function draw() {
-  const t = tNow, cl = RV[0], sl = RV[1];
+  const t = tNow, [cl, sl] = rot(t);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, W, W);
   // 우주 배경 별
@@ -546,7 +546,7 @@ function draw() {
       labelAt('북극점', X + 6, Y - fs * 1.2, { size: fs, weight: 600, align: 'left' }); } }
   // 관측 지점
   OBS.forEach(o => {
-    projV(o.u[0], o.u[1], o.u[2], cl, sl, tmp); if (tmp[2] < 0) return;
+    projV(o.u[0], o.u[1], o.u[2], cl, sl, tmp); if (tmp[2] < 0) { o.sx = null; return; } // 지구 뒤로 돌아간 지점은 그리지 않음
     const X = CX + R * tmp[0], Y = CY - R * tmp[1], r = Math.max(8, W / 70);
     const selc = o === OBS[sel];
     o.sx = X; o.sy = Y; o.sr = r;

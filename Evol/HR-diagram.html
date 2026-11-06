@@ -136,7 +136,15 @@ let S,X0,X1,Y0,Y1;
 const frame=(svg,a,b,c,d)=>{S=svg;S.innerHTML='';X0=a;X1=b;Y0=c;Y1=d};
 const xOf=t=>X0+(TA-t)/(TA-TB)*(X1-X0),yOf=l=>Y0+(LA-l)/(LA-LB)*(Y1-Y0);
 function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||S).appendChild(e);return e}
-function lab(x,y,t,fs=15,an='middle',fill='#cfd6ea',w=600,p){const e=el('text',{x,y,fill,'font-size':fs,'text-anchor':an,'font-weight':w,stroke:'#0b1026','stroke-width':3,'paint-order':'stroke'},p);e.textContent=t;return e}
+function lab(x,y,t,fs=15,an='middle',fill='#cfd6ea',w=600,p){const e=el('text',{x,y,fill,'font-size':fs,'text-anchor':an,'font-weight':w,stroke:'#0b1026','stroke-width':3,'paint-order':'stroke'},p);e.textContent=t;if(t.includes('☉'))sunify(e);return e}
+// 태양 기호가 붙은 물리량(M☉, R☉, L☉): 물리량 글자는 기울임꼴, ☉는 아래첨자로 (교과서·논문 표기)
+function sunify(e){const SUB=.28;
+ [...e.childNodes].forEach(n=>{if(n.nodeType==1){sunify(n);return}
+  const ps=n.nodeValue.split(/([MRL])☉/);if(ps.length<2)return;
+  const f=document.createDocumentFragment(),ts=(s,a)=>{const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');for(const k in a)t.setAttribute(k,a[k]);t.textContent=s;f.appendChild(t)};let back=false;
+  ps.forEach((s,i)=>{if(i%2){ts(s,{style:"font-family:'Times New Roman',Cambria,serif;font-style:italic;font-size:1.1em"});ts('☉',{dy:(SUB/.7)+'em','font-size':'.7em'});back=true}
+   else if(back){ts(' '+s,{dy:-SUB+'em'});back=false}else if(s)f.appendChild(document.createTextNode(s))});
+  n.replaceWith(f)})}
 // 무리 (주계열성, 거성, 초거성, 백색왜성)
 const GR={
 // 설명(d)은 패드 세로 화면에서도 한 줄에 들어가도록 짧게 씀 (별의 분류를 바꿔도 그림이 위아래로 움직이지 않게)

@@ -12,6 +12,7 @@
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
 button,input{font-family:inherit}
 /* 수식 변수(기울임꼴): 기울어진 글자가 옆 글자와 겹치지 않도록 좌우에 작은 여백 */
+sub.sun{font-size:.68em;line-height:0;margin-left:.05em}
 i.v{font-family:"Times New Roman",Cambria,serif;font-style:italic;font-size:1.12em;line-height:1;padding:0 .09em 0 .03em}
 main{max-width:960px;margin:0 auto;padding:14px 16px}
 h1{font-size:1.3rem;margin:4px 0 10px}
@@ -202,7 +203,7 @@ const LB=document.getElementById('lab');
 let R=1,T=TS,raf=0;
 const lum=(r=R,t=T)=>r*r*(t/TS)**4;
 const sup=n=>String(n).replace(/[-0-9]/g,c=>'⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)]);
-// 수식의 변수 L, R, T, E를 기울임꼴(교과서 수식 글꼴)로 바꿈. 앞뒤가 영문자인 경우만 그대로 두고, 태양 기호가 붙은 R☉, T☉, L☉의 R, T, L도 물리량이므로 기울임꼴로 통일
+// 수식의 변수 L, R, T, E를 기울임꼴(교과서 수식 글꼴)로 바꿈. 앞뒤가 영문자인 경우만 그대로 두고, 태양 기호가 붙은 R☉, T☉, L☉의 R, T, L도 물리량이므로 기울임꼴로 통일하고 ☉는 아래첨자로
 // 기울어진 글자가 옆 글자(위첨자 ², ⁴ 등)와 붙어 보이지 않도록 HTML은 좌우 여백, SVG는 뒤에 아주 좁은 공백(U+200A)을 둠
 function mathify(root){
  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),ns=[];while(w.nextNode())ns.push(w.currentNode);
@@ -211,12 +212,18 @@ function mathify(root){
   // 식이 =, ×, ∝ 앞뒤에서 줄바꿈되어 끊기지 않도록 그 양옆 공백을 줄바꿈 없는 공백으로
   if(!svg)n.nodeValue=n.nodeValue.replace(/ ([=×∝]) /g,' $1 ');
   const s=n.nodeValue,isV=i=>'LRTE'.includes(s[i])&&!/[A-Za-z]/.test(s[i-1]||'')&&!/[A-Za-z]/.test(s[i+1]||'');
-  let out=[],last=0;for(let i=0;i<s.length;i++)if(isV(i)){out.push(s.slice(last,i),[s[i]]);last=i+1}
+  // 뒤에 ☉가 붙으면(R☉, L☉, T☉) ☉를 아래첨자로: [글자, true]로 표시해 둠
+  let out=[],last=0;for(let i=0;i<s.length;i++)if(isV(i)){const sun=s[i+1]==='☉';out.push(s.slice(last,i),[s[i],sun]);last=i+(sun?2:1);if(sun)i++}
   if(!out.length)return;out.push(s.slice(last));
-  const f=document.createDocumentFragment();
-  out.forEach(x=>{if(typeof x=='string'){if(x)f.appendChild(document.createTextNode(x));return}
-   if(svg){const t=document.createElementNS(NS,'tspan');t.setAttribute('data-v','');t.setAttribute('style',"font-family:'Times New Roman',Cambria,serif;font-style:italic;font-size:1.12em");t.textContent=x[0];f.appendChild(t);f.appendChild(document.createTextNode(' '))}
-   else{const v=document.createElement('i');v.className='v';v.textContent=x[0];f.appendChild(v)}});
+  const f=document.createDocumentFragment(),SUB=.28;let back=false;
+  const ts=(txt,attrs)=>{const t=document.createElementNS(NS,'tspan');for(const k in attrs)t.setAttribute(k,attrs[k]);t.textContent=txt;f.appendChild(t);return t};
+  out.forEach(x=>{if(typeof x=='string'){
+    // SVG: 아래첨자 ☉로 내려간 기준선을 다음 글자에서 원래 높이로 되돌림
+    if(back){ts(' '+x,{dy:`-${SUB}em`,'data-v':''});back=false}else if(x)f.appendChild(document.createTextNode(x));return}
+   if(svg){ts(x[0],{'data-v':'',style:"font-family:'Times New Roman',Cambria,serif;font-style:italic;font-size:1.12em"});
+    if(x[1]){ts('☉',{'data-v':'',dy:`${SUB/.7}em`,'font-size':'.7em'});back=true}else f.appendChild(document.createTextNode(' '))}
+   else{const v=document.createElement('i');v.className='v';v.textContent=x[0];f.appendChild(v);
+    if(x[1]){const b=document.createElement('sub');b.className='sun';b.textContent='☉';f.appendChild(b)}}});
   p.replaceChild(f,n)})}
 function fmt(x){
  if(x>=0.01&&x<10000)return Number(x.toPrecision(3)).toLocaleString('ko-KR',{maximumFractionDigits:4});
