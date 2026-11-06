@@ -26,11 +26,11 @@ svg{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:no
 [data-tip]{cursor:pointer}
 #tip{position:fixed;z-index:20;pointer-events:none;background:#fff;color:#111;border:2px solid #111;border-radius:8px;padding:6px 10px;font-size:.88rem;max-width:260px;opacity:0;transition:opacity .12s;box-shadow:0 2px 8px rgba(0,0,0,.2);line-height:1.45}
 #tip b{display:block;font-size:.95rem}
-.count{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.cbox{padding:5px 12px;border:1px solid var(--line);border-radius:10px}
+.count{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cbox{padding:5px 9px;border:1px solid var(--line);border-radius:10px;container-type:inline-size;min-width:0}
 .cbox .lab{font-size:.82rem;color:var(--muted);line-height:1.4}
-.cbox .num{font-size:1.6rem;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
-.cbox .num small{font-size:.95rem;font-weight:400;color:var(--muted)}
+.cbox .num{font-size:min(1.6rem,18.5cqi);font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cbox .num small{font-size:.51em;font-weight:400;color:var(--muted)}
 #msg{padding:8px 14px;border:1px solid var(--line);border-radius:10px;font-size:.9rem;line-height:1.55;height:8.2em;overflow-y:auto}  /* 높이 고정: 글이 길어져도 아래 기록 막대가 움직이지 않음 */
 #msg b{font-size:1rem}
 .yes{color:var(--ok)}.no{color:var(--accent)}
@@ -335,7 +335,7 @@ function renderCount(){
   var h;
   if(t>=TMAX-0.01)h='<b>1년이 지났습니다.</b> '+(I===0?'두 궤도면이 일치하면 삭(신월)마다 일식이, 망(보름달)마다 월식이 일어납니다. 이제 일치하지 않는 경우와 비교해 보세요.':'실제로도 이 기간에는 2026년 2월 17일과 8월 12일에 일식이, 3월 3일과 8월 28일에 월식이 일어납니다.');
   else if(lastE)h='<span style="color:var(--muted);font-size:.85rem">가장 최근</span><br>'+evText(lastE);
-  else h='<span class="go">▶ 1년 공전 시작을 눌러 보세요.</span> <span style="color:var(--muted)">삭(신월)과 망(보름달)이 될 때마다 식이 일어나는지 기록됩니다.</span>';
+  else h='<span class="go">▶ 1년 공전 시작을 눌러 보세요.</span><br><span style="color:var(--muted)">삭(신월)과 망(보름달)이 될 때마다 식이 일어나는지 기록됩니다.</span>';
   $('msg').innerHTML=h;
   $('timeTxt').textContent=dstr(Math.min(t,TMAX-0.001),true);
   recMarks.forEach(function(r){var e=r.e,done=e.t<=t+1e-6;
