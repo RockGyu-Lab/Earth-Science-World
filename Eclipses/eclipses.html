@@ -63,7 +63,7 @@ svg{border-radius:14px;box-shadow:0 0 0 1px var(--frame)}
 main{max-width:max(560px,min(960px,calc((100vh - 270px)*900/545)))}
 main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 /* 심화 질문 단추 (월식 탭에서만 보임, 조작 줄 오른쪽 끝) + 답 팝업 */
-/* 심화 질문 줄 (월식 탭에서만, 다른 자료의 '생각해 보기'와 같은 형식: 꼬리표 + 질문 + 답 보기) */
+/* 심화 질문 줄 (월식 탭에서만, 다른 자료의 '생각해 보기'와 같은 형식: 꼬리표 + 질문 + 정답 확인) */
 .deeprow{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin:10px 0 0;font-size:.95rem}
 .deeprow .q{font-weight:600}
 .deeprow button{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer}
@@ -109,7 +109,7 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 <div class="ctl">
 <div class="tabs" id="selrow"><button id="b1" class="on">개기일식 위치 (달이 가까울 때)</button><button id="b0">금환일식 위치 (달이 멀 때)</button></div>
 <div class="row"><button id="go">▶ 달 공전 시작</button><button id="rst" disabled>■ 처음으로</button><label>공전 속도 <input id="sp" type="range" min="0.3" max="3" step="0.1" value="1"><b id="spv">1.0배</b></label></div>
-<div class="deeprow" id="deep"><span class="tag">심화</span><span class="q">개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</span><button type="button" id="deepA">답 보기</button></div>
+<div class="deeprow" id="deep"><span class="tag">심화</span><span class="q">개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</span><button type="button" id="deepA">정답 확인</button></div>
 </div>
 <div id="tip"></div>
 <div class="ov" id="deepOv" hidden><div class="pop" role="dialog" aria-modal="true" aria-label="심화: 개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?">

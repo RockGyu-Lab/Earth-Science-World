@@ -131,7 +131,7 @@ svg.arw{display:inline-block;width:1.35em;height:.9em;vertical-align:-.08em;marg
 .think .ch button{font-size:.95rem;background:var(--bg);border:1px solid transparent;border-radius:10px;padding:7px 10px;cursor:pointer;color:var(--fg);font-family:inherit;box-shadow:0 1px 2px rgba(20,25,45,.08);transition:border-color .15s,background .15s}
 .think .ch button:hover{border-color:var(--acc)}
 .think .ch button.sel{border-color:var(--acc);background:var(--acc-bg);color:var(--acc);font-weight:700}
-.think .ch button.chk{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700;padding:7px 16px}
+.think .ch button.chk{background:var(--bg);border-color:var(--acc);color:var(--acc);font-weight:700;padding:7px 16px}
 .think .q .fb2{font-size:.95rem;margin-top:12px}
 .think .fb2:empty{display:none}
 .hl{color:var(--acc);font-weight:700}
@@ -199,7 +199,7 @@ body[data-step="3"] #q1svg{max-height:max(160px,calc(100dvh - 464px))}
 <!-- 실제 별 비교의 생각해 보기 (팝업) -->
 <div class="ov" id="thOv" hidden><div class="think realq" role="dialog" aria-modal="true" aria-label="생각해 보기">
 <div class="think-h"><b class="think-t">생각해 보기</b><button type="button" class="x" id="thX">닫기 ✕</button></div>
-<p>베텔게우스는 태양보다 표면 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 왜 그럴까요? <button type="button" class="ansbtn" id="realA">답 보기</button></p>
+<p>베텔게우스는 태양보다 표면 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 왜 그럴까요? <button type="button" class="ansbtn" id="realA">정답 확인</button></p>
 <p class="ans" id="realAns" hidden>광도는 <b>반지름의 제곱</b>과 <b>표면 온도의 네제곱</b>에 비례합니다(L ∝ R²T⁴). 베텔게우스는 표면 온도가 낮아 온도 효과는 태양의 약 0.15배에 불과하지만, 반지름이 태양의 약 760배라 반지름 효과가 약 58만 배나 됩니다. 그래서 둘을 곱한 광도는 태양의 약 9만 배가 됩니다. 즉, 별의 광도는 온도만으로 정해지지 않고 <b>크기(반지름)</b>의 영향도 매우 큽니다.</p>
 </div></div>
 
@@ -310,7 +310,7 @@ const REAL=[['시리우스 A',1.71,9940,'주계열성'],['리겔',79,12100,'청�
 document.getElementById('real').innerHTML=REAL.map(([n,r,t,s])=>{const a=r*r,b=(t/TS)**4;
  return `<tr><td><b>${n}</b></td><td>${r}</td><td>${t.toLocaleString('ko-KR')}</td><td>${fmt(a)}</td><td>${fmt(b)}</td><td>${fmt(a*b)}</td></tr>`}).join('');
 mathify(document.querySelector('.real'));
-// 실제 별 비교: 팝업 없이 단추 아래에 펼치고 접음. 생각해 보기 답은 [답 보기]로 펼침
+// 실제 별 비교: 팝업 없이 단추 아래에 펼치고 접음. 생각해 보기 답은 [정답 확인]로 펼침
 const realBtn=document.getElementById('realBtn'),realBox=document.getElementById('realBox');
 realBtn.onclick=()=>{realBox.hidden=!realBox.hidden;realBtn.setAttribute('aria-expanded',!realBox.hidden);realBtn.classList.toggle('on',!realBox.hidden)};
 // 생각해 보기 팝업: 단추로 열고, 닫기·바깥 누르기·Esc로 닫음
@@ -319,7 +319,7 @@ thB.onclick=()=>{thOv.hidden=false;thX.focus()};thX.onclick=()=>{thOv.hidden=tru
 thOv.addEventListener('click',e=>{if(e.target===thOv)thX.onclick()});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!thOv.hidden)thX.onclick()});
 mathify(thOv);
-document.getElementById('realA').onclick=e=>{const a=document.getElementById('realAns');a.hidden=!a.hidden;e.target.textContent=a.hidden?'답 보기':'답 닫기'};
+document.getElementById('realA').onclick=e=>{const a=document.getElementById('realAns');a.hidden=!a.hidden;e.target.textContent=a.hidden?'정답 확인':'답 닫기'};
 render();
 
 /* ===== 탭 ① 광도 식 유도하기 (4단계 문답) ===== */

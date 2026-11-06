@@ -64,7 +64,7 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
 .stars button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub);font-weight:700}
 #tip{position:fixed;pointer-events:none;background:#fff;color:#111;border-radius:8px;padding:5px 10px;font-weight:700;font-size:.95rem;box-shadow:0 2px 8px #0006;display:none;z-index:9;white-space:nowrap}
 /* 생각해 보기: 정식 사이트(eclipses.html 심화 질문, luminosity.html)와 같은 형식
-   [꼬리표(남색)] 질문 [답 보기(남색 테두리)] → 누르면 팝업에 질문과 답 */
+   [꼬리표(남색)] 질문 [정답 확인(남색 테두리)] → 누르면 팝업에 질문과 답 */
 .ask{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin:0 0 8px;font-size:.95rem}
 .ask p{margin:0;font-weight:600}
 .ask-b{margin:8px 0 0}
@@ -107,7 +107,7 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
  </div>
  <svg id="sv1" viewBox="0 0 900 590"></svg>
  <div class="stars" id="stars"><span class="qmsg">유명한 별</span></div>
- <div class="ask ask-b"><span class="tag">생각해 보기</span><p>H-R 도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?</p><button type="button" class="open-think" id="thb1">답 보기</button></div>
+ <div class="ask ask-b"><span class="tag">생각해 보기</span><p>H-R 도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
  <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: H-R 도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>H-R 도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">왼쪽으로 갈수록 별의 표면 온도가 높아집니다.</p>
@@ -230,7 +230,7 @@ function pill(x,y,t,an){const w=t.length*9+16,bx=an=='end'?x-w:x-w/2;
 // ② H-R 도 상의 별의 분류: 왼쪽에 광도와 절대등급 두 축을 나란히 (그림판을 가로로 넓혀 패드 화면의 빈 곳을 씀)
 let G='all';
 const ALL='별들은 몇 개의 무리로 모여 있습니다.';
-const ASK='<span class="tag">생각해 보기</span>거성과 백색왜성은 왜 광도가 다를까요? <span class="go">‘반지름이 같은 선’을 켜 보세요.</span><button type="button" class="open-think" id="thb">답 보기</button>';
+const ASK='<span class="tag">생각해 보기</span>거성과 백색왜성은 왜 광도가 다를까요? <span class="go">‘반지름이 같은 선’을 켜 보세요.</span><button type="button" class="open-think" id="thb">정답 확인</button>';
 function draw2(){frame(sv2,200,975,44,500);const AL=112; // AL: 광도 축의 위치
  el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0},el('clipPath',{id:'pa'},el('defs',{})));
  for(let m=15;m>=-10;m-=5){const y=yOf((MSUN-m)/2.5);el('line',{x1:X0,x2:X1,y1:y,y2:y,stroke:'#2a3156'});lab(X0-8,y+5,mTick(m),15,'end')}
@@ -278,7 +278,7 @@ function openTab(i){TABS.forEach((t,j)=>{t.setAttribute('aria-selected',i==j);t.
  PANES[i].classList.remove('enter');void PANES[i].offsetWidth;PANES[i].classList.add('enter');i?draw2():draw1()}
 TABS.forEach((t,i)=>{t.onclick=()=>openTab(i);t.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+(e.key=='ArrowRight'?1:TABS.length-1))%TABS.length;TABS[j].focus();openTab(j)}}});
 pickStar('태양');setG('all');
-// 생각해 보기 답 팝업: '답 보기'는 설명 칸을 다시 그릴 때마다 새로 생기므로 설명 칸에서 누름을 받음. 닫기·바깥 누르기·Esc로 닫힘
+// 생각해 보기 답 팝업: '정답 확인'는 설명 칸을 다시 그릴 때마다 새로 생기므로 설명 칸에서 누름을 받음. 닫기·바깥 누르기·Esc로 닫힘
 {const ov=document.getElementById('ov1'),bt=document.getElementById('thb1'),cl=document.getElementById('thx1');
  const closeTh=()=>{ov.hidden=true;bt.focus()};
  bt.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);

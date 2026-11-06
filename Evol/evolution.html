@@ -41,7 +41,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .duo svg{max-height:max(260px,calc(100vh - 344px))}
 .duo svg{max-height:max(260px,calc(100dvh - 344px))}
 /* 생각해 보기: 정식 사이트(eclipses.html 심화 질문, luminosity.html)와 같은 형식
-   상자 없이 한 줄에 [꼬리표(남색)] 질문 [답 보기(남색 테두리)] → 누르면 팝업에 질문과 답 */
+   상자 없이 한 줄에 [꼬리표(남색)] 질문 [정답 확인(남색 테두리)] → 누르면 팝업에 질문과 답 */
 .note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
 .note.ask p{margin:0;font-weight:600}
 .tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
@@ -144,8 +144,8 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
   <input type="range" id="prog" min="0" max="1000" value="0" aria-label="진화 진행 정도">
   <span class="unit" title="태양의 질량을 1로 나타낸 단위"><i class="v">M</i><sub class="sun">☉</sub> = 태양 질량</span>
  </div>
- <!-- 생각해 보기: 꼬리표 + 질문 + [답 보기] → 팝업 (정식 사이트 eclipses.html 심화 질문과 같은 형식) -->
- <div class="note ask"><span class="tag">생각해 보기</span><p>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요? (모두 보기 체크 후 재생)</p><button type="button" class="open-think" id="thb1">답 보기</button></div>
+ <!-- 생각해 보기: 꼬리표 + 질문 + [정답 확인] → 팝업 (정식 사이트 eclipses.html 심화 질문과 같은 형식) -->
+ <div class="note ask"><span class="tag">생각해 보기</span><p>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요? (모두 보기 체크 후 재생)</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
  <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">질량이 클수록 짧아집니다.</p>
@@ -164,7 +164,7 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
     <div class="stp"><button id="fprev" aria-label="이전 단계">◀</button><b id="fstep"></b><button id="fnext" aria-label="다음 단계">▶</button></div>
     <button class="pb" id="fplay">▶ 자동 진행</button></div></div>
  </div>
- <div class="note ask"><span class="tag">생각해 보기</span><p>주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?</p><button type="button" class="open-think" id="thb2">답 보기</button></div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?</p><button type="button" class="open-think" id="thb2">정답 확인</button></div>
  <div class="ov" id="ov2" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?</b><button type="button" class="x" id="thx2" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">4H → He + 에너지</p>
@@ -183,13 +183,13 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
   <button class="pb" id="pmplay">▶ 자동 진행</button>
   <span class="unit" id="pmhint" hidden><span class="go">그림의 각 단계를 눌러 보세요.</span></span>
  </div>
- <div class="note ask"><span class="tag">생각해 보기</span><p>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</p><button type="button" class="open-think" id="thb4">답 보기</button></div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</p><button type="button" class="open-think" id="thb4">정답 확인</button></div>
  <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</b><button type="button" class="x" id="thx4" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">별의 내부에서 핵융합으로 만들어지고, 행성상 성운과 초신성 폭발로 우주에 퍼진 원소들입니다.</p>
   <p class="exp">이 원소들이 성간 물질이 되었다가 다시 태양계와 지구, 생명체를 이루는 재료가 되었습니다.</p>
  </div></div>
- <div class="note ask ask2"><span class="tag">생각해 보기</span><p>질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?</p><button type="button" class="open-think" id="thb3">답 보기</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?</p><button type="button" class="open-think" id="thb3">정답 확인</button></div>
  <div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?</b><button type="button" class="x" id="thx3" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">질량이 태양 정도인 별은 적색 거성을 거쳐 행성상 성운과 백색 왜성이 되고, 질량이 매우 큰 별은 초거성을 거쳐 초신성 폭발 후 중성자별이나 블랙홀이 됩니다.</p>
@@ -203,13 +203,13 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
  <div class="note"><div class="nh">별의 진화와 순환 <span class="ex">· 별은 성간 물질에서 태어나 일생을 마친 뒤, 만든 원소를 다시 성간 물질로 돌려보내 새로운 별을 만드는 재료가 된다.</span></div></div>
  <div class="subtabs" id="cysel"><button data-v="sun" class="on">질량이 태양과 비슷한 별</button><button data-v="big">질량이 태양보다 매우 큰 별</button><button data-v="cmp">진화 속도 비교</button></div>
  <div class="cyfig"><svg id="cyv" viewBox="0 0 960 500"></svg><div class="cyb" id="cytool"><button class="pb" id="cyplay">▶ 순환 따라가기</button><span id="cyhint">각 단계를 눌러도 설명을 볼 수 있습니다.</span></div></div>
- <div class="note ask"><span class="tag">생각해 보기</span><p>철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?</p><button type="button" class="open-think" id="thb5">답 보기</button></div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?</p><button type="button" class="open-think" id="thb5">정답 확인</button></div>
  <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">초신성 폭발 과정에서 만들어집니다.</p>
   <p class="exp">별 내부의 핵융합 반응으로는 철까지만 만들어집니다. 철보다 무거운 원소(금, 우라늄 등)는 초신성이 폭발할 때 생기는 엄청난 에너지 속에서 원자핵이 많은 중성자를 흡수하여 만들어지고, 폭발과 함께 우주로 흩어집니다.</p>
  </div></div>
- <div class="note ask ask2"><span class="tag">생각해 보기</span><p>질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?</p><button type="button" class="open-think" id="thb6">답 보기</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?</p><button type="button" class="open-think" id="thb6">정답 확인</button></div>
  <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">질량이 클수록 별의 수명은 짧아집니다. 질량이 큰 별일수록 중심부 온도가 높아 핵융합 반응이 빠르게 일어나 수소를 빨리 소모하기 때문입니다.</p>

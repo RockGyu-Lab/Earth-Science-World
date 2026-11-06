@@ -66,7 +66,7 @@ svg.pan{touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .think .ch{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;margin:6px 0 0}
 .think .ch button{font-size:.85rem;background:var(--btn);border:1px solid var(--grid);border-radius:8px;padding:3px 10px;cursor:pointer;color:var(--fg)}
 .think .ch button.sel{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc);font-weight:600}
-.think .ch button.chk{grid-column:1/-1;justify-self:end;background:var(--acc);border-color:var(--acc);color:#fff}
+.think .ch button.chk{grid-column:1/-1;justify-self:end;background:var(--bg);border-color:var(--acc);color:var(--acc);font-weight:700}
 .think .fb{font-size:.85rem;min-height:0}
 .think .fb:empty{display:none}
 .bar:has(.open-think){display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between}
@@ -165,7 +165,7 @@ var+sup{margin-left:.03em}
 .think .ch button{background:var(--bg);border:1px solid transparent;border-radius:10px;box-shadow:0 1px 2px rgba(20,25,45,.12);transition:border-color .15s,background .15s}
 .think .ch button:hover{border-color:var(--acc)}
 .think .ch button.sel{border-color:var(--acc);background:var(--acc-bg);color:var(--acc);font-weight:700;box-shadow:none}
-.think .ch button.chk{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.think .ch button.chk{background:var(--bg);border-color:var(--acc);color:var(--acc);font-weight:700}
 .ov .think{border:0;border-radius:14px}
 .ov .think .ch button:not(.sel):not(.chk){background:var(--card);box-shadow:none}
 /* 별 그림: 밝은 중심 → 별의 색 → 어두운 가장자리, 배경에 옅은 별밭 */
