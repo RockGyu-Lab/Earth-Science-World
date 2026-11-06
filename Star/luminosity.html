@@ -36,7 +36,8 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#111729;b
 #realBox{margin-top:10px}
 #realBox .tbl table{font-size:.82rem}
 #realBox .tbl th,#realBox .tbl td{padding:4px 6px}
-.real p.rnote{margin:4px 0 8px}
+.rtop{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.realq p{margin:0;font-size:.98rem;line-height:1.65}.realq .ans{padding:10px 12px;border-radius:10px;background:var(--card)}
 .real small{color:var(--sub)}
 .tbl{overflow-x:auto}
 .tbl table{width:100%;border-collapse:collapse;font-size:.9rem;white-space:nowrap}
@@ -99,7 +100,7 @@ svg{background:radial-gradient(130% 100% at 50% 0%,#1c2340 0%,#111729 55%,#0b0f1
 .row.seg button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 .think.inline{width:auto;max-height:none;margin-top:10px;padding:0;border:0;background:none;box-shadow:none}
 .thtag{display:inline-block;margin-right:10px;padding:4px 12px;border-radius:8px;background:var(--acc);color:#fff;font-size:.9rem;font-weight:700;vertical-align:1px}
-.sum{margin-top:14px;padding:12px 16px;border:1px solid var(--acc-bd);border-radius:12px;background:var(--acc-bg);color:var(--fg);font-weight:600;font-size:1.08rem;line-height:1.7}
+.sum{margin-top:12px;padding:10px 16px;border:1px solid var(--acc-bd);border-radius:12px;background:var(--acc-bg);color:var(--fg);font-weight:600;font-size:1.08rem;line-height:1.6}
 .sum .key{color:var(--acc);font-weight:800}
 svg.arw{display:inline-block;width:1.35em;height:.9em;vertical-align:-.08em;margin-right:.35em;border-radius:0;background:none!important;box-shadow:none}
 .thbar{display:flex;justify-content:flex-start;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--bd)}
@@ -159,10 +160,10 @@ input[type=range]{accent-color:var(--acc)}
 #q1svg{max-height:max(240px,calc(100vh - 320px))}
 #q1svg{max-height:max(240px,calc(100dvh - 320px))}
 /* 생각해 보기 탭은 정답을 맞혀 아래에 풀이·정리가 펼쳐진 상태에서도 한 화면에 들어오도록 그림을 더 줄임 (탭마다 아래 글 높이가 다름) */
-body[data-step="2"] #q1svg,body[data-step="4"] #q1svg{max-height:max(180px,calc(100vh - 402px))}
-body[data-step="2"] #q1svg,body[data-step="4"] #q1svg{max-height:max(180px,calc(100dvh - 402px))}
-body[data-step="3"] #q1svg{max-height:max(160px,calc(100vh - 505px))}
-body[data-step="3"] #q1svg{max-height:max(160px,calc(100dvh - 505px))}
+body[data-step="2"] #q1svg,body[data-step="4"] #q1svg{max-height:max(180px,calc(100vh - 371px))}
+body[data-step="2"] #q1svg,body[data-step="4"] #q1svg{max-height:max(180px,calc(100dvh - 371px))}
+body[data-step="3"] #q1svg{max-height:max(160px,calc(100vh - 464px))}
+body[data-step="3"] #q1svg{max-height:max(160px,calc(100dvh - 464px))}
 #lab{max-height:max(220px,calc(100vh - 410px))}
 #lab{max-height:max(220px,calc(100dvh - 410px))}
 </style></head><body><main>
@@ -186,16 +187,19 @@ body[data-step="3"] #q1svg{max-height:max(160px,calc(100dvh - 505px))}
 </div>
 <!-- 실제 별과 비교해 보기: 팝업 없이 오른쪽 칸에 바로 펼침 -->
 <div class="labr real">
-<button type="button" id="realBtn" class="realbtn" aria-expanded="false" aria-controls="realBox">실제 별과 비교해 보기</button>
+<div class="rtop"><button type="button" id="realBtn" class="realbtn" aria-expanded="false" aria-controls="realBox">실제 별과 비교해 보기</button><button type="button" class="open-think" id="realThink" hidden>생각해 보기</button></div>
 <div id="realBox" hidden>
 <div class="tbl"><table><thead><tr><th>별</th><th>반지름<br><small>(R☉)</small></th><th>표면 온도<br><small>(K)</small></th><th>반지름 효과<br><small>(R/R☉)²</small></th><th>온도 효과<br><small>(T/T☉)⁴</small></th><th>광도<br><small>(L☉)</small></th></tr></thead><tbody id="real"></tbody></table></div>
-<p class="rnote"><small>대략적인 값이며 자료마다 조금씩 다릅니다.</small></p>
-<p><span class="badge">생각해 보기</span> 베텔게우스는 태양보다 표면 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 왜 그럴까요? <button type="button" class="ansbtn" id="realA">답 보기</button></p>
-<p class="ans" id="realAns" hidden>광도는 <b>반지름의 제곱</b>과 <b>표면 온도의 네제곱</b>에 비례합니다(L ∝ R²T⁴). 베텔게우스는 표면 온도가 낮아 온도 효과는 태양의 약 0.15배에 불과하지만, 반지름이 태양의 약 760배라 반지름 효과가 약 58만 배나 됩니다. 그래서 둘을 곱한 광도는 태양의 약 9만 배가 됩니다. 즉, 별의 광도는 온도만으로 정해지지 않고 <b>크기(반지름)</b>의 영향도 매우 큽니다.</p>
 </div>
 </div>
 </div>
 </section>
+<!-- 실제 별 비교의 생각해 보기 (팝업) -->
+<div class="ov" id="thOv" hidden><div class="think realq" role="dialog" aria-modal="true" aria-label="생각해 보기">
+<div class="think-h"><b class="think-t">생각해 보기</b><button type="button" class="x" id="thX">닫기 ✕</button></div>
+<p>베텔게우스는 태양보다 표면 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 왜 그럴까요? <button type="button" class="ansbtn" id="realA">답 보기</button></p>
+<p class="ans" id="realAns" hidden>광도는 <b>반지름의 제곱</b>과 <b>표면 온도의 네제곱</b>에 비례합니다(L ∝ R²T⁴). 베텔게우스는 표면 온도가 낮아 온도 효과는 태양의 약 0.15배에 불과하지만, 반지름이 태양의 약 760배라 반지름 효과가 약 58만 배나 됩니다. 그래서 둘을 곱한 광도는 태양의 약 9만 배가 됩니다. 즉, 별의 광도는 온도만으로 정해지지 않고 <b>크기(반지름)</b>의 영향도 매우 큽니다.</p>
+</div></div>
 
 <script>
 const NS="http://www.w3.org/2000/svg",TS=5772;
@@ -300,13 +304,19 @@ rPick.forEach(b=>b.onclick=()=>pick('R',+b.dataset.v));
 tPick.forEach(b=>b.onclick=()=>pick('T',+b.dataset.v));
 syncPick();showMsg();
 // 실제 별 비교 표 (몇 개의 별만 간단히)
-const REAL=[['시리우스 A',1.71,9940,'주계열성'],['시리우스 B',0.0084,25000,'백색 왜성'],['리겔',79,12100,'청색 초거성'],['베텔게우스',760,3600,'적색 초거성']];
+const REAL=[['시리우스 A',1.71,9940,'주계열성'],['리겔',79,12100,'청색 초거성'],['베텔게우스',760,3600,'적색 초거성']];
 document.getElementById('real').innerHTML=REAL.map(([n,r,t,s])=>{const a=r*r,b=(t/TS)**4;
- return `<tr><td><b>${n}</b><br><small>${s}</small></td><td>${r}</td><td>${t.toLocaleString('ko-KR')}</td><td>${fmt(a)}</td><td>${fmt(b)}</td><td>${fmt(a*b)}</td></tr>`}).join('');
+ return `<tr><td><b>${n}</b></td><td>${r}</td><td>${t.toLocaleString('ko-KR')}</td><td>${fmt(a)}</td><td>${fmt(b)}</td><td>${fmt(a*b)}</td></tr>`}).join('');
 mathify(document.querySelector('.real'));
 // 실제 별 비교: 팝업 없이 단추 아래에 펼치고 접음. 생각해 보기 답은 [답 보기]로 펼침
 const realBtn=document.getElementById('realBtn'),realBox=document.getElementById('realBox');
-realBtn.onclick=()=>{realBox.hidden=!realBox.hidden;realBtn.setAttribute('aria-expanded',!realBox.hidden);realBtn.classList.toggle('on',!realBox.hidden)};
+realBtn.onclick=()=>{realBox.hidden=!realBox.hidden;document.getElementById('realThink').hidden=realBox.hidden;realBtn.setAttribute('aria-expanded',!realBox.hidden);realBtn.classList.toggle('on',!realBox.hidden)};
+// 생각해 보기 팝업: 단추로 열고, 닫기·바깥 누르기·Esc로 닫음
+const thOv=document.getElementById('thOv'),thB=document.getElementById('realThink'),thX=document.getElementById('thX');
+thB.onclick=()=>{thOv.hidden=false;thX.focus()};thX.onclick=()=>{thOv.hidden=true;thB.focus()};
+thOv.addEventListener('click',e=>{if(e.target===thOv)thX.onclick()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!thOv.hidden)thX.onclick()});
+mathify(thOv);
 document.getElementById('realA').onclick=e=>{const a=document.getElementById('realAns');a.hidden=!a.hidden;e.target.textContent=a.hidden?'답 보기':'답 닫기'};
 render();
 
@@ -327,7 +337,7 @@ const STEP={
  qs:[{q:'<b>1 m²</b>의 표면이 1초 동안 방출하는 에너지는 <b>E = σT⁴</b>입니다(슈테판–볼츠만 법칙). 광원 <b>B</b>의 온도가 광원 <b>A</b>의 <b>2배</b>라면, E<sub>B</sub>는 E<sub>A</sub>의 몇 배인가요?',opts:['2배','4배','8배','16배'],ans:3,
   hints:['방출 에너지는 온도에 그냥 비례하지 않아요. σT⁴의 T 자리에 2T를 넣어 보세요.','(2T)²이 아니라 (2T)⁴입니다. 2를 네 번 곱하면?','2를 세 번이 아니라 네 번 곱해야 해요. 2×2×2×2 = ?',''],
   ok:'정답! E<sub>B</sub> = σ(2T)⁴ = 2⁴ × σT⁴ = <b>16σT⁴</b>, 즉 E<sub>A</sub>의 <b>16배</b>입니다.'}],
- done:'면적이 동일한 경우, 광도는 온도의 네제곱에 비례합니다. → <span class="key">L ∝ T⁴</span><br>1 m²의 광원이 방출하는 에너지는 σT⁴입니다<span style="white-space:nowrap">(슈테판–볼츠만 법칙).</span><span class="key" style="display:block;margin-top:.9rem">'+ARW+'두 결론을 합치면: <span style="white-space:nowrap">광도 L = 면적 × σT⁴</span></span>',sum:true},
+ done:'면적이 동일한 경우, 광도는 온도의 네제곱에 비례합니다. → <span class="key">L ∝ T⁴</span><br>1 m²의 광원이 방출하는 에너지는 σT⁴입니다<span style="white-space:nowrap">(슈테판–볼츠만 법칙).</span><span class="key" style="display:block;margin-top:.45rem">'+ARW+'두 결론을 합치면: <span style="white-space:nowrap">광도 L = 면적 × σT⁴</span></span>',sum:true},
 4:{title:'별의 광도',intro:'',
  qs:[{q:'별은 <b>구형</b>입니다. 반지름이 <b>R</b>, 표면 온도가 <b>T</b>인 별의 광도는 어떻게 표현될까요?',opts:['πR²σT⁴','2πR²σT⁴','4πR²σT⁴','(4/3)πR³σT⁴'],ans:2,
   hints:['πR²은 원의 면적이에요. 별은 구형이므로 구의 표면적을 곱해야 합니다.','2πR²은 반구의 표면적이에요. 별은 표면 전체에서 사방으로 빛을 냅니다.','','(4/3)πR³은 구의 부피예요. 빛은 별의 표면에서 나오므로 표면적을 곱해야 합니다.'],

@@ -67,6 +67,8 @@ header p{margin:2px 0 0;color:var(--muted);font-size:14px;max-width:90ch}
 .main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;align-items:start}
 .globe-col .legend{margin-top:6px;font-size:11px;gap:2px 12px}
 .globe-col{width:100%;max-width:max(300px,min(600px,calc(100dvh - 285px)));margin:0 auto}
+/* 지구 그림이 화면 높이 때문에 작아지면 전체 폭도 같이 줄여, 제목·안내·단추의 왼쪽 끝이 지구 그림의 왼쪽 끝과 맞도록 (지구 칸 : 하늘 칸 = 1.15 : 1) */
+@media (min-width:701px){.wrap{max-width:min(1180px,calc(max(300px,min(600px,calc(100dvh - 285px))) * 2.15 / 1.15 + 14px))}}
 .sky-col{display:flex;flex-direction:column;gap:10px;min-width:0}
 .picker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .picker button{font:inherit;font-weight:600;font-size:18px;padding:8px 0;border-radius:9px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;line-height:1.1}
