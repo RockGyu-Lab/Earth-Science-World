@@ -57,7 +57,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--fg);outline-off
 .ax2{fill:var(--fg);font-size:12px}
 .pk2{font-size:12px;font-weight:600}
 svg.pan{touch-action:pan-y;user-select:none;-webkit-user-select:none}
-.slider{margin:0 2.5% 0 9.75%}
+.slider{margin:0 2.6% 0 5.99%}  /* 슬라이더 양 끝을 그래프의 0 nm, 2500 nm에 맞춤: (78-32)/768, 20/768 */
 .slider input{width:100%;height:30px;margin:0;accent-color:var(--fg)}
 .think{border:1px solid var(--grid);border-radius:10px;padding:6px 10px;display:flex;flex-direction:column;gap:4px}
 .think-t{color:var(--acc);font-size:.95rem}
@@ -105,6 +105,8 @@ svg.pan{touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .tb.tight th,.tb.tight td{padding:2px 4px;text-align:center}
 .tb.tight tbody th{white-space:nowrap}
 .tb.tight thead th{word-break:keep-all;line-height:1.35}
+/* 빈·슈테판-볼츠만 오른쪽 표: 좁은 칸에서도 값이 덜 줄바꿈되도록 조금 작게 (패드 한 화면에 들어오게) */
+.tb.tight td{font-size:.84rem}.tb.tight thead th{font-size:.74rem}
 .tb tr.off{opacity:.3}
 .tb .ln{display:inline-block;width:14px;border-top:3px solid var(--k);vertical-align:middle;margin-right:6px}
 .tb small{color:var(--muted)}
@@ -136,9 +138,9 @@ sup{font-size:.8em;margin-left:.18em;line-height:0}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--card:#1b2029}}
 :root[data-theme="dark"]{--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--card:#1b2029}
 /* 패드처럼 세로가 짧은 화면에서는 그림이 한 화면에 들어오도록 전체 폭을 줄임 (다른 탐구 자료와 같은 방식: 제목·글·단추가 그림 폭에 맞춰 안쪽으로 들어옴)
-   위아래 글·단추 높이 약 340px + 그래프 높이(=본문 폭의 약 0.41배) ≤ 화면 높이 */
-main{max-width:max(560px,min(1080px,calc((100vh - 340px) * 2.44 + 46px)))}
-main{max-width:max(560px,min(1080px,calc((100dvh - 340px) * 2.44 + 46px)))}
+   위아래 글·단추 높이 약 350px + 그래프 높이(=본문 폭의 약 0.41배) ≤ 화면 높이 */
+main{max-width:max(560px,min(1080px,calc((100vh - 352px) * 2.34 + 46px)))}
+main{max-width:max(560px,min(1080px,calc((100dvh - 352px) * 2.34 + 46px)))}
 body{font-family:"Pretendard Variable",Pretendard,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;word-break:keep-all}
 /* 수식 변수(기울임꼴): 기울어진 글자가 옆 글자와 겹치지 않도록 좌우에 작은 여백 */
 var,.think .q var{font-family:"Times New Roman",Cambria,serif;font-style:italic;font-size:1.1em;line-height:1;padding:0 .09em 0 .03em}
@@ -199,7 +201,7 @@ var+sup{margin-left:.03em}
   <p class="explain"><b>플랑크 법칙(Planck's law)</b>은 흑체가 파장에 따라 얼마나 많은 빛에너지를 방출하는지를 나타낸 법칙입니다. <b>플랑크 곡선</b>은 이 법칙에 따라 각 온도에서 파장에 따른 방출 에너지량을 그린 곡선입니다.</p>
   <div class="grid">
     <div class="stack">
-      <svg id="c1" class="pan" viewBox="0 0 800 500" role="img" aria-label="6000 K, 5000 K, 4000 K, 3000 K 플랑크 곡선. 가로축은 파장, 세로축은 에너지량"></svg>
+      <svg id="c1" class="pan" viewBox="32 0 768 500" role="img" aria-label="6000 K, 5000 K, 4000 K, 3000 K 플랑크 곡선. 가로축은 파장, 세로축은 에너지량"></svg>
       <div class="slider"><input type="range" id="s1" min="0" max="2500" step="5" value="500" aria-label="파장 선택 (nm)"></div>
       <p class="hint hint-c cue">그래프를 누르거나 끌어서 파장을 골라 보세요.</p>
     </div>
@@ -212,7 +214,7 @@ var+sup{margin-left:.03em}
   <p class="explain">우리의 눈은 별이 가시광선 영역에서 방출하는 각 파장의 빛을 한꺼번에 받아들이므로, 이 빛을 모두 합성한 색으로 인식하게 됩니다. 실제 별은 완전한 흑체가 아니고 지구 대기의 영향도 받기 때문에, 지구에서 관찰한 별의 색과 조금 다를 수 있습니다.<br><span class="cue">원하는 온도를 선택하여 별의 색을 확인해 보세요.</span></p>
   <div class="bar"><div class="lg" id="lg2" role="group" aria-label="온도 선택"></div></div>
   <div class="grid">
-    <svg id="c2" viewBox="0 0 800 500" role="img" aria-label="10000 K, 6000 K, 5800 K, 5000 K, 4000 K, 3000 K 플랑크 곡선 비교. 10000 K 곡선의 윗부분은 그래프 밖으로 잘려 있습니다."></svg>
+    <svg id="c2" viewBox="32 0 768 500" role="img" aria-label="10000 K, 6000 K, 5800 K, 5000 K, 4000 K, 3000 K 플랑크 곡선 비교. 10000 K 곡선의 윗부분은 그래프 밖으로 잘려 있습니다."></svg>
     <section class="star" aria-live="polite">
       <h2 class="ct">온도에 따른 별의 색깔 <small>(시뮬레이션)</small></h2>
       <h2 id="st-title"></h2>
@@ -229,7 +231,7 @@ var+sup{margin-left:.03em}
   <p class="explain"><b>빈의 변위 법칙(Wien's displacement law)</b>은 온도와, 최대 에너지를 방출하는 파장 사이의 관계를 나타낸 법칙입니다.<br><span class="cue">높은 온도부터 차례대로 버튼을 눌러서 최대 에너지 파장과 온도와의 관계를 살펴보세요.</span></p>
   <div class="bar"><div class="lg" id="lg3" role="group" aria-label="봉우리 표시 켜고 끄기"></div><button type="button" class="open-think" id="thb3">생각해 보기</button></div>
   <div class="grid top">
-    <svg id="c3" viewBox="0 0 800 500" role="img" aria-label="플랑크 곡선의 봉우리를 이은 곡선"></svg>
+    <svg id="c3" viewBox="32 0 768 500" role="img" aria-label="플랑크 곡선의 봉우리를 이은 곡선"></svg>
     <div class="side row2">
       <svg id="c3b" viewBox="0 0 340 128" role="img" aria-label="온도에 따른 최대 에너지 파장. 온도가 높을수록 파장이 짧아진다"></svg>
       <div class="card tight-card">
@@ -254,7 +256,7 @@ var+sup{margin-left:.03em}
   <div class="bar"><div class="lg" id="lg4" role="group" aria-label="곡선 아래 면적 표시 켜고 끄기"></div><button type="button" class="open-think" id="thb">생각해 보기</button></div>
   <div class="grid top">
     <div class="stack">
-      <svg id="c4" viewBox="0 0 800 500" role="img" aria-label="플랑크 곡선 아래 면적"></svg>
+      <svg id="c4" viewBox="32 0 768 500" role="img" aria-label="플랑크 곡선 아래 면적"></svg>
       <div class="ov" id="ov" hidden><div class="think" id="think" role="dialog" aria-modal="true" aria-label="생각해 보기">
         <div class="think-h"><b class="think-t">생각해 보기</b><button type="button" class="x" id="thx" aria-label="닫기">닫기 ✕</button></div>
         <div class="q" data-ans="3" data-exp="슈테판-볼츠만 법칙 E ∝ T⁴ 이므로, 온도가 2배인 2T인 별이 단위 시간 동안 단위 면적에서 방출하는 에너지양은 T인 별의 2⁴ = 16배입니다.">
@@ -328,7 +330,7 @@ function frame(p) {
   s += `<text class="lab" x="${(X(380)+X(750))/2}" y="${yTop-10}" text-anchor="middle">가시광선</text>`;
   s += `<text class="lab" x="${(X(750)+X(2500))/2}" y="${yTop-10}" text-anchor="middle" style="fill:var(--ir)">적외선</text>`;
   s += `<text class="ax" x="${(G.m.l+G.W-G.m.r)/2}" y="${G.H-14}" text-anchor="middle">파장 (nm)</text>`;
-  s += `<text class="ax" transform="translate(18 ${(yTop+base)/2}) rotate(-90)" text-anchor="middle">에너지량 (×10¹³ W·sr⁻¹·m⁻³)</text>`;
+  s += `<text class="ax" transform="translate(48 ${(yTop+base)/2}) rotate(-90)" text-anchor="middle">에너지량 (×10¹³ W·sr⁻¹·m⁻³)</text>`;
   return s;
 }
 const curveEl = (T, p, w, o) => `<path d="${pathOf(T)}" fill="none" stroke="${COL[T]}" stroke-width="${w}" stroke-linejoin="round" opacity="${o}" clip-path="url(#plot-${p})"/>`;
