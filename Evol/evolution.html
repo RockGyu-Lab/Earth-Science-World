@@ -124,8 +124,8 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
-<div class="titlebar"><p class="pnum">탐구 02</p><h1>별의 진화</h1><a class="back" href="./Evol_index.html">← [H-R 도와 별의 진화] 메뉴로 돌아가기</a></div>
-<p class="intro">별은 성운에서 태어나 각 단계를 거치며 살아가는 동안 표면 온도와 광도가 변하며, 그에 따라 <b>H-R 도 위에서의 위치</b>도 달라집니다.</p>
+<div class="titlebar"><p class="pnum">탐구 02</p><h1>별의 진화</h1><a class="back" href="./Evol_index.html">← [H-R도와 별의 진화] 메뉴로 돌아가기</a></div>
+<p class="intro">별은 성운에서 태어나 각 단계를 거치며 살아가는 동안 표면 온도와 광도가 변하며, 그에 따라 <b>H-R도 위에서의 위치</b>도 달라집니다.</p>
 <div class="tabs" role="tablist" aria-label="학습 메뉴">
  <button role="tab" id="tab1" aria-controls="p1" aria-selected="true">전주계열 단계</button>
  <button role="tab" id="tab2" aria-controls="p2" aria-selected="false" tabindex="-1">주계열 단계</button>
@@ -133,7 +133,7 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
  <button role="tab" id="tab4" aria-controls="p4" aria-selected="false" tabindex="-1">별의 진화와 순환</button>
 </div>
 
-<!-- ① 전주계열 단계: 왼쪽 별의 탄생 그림, 오른쪽 H-R 도 경로 (재생·슬라이더 하나로 함께 움직임) -->
+<!-- ① 전주계열 단계: 왼쪽 별의 탄생 그림, 오른쪽 H-R도 경로 (재생·슬라이더 하나로 함께 움직임) -->
 <section id="p1" role="tabpanel" aria-labelledby="tab1">
  <div class="note" id="pnote"></div>
  <div class="duo"><svg id="bv" viewBox="0 0 500 440"></svg><svg id="hv" viewBox="0 0 560 440"></svg></div>
@@ -247,13 +247,13 @@ function curve(P,n=14){const o=[];for(let i=0;i<P.length-1;i++){const a=P[i-1]||
  o.push(P[P.length-1]);return o}
 
 // ---- ① 전주계열 단계 ----
-// 진행 정도 s (0~1): 0~0.2 성운, 0.2~0.4 중력 수축, 0.4~1 원시별(H-R 도 경로를 따라 이동), 1 주계열성
+// 진행 정도 s (0~1): 0~0.2 성운, 0.2~0.4 중력 수축, 0.4~1 원시별(H-R도 경로를 따라 이동), 1 주계열성
 const STG=[{n:'성운',s:0,d:'별이 태어나는 곳으로, 온도가 매우 낮고 밀도가 큰 기체와 먼지 구름입니다.'},
  {n:'중력 수축',s:.2,d:'밀도가 큰 부분이 자체 중력으로 수축하면서 중심부의 밀도와 온도가 높아집니다.'},
  {n:'원시별',s:.4,d:'중력 수축 에너지로 빛을 내며, 계속 수축하면서 중심부 온도가 올라갑니다.'},
  {n:'주계열성',s:1,d:'중심부 온도가 약 1,000만 K에 이르면 수소 핵융합 반응이 시작되어 주계열성이 됩니다.'}];
 const stageOf=s=>s>=1?3:s>=.4?2:s>=.2?1:0;
-// 원시별의 H-R 도 경로 [log T, log L] (전주계열 진화 경로를 단순화한 모양) 과 주계열 도달 시간(년, 대략값)
+// 원시별의 H-R도 경로 [log T, log L] (전주계열 진화 경로를 단순화한 모양) 과 주계열 도달 시간(년, 대략값)
 const MASS=[
  {m:'0.5',yr:1.5e8,P:[[3.57,1.0],[3.575,.25],[3.58,-.45],[3.585,-1.0],[3.59,-1.35]]},
  {m:'1',yr:5e7,P:[[3.6,1.6],[3.61,1.0],[3.62,.4],[3.635,-.2],[3.66,-.35],[3.72,-.25],[3.76,-.15]]},
@@ -289,7 +289,7 @@ function drawBirth(s){S=bv;S.innerHTML='';const st=stageOf(s),M=MASS[mi],C=[220,
  // 짙어지는 중심
  if(s>.12&&s<.45){const c=Math.min(1,(s-.12)/.28);el('circle',{cx:C[0],cy:C[1],r:10+30*c,fill:'url(#gw)',opacity:.25+.35*c})}
  // 원시별: 원반과 제트, 점점 밝아지는 중심 별
- if(s>=.4){const q=(s-.4)/.6,now=colA(along(M,q)[0]); // 별의 색은 H-R 도 경로 위의 표면 온도를 따름
+ if(s>=.4){const q=(s-.4)/.6,now=colA(along(M,q)[0]); // 별의 색은 H-R도 경로 위의 표면 온도를 따름
   const dop=Math.max(0,1-q*1.15);
   if(dop>0){el('ellipse',{cx:C[0],cy:C[1],rx:120-40*q,ry:20-6*q,fill:'url(#dk)',opacity:dop});
    const jo=dop*.8;el('path',{d:`M${C[0]},${C[1]-16} l-8,-${90-30*q} l16,0 z`,fill:'#9fc3ff',opacity:jo*.45});el('path',{d:`M${C[0]},${C[1]+16} l-8,${90-30*q} l16,0 z`,fill:'#9fc3ff',opacity:jo*.45})}
@@ -316,7 +316,7 @@ function drawBirth(s){S=bv;S.innerHTML='';const st=stageOf(s),M=MASS[mi],C=[220,
  STG.forEach((g,i)=>{const on=i==st,G=el('g',{'data-s':g.s});el('circle',{cx:xs[i],cy:ty,r:on?8:6,fill:on?'#f5b942':i<st?'#8f9cf0':'#3a4260'},G);
   lab(xs[i],ty-14,g.n,13,'middle',on?'#ffd166':'#cfd6ea',on?800:600,G);el('rect',{x:xs[i]-45,y:ty-30,width:90,height:44,fill:'transparent'},G)})}
 
-// 오른쪽: H-R 도 위에서 원시별이 주계열에 도달하는 경로
+// 오른쪽: H-R도 위에서 원시별이 주계열에 도달하는 경로
 const MSB=[[4.65,5.7],[4.6,5.3],[4.5,4.5],[4.4,3.75],[4.3,3.1],[4.2,2.6],[4.1,1.95],[4.0,1.45],[3.9,1.0],[3.86,.75],[3.8,.3],[3.761,0],[3.7,-.45],[3.65,-.85],[3.6,-1.15],[3.55,-1.6]];
 // 진행 상태: 질량마다 경로 위 위치 q (0~1, 원시별이 되기 전은 -1)
 //  · 한 질량만 볼 때: 고른 질량이 재생 시간 동안 경로를 끝까지 감
@@ -358,7 +358,7 @@ function drawHR(G){S=hv;S.innerHTML='';const X0=78,X1=545,Y0=44,Y1=372,TA=4.62,T
   else{lab(bx+12,by+24,M.m+' M☉ '+(q>=1?'주계열성':'원시별'),15,'start','#fff',800,g);
    row(by+48,'걸린 시간','약 '+fmtYr(Math.max(M.yr*q*q,q>0?Math.min(M.yr,1000):0)))}
   const b=g.getBBox();bg.setAttribute('x',bx);bg.setAttribute('y',by);bg.setAttribute('width',b.width+24);bg.setAttribute('height',60)}
- else{lab((X0+X1)/2,Y0+26,'성운 단계는 온도가 매우 낮고 먼지에 가려 H-R 도에 나타내지 않습니다',13,'middle','#a9b1cc',600)}
+ else{lab((X0+X1)/2,Y0+26,'성운 단계는 온도가 매우 낮고 먼지에 가려 H-R도에 나타내지 않습니다',13,'middle','#a9b1cc',600)}
 }
 
 function drawPre(){const G=stateOf(),st=stageOf(G.vs);
@@ -476,13 +476,13 @@ drawEq();drawFu();fstop();
 let pv=0; // 소메뉴: 0 주계열 이후 변화, 1 내부 구조, 2 질량에 따른 진화 경로
 const PMH='후주계열 단계 <span class="ex">· 주계열 단계가 끝난 뒤 별이 거성이나 초거성이 되고 일생을 마치는 단계</span>';
 const mix=(a,b,f)=>a.map((v,k)=>v+(b[k]-v)*f);
-// ① 주계열 이후 변화 (질량이 태양 정도인 별): 단계마다 별의 모습(반지름 R, 핵 반지름 c, 껍질 연소 sh, 바깥층 색 oc, 핵 색 cc, 핵 수축 표시 ar, 헬륨 핵융합 he)과 H-R 도 위치 hr
+// ① 주계열 이후 변화 (질량이 태양 정도인 별): 단계마다 별의 모습(반지름 R, 핵 반지름 c, 껍질 연소 sh, 바깥층 색 oc, 핵 색 cc, 핵 수축 표시 ar, 헬륨 핵융합 he)과 H-R도 위치 hr
 const PS=[
  {n:'주계열 끝',d:'중심부의 수소가 헬륨으로 바뀌어 헬륨 핵이 생기고, 중심부의 수소 핵융합 반응이 멈춥니다.',R:92,c:30,sh:0,oc:[255,214,120],cc:[214,210,200],ar:0,he:0,hr:[810,222]},
  {n:'헬륨 핵 수축',d:'에너지를 내지 못하는 헬륨 핵이 중력에 의해 수축하며, 핵의 온도가 높아집니다.',R:92,c:20,sh:0,oc:[255,214,120],cc:[255,240,200],ar:1,he:0,hr:[824,212]},
  {n:'수소 껍질 연소',d:'뜨거워진 헬륨 핵을 둘러싼 껍질에서 수소 핵융합 반응이 일어나 에너지가 많아집니다.',R:104,c:20,sh:1,oc:[255,200,110],cc:[255,240,200],ar:0,he:0,hr:[850,198]},
  {n:'바깥층 팽창',d:'바깥층이 크게 팽창하여 반지름은 커지고 표면 온도는 낮아져 붉은 적색 거성이 됩니다.',R:158,c:20,sh:1,oc:[255,140,90],cc:[255,240,200],ar:0,he:0,hr:[880,145]},
- // 헬륨 핵융합 단계: 실제로는 별이 다시 작아지지만, 교과서 수준에 맞춰 크기와 H-R 도 위치는 적색 거성과 같게 둠
+ // 헬륨 핵융합 단계: 실제로는 별이 다시 작아지지만, 교과서 수준에 맞춰 크기와 H-R도 위치는 적색 거성과 같게 둠
  {n:'헬륨 핵융합',d:'헬륨 핵의 온도가 약 1억 K에 이르면 중심부에서 헬륨 핵융합 반응(헬륨 → 탄소)이 일어납니다.',R:158,c:20,sh:1,oc:[255,140,90],cc:[200,225,255],ar:0,he:1,hr:[880,145]}];
 let pi_=0,pT=1,pFrom=0,pRaf=0,pPlay=false,pTimer=0;
 function pmState(){const a=PS[pFrom],b=PS[pi_],f=pT<1?pT*pT*(3-2*pT):1,o={};
@@ -504,9 +504,9 @@ function drawPm0(){const d=el('defs',{});heads(d);const s=pmState(),C=[270,180];
  tag(170,s.c*.8,s.he>.5?'헬륨 핵융합 (→ 탄소)':'헬륨 핵','#e8eaf2');
  lab(20,30,`${pi_+1}. ${PS[pi_].n}`,20,'start','#ffd166',800);
  lab(20,345,'※ 핵과 껍질의 크기는 알아보기 쉽게 크게 그림',12,'start','#a9b1cc',600);
- // H-R 도 위의 위치 (작은 그림)
+ // H-R도 위의 위치 (작은 그림)
  const X0=610,X1=945,Y0=40,Y1=300;el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0,rx:8,fill:'#111836',stroke:'#3a4260'});
- lab(X0,Y0-12,'H-R 도에서의 위치',14,'start','#cfd6ea',700);lab(X0+6,Y0+18,'광도 ↑',12,'start','#a9b1cc',600);lab(X1-6,Y1+18,'표면 온도 낮음 →',12,'end','#a9b1cc',600);
+ lab(X0,Y0-12,'H-R도에서의 위치',14,'start','#cfd6ea',700);lab(X0+6,Y0+18,'광도 ↑',12,'start','#a9b1cc',600);lab(X1-6,Y1+18,'표면 온도 낮음 →',12,'end','#a9b1cc',600);
  el('path',{d:`M${X0+20},${Y0+40} L${X0+130},${Y0+130} L${X0+230},${Y0+205} L${X1-20},${Y1-15}`,fill:'none',stroke:'#7fb4ff','stroke-width':18,opacity:.18,'stroke-linecap':'round'});
  lab(X0+70,Y0+140,'주계열',13,'middle','#7fb4ff',700);
  el('ellipse',{cx:880,cy:150,rx:42,ry:32,fill:'#ffb86b',opacity:.12});lab(880,108,'적색 거성',13,'middle','#ffb86b',700);
@@ -533,10 +533,10 @@ function drawPm1(){const g=[180,190],s=[640,190],R=130;
  lab(s[0],348,'중심으로 갈수록 무거운 원소 · 철(Fe)까지 핵융합 (양파 껍질 구조)',13,'middle','#cfd6ea',700);
  lab(950,30,'※ 층의 두께는 실제 비율과 다름',12,'end','#a9b1cc',600)}
 
-// ③ 질량에 따른 진화 경로: 흐름도 (누르면 설명과 H-R 도 위치)
+// ③ 질량에 따른 진화 경로: 흐름도 (누르면 설명과 H-R도 위치)
 const ND=[
- // hr: H-R 도 위치 (없으면 H-R 도에 나타내지 않음), lo: H-R 도 이름표 위치 [dx, dy, 정렬]
- // H-R 도 위치는 정확한 값이 아니라 모양을 보여 주는 대략적인 자리: 태양 정도인 별은 주계열 아래쪽에서 적색 거성으로,
+ // hr: H-R도 위치 (없으면 H-R도에 나타내지 않음), lo: H-R도 이름표 위치 [dx, dy, 정렬]
+ // H-R도 위치는 정확한 값이 아니라 모양을 보여 주는 대략적인 자리: 태양 정도인 별은 주계열 아래쪽에서 적색 거성으로,
  // 질량이 큰 별은 주계열 위쪽에서 거의 수평으로 오른쪽(초거성)으로 이동하여, 초거성이 적색 거성보다 확실히 위에 오도록 함
  {r:0,x:70,y:120,n:'주계열성',k:'ms1',d:'중심부에서 수소 핵융합 반응이 일어나는 안정한 단계로, 별의 일생에서 가장 긴 시간을 보냅니다.',hr:[790,207],lo:[12,22,'start']},
  {r:0,x:205,y:120,n:'적색 거성',k:'rg',d:'헬륨 핵이 수축하고 바깥층이 팽창하여, 크고 표면 온도가 낮은 붉은 별이 됩니다.',hr:[836,137],lo:[12,5,'start']},
@@ -544,7 +544,7 @@ const ND=[
  {r:0,x:480,y:120,n:'백색 왜성',k:'wd',d:'남은 중심핵이 수축하여 된 지구 정도 크기의 작고 뜨거운 별로, 서서히 식어 갑니다.',hr:[706,266],lo:[-6,22,'end']},
  {r:1,x:70,y:280,n:'주계열성',k:'ms2',d:'질량이 커서 중심부 온도가 높고, 수소를 빠르게 소모하여 주계열 단계가 짧습니다.',hr:[650,96],lo:[10,-14,'start']},
  {r:1,x:205,y:280,n:'초거성',k:'sg',d:'중심부에서 철까지 핵융합 반응이 일어나 양파 껍질 같은 구조가 되고, 반지름이 매우 커집니다.',hr:[910,80],lo:[-4,-14,'end']},
- // 초신성 폭발은 평형 상태의 별이 아니라 폭발하는 사건이므로 H-R 도에 점으로 나타내지 않음
+ // 초신성 폭발은 평형 상태의 별이 아니라 폭발하는 사건이므로 H-R도에 점으로 나타내지 않음
  {r:1,x:345,y:280,n:'초신성 폭발',k:'sn',d:'철로 된 중심핵이 급격히 붕괴한 뒤 바깥층이 폭발하며 매우 밝게 빛나고, 철보다 무거운 원소가 만들어집니다.',hr:null},
  {r:1,x:480,y:240,n:'중성자별',k:'ns',d:'남은 중심핵이 중성자로 이루어진 매우 작고 밀도가 큰 별이 됩니다(지름 약 20 km).',hr:null},
  {r:1,x:480,y:318,n:'블랙홀',k:'bh',d:'남은 중심핵의 질량이 매우 크면(태양의 약 3배 이상) 빛조차 빠져나올 수 없는 블랙홀이 됩니다.',hr:null}];
@@ -568,13 +568,13 @@ function drawPm2(){const d=el('defs',{});heads(d);
  ND.forEach((n,i)=>{const g=el('g',{'data-n':i});g.appendChild(icon(n.k,n.x,n.y,i==nsel));lab(n.x,n.y+(n.k=='sg'?60:n.k=='rg'||n.k=='sn'?54:n.r==1&&n.x==480?28:46),n.n,14,'middle',i==nsel?'#ffd166':'#e8eaf2',800,g);
   el('rect',{x:n.x-55,y:n.y-45,width:110,height:110,fill:'transparent'},g)});
  lab(480,290,'남은 핵의 질량에 따라',11,'middle','#a9b1cc',600);
- // H-R 도에서의 진화 경로 (고른 별의 무리)
+ // H-R도에서의 진화 경로 (고른 별의 무리)
  const X0=610,X1=945,Y0=40,Y1=300,row=ND[nsel].r;el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0,rx:8,fill:'#111836',stroke:'#3a4260'});
- lab(X0,Y0-12,'H-R 도에서의 진화 경로',14,'start','#cfd6ea',700);lab(X0+6,Y0+18,'광도 ↑',12,'start','#a9b1cc',600);lab(X1-6,Y1+18,'표면 온도 낮음 →',12,'end','#a9b1cc',600);
+ lab(X0,Y0-12,'H-R도에서의 진화 경로',14,'start','#cfd6ea',700);lab(X0+6,Y0+18,'광도 ↑',12,'start','#a9b1cc',600);lab(X1-6,Y1+18,'표면 온도 낮음 →',12,'end','#a9b1cc',600);
  el('path',{d:`M${X0+20},${Y0+40} L${X0+130},${Y0+130} L${X0+230},${Y0+205} L${X1-20},${Y1-15}`,fill:'none',stroke:'#7fb4ff','stroke-width':18,opacity:.18,'stroke-linecap':'round'});
  lab(X0+70,Y0+140,'주계열',13,'middle','#7fb4ff',700);
  // 질량이 태양 정도인 별: 교과서 그림의 경로 모양(A 주계열 → B 적색 거성 → 고리 → 위쪽을 왼쪽으로 → C 백색 왜성 → 오른쪽 아래로 식어 감)을
- // 교과서 그림 좌표(TB)로 적고 작은 H-R 도 안으로 옮겨 그림 (A가 주계열성 자리 [790,207]에 오도록)
+ // 교과서 그림 좌표(TB)로 적고 작은 H-R도 안으로 옮겨 그림 (A가 주계열성 자리 [790,207]에 오도록)
  const TB=[[475,352],[474,318],[500,314],[535,300],[548,262],[573,197],[555,235],[505,268],[490,270],[500,250],[540,200],[562,160],[555,145],[480,142],[380,145],[280,165],[190,210],[135,270],[125,320],[150,385],[220,440],[297,483]],
   tb=([x,y])=>[790+(x-475)*.47,207+(y-352)*.45],P=a=>a.map(v=>v.toFixed(1)).join(',');
  const path=row?'M650,96 C740,94 840,88 910,80':'M'+curve(TB.map(tb),8).map(P).join(' L')+' L'+P(tb([455,550]));
@@ -587,8 +587,8 @@ function drawPm2(){const d=el('defs',{});heads(d);
   el('circle',{cx:x,cy:y,r:on?9:6,fill:on?'#ffd166':'#cfd6ea',stroke:'#fff','stroke-width':on?2:1,opacity:on?1:.45});
   lab(x+dx,y+dy,n.n,on?15:13,an,on?'#ffd166':'#cfd6ea',800).setAttribute('opacity',on?1:.55)});
  const k=ND[nsel].k;
- if(k=='sn')lab((X0+X1)/2,Y1-30,'초신성 폭발은 별이 폭발하는 사건이라 H-R 도에 나타내지 않음',12,'middle','#a9b1cc',600),lab((X0+X1)/2,Y1-13,'(폭발할 때는 잠시 태양의 수십억 배까지 밝아짐)',12,'middle','#a9b1cc',600);
- else if(!ND[nsel].hr)lab((X0+X1)/2,Y1-14,'중성자별과 블랙홀은 H-R 도에 나타내지 않음',12,'middle','#a9b1cc',600)}
+ if(k=='sn')lab((X0+X1)/2,Y1-30,'초신성 폭발은 별이 폭발하는 사건이라 H-R도에 나타내지 않음',12,'middle','#a9b1cc',600),lab((X0+X1)/2,Y1-13,'(폭발할 때는 잠시 태양의 수십억 배까지 밝아짐)',12,'middle','#a9b1cc',600);
+ else if(!ND[nsel].hr)lab((X0+X1)/2,Y1-14,'중성자별과 블랙홀은 H-R도에 나타내지 않음',12,'middle','#a9b1cc',600)}
 
 function drawPm(){S=pmv;S.innerHTML='';[drawPm0,drawPm1,drawPm2][pv]();
  const desc=pv==0?`<b>${PS[pi_].n}</b> ${PS[pi_].d}`:pv==1?'<b>거성과 초거성</b> 질량이 큰 별일수록 중심부 온도가 높아, 더 무거운 원소까지 핵융합 반응이 일어납니다.':`<b>${ND[nsel].n}</b> ${ND[nsel].d}`;

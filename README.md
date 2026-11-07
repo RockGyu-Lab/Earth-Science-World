@@ -17,9 +17,9 @@
   - `radiation.html`: 탐구 01 · 복사 법칙
   - `spectrum.html`: 탐구 02 · 스펙트럼과 별의 분광형 (연속·방출·흡수 스펙트럼, 별의 스펙트럼, 별의 분광형 탭)
   - `luminosity.html`: 탐구 03 · 별의 광도
-- `Evol/`: H-R 도와 별의 진화 학습실
+- `Evol/`: H-R도와 별의 진화 학습실
   - `Evol_index.html`: 학습실 메뉴
-  - `HR-diagram.html`: 탐구 01 · H-R 도 (H-R 도란?, H-R 도 상의 별의 분류 탭)
+  - `HR-diagram.html`: 탐구 01 · H-R도 (H-R도란?, H-R도 상의 별의 분류 탭)
   - `evolution.html`: 탐구 02 · 별의 진화 (전주계열 단계, 주계열 단계, 후주계열 단계, 별의 진화와 순환 탭)
 
 ## 페이지 연결

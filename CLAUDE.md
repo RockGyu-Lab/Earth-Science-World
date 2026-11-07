@@ -14,7 +14,7 @@ Eclipses/                  일식과 월식 학습실
 Star/                      별의 물리량 학습실
   Star_index.html          학습실 메뉴 (탐구 01~03 카드)
   radiation.html, spectrum.html, luminosity.html
-Evol/                      H-R 도와 별의 진화 학습실
+Evol/                      H-R도와 별의 진화 학습실
   Evol_index.html          학습실 메뉴 (탐구 01~02 카드)
   HR-diagram.html, evolution.html
 ```
