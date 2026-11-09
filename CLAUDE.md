@@ -18,14 +18,14 @@ Evol/                      H-R도와 별의 진화 학습실
   Evol_index.html          학습실 메뉴 (탐구 01~02 카드)
   HR-diagram.html, evolution.html
 Expansion/                 허블-르메트르 법칙과 우주 팽창 학습실
-  Expansion_index.html     학습실 메뉴 (탐구 01~05 카드)
-  static_expanding.html, doppler.html, hubble_law.html, expanding_universe.html, hubble_time.html
+  Expansion_index.html     학습실 메뉴 (탐구 01~03 카드)
+  static_expanding.html, doppler.html, expansion.html
 Cosmology/                 현대 우주론의 정립 학습실
   Cosmology_index.html     학습실 메뉴 (탐구 01 카드)
   cosmology.html
   lib/cmb_wmap.jpg         cosmology.html의 우주 배경 복사 관측 그림 (WMAP, 퍼블릭 도메인)
 ```
-- `Expansion/`의 탐구 01~05와 `Cosmology/cosmology.html`은 테스트 사이트(Earth-Test-Lab)의 `expansion.html`, `cosmology.html`을 옮긴 것입니다(`expansion.html`의 탭 다섯 개를 탐구 01~05 파일로 나눔). 정식 사이트로 옮긴 뒤에는 **정식 사이트만 고칩니다.** 테스트 사이트는 자료가 어느 정도 완성될 때까지만 쓰므로, 테스트 사이트에 남은 파일은 함께 고치지 않습니다.
+- `Expansion/`의 탐구 01~03과 `Cosmology/cosmology.html`은 테스트 사이트(Earth-Test-Lab)의 `expansion.html`, `cosmology.html`을 옮긴 것입니다(탐구 01·02는 예전 `expansion.html`의 탭을 따로 떼어 낸 것이고, 탐구 03 `expansion.html`은 나머지 탭을 모은 것). 정식 사이트로 옮긴 뒤에는 **정식 사이트만 고칩니다.** 테스트 사이트는 자료가 어느 정도 완성될 때까지만 쓰므로, 테스트 사이트에 남은 파일은 함께 고치지 않습니다.
 - 빌드 도구나 패키지 없이, 각 자료는 CSS와 JS가 들어 있는 HTML 파일 하나입니다.
 - 학습실 메뉴 파일 이름은 `<폴더명>_index.html` 형식입니다(`Eclipse_index.html`은 예외로 단수형).
 
@@ -63,7 +63,7 @@ HTML 파일을 추가하거나 고치거나 이름을 바꾸면 다음을 확인
 - 답을 보여 주거나 확인하는 단추(생각해 보기·심화의 답, 보기 고르기 문제의 확인 등)는 모두 **정답 확인**이라고 쓰고("답 보기" 쓰지 않음), 흰 바탕(`var(--bg)`)에 파란 글씨·테두리(`var(--acc)`), 굵은 글씨로 통일합니다. 테스트 사이트(Earth-Test-Lab)도 같습니다.
 - 같은 그림 안에서 보기를 고르는 선택 단추(예: 개기일식/금환일식 위치, 기체 종류, 온도, 관측 지점, 재생 속도)는 연보라(`--sub`, `--on-sub`, `--sub-bg`, `--sub-bd`, `--sub-tx`)입니다. 고르지 않은 단추는 옅은 연보라, 고른 단추는 진한 연보라로 채웁니다.
 - 학생에게 조작을 요청하는 글(예: "재생 버튼을 눌러주세요.", "그림자 위에 마우스를 올려 보세요.")은 설명과 구분되도록 남색 굵은 글씨(`.go` 또는 `.cue`, `color:var(--acc);font-weight:700`)로 씁니다. 관찰·생각을 권하는 말("비교해 보세요", "생각해 보세요")은 보통 글씨로 둡니다.
-- 글 속에서 단추 이름을 가리킬 때는 **단추 꼬리표**(`<span class="kb">부풀리기</span>를 눌러 보세요.`)로 씁니다. 실제 단추와 같은 색의 작은 둥근 상자입니다. 실행 단추는 `.kb`(남색 바탕, 흰 글씨), 연보라 선택 단추는 `.kb.sub`(연보라)입니다. 괄호·따옴표·▶·◀는 붙이지 않습니다. 파일에 `.kb` 스타일이 없으면 그 파일의 남색 변수로 추가합니다(`expanding_universe.html`, `orbit_eclipse.html` 참고). 그림(SVG) 안의 글처럼 꼬리표를 넣을 수 없는 곳은 `[직선 긋기]`처럼 대괄호로 씁니다. 테스트 사이트(Earth-Test-Lab)도 같습니다.
+- 글 속에서 단추 이름을 가리킬 때는 **단추 꼬리표**(`<span class="kb">부풀리기</span>를 눌러 보세요.`)로 씁니다. 실제 단추와 같은 색의 작은 둥근 상자입니다. 실행 단추는 `.kb`(남색 바탕, 흰 글씨), 연보라 선택 단추는 `.kb.sub`(연보라)입니다. 괄호·따옴표·▶·◀는 붙이지 않습니다. 파일에 `.kb` 스타일이 없으면 그 파일의 남색 변수로 추가합니다(`expansion.html`, `orbit_eclipse.html` 참고). 그림(SVG) 안의 글처럼 꼬리표를 넣을 수 없는 곳은 `[직선 긋기]`처럼 대괄호로 씁니다. 테스트 사이트(Earth-Test-Lab)도 같습니다.
 
 ### 6. 제목·글·단추는 그림 폭에 맞춥니다
 - 탐구 자료의 제목 줄(탐구 NN, 제목, 돌아가기), 안내 글, 탭, 단추 줄의 왼쪽·오른쪽 끝은 그 아래 그림(그림판)의 끝과 맞아야 합니다. 그림만 안쪽으로 들어가 있고 글·단추가 더 넓게 펼쳐지면 안 됩니다.
