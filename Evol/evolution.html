@@ -615,11 +615,12 @@ function drawPm(){S=pmv;S.innerHTML='';[drawPm0,drawPm1,drawPm2][pv]();
 function pmGo(i,then){cancelAnimationFrame(pRaf);pFrom=pi_;pi_=i;pT=0;const t0=performance.now();
  const st=now=>{pT=Math.min(1,(now-t0)/1300);drawPm();if(pT<1)pRaf=requestAnimationFrame(st);else if(then)then()};pRaf=requestAnimationFrame(st)}
 function pmStop(){pPlay=false;clearTimeout(pTimer);cancelAnimationFrame(pRaf);pT=1;pmplay.textContent='▶ 자동 진행'}
-function pmAuto(){pmStop();pPlay=true;pmplay.textContent='❚❚ 멈춤';pFrom=pi_=0;pT=1;drawPm();
+// 자동 진행: 탭·소메뉴를 고르면 처음부터(restart), 멈춘 뒤 다시 누르면 멈춘 단계부터 이어서 진행
+function pmAuto(restart=true){pmStop();pPlay=true;pmplay.textContent='❚❚ 멈춤';if(restart){pFrom=pi_=0}else pFrom=pi_;pT=1;drawPm();
  const next=()=>{if(!pPlay)return;pTimer=setTimeout(()=>{if(!pPlay)return;if(pi_<PS.length-1)pmGo(pi_+1,next);else{pFrom=pi_=0;pT=1;drawPm();next()}},pi_==PS.length-1?2600:1900)};next()}
 pmsel.querySelectorAll('button').forEach(b=>b.onclick=()=>{pmsel.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));pv=+b.dataset.v;if(pv==0)pmAuto();else{pmStop();drawPm()}});
 pmprev.onclick=()=>{pmStop();pmGo((pi_+PS.length-1)%PS.length)};pmnext.onclick=()=>{pmStop();pmGo((pi_+1)%PS.length)};
-pmplay.onclick=()=>pPlay?pmStop():pmAuto();
+pmplay.onclick=()=>pPlay?pmStop():pmAuto(false);
 pmv.addEventListener('click',e=>{const g=e.target.closest('[data-n]');if(g&&pv==2){nsel=+g.dataset.n;drawPm()}});
 drawPm();
 
