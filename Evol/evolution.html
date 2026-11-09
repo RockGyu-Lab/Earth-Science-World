@@ -155,7 +155,7 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
 
 <!-- ② 주계열 단계: 위 정역학 평형, 아래 수소 핵융합 반응 -->
 <section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
- <div class="note"><div class="nh">주계열 단계 <span class="ex">· 중심부에서 수소 핵융합 반응이 일어나며 크기가 일정하게 유지되는 단계</span></div><p>별이 일생의 대부분을 보내는 단계로, 중력과 기체 압력 차에 의한 힘이 평형을 이룹니다.</p></div>
+ <div class="note"><div class="nh">주계열 단계(main-sequence stage) <span class="ex">· 중심부에서 수소 핵융합 반응이 일어나며 크기가 일정하게 유지되는 단계</span></div><p>별이 일생의 대부분을 보내는 단계로, 중력과 기체 압력 차에 의한 힘이 평형을 이룹니다.</p></div>
  <div class="duo2">
   <div class="col"><svg id="eqv" viewBox="0 0 480 440"></svg>
    <div class="side"><b class="st">정역학 평형</b><span class="cap">중력과 기체 압력 차에 의한 힘이 평형을 이룸</span></div></div>
@@ -362,7 +362,7 @@ function drawHR(G){S=hv;S.innerHTML='';const X0=78,X1=545,Y0=44,Y1=372,TA=4.62,T
 }
 
 function drawPre(){const G=stateOf(),st=stageOf(G.vs);
- pnote.innerHTML=`<div class="nh">전주계열 단계 <span class="ex">· 성운에서 태어난 원시별이 주계열성이 되기 전까지의 단계</span></div><p><b>${STG[st].n}</b> ${STG[st].d}</p>`;
+ pnote.innerHTML=`<div class="nh">전주계열 단계(pre-main-sequence stage) <span class="ex">· 성운에서 태어난 원시별이 주계열성이 되기 전까지의 단계</span></div><p><b>${STG[st].n}</b> ${STG[st].d}</p>`;
  drawBirth(G.vs);drawHR(G);prog.value=Math.round(ps*1000)}
 function setS(v){ps=Math.max(0,Math.min(1,v));drawPre()}
 MASS.forEach((M,i)=>{const b=document.createElement('button');b.innerHTML=M.m+' <i class="v">M</i><sub class="sun">☉</sub>';b.onclick=()=>{mi=i;msel.querySelectorAll('button').forEach((x,j)=>x.classList.toggle('on',j==i));drawPre()};msel.appendChild(b)});
@@ -474,7 +474,7 @@ drawEq();drawFu();fstop();
 
 // ---- ③ 후주계열 단계 ----
 let pv=0; // 소메뉴: 0 주계열 이후 변화, 1 내부 구조, 2 질량에 따른 진화 경로
-const PMH='후주계열 단계 <span class="ex">· 주계열 단계가 끝난 뒤 별이 거성이나 초거성이 되고 일생을 마치는 단계</span>';
+const PMH='후주계열 단계(post-main-sequence stage) <span class="ex">· 주계열 단계가 끝난 뒤 별이 거성이나 초거성이 되고 일생을 마치는 단계</span>';
 const mix=(a,b,f)=>a.map((v,k)=>v+(b[k]-v)*f);
 // ① 주계열 이후 변화 (질량이 태양 정도인 별): 단계마다 별의 모습(반지름 R, 핵 반지름 c, 껍질 연소 sh, 바깥층 색 oc, 핵 색 cc, 핵 수축 표시 ar, 헬륨 핵융합 he)과 H-R도 위치 hr
 const PS=[
