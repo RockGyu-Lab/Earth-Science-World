@@ -397,7 +397,7 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
     mk('circle',{cx:b[0],cy:b[1],r:7,fill:'none',stroke:'#ffe9a8','stroke-width':1.2,opacity:.6*(1-f)},inn);
     bWave(inn,tx,ty,ang,L,9,'#ffd76b',4,2.2)})}
   else{const lam=bs==2?9*Math.pow(4,bw):9,col=bs==2?`rgb(255,${mix(215,110,bw)},${mix(107,90,bw)})`:'#ffd76b';
-   BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,len=46,per=700,u=((t*sp+i*131)%per)-110,a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a),
+   BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,len=46*Math.pow(2,bs==2?bw:0),per=700,u=((t*sp+i*131)%per)-110,a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a),
      x=(dir>0?20:520)+c*u,y=44+y0+s*u;bWave(inn,x,y,a,len,lam,col,4+2*(bs==2?bw:0),2.2)})}
   // 원자핵과 전자 (2단계부터 전자가 원자핵 둘레를 돎)
   BNU.forEach(([nx,ny],k)=>{const jx=(1-e)*4*Math.sin(t*2.3+k),jy=(1-e)*4*Math.cos(t*1.9+k*1.4),x=nx+jx,y=ny+jy;
@@ -459,7 +459,7 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
   T('→ 은하와 같은 구조가 생기는 씨앗',{y:274,'font-size':14,fill:'#ffd76b'})}
 }
 function bLoop(now){const dt=Math.min(.05,(now-bLast)/1000);bLast=now;const tg=bs>=1?1:0;
- bm=tg>bm?Math.min(tg,bm+dt/1.6):Math.max(tg,bm-dt/1.6);if(bs==2){bT+=dt;if(bT>6.5)bT=0;bw=Math.min(1,bT/5)}else{bT=0;bw=0}   // 3단계: 5초 동안 파장이 늘어나고 1.5초 멈췄다가 되풀이
+ bm=tg>bm?Math.min(tg,bm+dt/1.6):Math.max(tg,bm-dt/1.6);if(bs==2){bT+=dt;bw=Math.min(1,bT/5)}else{bT=0;bw=0}   // 3단계: 5초 동안 파장이 늘어난 뒤 그대로 (되풀이하지 않음)
  if(bs<3&&!p2.hidden&&!evb.hidden)bDraw((now/1000-TB));requestAnimationFrame(bLoop)}   // 관측 결과(그래프·지도)는 움직이지 않으므로 고를 때만 그림
 // bs 0~2: 과정 1~3단계 / 3: 관측 결과 1(스펙트럼) / 4: 관측 결과 2(우주 배경 복사)
 function bGo(s){bs=Math.max(0,Math.min(4,s));bw=0;const[tt,tx]=BS[bs],ob=bs>=3;bstep.innerHTML=stepHTML(tt,tx);
