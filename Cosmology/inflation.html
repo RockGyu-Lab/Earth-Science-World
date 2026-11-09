@@ -101,8 +101,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 /* 기억하기는 정답 확인을 누른 뒤에 보임 (자리는 미리 차지해 화면이 움직이지 않음) */
 #cmemo.wait{visibility:hidden}
 /* ② 빅뱅 우주론의 증거: 작은 메뉴(연보라)와 단계 설명 */
-.subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
-.subtabs button{padding:5px 16px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:700;cursor:pointer}
+.subtabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.subtabs button{min-width:11em;padding:6px 18px;text-align:center;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.92rem;font-weight:700;cursor:pointer}
 .subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
 #hsv,#bsv{max-height:max(240px,calc(100vh - 360px))}
 #hsv,#bsv{max-height:max(240px,calc(100dvh - 360px))}
@@ -130,12 +130,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
 <div class="titlebar"><p class="pnum">탐구 03</p><h1>급팽창 이론</h1><a class="back" href="./Cosmology_index.html">← [현대 우주론의 정립] 메뉴로 돌아가기</a></div>
 
-<!-- ④ 급팽창 이론: 위쪽 탭 [급팽창 이론] [지평선 문제 해결] [평탄성 문제 해결], 차례대로 (지평선 문제 해결은 2단계) -->
+<!-- ④ 급팽창 이론: 위쪽 탭 [급팽창 이론] [지평선 문제의 해결] [평탄성 문제의 해결], 차례대로 (지평선 문제 해결은 2단계) -->
 <section id="p4">
  <div class="tabs" role="tablist" aria-label="급팽창 이론">
   <button type="button" role="tab" id="i4a" class="on" aria-selected="true">급팽창 이론</button>
-  <button type="button" role="tab" id="i4b" aria-selected="false">지평선 문제 해결</button>
-  <button type="button" role="tab" id="i4c" aria-selected="false">평탄성 문제 해결</button>
+  <button type="button" role="tab" id="i4b" aria-selected="false">지평선 문제의 해결</button>
+  <button type="button" role="tab" id="i4c" aria-selected="false">평탄성 문제의 해결</button>
  </div>
  <div id="iva">
   <svg id="isv" viewBox="0 0 940 320" aria-label="빅뱅 직후 매우 짧은 시간 동안 우주가 급격하게 팽창했다는 급팽창 이론"><defs><clipPath id="iclip"><rect x="20" y="44" width="500" height="252" rx="12"/></clipPath></defs><g id="ig"></g></svg>
@@ -234,7 +234,7 @@ function pPanel(g,title){mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'
  txt(title,{x:734,y:72,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g)}
 
 // ---- ④ 급팽창 이론 ----
-// 작은 메뉴: 급팽창 이론 / 지평선 문제 해결 / 평탄성 문제 해결
+// 작은 메뉴: 급팽창 이론 / 지평선 문제의 해결 / 평탄성 문제의 해결
 [[i4a,iva],[i4b,ivb],[i4c,ivc]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
 const iBox=g=>mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#10122a',stroke:'rgba(255,255,255,.18)'},g);
 const iHead=(g,s)=>txt(s,{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
