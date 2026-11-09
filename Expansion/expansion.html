@@ -1205,7 +1205,8 @@ function eLoop(now){et=Math.min(ETEND,et+2*Math.min(.05,(now-eLast)/1000));eLast
  eAll();eraf=requestAnimationFrame(eLoop)}
 eplay.onclick=()=>{if(eraf){eStop();return}if(et>=ETEND)et=0;eplay.textContent='⏸ 멈춤';eLast=performance.now();eraf=requestAnimationFrame(eLoop)};
 erst.onclick=()=>{eStop();et=0;EDONE.length=0;eAll()};
-erefs.onclick=e=>{const b=e.target.closest('button');if(!b)return;eref=+b.dataset.v;segPick(erefs,b.dataset.v);eMark();eAll()};
+// 기준 개미를 고르면 풍선을 처음 크기로 되돌려 다시 부풀림 (다 부푼 뒤에 결과가 표와 그래프에 나타남)
+erefs.onclick=e=>{const b=e.target.closest('button');if(!b)return;eref=+b.dataset.v;segPick(erefs,b.dataset.v);eStop();et=0;eAll();eplay.onclick()};
 const ENOTE={i:'<p style="margin:0">고무 풍선 위에 개미 A, B, C, D가 붙어 있습니다. 풍선이 부풀 때 개미 A에게서 다른 개미들이 어떻게 멀어지는지 살펴봅시다.</p>',
  c:'<p style="margin:0">이번에는 기준이 되는 개미를 바꾸어 봅시다. 어느 개미의 입장에서 보아도 같은 결과가 나올까요?</p>'};
 const ECUE={i:"<span class='kb'>부풀리기</span>를 눌러 개미 A와 다른 개미 사이의 거리가 어떻게 변하는지 살펴보세요.",
