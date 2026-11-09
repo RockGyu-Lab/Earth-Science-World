@@ -38,8 +38,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 @media (max-width:640px){.tabs button{flex-basis:40%}}
 /* ① 전주계열 단계: 두 그림을 나란히 (좁은 화면에서는 위아래로), 아래에 조작 줄 */
 .duo{display:grid;grid-template-columns:500fr 560fr;gap:8px}
-.duo svg{max-height:max(260px,calc(100vh - 344px))}
-.duo svg{max-height:max(260px,calc(100dvh - 344px))}
+.duo svg{max-height:max(260px,calc(100vh - 356px))}
+.duo svg{max-height:max(260px,calc(100dvh - 356px))}
 /* 생각해 보기: 정식 사이트(eclipses.html 심화 질문, luminosity.html)와 같은 형식
    상자 없이 한 줄에 [꼬리표(남색)] 질문 [정답 확인(남색 테두리)] → 누르면 팝업에 질문과 답 */
 .note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
@@ -56,7 +56,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
 .think .exp{margin:0;font-size:.93rem;line-height:1.6}
 /* 패드 세로 화면처럼 세로로 긴 화면: 두 그림을 위아래로 놓고 각각 남은 높이의 절반씩 */
-@media (max-aspect-ratio:4/5){.duo{grid-template-columns:1fr}.duo svg{max-height:max(220px,calc((100vh - 400px)/2))}.duo svg{max-height:max(220px,calc((100dvh - 400px)/2))}}
+@media (max-aspect-ratio:4/5){.duo{grid-template-columns:1fr}.duo svg{max-height:max(220px,calc((100vh - 422px)/2))}.duo svg{max-height:max(220px,calc((100dvh - 422px)/2))}}
 #pnote{min-height:calc(3.1em + 18px)}
 .note .ex{font-weight:500;color:var(--fg);opacity:.75;font-size:.88rem}
 .ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card)}
@@ -121,6 +121,9 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
 #cyv [data-c]{cursor:pointer}
 /* 학생에게 할 일을 알려 주는 말(실행 요청): 남색 굵은 글씨로 설명과 구분 */
 .go{color:var(--acc);font-weight:700}
+/* 글 속의 단추 이름 꼬리표: 실제 단추와 같은 색의 작은 상자 (.kb 실행 단추=남색, .kb.sub 선택 단추=연보라) */
+.kb{display:inline-block;padding:0 .45em;margin:0 .1em;border-radius:6px;background:var(--acc);color:var(--on-acc);font-size:.9em;font-weight:700;line-height:1.55;vertical-align:.05em;white-space:nowrap}
+.kb.sub{background:var(--sub-bg);color:var(--sub-tx);border:1px solid var(--sub-bd)}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -145,7 +148,15 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
   <span class="unit" title="태양의 질량을 1로 나타낸 단위"><i class="v">M</i><sub class="sun">☉</sub> = 태양 질량</span>
  </div>
  <!-- 생각해 보기: 꼬리표 + 질문 + [정답 확인] → 팝업 (정식 사이트 eclipses.html 심화 질문과 같은 형식) -->
- <div class="note ask"><span class="tag">생각해 보기</span><p>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요? (모두 보기 체크 후 재생)</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>0.5 <i class="v">M</i><sub class="sun">☉</sub>과 15 <i class="v">M</i><sub class="sun">☉</sub>이 원시별에서 주계열이 될 때, 크기와 온도는 어떻게 변하나요?</p><button type="button" class="open-think" id="thb7">정답 확인</button></div>
+ <div class="ov" id="ov7" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 0.5 M☉과 15 M☉이 원시별에서 주계열이 될 때, 크기와 온도는 어떻게 변하나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span><span>0.5 <i class="v">M</i><sub class="sun">☉</sub>과 15 <i class="v">M</i><sub class="sun">☉</sub>이 원시별에서 주계열이 될 때, 크기와 온도는 어떻게 변하나요?</span></b><button type="button" class="x" id="thx7" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">두 별 모두 수축하여 크기가 작아집니다. 0.5 <i class="v">M</i><sub class="sun">☉</sub>은 표면 온도가 거의 변하지 않고, 15 <i class="v">M</i><sub class="sun">☉</sub>은 표면 온도가 크게 높아집니다.</p>
+  <p class="exp">0.5 <i class="v">M</i><sub class="sun">☉</sub>의 원시별은 H-R도에서 거의 수직으로 아래로 내려옵니다. 표면 온도는 거의 그대로인데 광도가 크게 줄어들므로, 반지름이 작아진 것입니다(<i class="v">L</i> ∝ <i class="v">R</i>²<i class="v">T</i>⁴).</p>
+  <p class="exp">15 <i class="v">M</i><sub class="sun">☉</sub>의 원시별은 H-R도에서 거의 수평으로 왼쪽으로 이동합니다. 광도는 거의 그대로인데 표면 온도가 크게 높아지므로, 이때도 반지름은 작아집니다.</p>
+  <p class="exp">두 별 모두 수축하는 동안 중심부 온도는 계속 올라가며, 약 1,000만 K에 이르러 수소 핵융합 반응이 시작되면 주계열성이 됩니다. <span class="go"><span class="kb sub">0.5 <i class="v">M</i><sub class="sun">☉</sub></span>과 <span class="kb sub">15 <i class="v">M</i><sub class="sun">☉</sub></span>을 골라 재생하며 H-R도의 경로를 비교해 보세요.</span></p>
+ </div></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요? (모두 보기 체크 후 재생)</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
  <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">질량이 클수록 짧아집니다.</p>
@@ -742,7 +753,7 @@ cyv.addEventListener('click',e=>{const g=e.target.closest('[data-c]');if(g){cySt
 drawCy();
 
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+[['ov7','thb7','thx7'],['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const closeTh=()=>{ov.hidden=true;btn.focus()};
  btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
