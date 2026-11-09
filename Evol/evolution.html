@@ -420,7 +420,7 @@ function light(x,y,t,o=1,z=1,ang=0){const g=el('g',{opacity:o}),fs=14*Math.min(z
  if(t=='e'){el('circle',{cx:x,cy:y,r:5*z,fill:'#ffd166'},g);lab(x,y+12*z+8,'e⁺',fs,'middle','#ffd166',800,g)}
  else if(t=='nu'){el('circle',{cx:x,cy:y,r:3.5*z,fill:'none',stroke:'#cfd6ea','stroke-width':1.5*z},g);lab(x,y+10*z+8,'ν',fs,'middle','#cfd6ea',800,g)}
  else if(t=='g'){// 물결 끝에 좌우 대칭인 뾰족한 화살촉을 직접 그림 (진행 방향으로 회전)
-  const u=7*z,e=2.3*u,ah=6*z,aw=3.6*z,w=el('g',{transform:`translate(${x},${y}) rotate(${ang*180/Math.PI})`},g);
+  const u=7*z,e=1.77*u,ah=6*z,aw=3.6*z,w=el('g',{transform:`translate(${x},${y}) rotate(${ang*180/Math.PI})`},g);
   el('path',{d:`M${-2.5*u},0 q${u/2},-${u} ${u},0 t${u},0 t${u},0 t${u},0 L${e},0`,fill:'none',stroke:'#c9a7ff','stroke-width':2*z,'stroke-linecap':'round','stroke-linejoin':'round'},w);
   el('polygon',{points:`${e+ah},0 ${e-1},${-aw} ${e-1},${aw}`,fill:'#c9a7ff'},w);
   lab(x,y+12*z+12,'γ',fs,'middle','#c9a7ff',800,g)}
