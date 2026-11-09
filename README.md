@@ -23,7 +23,7 @@
   - `evolution.html`: 탐구 02 · 별의 진화 (전주계열 단계, 주계열 단계, 후주계열 단계, 별의 진화와 순환 탭)
 - `Expansion/`: 허블-르메트르 법칙과 우주 팽창 학습실
   - `Expansion_index.html`: 학습실 메뉴
-  - `static_expanding.html`: 탐구 01 · 정적 우주와 팽창 우주
+  - `static_expanding.html`: 탐구 01 · 정적 우주와 팽창 우주 (벤틀리와 뉴턴, 아인슈타인과 프리드만 탭)
   - `doppler.html`: 탐구 02 · 도플러 효과 (소리(음파)의 도플러 효과, 빛(전자기파)의 도플러 효과 탭)
   - `hubble_law.html`: 탐구 03 · 허블-르메트르 법칙
   - `expanding_universe.html`: 탐구 04 · 팽창하는 우주 (허블-르메트르 법칙의 의미, 팽창하는 우주의 중심 탭)
