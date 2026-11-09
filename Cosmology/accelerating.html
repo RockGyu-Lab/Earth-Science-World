@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>우주의 가속 팽창</title>
+<style>
+/* expansion.html과 같은 규칙
+   색: 남색 하나를 기본 강조색으로 / 상자: 옅은 회색 판 / 모서리: 판 14px, 버튼 10px / 그림판: 밤하늘 남색 */
+:root{--bg:#fff;--fg:#1b1f2a;--card:#f3f4f8;--bd:#d5d8e2;--bline:#d9d9d6;--bcard:#fff;--bfg:#1c1c1c;--acc:#5468d4;--acc-bg:#eef0fc;--acc-bd:#c3caf2;--on-acc:#fff;--frame:transparent;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}
+/* 탭 안에서 고르는 단추는 라벤더(연보라) (위쪽 큰 탭의 남색과 구분) */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+/* 기억하기(꼭 기억할 내용) 꼬리표: 생각해 보기(남색)와 구분되는 주황색 */
+:root{--mem:#c2620a;--on-mem:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mem:#ffb357;--on-mem:#2a1600}}
+:root[data-theme="dark"]{--mem:#ffb357;--on-mem:#2a1600}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
+button,input{font-family:inherit}
+main{max-width:960px;margin:0 auto;padding:14px}
+/* 제목 줄: 제목 …… [← 돌아가기] (좁은 화면에서는 줄바꿈) */
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
+.pnum{margin:0;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;text-wrap:balance}
+.back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--bline)}
+/* 학습 메뉴 탭 (expansion.html과 같은 모양) */
+/* 탭: 넓은 화면은 한 줄, 좁으면 여러 줄 */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.tabs button{flex:1 1 150px}
+.tabs button{padding:9px 8px;font-size:.95rem;line-height:1.3;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.note{margin-bottom:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem}
+.note p{margin:0}
+/* 탭을 바꿀 때 내용이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+/* 그림판: 패드에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한 */
+svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
+section svg{max-height:max(300px,calc(100vh - 300px))}
+section svg{max-height:max(300px,calc(100dvh - 300px))}
+/* 그림 아래 조작 줄 */
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
+.pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
+.pb:disabled{opacity:.4;cursor:default}
+/* 과정 단계가 끝나면 관측 결과 단추가 되풀이하여 빛남 */
+.pb.glow{animation:pbGlow 1.6s ease-in-out infinite}
+@keyframes pbGlow{0%,100%{box-shadow:0 0 0 0 rgba(84,104,212,.55);filter:brightness(1)}50%{box-shadow:0 0 0 7px rgba(84,104,212,0),0 0 16px 3px rgba(84,104,212,.55);filter:brightness(1.18)}}
+@media (prefers-reduced-motion:reduce){.pb.glow{animation:none;box-shadow:0 0 0 3px rgba(84,104,212,.45)}}
+/* 학생에게 할 일을 알려 주는 말: 실행 단추와 같은 남색 굵은 글씨로 설명과 구분 */
+.go{color:var(--acc);font-weight:700}
+/* 글 속의 단추 이름 꼬리표: 실제 단추와 같은 색의 작은 상자 (.kb 실행 단추=남색, .kb.sub 선택 단추=연보라) */
+.kb{display:inline-block;padding:0 .45em;margin:0 .1em;border-radius:6px;background:var(--acc);color:var(--on-acc);font-size:.9em;font-weight:700;line-height:1.55;vertical-align:.05em;white-space:nowrap}
+.kb.sub{background:var(--sub-bg);color:var(--sub-tx);border:1px solid var(--sub-bd)}
+/* 생각해 보기: 한 줄에 [꼬리표(남색)] 질문 [정답 확인(흰 바탕, 파란 글씨·테두리)] → 누르면 팝업에 질문과 답 */
+.note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
+.note.ask p{margin:0;font-weight:600}
+.ask2{margin-top:6px!important}
+.tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.tag.mem{background:var(--mem);color:var(--on-mem)}
+.memo .mtx{margin:0;font-weight:700;color:var(--mem);font-size:.95rem}
+.open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
+.open-think:hover{background:var(--card)}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
+.think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg);font-family:inherit}
+.think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
+.think .exp{margin:0;font-size:.93rem;line-height:1.6}
+.think .exp+.exp{margin-top:6px}
+/* ① 현대 우주론: 정상 우주론과 빅뱅 우주론 그림판을 나란히 (좁은 화면에서는 위아래로) */
+/* 위: 두 그림판 / 가운데: 안내 문장과 정답 확인 / 아래: 두 우주론의 질량·밀도·온도 고르기 */
+.cpair{display:flex;gap:10px}
+.cpair>svg,.cpair>.cq{flex:1 1 0;min-width:0}
+.cpair>svg{max-height:max(220px,calc(100vh - 425px))}
+.cpair>svg{max-height:max(220px,calc(100dvh - 425px))}
+.cpair+.cpair{margin-top:6px}
+.cq .th{display:none;grid-column:1/-1;font-size:.9rem}
+@media (max-width:600px){.cpair{flex-direction:column}.cpair>svg,.cpair>.cq{flex:none}.cq .th{display:block}}
+.crow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:8px 2px 0}
+#ccue{flex:0 1 auto;font-size:.95rem}
+/* 고르기 줄: [이름] [증가|일정|감소] (연보라 선택 단추) [맞음·틀림 표시] */
+:root{--ok:#13894a;--no:#d0353b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ok:#6fe08f;--no:#ff7b7b}}
+:root[data-theme="dark"]{--ok:#6fe08f;--no:#ff7b7b}
+.cq{background:var(--card);border-radius:14px;padding:8px 14px;display:grid;grid-template-columns:auto 1fr 6.6em;gap:6px 12px;align-items:center}
+.cq .nm{font-weight:700;font-size:.95rem}
+.bs{display:flex;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
+.bs button{flex:1 1 0;padding:6px 8px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.93rem;font-weight:600;cursor:pointer}
+.bs button+button{border-left:1px solid var(--sub-bd)}
+.bs button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
+.cq .mk{font-size:.86rem;font-weight:700}
+.cq .mk.ok{color:var(--ok)}.cq .mk.no{color:var(--no)}.cq .mk.na{opacity:.7}
+#ccheck{flex:none}
+/* 기억하기는 정답 확인을 누른 뒤에 보임 (자리는 미리 차지해 화면이 움직이지 않음) */
+#cmemo.wait{visibility:hidden}
+/* ② 빅뱅 우주론의 증거: 작은 메뉴(연보라)와 단계 설명 */
+.subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.subtabs button{padding:5px 16px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:700;cursor:pointer}
+.subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+#hsv,#bsv{max-height:max(240px,calc(100vh - 360px))}
+#hsv,#bsv{max-height:max(240px,calc(100dvh - 360px))}
+.stepbox{margin-top:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.55;min-height:4.4em}
+.stepbox b{color:var(--acc);flex:none;white-space:nowrap;margin-right:.45em}
+/* 단계 설명: 파란 제목 오른쪽에 설명을 두어, 둘째 줄부터 제목 끝에 맞춰 들여쓰기 (좁은 화면에서는 한 덩어리로) */
+.stepbox.sx{display:flex;align-items:baseline}
+.stepbox.sx>span{flex:1;min-width:0}
+@media (max-width:560px){.stepbox.sx{display:block}.stepbox.sx b{white-space:normal}}
+.stepbox em{font-style:normal;font-weight:700;color:#1747c8}   /* 설명 속 중요한 내용 (진한 파란색) */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stepbox em{color:#7fb0ff}}
+:root[data-theme="dark"] .stepbox em{color:#7fb0ff}
+#bstep,#istep,#jstep,#kstep,#rstep,#lstep,#astep,#qstep{min-height:calc(3 * 1.55em + 16px)}
+#zstep,#fstep{min-height:calc(2 * 1.55em + 16px)}   /* 빅뱅 우주론의 문제점: 설명이 모두 2줄 이하라 2줄 높이만 확보 */
+@media (max-width:900px){#zstep,#fstep{min-height:calc(3 * 1.55em + 16px)}}   /* 좁은 화면에서는 3줄이 되는 설명이 많아 3줄 높이 */
+#zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100vh - 360px))}
+#zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100dvh - 360px))}
+#zcue,#fcue,#icue,#jcue,#kcue,#rcue,#lcue,#acue,#qcue{flex:1 1 220px;font-size:.92rem}
+#zva[hidden],#zvb[hidden],#iva[hidden],#ivb[hidden],#ivc[hidden],#rva[hidden],#rvb[hidden],#ava[hidden],#avb[hidden]{display:none}   /* 우주 배경 복사: 단계마다 설명이 2~3줄로 달라도 아래 줄이 움직이지 않게 3줄 높이 확보 */
+.sn{font-size:.9rem;font-weight:700;opacity:.8}
+#hcue,#bcue{flex:1 1 220px;font-size:.92rem}
+#eva[hidden],#evb[hidden]{display:none}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
+<div class="titlebar"><p class="pnum">탐구 05</p><h1>우주의 가속 팽창</h1><a class="back" href="./Cosmology_index.html">← [현대 우주론의 정립] 메뉴로 돌아가기</a></div>
+
+<!-- ⑥ 우주의 가속 팽창: 위쪽 탭 [가속 팽창의 발견] 4단계, [암흑 에너지] 3단계 -->
+<section id="p6">
+ <div class="tabs" role="tablist" aria-label="우주의 가속 팽창">
+  <button type="button" role="tab" id="a6a" class="on" aria-selected="true">가속 팽창의 발견</button>
+  <button type="button" role="tab" id="a6b" aria-selected="false">암흑 에너지</button>
+ </div>
+ <div id="ava">
+  <svg id="asv" viewBox="0 0 940 320" aria-label="Ia형 초신성을 이용해 거리를 재고, 먼 초신성이 예상보다 어둡게 관측되어 우주의 가속 팽창을 알아낸 과정"><defs>
+   <radialGradient id="agi" cx=".4" cy=".36" r=".7"><stop offset="0" stop-color="#ffd2b8"/><stop offset=".6" stop-color="#ff7a52"/><stop offset="1" stop-color="#b8333a"/></radialGradient>
+   <radialGradient id="afl" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffffff"/><stop offset=".3" stop-color="#fff2b0"/><stop offset=".65" stop-color="#ffd76b" stop-opacity=".45"/><stop offset="1" stop-color="#ffb357" stop-opacity="0"/></radialGradient>
+   <radialGradient id="aearth" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#bfe6ff"/><stop offset=".55" stop-color="#2f7fd8"/><stop offset="1" stop-color="#173f86"/></radialGradient>
+   <marker id="aar" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="context-stroke"/></marker>
+   <clipPath id="aclip"><rect x="20" y="44" width="500" height="252" rx="12"/></clipPath></defs><g id="agg"></g></svg>
+  <div class="stepbox sx" id="astep"></div>
+  <div class="ctl">
+   <button class="pb" id="aprev">◀ 이전 단계</button><button class="pb" id="anext">다음 단계 ▶</button>
+   <span class="sn" id="anum"></span>
+   <span class="go" id="acue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+   <button type="button" class="pb" id="thb13" style="margin-left:auto">Ia형 초신성 알아보기</button>
+  </div>
+  <div class="note ask"><span class="tag">생각해 보기</span><p>먼 Ia형 초신성이 예상보다 어둡게 관측된 것으로 우주가 가속 팽창한다는 것을 알 수 있는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb11">정답 확인</button></div>
+  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">Ia형 초신성(최대 밝기 일정) → 먼 초신성이 예상보다 어둡게 관측됨 → 우주는 가속 팽창하고 있음</p></div>
+  <div class="ov" id="ov11" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 먼 Ia형 초신성이 예상보다 어둡게 관측된 것으로 우주가 가속 팽창한다는 것을 알 수 있는 까닭은 무엇일까요?">
+   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>먼 Ia형 초신성이 예상보다 어둡게 관측된 것으로 우주가 가속 팽창한다는 것을 알 수 있는 까닭은 무엇일까요?</b><button type="button" class="x" id="thx11" aria-label="닫기">닫기 ✕</button></div>
+   <p class="ans">먼 초신성은 팽창 속도가 일정한 등속 팽창으로 예상한 것보다도 어둡게, 즉 멀리 있으므로 우주의 팽창 속도가 과거보다 지금 더 빨라졌다는 뜻이기 때문입니다.</p>
+   <svg id="th11sv" viewBox="20 44 500 252" style="display:block;width:100%;height:auto;border-radius:12px;margin:4px 0 8px" aria-label="먼 Ia형 초신성의 관측 그래프: 먼 초신성은 감속 팽창과 등속 팽창으로 예상한 거리보다 멀리 있고, 가속 팽창으로 예상한 거리와 맞음"><g id="th11g"></g></svg>
+   <p class="exp">그래프의 세 선은 같은 적색 편이에서 우주가 감속 팽창, 등속 팽창(팽창 속도 일정), 가속 팽창한다고 보고 예상한 거리이고, 노란 점은 실제로 관측한 Ia형 초신성입니다. 가까운 초신성은 세 선과 거의 같지만, 먼 초신성일수록 감속 팽창과 등속 팽창의 선보다 위에 있고 가속 팽창의 선과 맞습니다.</p>
+   <p class="exp">Ia형 초신성은 최대 밝기가 거의 일정하므로, 어둡게 보일수록 멀리 있습니다. 팽창 속도가 줄곧 일정했다고 보고 계산한 거리보다도 실제 먼 초신성까지의 거리가 더 멀었습니다.</p>
+   <p class="exp">같은 적색 편이인데 거리가 더 멀다는 것은 빛이 오는 데 시간이 더 걸렸다는 뜻이고, 이는 과거에는 우주가 지금보다 느리게 팽창했다는 뜻입니다. 즉, 우주의 팽창 속도는 과거보다 지금 더 빨라졌으며, 우주는 가속 팽창하고 있습니다.</p>
+  </div></div>
+  <div class="ov" id="ov13" hidden><div class="think" role="dialog" aria-modal="true" aria-label="더 알아보기: Ia형 초신성">
+   <div class="think-h"><b class="think-t"><span class="tag">더 알아보기</span>Ia형 초신성</b><button type="button" class="x" id="thx13" aria-label="닫기">닫기 ✕</button></div>
+   <svg id="iasv" viewBox="20 44 500 252" style="display:block;width:100%;height:auto;border-radius:12px;margin-bottom:8px" aria-label="쌍성계에서 백색 왜성이 동반성의 물질을 끌어당겨 질량이 태양의 약 1.4배가 되면 폭발하는 모습"><g id="iagg"></g></svg>
+   <div class="ctl" style="margin:0 0 8px"><button type="button" class="pb" id="iare">↺ 다시 보기</button></div>
+   <p class="ans">Ia형 초신성은 쌍성계에서 백색 왜성이 폭발하는 초신성으로, 매우 밝아서 아주 먼 은하에 있어도 관측할 수 있습니다.</p>
+   <p class="exp">백색 왜성이 가까이 있는 동반성(적색 거성)의 물질을 끌어당겨 질량이 늘어나다가, 태양 질량의 약 1.4배에 이르면 폭발합니다.</p>
+   <p class="exp">Ia형 초신성은 가장 밝을 때 태양보다 수십억 배나 밝아서, 은하 하나가 내는 빛과 맞먹을 정도입니다. 그래서 수십억 광년 떨어진 먼 은하에서 폭발해도 관측할 수 있습니다.</p>
+   <p class="exp">또 거의 같은 질량에서 폭발하므로 최대 밝기가 거의 일정합니다. 그래서 겉보기 밝기를 측정하면 거리를 구할 수 있어, 먼 은하까지의 거리를 재는 기준(표준 촛불)으로 씁니다.</p>
+  </div></div>
+ </div>
+ <div id="avb" hidden>
+  <svg id="qsv" viewBox="0 0 940 320" aria-label="우주를 가속 팽창시키는 암흑 에너지의 특징과 우주의 구성"><defs>
+   <radialGradient id="qgx" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#dcd2ff"/><stop offset="1" stop-color="#9f86ff" stop-opacity=".1"/></radialGradient>
+   <marker id="qar" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L10,5L0,10z" fill="context-stroke"/></marker>
+   <clipPath id="qclip"><rect x="20" y="44" width="500" height="252" rx="12"/></clipPath></defs><g id="qgg"></g></svg>
+  <div class="stepbox sx" id="qstep"></div>
+  <div class="ctl">
+   <button class="pb" id="qprev">◀ 이전 단계</button><button class="pb" id="qnext">다음 단계 ▶</button>
+   <span class="sn" id="qnum"></span>
+   <span class="go" id="qcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+  </div>
+  <div class="note ask"><span class="tag">생각해 보기</span><p>우주가 팽창할수록 암흑 에너지의 영향이 점점 커지는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb12">정답 확인</button></div>
+  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">암흑 에너지: 우주를 가속 팽창시키는 에너지(척력처럼 작용) · 우주의 구성: 암흑 에너지 약 68&nbsp;%, 암흑 물질 약 27&nbsp;%, 보통 물질 약 5&nbsp;%</p></div>
+  <div class="ov" id="ov12" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우주가 팽창할수록 암흑 에너지의 영향이 점점 커지는 까닭은 무엇일까요?">
+   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우주가 팽창할수록 암흑 에너지의 영향이 점점 커지는 까닭은 무엇일까요?</b><button type="button" class="x" id="thx12" aria-label="닫기">닫기 ✕</button></div>
+   <p class="ans">우주가 팽창하면 물질의 밀도는 작아지지만, 암흑 에너지의 밀도는 거의 일정하기 때문입니다.</p>
+   <p class="exp">물질의 양은 변하지 않으므로 우주가 팽창하여 부피가 커지면 물질의 밀도는 작아지고, 팽창을 느리게 하는 중력의 효과도 약해집니다.</p>
+   <p class="exp">반면 암흑 에너지는 우주 공간 자체가 가진 에너지여서 공간이 늘어나도 밀도가 거의 일정합니다. 그래서 시간이 지날수록 암흑 에너지가 차지하는 비율이 커지고, 우주는 점점 더 빠르게 팽창합니다.</p>
+  </div></div>
+ </div>
+</section>
+</main>
+
+<script>
+let TB=0;const NOW=()=>performance.now()/1000-TB;
+function resetAll(){TB=performance.now()/1000;aLast=qLast=-1;[DA,DQ].forEach(o=>o.go(0))}
+// 애니메이션 시계: TB는 마지막으로 탭이나 작은 메뉴를 누른 시각. 누를 때마다 시계를 0으로 돌리고 1단계부터 다시 시작
+
+// SVG 그리기 도우미
+const SVGNS='http://www.w3.org/2000/svg';
+function mk(t,a,p){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function txt(s,a,p){const e=mk('text',a,p);e.textContent=s;return e}
+// 단계 설명 상자: 파란 제목 + 설명. 비(7 : 1), 식(12 : 4 = 3 : 1), 수와 단위(2.7 K)가 줄 끝에서 갈라지지 않게
+function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=]) /g,'\u00a0$1\u00a0').replace(/ (K|mm)\b/g,'\u00a0$1')}</span>`}
+
+
+// 두 자료가 함께 쓰는 단계 넘기기: 이전·다음 단추, 단계 표시, 안내 문구 (마지막 단계에서 다음 단추는 처음으로)
+// 과정(시간 순서)인 자료는 제목이 'N단계'로 시작 → '다음 단계 ▶', 'n / N 단계'. 과정이 아닌 설명은 내용 제목만 → '다음 ▶', 'n / N'
+function stepper(S,box,prev,next,num,cue,draw){const ST=/^\d+단계/.test(S[0][0]),NX=ST?'다음 단계':'다음';prev.textContent=ST?'◀ 이전 단계':'◀ 이전';
+ const o={s:0,go(s){o.s=Math.max(0,Math.min(S.length-1,s));const[tt,tx]=S[o.s],last=o.s==S.length-1;
+  box.innerHTML=stepHTML(tt,tx);prev.disabled=o.s==0;next.textContent=last?'↺ 처음으로':NX+' ▶';num.textContent=`${o.s+1} / ${S.length}`+(ST?' 단계':'');
+  if(last){cue.className='';cue.textContent=''}else{cue.className='go';cue.innerHTML=`<span class="kb">${NX}</span>${ST?'를':'을'} 눌러 차례대로 알아보세요.`}draw(NOW())}};
+ prev.onclick=()=>o.go(o.s-1);next.onclick=()=>o.go(o.s==S.length-1?0:o.s+1);return o}
+const PT=(g,C)=>(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);   // 오른쪽 정리판 가운데 글
+// 오른쪽 정리판 꾸밈 도우미 (함수 선언이라 앞쪽 자료에서도 쓸 수 있음)
+// pCard: 색 상자, pPill: 둥근 꼬리표, pBox: 가운데 정렬 글줄을 담은 상자(lines: [글, 색, 크기]), pRow: 한 줄 상자(왼쪽 이름, 오른쪽 값), pNote: 아래쪽 회색 덧붙임
+// 그래프 세로축 이름: 축 왼쪽에 세로로(아래에서 위로) 쓰고, 축의 가운데에 맞춤
+function yLab(g,x,ya,yb,s){const y=(ya+yb)/2;return txt(s,{x,y,transform:`rotate(-90 ${x} ${y})`,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},g)}
+function pCard(g,x,y,w,h,c,o){return mk('rect',{x,y,width:w,height:h,rx:10,fill:c,'fill-opacity':o||.1,stroke:c,'stroke-opacity':.45},g)}
+function pPill(g,cx,y,s,c,fs,w){fs=fs||13.5;w=w||s.length*fs+24;mk('rect',{x:cx-w/2,y,width:w,height:fs+12,rx:(fs+12)/2,fill:c,'fill-opacity':.2,stroke:c,'stroke-opacity':.6},g);
+ txt(s,{x:cx,y:y+fs+4,'text-anchor':'middle',fill:c,'font-size':fs,'font-weight':800},g)}
+function pBox(g,y,lines,c){pCard(g,572,y,324,16+lines.length*24,c);lines.forEach(([s,col,fs],i)=>txt(s,{x:734,y:y+26+i*24,'text-anchor':'middle',fill:col||'#e8ecff','font-size':fs||14,'font-weight':fs&&fs<13?400:800},g));return y+16+lines.length*24}
+function pRow(g,y,a,b,c,ca){pCard(g,572,y,324,30,ca||'#ffffff',ca?.1:.05);txt(a,{x:588,y:y+20,fill:ca||'#e8ecff','font-size':14,'font-weight':800},g);txt(b,{x:880,y:y+20,'text-anchor':'end',fill:c,'font-size':14.5,'font-weight':800},g)}
+function pNote(g,y,s){txt(s,{x:734,y,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g)}
+function pArc(cx,cy,r,a0,a1){a0*=Math.PI/180;a1*=Math.PI/180;return`M${(cx+r*Math.cos(a0)).toFixed(1)},${(cy+r*Math.sin(a0)).toFixed(1)}A${r},${r} 0 ${a1-a0>Math.PI?1:0} 1 ${(cx+r*Math.cos(a1)).toFixed(1)},${(cy+r*Math.sin(a1)).toFixed(1)}`}
+function pPanel(g,title){mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
+ txt(title,{x:734,y:72,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g)}
+
+const iBox=g=>mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#10122a',stroke:'rgba(255,255,255,.18)'},g);
+const iHead=(g,s)=>txt(s,{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
+const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
+function rnd0(seed){let q=seed;return()=>(q=(q*16807)%2147483647)/2147483647}   // 늘 같은 모양을 그리는 의사 난수
+// ---- ⑥ 우주의 가속 팽창 ----
+// 작은 메뉴: 가속 팽창의 발견 / 암흑 에너지
+[[a6a,ava],[a6b,avb]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
+// 우주의 크기 (개념도, u: 시간 0~1, 현재 u = 0.54)
+// AA: 물질 + 암흑 에너지 (처음에는 감속, 뒤에는 가속), AD: 암흑 에너지가 없었다면 (계속 감속)
+const AA=u=>.3*Math.pow(Math.sinh(2.2*u),2/3),AD=u=>.3*Math.pow(2.2*u,2/3),ANOW=.54,AINF=.3;
+const AXES=(g,x0,x1,y0,y1,xl,yl)=>{mk('line',{x1:x0,y1:y0,x2:x1,y2:y0,stroke:'#cfd6ee','stroke-width':1.2},g);mk('line',{x1:x0,y1:y0,x2:x0,y2:y1,stroke:'#cfd6ee','stroke-width':1.2},g);
+ txt(xl,{x:x1,y:y0+18,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},g);yLab(g,x0-10,y1,y0,yl)};
+const curve=(f,X,Y,a,b)=>{let d='';for(let u=a;u<=b+1e-9;u+=.004)d+=(d?'L':'M')+X(u).toFixed(1)+','+Y(f(u)).toFixed(1);return d};
+
+// 가속 팽창의 발견: 거리 측정 → 예상보다 어두운 먼 초신성 → 가속 팽창 (Ia형 초신성의 폭발 과정은 'Ia형 초신성 알아보기' 창)
+const AS=[
+ ['거리 측정','Ia형 초신성은 <em>최대 밝기가 거의 일정</em>하여 <em>거리를 재는 기준(표준 촛불)</em>이 되고, <em>매우 밝아서</em> 멀리 있는 은하에서도 관측할 수 있으므로 <em>우주의 더 먼 과거</em>를 관측할 수 있습니다. 같은 밝기의 천체는 멀수록 어둡게 보이므로(밝기는 <em>거리의 제곱에 반비례</em>), 겉보기 밝기를 측정하면 초신성이 있는 은하까지의 <em>거리</em>를 구할 수 있습니다.'],
+ ['예상보다 어두운 초신성','<em>1998년</em> 두 연구팀이 먼 은하의 Ia형 초신성을 관측했습니다. 먼 초신성은 우주가 감속 팽창한다고 보고 예상한 것보다, 그리고 팽창 속도가 일정한 <em>등속 팽창</em>으로 예상한 것보다도 <em>어둡게</em> 관측되었습니다. 즉, 먼 초신성은 <em>예상보다 더 멀리</em> 있습니다.'],
+ ['우주의 가속 팽창','먼 초신성이 <em>등속 팽창으로 예상한 것보다도 멀리</em> 있다는 것은 우주의 <em>팽창 속도가 과거보다 빨라졌다</em>는 뜻입니다. 우주는 초기에는 물질의 중력 때문에 팽창 속도가 점점 느려졌지만, 수십억 년 전부터는 팽창 속도가 점점 빨라지는 <em>가속 팽창</em>을 하고 있습니다.']];
+const bz=(p,k)=>[0,1].map(j=>(1-k)**3*p[0][j]+3*(1-k)**2*k*p[1][j]+3*(1-k)*k*k*p[2][j]+k**3*p[3][j]);
+const ASN=[[.05,0],[.09,.01],[.13,-.008],[.18,.006],[.23,-.004],[.28,.008],[.46,.012],[.53,-.016],[.6,.01],[.67,-.006],[.74,.016],[.8,-.01],[.87,.008],[.93,-.006]];   // 관측한 초신성 (적색 편이, 흩어짐)
+// Ia형 초신성 알아보기 창: 0~5초 물질이 넘어감, 5초에 폭발, 그 뒤로는 마지막 모습 유지
+let iaT0=0;
+function iaDraw(t){const inn=iagg;inn.innerHTML='';const p=t-iaT0,m=Math.min(1,p/5),WX=372,WY=150;
+  iBox(inn);
+  mk('circle',{cx:150,cy:150,r:66,fill:'url(#agi)'},inn);
+  txt('동반성 (적색 거성)',{x:150,y:240,'text-anchor':'middle',fill:'#ffb39a','font-size':12.5,'font-weight':800},inn);
+  if(p<5){const P=[[210,124],[270,96],[332,118],[WX-8,WY-4]];
+   mk('path',{d:`M${P[0]}C${P[1]} ${P[2]} ${P[3]}`,fill:'none',stroke:'#ff9d7a','stroke-width':3,opacity:.55},inn);
+   for(let k=0;k<4;k++){const[x,y]=bz(P,((t*.6+k/4)%1));mk('circle',{cx:x,cy:y,r:3.2,fill:'#ffb39a'},inn)}
+   mk('ellipse',{cx:WX,cy:WY,rx:24,ry:7,fill:'none',stroke:'#ffb39a','stroke-width':2,opacity:.8},inn);
+   mk('circle',{cx:WX,cy:WY,r:16,fill:'url(#afl)',opacity:.6},inn);mk('circle',{cx:WX,cy:WY,r:7,fill:'#fff'},inn);
+   txt('백색 왜성',{x:WX,y:WY+34,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':800},inn)}
+  else{const b=ease((p-5)/1.2);
+   mk('circle',{cx:WX,cy:WY,r:12+b*90,fill:'url(#afl)'},inn);
+   txt('Ia형 초신성 폭발!',{x:WX,y:76,'text-anchor':'middle',fill:'#ffd76b','font-size':16,'font-weight':800,opacity:b},inn)}
+  const M=p<5?1+.4*m:1.4;   // 백색 왜성의 질량 막대 (태양 질량의 1.0배 → 1.4배)
+  txt('백색 왜성의 질량',{x:40,y:276,fill:'#cfd6ee','font-size':12.5,'font-weight':700},inn);
+  mk('rect',{x:150,y:265,width:250,height:14,rx:7,fill:'rgba(255,255,255,.1)'},inn);mk('rect',{x:150,y:265,width:250*(M-1)/.4,height:14,rx:7,fill:M>=1.4?'#ffd76b':'#ffb39a'},inn);
+  txt(`태양의 ${M.toFixed(2)}배`,{x:410,y:276,fill:M>=1.4?'#ffd76b':'#e8ecff','font-size':12.5,'font-weight':800},inn)}
+// 먼 Ia형 초신성의 관측 그래프 (u1: 그려진 정도 0~1, near: 가까운 초신성 설명도 씀) — 2단계 그림과 생각해 보기 답 창에서 함께 씀
+// 세 선: 감속 팽창, 등속 팽창(팽창 속도 일정), 가속 팽창으로 예상한 거리 (개념도)
+function aObs(inn,u1,near){const X=u=>80+u*410,Y=v=>266-v*200,dec=u=>.6*u+.08*u*u,coa=u=>.6*u+.2*u*u,acc=u=>.6*u+.38*u*u;
+  AXES(inn,80,500,266,62,'적색 편이 (멀어지는 속도) →','거리 (어두울수록 멂) →');
+  mk('path',{d:curve(dec,X,Y,0,1),fill:'none',stroke:'#a9b1cc','stroke-width':2.2,'stroke-dasharray':'6 5'},inn);
+  mk('path',{d:curve(coa,X,Y,0,1),fill:'none',stroke:'#7fd3ff','stroke-width':2.2,'stroke-dasharray':'2 4'},inn);
+  if(u1>=1){mk('path',{d:curve(acc,X,Y,0,1),fill:'none',stroke:'#c9b2ff','stroke-width':2.2},inn);
+   mk('line',{x1:X(.85),y1:Y(coa(.85))-4,x2:X(.85),y2:Y(acc(.85))+6,stroke:'#ff9d9d','stroke-width':2,'marker-start':'url(#aar)','marker-end':'url(#aar)'},inn);
+   txt('먼 초신성: 등속 팽창보다도 어두움',{x:500,y:214,'text-anchor':'end',fill:'#ff9d9d','font-size':12.5,'font-weight':800},inn);
+   txt('→ 예상보다 더 멀리 있음',{x:500,y:234,'text-anchor':'end',fill:'#ff9d9d','font-size':12.5,'font-weight':800},inn)}
+  ASN.forEach(([u,j])=>{if(u<=u1)mk('circle',{cx:X(u),cy:Y(acc(u)+j),r:4,fill:'#ffd76b',stroke:'#fff','stroke-width':.8},inn)});
+  mk('circle',{cx:100,cy:82,r:4,fill:'#ffd76b'},inn);txt('관측한 Ia형 초신성',{x:112,y:86,fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
+  [['감속 팽창으로 예상한 거리','#a9b1cc','5 3'],['등속 팽창으로 예상한 거리','#7fd3ff','2 3'],['가속 팽창으로 예상한 거리','#c9b2ff','']].forEach(([l,c,da],i)=>{const y=102+i*20;
+   mk('line',{x1:92,y1:y,x2:108,y2:y,stroke:c,'stroke-width':2.2,'stroke-dasharray':da},inn);txt(l,{x:112,y:y+4,fill:c,'font-size':12.5,'font-weight':800},inn)});
+  if(near&&u1>=1)txt('가까운 초신성: 세 선과 거의 같음',{x:236,y:258,fill:'#e8ecff','font-size':12.5,'font-weight':800},inn)}
+let aLast=-1,aT0=0;   // 단계가 바뀐 시각: 애니메이션은 한 번만 진행하고 마지막 모습을 유지
+function aDraw(t){const g=agg;g.innerHTML='';const s=DA.s;if(s!=aLast){aLast=s;aT0=t}
+ iHead(g,['같은 밝기의 천체를 멀리서 보면','먼 Ia형 초신성의 관측 (개념도)','우주의 크기 변화 (개념도)'][s]);iBox(g);
+ const inn=mk('g',{'clip-path':'url(#aclip)'},g);
+ if(s==0){const EX=56,EY=160,pl=.85+.15*Math.sin(t*3);
+  mk('circle',{cx:EX,cy:EY,r:13,fill:'url(#aearth)',stroke:'#fff','stroke-width':1},inn);txt('지구',{x:EX,y:EY+32,'text-anchor':'middle',fill:'#cfe6ff','font-size':12.5,'font-weight':800},inn);
+  [1,2,3].forEach(d=>{const x=EX+118*d,b=1/(d*d);
+   mk('line',{x1:x-14,y1:EY,x2:EX+18,y2:EY,stroke:'#ffd76b','stroke-width':1.2,'stroke-dasharray':'3 5',opacity:.25+.5*b},inn);
+   mk('circle',{cx:x,cy:EY,r:(12+30*Math.sqrt(b))*pl,fill:'url(#afl)',opacity:.2+.8*b},inn);mk('circle',{cx:x,cy:EY,r:4,fill:'#fff',opacity:.4+.6*b},inn);
+   txt(`거리 ${d}`,{x,y:228,'text-anchor':'middle',fill:'#e8ecff','font-size':13,'font-weight':800},inn);
+   txt('보이는 밝기 '+['1','1/4','1/9'][d-1],{x,y:252,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':700},inn)});
+  txt('모두 같은 Ia형 초신성 (최대 밝기가 같음)',{x:270,y:78,'text-anchor':'middle',fill:'#cfd6ee','font-size':12.5,'font-weight':700},inn);
+  txt('밝기는 거리의 제곱에 반비례',{x:270,y:286,'text-anchor':'middle',fill:'#e8ecff','font-size':13,'font-weight':800},inn)}
+ if(s==1)aObs(inn,Math.min(1,(t-aT0)/5));
+ if(s==2){const X=u=>80+u*410,Y=v=>266-v*220,u1=Math.min(1,(t-aT0)/5);
+  mk('rect',{x:X(0),y:62,width:X(AINF)-X(0),height:204,fill:'rgba(127,211,255,.07)'},inn);mk('rect',{x:X(AINF),y:62,width:X(1)-X(AINF),height:204,fill:'rgba(201,178,255,.09)'},inn);
+  txt('감속 팽창',{x:(X(0)+X(AINF))/2,y:80,'text-anchor':'middle',fill:'#7fd3ff','font-size':13,'font-weight':800},inn);
+  txt('가속 팽창',{x:(X(AINF)+X(1))/2,y:80,'text-anchor':'middle',fill:'#c9b2ff','font-size':13,'font-weight':800},inn);
+  AXES(inn,80,500,266,62,'시간 →','우주의 크기 →');
+  mk('path',{d:curve(AD,X,Y,0,1),fill:'none',stroke:'#a9b1cc','stroke-width':2,'stroke-dasharray':'6 5'},inn);
+  txt('암흑 에너지가 없었다면',{x:X(1),y:Y(AD(1))+36,'text-anchor':'end',fill:'#a9b1cc','font-size':12,'font-weight':700},inn);
+  const e=Math.min(u1,ANOW);mk('path',{d:curve(AA,X,Y,0,e),fill:'none',stroke:'#7faaff','stroke-width':2.8},inn);
+  if(u1>ANOW)mk('path',{d:curve(AA,X,Y,ANOW,u1),fill:'none',stroke:'#7faaff','stroke-width':2.4,'stroke-dasharray':'3 4'},inn);
+  mk('line',{x1:X(ANOW),y1:116,x2:X(ANOW),y2:266,stroke:'#ffd76b','stroke-width':1.2,'stroke-dasharray':'4 4'},inn);
+  txt('현재',{x:X(ANOW),y:108,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
+  if(u1>=AINF){mk('circle',{cx:X(AINF),cy:Y(AA(AINF)),r:4.5,fill:'#fff',stroke:'#c9b2ff','stroke-width':2},inn);
+   txt('가속 팽창 시작',{x:X(AINF),y:Y(AA(AINF))-14,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':800},inn)}
+  if(u1>=1)txt('미래 (예상)',{x:X(.9),y:Y(AA(.9))-12,'text-anchor':'end',fill:'#7faaff','font-size':12,'font-weight':700},inn)}
+ pPanel(g,AS[s][0]);const T=PT(g,734);
+ const row=(y,a,b,c)=>pRow(g,y,a,b,c);
+ if(s==0){pBox(g,80,[['Ia형 초신성: 최대 밝기가 거의 일정'],['→ 거리를 재는 기준 (표준 촛불)','#ffd76b',14.5],['매우 밝아 멀리 있는 은하도 관측 가능'],['→ 우주의 더 먼 과거를 관측','#ffd76b',14.5]],'#ffd76b');
+  pCard(g,572,200,324,46,'#ffffff',.04);
+  [[610,18,1,'가까움'],[720,12,.6,'멂'],[830,7,.35,'더 멂']].forEach(([x,r,o,l])=>{mk('circle',{cx:x,cy:216,r:r*.8,fill:'url(#afl)',opacity:o},g);mk('circle',{cx:x,cy:216,r:3,fill:'#fff',opacity:o},g);
+   txt(l,{x,y:240,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g)});
+  pPill(g,734,254,'겉보기 밝기 측정 → 거리 계산','#ffd76b',14,260)}
+ if(s==1){T('1998년 두 연구팀의 관측',{y:100,'font-size':13,fill:'#a9b1cc','font-weight':400});
+  pRow(g,112,'가까운 초신성','예상과 비슷','#e8ecff');pRow(g,150,'먼 초신성','등속 팽창보다도 어두움','#ff9d9d','#ff9d9d');
+  pBox(g,196,[['어둡다 = 예상보다 멀리 있다','#ffd76b',15.5]],'#ffd76b');
+  pNote(g,268,'(펄머터, 슈미트, 리스: 2011년 노벨 물리학상)')}
+ if(s==2){pBox(g,88,[['초기: 물질의 중력이 우세'],['팽창 속도가 점점 느려짐 (감속 팽창)','#7fd3ff',13.5]],'#7fd3ff');
+  txt('▼',{x:734,y:166,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
+  pBox(g,174,[['수십억 년 전부터'],['팽창 속도가 점점 빨라짐 (가속 팽창)','#c9b2ff',13.5]],'#c9b2ff');
+  pPill(g,734,250,'우주의 가속 팽창','#ffd76b',16,200)}
+}
+const DA=stepper(AS,astep,aprev,anext,anum,acue,aDraw);
+
+// 암흑 에너지: 가속 팽창의 원인 → 암흑 에너지의 특징(밀도 변화) → 우주의 구성
+const QS=[
+ ['가속 팽창의 원인','우주에 있는 물질(보통 물질과 암흑 물질)은 서로 <em>중력</em>으로 끌어당겨 우주의 팽창을 느리게 합니다. 그런데도 우주가 가속 팽창하려면 중력을 이기고 우주를 밀어내는 무언가가 있어야 하며, 이를 <em>암흑 에너지</em>라고 합니다. 은하 사이가 멀어질수록 서로 끌어당기는 <em>중력은 약해지므로</em> 암흑 에너지의 효과가 상대적으로 커집니다.'],
+ ['암흑 에너지의 특징','암흑 에너지는 <em>우주 공간 자체가 가진 에너지</em>로, <em>척력</em>처럼 작용합니다. 우주가 팽창하면 물질의 밀도는 <em>작아지지만</em> 암흑 에너지의 밀도는 <em>거의 일정</em>하므로, 시간이 지날수록 암흑 에너지의 영향이 커집니다.'],
+ ['우주의 구성','플랑크 위성의 관측 결과에 따르면 우주는 암흑 에너지 <em>약 68&nbsp;%</em>, 암흑 물질 <em>약 27&nbsp;%</em>, 보통 물질 <em>약 5&nbsp;%</em>로 이루어져 있습니다. 우리가 알고 있는 보통 물질은 우주의 아주 작은 부분이며, 암흑 물질과 암흑 에너지의 정체는 아직 밝혀지지 않았습니다.']];
+const QDOT=[];{const r=rnd0(23);for(let i=0;i<4;i++)for(let j=0;j<4;j++)QDOT.push([(i+.5)/4-.5+(r()-.5)*.12,(j+.5)/4-.5+(r()-.5)*.12])}   // 상자 안의 물질 (개수는 그대로)
+function qGal(g,x,y,r){mk('ellipse',{cx:x,cy:y,rx:r*1.6,ry:r,fill:'url(#qgx)'},g);mk('circle',{cx:x,cy:y,r:r*.35,fill:'#fff'},g)}
+let qLast=-1,qT0=0;   // 단계가 바뀐 시각: 애니메이션은 한 번만 진행하고 마지막 모습을 유지
+function qDraw(t){const g=qgg;g.innerHTML='';const s=DQ.s;if(s!=qLast){qLast=s;qT0=t}
+ iHead(g,['중력과 암흑 에너지 (은하 사이가 점점 빠르게 멀어짐)','우주가 팽창할 때 밀도의 변화 (개념도)','우주를 이루는 것'][s]);iBox(g);
+ const inn=mk('g',{'clip-path':'url(#qclip)'},g);
+ if(s==0){const p=t-qT0,R=44+36*Math.pow(Math.min(1,p/5.5),2),CX=270,CY=156,q=44/R;   // 은하 사이의 거리가 점점 빠르게 멀어짐
+  const LG=8+16*q*q,LD=24+12*(R-44)/36;   // 화살표 길이: 중력은 거리의 제곱에 반비례하여 약해짐, 암흑 에너지(밀어냄)의 효과는 거리가 멀수록 커짐 (개념도)
+  mk('rect',{x:20,y:44,width:500,height:252,fill:'rgba(181,140,255,.07)'},inn);
+  qGal(inn,CX,CY,8);
+  for(let k=0;k<6;k++){const a=k*Math.PI/3,c=Math.cos(a),sn=Math.sin(a),x=CX+R*c,y=CY+R*sn;
+   mk('line',{x1:x-c*12,y1:y-sn*12,x2:x-c*(12+LG),y2:y-sn*(12+LG),stroke:'#7fd3ff','stroke-width':2.4,'marker-end':'url(#qar)'},inn);
+   mk('line',{x1:x+c*12,y1:y+sn*12,x2:x+c*(12+LD),y2:y+sn*(12+LD),stroke:'#c9b2ff','stroke-width':3,'marker-end':'url(#qar)'},inn);
+   qGal(inn,x,y,7)}
+  mk('line',{x1:36,y1:278,x2:62,y2:278,stroke:'#7fd3ff','stroke-width':2.4,'marker-end':'url(#qar)'},inn);txt('물질의 중력 (끌어당김)',{x:70,y:283,fill:'#7fd3ff','font-size':12.5,'font-weight':800},inn);
+  mk('line',{x1:270,y1:278,x2:300,y2:278,stroke:'#c9b2ff','stroke-width':3,'marker-end':'url(#qar)'},inn);txt('암흑 에너지 (밀어냄)',{x:308,y:283,fill:'#c9b2ff','font-size':12.5,'font-weight':800},inn)}
+ if(s==1){const U0=.24,u=U0+(1-U0)*ease((t-qT0-.6)/5),L=44*AA(u)/AA(U0),BX=140,BY=164;   // 왼쪽: 팽창하는 공간(한 변 ∝ 우주의 크기), 오른쪽: 같은 시각까지의 밀도 그래프 (개념도), 한 번 진행 후 유지
+  mk('rect',{x:BX-L/2,y:BY-L/2,width:L,height:L,fill:'rgba(181,140,255,.32)',stroke:'#c9b2ff','stroke-width':1.6},inn);
+  QDOT.forEach(([x,y])=>mk('circle',{cx:BX+x*L,cy:BY+y*L,r:3.6,fill:'#ffd76b',stroke:'#fff','stroke-width':.8},inn));
+  txt('같은 공간이 커짐',{x:BX,y:68,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':800},inn);
+  mk('circle',{cx:42,cy:274,r:4.5,fill:'#ffd76b'},inn);txt('물질 (개수는 그대로)',{x:52,y:278,fill:'#ffd76b','font-size':12,'font-weight':700},inn);
+  mk('rect',{x:37,y:283,width:10,height:10,fill:'rgba(181,140,255,.6)'},inn);txt('암흑 에너지 (색의 진하기 그대로)',{x:52,y:292,fill:'#c9b2ff','font-size':12,'font-weight':700},inn);
+  const X=u=>294+u*206,Y=v=>262-v*190,DL0=.3,DM=u=>Math.min(1.1,DL0*.45*Math.pow(AA(ANOW)/AA(u),3));
+  AXES(inn,294,504,262,66,'시간 →','밀도 →');
+  mk('line',{x1:X(ANOW),y1:84,x2:X(ANOW),y2:262,stroke:'#e8ecff','stroke-width':1,'stroke-dasharray':'4 4',opacity:.6},inn);txt('현재',{x:X(ANOW),y:80,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},inn);
+  mk('path',{d:curve(DM,X,Y,U0,u),fill:'none',stroke:'#ffd76b','stroke-width':2.6},inn);
+  mk('line',{x1:X(U0),y1:Y(DL0),x2:X(u),y2:Y(DL0),stroke:'#c9b2ff','stroke-width':2.6},inn);
+  mk('circle',{cx:X(u),cy:Y(DM(u)),r:4.5,fill:'#ffd76b',stroke:'#fff','stroke-width':1},inn);mk('circle',{cx:X(u),cy:Y(DL0),r:4.5,fill:'#c9b2ff',stroke:'#fff','stroke-width':1},inn);
+  txt('물질의 밀도',{x:X(.27)+8,y:Y(.75),fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
+  txt('암흑 에너지의 밀도',{x:X(1),y:Y(DL0)-10,'text-anchor':'end',fill:'#c9b2ff','font-size':12.5,'font-weight':800,opacity:ease((u-.7)/.2)},inn)}
+ if(s==2){const k=ease((t-qT0)/2.2),CX=150,CY=170,r=78,C=2*Math.PI*r,P=[['암흑 에너지','약 68 %',.683,'#b58cff'],['암흑 물질','약 27 %',.268,'#7fa8ff'],['보통 물질','약 5 %',.049,'#ffd76b']];
+  let st=0;P.forEach(([,,v,c])=>{const w=Math.max(0,Math.min(v,k-st));if(w>0)mk('circle',{cx:CX,cy:CY,r,fill:'none',stroke:c,'stroke-width':40,'stroke-dasharray':`${w*C} ${C}`,'stroke-dashoffset':-st*C,transform:`rotate(-90 ${CX} ${CY})`},inn);st+=v});
+  txt('우주의',{x:CX,y:CY-4,'text-anchor':'middle',fill:'#e8ecff','font-size':14,'font-weight':800},inn);txt('구성',{x:CX,y:CY+16,'text-anchor':'middle',fill:'#e8ecff','font-size':14,'font-weight':800},inn);
+  P.forEach(([a,b,,c],i)=>{const y=122+i*50;mk('rect',{x:282,y:y-13,width:16,height:16,rx:3,fill:c},inn);
+   txt(a,{x:308,y,fill:'#e8ecff','font-size':15,'font-weight':800},inn);txt(b,{x:500,y,'text-anchor':'end',fill:c,'font-size':17,'font-weight':800},inn)});
+  txt('(플랑크 위성 관측 결과)',{x:500,y:282,'text-anchor':'end',fill:'#a9b1cc','font-size':12},inn)}
+ pPanel(g,QS[s][0]);const T=PT(g,734);
+ if(s==0){[[572,'물질의 중력','#7fd3ff','팽창을 느리게 함',1],[740,'밀어내는 작용','#c9b2ff','팽창을 빠르게 함',0]].forEach(([x,a,c,b,inw])=>{const cx=x+78;
+   pCard(g,x,88,156,94,c);txt(a,{x:cx,y:112,'text-anchor':'middle',fill:c,'font-size':14,'font-weight':800},g);
+   mk('circle',{cx:cx-32,cy:138,r:6,fill:'url(#qgx)'},g);mk('circle',{cx:cx+32,cy:138,r:6,fill:'url(#qgx)'},g);
+   const d=inw?[[cx-22,cx-6],[cx+22,cx+6]]:[[cx-42,cx-62],[cx+42,cx+62]];
+   d.forEach(([x1,x2])=>mk('line',{x1,y1:138,x2,y2:138,stroke:c,'stroke-width':2.4,'marker-end':'url(#qar)'},g));
+   txt(b,{x:cx,y:170,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':700},g)});
+  T('우주는 가속 팽창하고 있으므로',{y:206,'font-size':13.5,fill:'#cfd6ee','font-weight':400});
+  pPill(g,734,216,'밀어내는 작용 = 암흑 에너지','#c9b2ff',15,260);pNote(g,272,'(정체는 아직 밝혀지지 않음)')}
+ if(s==1){pBox(g,86,[['암흑 에너지','#c9b2ff',16],['우주 공간 자체가 가진 에너지, 척력처럼 작용','#e8ecff',13]],'#c9b2ff');
+  T('우주가 팽창하면',{y:170,'font-size':12.5,fill:'#a9b1cc','font-weight':400});
+  [[572,'물질의 밀도','▼ 작아짐','#ffd76b'],[740,'암흑 에너지의 밀도','= 거의 일정','#c9b2ff']].forEach(([x,a,b,c])=>{pCard(g,x,180,156,64,c);
+   txt(a,{x:x+78,y:202,'text-anchor':'middle',fill:'#e8ecff','font-size':13,'font-weight':700},g);txt(b,{x:x+78,y:230,'text-anchor':'middle',fill:c,'font-size':16,'font-weight':800},g)});
+  T('→ 시간이 지날수록 암흑 에너지의 영향이 커짐',{y:274,'font-size':13,fill:'#ffd76b'})}
+ if(s==2){T('플랑크 위성의 관측 결과',{y:98,'font-size':12.5,fill:'#a9b1cc','font-weight':400});
+  const W=316,X0=576;let x=X0;[[.683,'#b58cff','암흑 에너지 약 68 %'],[.268,'#7fa8ff','27 %'],[.049,'#ffd76b','']].forEach(([v,c,l])=>{mk('rect',{x,y:108,width:W*v,height:26,fill:c},g);
+   if(l)txt(l,{x:x+W*v/2,y:126,'text-anchor':'middle',fill:'#1b1f2a','font-size':12,'font-weight':800},g);x+=W*v});
+  txt('암흑 물질 약 27 %',{x:790,y:152,'text-anchor':'middle',fill:'#7fa8ff','font-size':12,'font-weight':800},g);txt('보통 물질 약 5 %',{x:892,y:168,'text-anchor':'end',fill:'#ffd76b','font-size':12,'font-weight':800},g);
+  pBox(g,180,[['별, 행성, 가스 등 보통 물질은 약 5 %뿐','#ffd76b'],['나머지 약 95 %: 암흑 물질 + 암흑 에너지','#c9b2ff']],'#ffffff');
+  pPill(g,734,252,'아직 정체가 밝혀지지 않음','#e8ecff',13.5,220)}
+}
+const DQ=stepper(QS,qstep,qprev,qnext,qnum,qcue,qDraw);
+DA.go(0);DQ.go(0);
+(function aLoop(now){if(!p6.hidden){const t=(now/1000-TB);if(!ava.hidden)aDraw(t);else qDraw(t);if(!ov13.hidden)iaDraw(t)}requestAnimationFrame(aLoop)})(performance.now());
+// 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
+[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
+ const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
+// Ia형 초신성 알아보기 창: 열 때와 다시 보기를 누를 때 애니메이션을 처음부터 한 번 진행
+thb13.addEventListener('click',()=>{iaT0=NOW()});
+thb11.addEventListener('click',()=>{th11g.innerHTML='';iBox(th11g);aObs(th11g,1,true)});   // 생각해 보기 답 창: 관측 그래프를 다 그린 모습으로 다시 보여 줌
+iare.onclick=()=>{iaT0=NOW()};
+</script>
+<script src="../copyright.js"></script>
+</body>
+</html>

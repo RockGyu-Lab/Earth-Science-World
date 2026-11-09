@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>급팽창 이론</title>
+<style>
+/* expansion.html과 같은 규칙
+   색: 남색 하나를 기본 강조색으로 / 상자: 옅은 회색 판 / 모서리: 판 14px, 버튼 10px / 그림판: 밤하늘 남색 */
+:root{--bg:#fff;--fg:#1b1f2a;--card:#f3f4f8;--bd:#d5d8e2;--bline:#d9d9d6;--bcard:#fff;--bfg:#1c1c1c;--acc:#5468d4;--acc-bg:#eef0fc;--acc-bd:#c3caf2;--on-acc:#fff;--frame:transparent;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}
+/* 탭 안에서 고르는 단추는 라벤더(연보라) (위쪽 큰 탭의 남색과 구분) */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+/* 기억하기(꼭 기억할 내용) 꼬리표: 생각해 보기(남색)와 구분되는 주황색 */
+:root{--mem:#c2620a;--on-mem:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mem:#ffb357;--on-mem:#2a1600}}
+:root[data-theme="dark"]{--mem:#ffb357;--on-mem:#2a1600}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
+button,input{font-family:inherit}
+main{max-width:960px;margin:0 auto;padding:14px}
+/* 제목 줄: 제목 …… [← 돌아가기] (좁은 화면에서는 줄바꿈) */
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
+.pnum{margin:0;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;text-wrap:balance}
+.back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--bline)}
+/* 학습 메뉴 탭 (expansion.html과 같은 모양) */
+/* 탭: 넓은 화면은 한 줄, 좁으면 여러 줄 */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.tabs button{flex:1 1 150px}
+.tabs button{padding:9px 8px;font-size:.95rem;line-height:1.3;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.note{margin-bottom:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem}
+.note p{margin:0}
+/* 탭을 바꿀 때 내용이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+/* 그림판: 패드에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한 */
+svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
+section svg{max-height:max(300px,calc(100vh - 300px))}
+section svg{max-height:max(300px,calc(100dvh - 300px))}
+/* 그림 아래 조작 줄 */
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
+.pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
+.pb:disabled{opacity:.4;cursor:default}
+/* 과정 단계가 끝나면 관측 결과 단추가 되풀이하여 빛남 */
+.pb.glow{animation:pbGlow 1.6s ease-in-out infinite}
+@keyframes pbGlow{0%,100%{box-shadow:0 0 0 0 rgba(84,104,212,.55);filter:brightness(1)}50%{box-shadow:0 0 0 7px rgba(84,104,212,0),0 0 16px 3px rgba(84,104,212,.55);filter:brightness(1.18)}}
+@media (prefers-reduced-motion:reduce){.pb.glow{animation:none;box-shadow:0 0 0 3px rgba(84,104,212,.45)}}
+/* 학생에게 할 일을 알려 주는 말: 실행 단추와 같은 남색 굵은 글씨로 설명과 구분 */
+.go{color:var(--acc);font-weight:700}
+/* 글 속의 단추 이름 꼬리표: 실제 단추와 같은 색의 작은 상자 (.kb 실행 단추=남색, .kb.sub 선택 단추=연보라) */
+.kb{display:inline-block;padding:0 .45em;margin:0 .1em;border-radius:6px;background:var(--acc);color:var(--on-acc);font-size:.9em;font-weight:700;line-height:1.55;vertical-align:.05em;white-space:nowrap}
+.kb.sub{background:var(--sub-bg);color:var(--sub-tx);border:1px solid var(--sub-bd)}
+/* 생각해 보기: 한 줄에 [꼬리표(남색)] 질문 [정답 확인(흰 바탕, 파란 글씨·테두리)] → 누르면 팝업에 질문과 답 */
+.note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
+.note.ask p{margin:0;font-weight:600}
+.ask2{margin-top:6px!important}
+.tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.tag.mem{background:var(--mem);color:var(--on-mem)}
+.memo .mtx{margin:0;font-weight:700;color:var(--mem);font-size:.95rem}
+.open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
+.open-think:hover{background:var(--card)}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
+.think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg);font-family:inherit}
+.think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
+.think .exp{margin:0;font-size:.93rem;line-height:1.6}
+.think .exp+.exp{margin-top:6px}
+/* ① 현대 우주론: 정상 우주론과 빅뱅 우주론 그림판을 나란히 (좁은 화면에서는 위아래로) */
+/* 위: 두 그림판 / 가운데: 안내 문장과 정답 확인 / 아래: 두 우주론의 질량·밀도·온도 고르기 */
+.cpair{display:flex;gap:10px}
+.cpair>svg,.cpair>.cq{flex:1 1 0;min-width:0}
+.cpair>svg{max-height:max(220px,calc(100vh - 425px))}
+.cpair>svg{max-height:max(220px,calc(100dvh - 425px))}
+.cpair+.cpair{margin-top:6px}
+.cq .th{display:none;grid-column:1/-1;font-size:.9rem}
+@media (max-width:600px){.cpair{flex-direction:column}.cpair>svg,.cpair>.cq{flex:none}.cq .th{display:block}}
+.crow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:8px 2px 0}
+#ccue{flex:0 1 auto;font-size:.95rem}
+/* 고르기 줄: [이름] [증가|일정|감소] (연보라 선택 단추) [맞음·틀림 표시] */
+:root{--ok:#13894a;--no:#d0353b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ok:#6fe08f;--no:#ff7b7b}}
+:root[data-theme="dark"]{--ok:#6fe08f;--no:#ff7b7b}
+.cq{background:var(--card);border-radius:14px;padding:8px 14px;display:grid;grid-template-columns:auto 1fr 6.6em;gap:6px 12px;align-items:center}
+.cq .nm{font-weight:700;font-size:.95rem}
+.bs{display:flex;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
+.bs button{flex:1 1 0;padding:6px 8px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.93rem;font-weight:600;cursor:pointer}
+.bs button+button{border-left:1px solid var(--sub-bd)}
+.bs button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
+.cq .mk{font-size:.86rem;font-weight:700}
+.cq .mk.ok{color:var(--ok)}.cq .mk.no{color:var(--no)}.cq .mk.na{opacity:.7}
+#ccheck{flex:none}
+/* 기억하기는 정답 확인을 누른 뒤에 보임 (자리는 미리 차지해 화면이 움직이지 않음) */
+#cmemo.wait{visibility:hidden}
+/* ② 빅뱅 우주론의 증거: 작은 메뉴(연보라)와 단계 설명 */
+.subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.subtabs button{padding:5px 16px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:700;cursor:pointer}
+.subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+#hsv,#bsv{max-height:max(240px,calc(100vh - 360px))}
+#hsv,#bsv{max-height:max(240px,calc(100dvh - 360px))}
+.stepbox{margin-top:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.55;min-height:4.4em}
+.stepbox b{color:var(--acc);flex:none;white-space:nowrap;margin-right:.45em}
+/* 단계 설명: 파란 제목 오른쪽에 설명을 두어, 둘째 줄부터 제목 끝에 맞춰 들여쓰기 (좁은 화면에서는 한 덩어리로) */
+.stepbox.sx{display:flex;align-items:baseline}
+.stepbox.sx>span{flex:1;min-width:0}
+@media (max-width:560px){.stepbox.sx{display:block}.stepbox.sx b{white-space:normal}}
+.stepbox em{font-style:normal;font-weight:700;color:#1747c8}   /* 설명 속 중요한 내용 (진한 파란색) */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stepbox em{color:#7fb0ff}}
+:root[data-theme="dark"] .stepbox em{color:#7fb0ff}
+#bstep,#istep,#jstep,#kstep,#rstep,#lstep,#astep,#qstep{min-height:calc(3 * 1.55em + 16px)}
+#zstep,#fstep{min-height:calc(2 * 1.55em + 16px)}   /* 빅뱅 우주론의 문제점: 설명이 모두 2줄 이하라 2줄 높이만 확보 */
+@media (max-width:900px){#zstep,#fstep{min-height:calc(3 * 1.55em + 16px)}}   /* 좁은 화면에서는 3줄이 되는 설명이 많아 3줄 높이 */
+#zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100vh - 360px))}
+#zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100dvh - 360px))}
+#zcue,#fcue,#icue,#jcue,#kcue,#rcue,#lcue,#acue,#qcue{flex:1 1 220px;font-size:.92rem}
+#zva[hidden],#zvb[hidden],#iva[hidden],#ivb[hidden],#ivc[hidden],#rva[hidden],#rvb[hidden],#ava[hidden],#avb[hidden]{display:none}   /* 우주 배경 복사: 단계마다 설명이 2~3줄로 달라도 아래 줄이 움직이지 않게 3줄 높이 확보 */
+.sn{font-size:.9rem;font-weight:700;opacity:.8}
+#hcue,#bcue{flex:1 1 220px;font-size:.92rem}
+#eva[hidden],#evb[hidden]{display:none}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
+<div class="titlebar"><p class="pnum">탐구 03</p><h1>급팽창 이론</h1><a class="back" href="./Cosmology_index.html">← [현대 우주론의 정립] 메뉴로 돌아가기</a></div>
+
+<!-- ④ 급팽창 이론: 위쪽 탭 [급팽창 이론] [지평선 문제 해결] [평탄성 문제 해결], 차례대로 (지평선 문제 해결은 2단계) -->
+<section id="p4">
+ <div class="tabs" role="tablist" aria-label="급팽창 이론">
+  <button type="button" role="tab" id="i4a" class="on" aria-selected="true">급팽창 이론</button>
+  <button type="button" role="tab" id="i4b" aria-selected="false">지평선 문제 해결</button>
+  <button type="button" role="tab" id="i4c" aria-selected="false">평탄성 문제 해결</button>
+ </div>
+ <div id="iva">
+  <svg id="isv" viewBox="0 0 940 320" aria-label="빅뱅 직후 매우 짧은 시간 동안 우주가 급격하게 팽창했다는 급팽창 이론"><defs><clipPath id="iclip"><rect x="20" y="44" width="500" height="252" rx="12"/></clipPath></defs><g id="ig"></g></svg>
+  <div class="stepbox sx" id="istep"></div>
+  <div class="ctl">
+   <button class="pb" id="iprev">◀ 이전 단계</button><button class="pb" id="inext">다음 단계 ▶</button>
+   <span class="sn" id="inum"></span>
+   <span class="go" id="icue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+  </div>
+  <div class="note ask"><span class="tag">생각해 보기</span><p>우주가 빛보다 빠르게 팽창했다는 것은 '빛보다 빠른 것은 없다'는 것과 어긋나지 않을까요?</p><button type="button" class="open-think" id="thb6">정답 확인</button></div>
+  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">급팽창 이론: 빅뱅 직후 아주 짧은 시간 동안 우주가 빛보다 빠른 속도로 급격하게 팽창함</p></div>
+  <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우주가 빛보다 빠르게 팽창했다는 것은 '빛보다 빠른 것은 없다'는 것과 어긋나지 않을까요?">
+   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우주가 빛보다 빠르게 팽창했다는 것은 '빛보다 빠른 것은 없다'는 것과 어긋나지 않을까요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
+   <p class="ans">어긋나지 않습니다. 급팽창은 물체나 정보가 공간 속을 빛보다 빨리 움직인 것이 아니라, 공간 자체가 빠르게 늘어난 것이기 때문입니다.</p>
+   <p class="exp">'빛보다 빠른 것은 없다'는 것은 물체나 정보가 공간 속을 이동하는 빠르기에 대한 이야기입니다. 급팽창 시기에는 공간 자체가 급격하게 늘어나 멀리 있는 두 지점 사이의 거리가 빛보다 빠르게 멀어졌지만, 그 사이에서 정보가 빛보다 빨리 전달된 것은 아닙니다.</p>
+   <p class="exp">그래서 급팽창이 일어나는 동안 서로 가까이 있던 영역들이 정보를 주고받을 수 없을 만큼 멀리 떨어지게 됩니다.</p>
+  </div></div>
+ </div>
+ <div id="ivb" hidden>
+  <svg id="jsv" viewBox="0 0 940 320" aria-label="급팽창 이전에 온도가 고르게 된 우주가 급팽창으로 커져 지평선 안쪽이 균질하게 관측되는 과정"><defs>
+   <radialGradient id="jgu" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#f4eeff"/><stop offset=".75" stop-color="#c9b2ff"/><stop offset="1" stop-color="#8f6fe0"/></radialGradient>
+   <radialGradient id="jgy" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff6c8"/><stop offset="1" stop-color="#ffd76b"/></radialGradient>
+   <radialGradient id="jearth" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#bfe6ff"/><stop offset=".55" stop-color="#2f7fd8"/><stop offset="1" stop-color="#173f86"/></radialGradient>
+   <clipPath id="jclip"><rect x="20" y="44" width="500" height="252" rx="12"/></clipPath></defs><g id="jg"></g></svg>
+  <div class="stepbox sx" id="jstep"></div>
+  <div class="ctl">
+   <button class="pb" id="jprev">◀ 이전 단계</button><button class="pb" id="jnext">다음 단계 ▶</button>
+   <span class="sn" id="jnum"></span>
+   <span class="go" id="jcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+  </div>
+  <div class="note ask"><span class="tag">생각해 보기</span><p>급팽창 이론으로 보면, 우주 배경 복사의 온도가 모든 방향에서 거의 같은 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb7">정답 확인</button></div>
+  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">급팽창 이전: 우주 전체가 상호작용하여 온도가 고르게 됨 → 급팽창 → 지평선 안쪽이 균질하게 관측됨</p></div>
+  <div class="ov" id="ov7" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 급팽창 이론으로 보면, 우주 배경 복사의 온도가 모든 방향에서 거의 같은 까닭은 무엇일까요?">
+   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>급팽창 이론으로 보면, 우주 배경 복사의 온도가 모든 방향에서 거의 같은 까닭은 무엇일까요?</b><button type="button" class="x" id="thx7" aria-label="닫기">닫기 ✕</button></div>
+   <p class="ans">지금 관측되는 우주 전체가 급팽창 이전에는 서로 상호작용할 수 있을 만큼 작은 영역이어서 온도가 고르게 되었고, 그 상태 그대로 급팽창으로 커졌기 때문입니다.</p>
+   <p class="exp">급팽창 이전에는 우주의 크기가 그 당시 정보 전달이 가능한 영역보다 작았으므로, 우주 전체가 에너지를 주고받으며 온도가 고르게 될 수 있었습니다.</p>
+   <p class="exp">급팽창으로 이 영역이 엄청나게 커지면서 지금은 서로 정보를 주고받을 수 없을 만큼 멀리 떨어진 A와 B도, 원래는 함께 상호작용했던 같은 영역에 있었던 것입니다. 그래서 반대 방향에서 온 우주 배경 복사의 온도도 거의 같습니다.</p>
+  </div></div>
+ </div>
+ <div id="ivc" hidden>
+  <svg id="ksv" viewBox="0 0 940 320" aria-label="풍선이 엄청나게 커지면 개미가 보는 좁은 영역이 평평하게 보이는 것처럼 급팽창으로 우주가 평탄하게 보이는 까닭"><defs>
+   <radialGradient id="kgb" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#fff3a6"/><stop offset=".6" stop-color="#e3c53a"/><stop offset="1" stop-color="#a8891a"/></radialGradient>
+   <clipPath id="kclip"><rect x="20" y="44" width="500" height="252" rx="12"/></clipPath>
+   <clipPath id="kzclip"><rect x="352" y="82" width="148" height="148"/></clipPath></defs><g id="kg"></g></svg>
+  <div class="stepbox sx" id="kstep"></div>
+  <div class="ctl">
+   <button class="pb" id="kprev">◀ 이전 단계</button><button class="pb" id="knext">다음 단계 ▶</button>
+   <span class="sn" id="knum"></span>
+   <span class="go" id="kcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+  </div>
+  <div class="note ask"><span class="tag">생각해 보기</span><p>둥근 지구의 표면이 우리에게 평평하게 느껴지는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb8">정답 확인</button></div>
+  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">급팽창으로 우주가 엄청나게 커짐 → 관측되는 우주 영역은 평탄하게 보임 → 평탄성 문제 해결</p></div>
+  <div class="ov" id="ov8" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 둥근 지구의 표면이 우리에게 평평하게 느껴지는 까닭은 무엇일까요?">
+   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>둥근 지구의 표면이 우리에게 평평하게 느껴지는 까닭은 무엇일까요?</b><button type="button" class="x" id="thx8" aria-label="닫기">닫기 ✕</button></div>
+   <p class="ans">지구 전체의 크기에 비해 우리가 한 번에 보는 범위가 매우 좁기 때문입니다.</p>
+   <p class="exp">지구는 둥글지만 반지름이 약 6400&nbsp;km로 매우 커서, 우리가 둘러볼 수 있는 좁은 범위의 표면은 거의 평평하게 보입니다.</p>
+   <p class="exp">급팽창 이론도 같은 생각입니다. 급팽창으로 우주 전체가 엄청나게 커졌기 때문에, 우리가 관측할 수 있는 우주 영역은 우주 전체의 아주 작은 일부분이 되어 평탄하게 보입니다. 그래서 초기 우주의 밀도가 임계 밀도와 정밀하게 같아야 할 필요가 없습니다.</p>
+  </div></div>
+ </div>
+</section>
+</main>
+
+<script>
+let TB=0;const NOW=()=>performance.now()/1000-TB;
+function resetAll(){TB=performance.now()/1000;jLast=-1;[I,J,K].forEach(o=>o.go(0))}
+// 애니메이션 시계: TB는 마지막으로 탭이나 작은 메뉴를 누른 시각. 누를 때마다 시계를 0으로 돌리고 1단계부터 다시 시작
+
+// SVG 그리기 도우미
+const SVGNS='http://www.w3.org/2000/svg';
+function mk(t,a,p){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function txt(s,a,p){const e=mk('text',a,p);e.textContent=s;return e}
+// 단계 설명 상자: 파란 제목 + 설명. 비(7 : 1), 식(12 : 4 = 3 : 1), 수와 단위(2.7 K)가 줄 끝에서 갈라지지 않게
+function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=]) /g,'\u00a0$1\u00a0').replace(/ (K|mm)\b/g,'\u00a0$1')}</span>`}
+
+
+// 두 자료가 함께 쓰는 단계 넘기기: 이전·다음 단추, 단계 표시, 안내 문구 (마지막 단계에서 다음 단추는 처음으로)
+// 과정(시간 순서)인 자료는 제목이 'N단계'로 시작 → '다음 단계 ▶', 'n / N 단계'. 과정이 아닌 설명은 내용 제목만 → '다음 ▶', 'n / N'
+function stepper(S,box,prev,next,num,cue,draw){const ST=/^\d+단계/.test(S[0][0]),NX=ST?'다음 단계':'다음';prev.textContent=ST?'◀ 이전 단계':'◀ 이전';
+ const o={s:0,go(s){o.s=Math.max(0,Math.min(S.length-1,s));const[tt,tx]=S[o.s],last=o.s==S.length-1;
+  box.innerHTML=stepHTML(tt,tx);prev.disabled=o.s==0;next.textContent=last?'↺ 처음으로':NX+' ▶';num.textContent=`${o.s+1} / ${S.length}`+(ST?' 단계':'');
+  if(last){cue.className='';cue.textContent=''}else{cue.className='go';cue.innerHTML=`<span class="kb">${NX}</span>${ST?'를':'을'} 눌러 차례대로 알아보세요.`}draw(NOW())}};
+ prev.onclick=()=>o.go(o.s-1);next.onclick=()=>o.go(o.s==S.length-1?0:o.s+1);return o}
+const PT=(g,C)=>(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);   // 오른쪽 정리판 가운데 글
+// 오른쪽 정리판 꾸밈 도우미 (함수 선언이라 앞쪽 자료에서도 쓸 수 있음)
+// pCard: 색 상자, pPill: 둥근 꼬리표, pBox: 가운데 정렬 글줄을 담은 상자(lines: [글, 색, 크기]), pRow: 한 줄 상자(왼쪽 이름, 오른쪽 값), pNote: 아래쪽 회색 덧붙임
+// 그래프 세로축 이름: 축 왼쪽에 세로로(아래에서 위로) 쓰고, 축의 가운데에 맞춤
+function yLab(g,x,ya,yb,s){const y=(ya+yb)/2;return txt(s,{x,y,transform:`rotate(-90 ${x} ${y})`,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},g)}
+function pCard(g,x,y,w,h,c,o){return mk('rect',{x,y,width:w,height:h,rx:10,fill:c,'fill-opacity':o||.1,stroke:c,'stroke-opacity':.45},g)}
+function pPill(g,cx,y,s,c,fs,w){fs=fs||13.5;w=w||s.length*fs+24;mk('rect',{x:cx-w/2,y,width:w,height:fs+12,rx:(fs+12)/2,fill:c,'fill-opacity':.2,stroke:c,'stroke-opacity':.6},g);
+ txt(s,{x:cx,y:y+fs+4,'text-anchor':'middle',fill:c,'font-size':fs,'font-weight':800},g)}
+function pBox(g,y,lines,c){pCard(g,572,y,324,16+lines.length*24,c);lines.forEach(([s,col,fs],i)=>txt(s,{x:734,y:y+26+i*24,'text-anchor':'middle',fill:col||'#e8ecff','font-size':fs||14,'font-weight':fs&&fs<13?400:800},g));return y+16+lines.length*24}
+function pRow(g,y,a,b,c,ca){pCard(g,572,y,324,30,ca||'#ffffff',ca?.1:.05);txt(a,{x:588,y:y+20,fill:ca||'#e8ecff','font-size':14,'font-weight':800},g);txt(b,{x:880,y:y+20,'text-anchor':'end',fill:c,'font-size':14.5,'font-weight':800},g)}
+function pNote(g,y,s){txt(s,{x:734,y,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g)}
+function pArc(cx,cy,r,a0,a1){a0*=Math.PI/180;a1*=Math.PI/180;return`M${(cx+r*Math.cos(a0)).toFixed(1)},${(cy+r*Math.sin(a0)).toFixed(1)}A${r},${r} 0 ${a1-a0>Math.PI?1:0} 1 ${(cx+r*Math.cos(a1)).toFixed(1)},${(cy+r*Math.sin(a1)).toFixed(1)}`}
+function pPanel(g,title){mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
+ txt(title,{x:734,y:72,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g)}
+
+// ---- ④ 급팽창 이론 ----
+// 작은 메뉴: 급팽창 이론 / 지평선 문제 해결 / 평탄성 문제 해결
+[[i4a,iva],[i4b,ivb],[i4c,ivc]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
+const iBox=g=>mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#10122a',stroke:'rgba(255,255,255,.18)'},g);
+const iHead=(g,s)=>txt(s,{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
+const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
+
+// 급팽창 이론 소개: 등장 → 우주의 크기 변화(개념도) → 빅뱅 우주론의 보완
+const IS=[
+ ['급팽창 이론의 등장','1980년대 초 <em>앨런 구스</em>는 빅뱅 우주론의 문제점을 해결하기 위해 급팽창 이론을 제안했습니다. 급팽창 이론에 따르면 빅뱅 직후 <em>약 10<sup>−36</sup>초에서 10<sup>−34</sup>초</em> 사이의 아주 짧은 시간 동안 우주가 <em>빛보다 빠른 속도로 급격하게 팽창</em>했습니다.'],
+ ['우주의 크기 변화','급팽창 시기에 우주의 크기는 <em>아주 짧은 시간 동안 엄청나게</em> 커졌습니다. 급팽창이 끝난 뒤에는 빅뱅 우주론에서 설명하는 것처럼 우주가 계속 팽창하며 식어 갔습니다. (그래프는 크기 변화를 알아보기 쉽게 나타낸 개념도입니다.)'],
+ ['빅뱅 우주론의 보완','급팽창 이론은 빅뱅 우주론을 버리는 것이 아니라 <em>빅뱅 직후의 아주 짧은 시기를 보완</em>하는 이론입니다. 급팽창 이론으로 빅뱅 우주론이 설명하기 어려웠던 <em>지평선 문제</em>와 <em>평탄성 문제</em>를 해결할 수 있습니다.']];
+function iDraw(t){const g=ig;g.innerHTML='';const s=I.s;
+ iHead(g,['빅뱅 직후의 급팽창','우주의 크기 변화 (개념도)','급팽창 이론이 해결한 문제'][s]);iBox(g);
+ const inn=mk('g',{'clip-path':'url(#iclip)'},g);
+ if(s==0){const CY=170,p=(t%10),k=ease((p-1.5)/1.2),r=8+k*88;   // 1.5초 멈춤 → 1.2초 동안 급격히 커짐 → 약 7초 동안 멈춤 → 다시 처음부터
+  mk('circle',{cx:270,cy:CY,r:8,fill:'none',stroke:'#cfd6ee','stroke-width':1.2,'stroke-dasharray':'3 3'},inn);
+  mk('circle',{cx:270,cy:CY,r,fill:'rgba(127,170,255,.22)',stroke:'#7faaff','stroke-width':2},inn);
+  for(let a=0;a<8;a++){const c=Math.cos(a*Math.PI/4),sn=Math.sin(a*Math.PI/4),r1=r+6;if(k>0&&k<1)mk('line',{x1:270+c*r1,y1:CY+sn*r1,x2:270+c*(r1+18),y2:CY+sn*(r1+18),stroke:'#ffd76b','stroke-width':2.2,'stroke-linecap':'round'},inn)}
+  txt(k<.05?'급팽창 전':k<1?'급팽창!':'급팽창 후',{x:270,y:286,'text-anchor':'middle',fill:'#ffd76b','font-size':16,'font-weight':800},inn);   // 글씨는 그림 아래: 안쪽의 급팽창 전 크기(점선 원)를 가리지 않게
+  txt('빅뱅 후 약 10⁻³⁶초 ~ 10⁻³⁴초',{x:36,y:72,fill:'#cfd6ee','font-size':12.5,'font-weight':700},inn)}
+ if(s==1){const X=u=>70+u*420,Y=v=>270-v*200,u1=Math.min(1,(t%7)/5);
+  const yes=u=>u<.12?.04+.05*u/.12:u<.2?.09+.53*ease((u-.12)/.08):.62+.3*Math.pow((u-.2)/.8,.6),no=u=>u<.12?.04+.05*u/.12:.09+.12*Math.pow((u-.12)/.88,.6);
+  mk('rect',{x:X(.12),y:62,width:X(.2)-X(.12),height:208,fill:'rgba(255,215,107,.13)'},inn);
+  txt('급팽창',{x:(X(.12)+X(.2))/2,y:80,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800},inn);
+  mk('line',{x1:70,y1:270,x2:500,y2:270,stroke:'#cfd6ee','stroke-width':1.2},inn);mk('line',{x1:70,y1:270,x2:70,y2:62,stroke:'#cfd6ee','stroke-width':1.2},inn);
+  txt('시간 →',{x:500,y:288,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},inn);yLab(inn,56,62,270,'우주의 크기 →');
+  [[yes,'#7faaff',''],[no,'#a9b1cc','5 5']].forEach(([f,c,da])=>{let d='';for(let u=0;u<=u1+1e-9;u+=.004)d+=(d?'L':'M')+X(u).toFixed(1)+','+Y(f(u)).toFixed(1);mk('path',{d,fill:'none',stroke:c,'stroke-width':2.6,'stroke-dasharray':da},inn)});
+  if(u1>=1){txt('급팽창이 있었던 우주',{x:X(1)-4,y:Y(yes(1))+22,'text-anchor':'end',fill:'#7faaff','font-size':12.5,'font-weight':800},inn);
+   txt('급팽창이 없었다면',{x:X(1)-4,y:Y(no(1))-10,'text-anchor':'end',fill:'#a9b1cc','font-size':12.5,'font-weight':700},inn)}}
+ if(s==2){[['지평선 문제',['급팽창 이전에 우주 전체의','온도가 고르게 됨'],50],['평탄성 문제',['급팽창으로 커진 우주는','평탄하게 보임'],286]].forEach(([a,[b1,b2],x])=>{
+   mk('rect',{x,y:86,width:204,height:170,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.2)'},inn);
+   txt(a,{x:x+102,y:124,'text-anchor':'middle',fill:'#e8ecff','font-size':17,'font-weight':800},inn);
+   txt(b1,{x:x+102,y:166,'text-anchor':'middle',fill:'#cfd6ee','font-size':13},inn);txt(b2,{x:x+102,y:188,'text-anchor':'middle',fill:'#cfd6ee','font-size':13},inn);
+   mk('rect',{x:x+56,y:208,width:92,height:30,rx:15,fill:'#6fe08f',opacity:.2},inn);txt('✔ 해결',{x:x+102,y:229,'text-anchor':'middle',fill:'#6fe08f','font-size':15,'font-weight':800},inn)})}
+ pPanel(g,IS[s][0]);const T=PT(g,734);
+ if(s==0){[['제안','앨런 구스 (1980년대 초)'],['시기','빅뱅 후 약 10⁻³⁶초 ~ 10⁻³⁴초'],['내용','빛보다 빠른 급격한 팽창']].forEach(([a,b],i)=>{const y=88+i*42;
+   pCard(g,572,y,324,34,'#ffffff',.05);txt(a,{x:590,y:y+22,fill:'#a9b1cc','font-size':13,'font-weight':800},g);txt(b,{x:638,y:y+22,fill:'#e8ecff','font-size':14.5,'font-weight':800},g)});
+  pPill(g,734,224,'공간 자체가 빠르게 늘어남','#7faaff',14,240)}
+ if(s==1){pBox(g,88,[['급팽창 시기','#ffd76b',14],['아주 짧은 시간 동안 크기가 엄청나게 커짐']],'#ffd76b');
+  txt('▼',{x:734,y:166,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
+  pBox(g,174,[['급팽창 이후','#7faaff',14],['빅뱅 우주론처럼 팽창하며 식어 감']],'#7faaff');
+  pNote(g,272,'(그래프는 개념도이며, 실제 비율과 다름)')}
+ if(s==2){pBox(g,88,[['빅뱅 우주론 + 급팽창 이론','#e8ecff',16],['빅뱅 직후의 아주 짧은 시기를 보완','#cfd6ee',13.5]],'#7faaff');
+  txt('▼',{x:734,y:172,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
+  pPill(g,652,184,'✔ 지평선 문제 해결','#6fe08f',14,156);pPill(g,816,184,'✔ 평탄성 문제 해결','#6fe08f',14,156);
+  pNote(g,244,'(어떻게 해결하는지는 다음 두 메뉴에서 알아봅니다)')}
+}
+const I=stepper(IS,istep,iprev,inext,inum,icue,iDraw);
+
+// 지평선 문제 해결 (교과서 그림 참고): 급팽창 이전 우주 < 정보 전달 가능 영역 → 급팽창 → 지평선 안쪽이 균질
+// 1단계는 '온도가 고르게 됨 → 급팽창'을 한 번에 이어서 진행하고 마지막 모습을 유지
+const JS=[
+ ['1단계(급팽창 이전과 급팽창)','급팽창 이전에는 우주의 크기가 그 당시 <em>정보 전달이 가능한 영역보다 작아서</em>, 우주 전체가 서로 상호작용하며 에너지를 주고받아 <em>온도가 고르게</em> 되었습니다. 그 뒤 급팽창 시기에 우주는 <em>빛보다 빠른 속도로 급격하게 팽창</em>하여, 온도가 고른 상태 그대로 <em>정보 전달이 가능한 영역보다 훨씬 커졌습니다</em>.'],
+ ['2단계(균질한 우주 배경 복사)','급팽창 이후에는 우주의 크기가 <em>우주의 지평선(관측 가능한 우주)보다 훨씬 큽니다</em>. 지금 관측되는 지평선 안쪽은 급팽창 이전에 서로 상호작용했던 영역이므로, 반대편 끝 A와 B에서 온 우주 배경 복사의 <em>온도도 거의 같습니다</em>.']];
+const JP=[];for(let r=0;r<3;r++)for(let k=0;k<(r?6*r:1);k++){const a=k*2*Math.PI/(r?6*r:1)+r*.3;JP.push([r*18*Math.cos(a),r*18*Math.sin(a),(k*37+r*11)%2])}   // 우주 안의 입자(가운데 1 + 6 + 12), 처음 온도: 높음/낮음
+const JC=[[255,125,105],[90,160,255]],JU=[181,140,255];
+function jDots(g,cx,cy,sc,m,rr){JP.forEach(([x,y,h])=>{const c=JC[h].map((v,i)=>Math.round(v+(JU[i]-v)*m));mk('circle',{cx:cx+x*sc,cy:cy+y*sc,r:rr,fill:`rgb(${c})`,stroke:'rgba(255,255,255,.6)','stroke-width':.8},g)})}
+let jLast=-1,jT0=0;   // 단계가 바뀐 시각: 애니메이션은 한 번만 진행하고 마지막 모습을 유지
+function jDraw(t){const g=jg;g.innerHTML='';const s=J.s,CX=270,CY=170;if(s!=jLast){jLast=s;jT0=t}
+ const p=t-jT0,m=ease((p-.8)/4),k=ease((p-6)/1.8);   // 0.8~4.8초: 온도가 고르게 됨, 6~7.8초: 급팽창
+ iHead(g,[k>0?'급팽창 (빛보다 빠른 팽창)':'급팽창 이전 (우주 < 정보 전달 가능 영역)','급팽창 이후 (지금)'][s]);iBox(g);
+ const inn=mk('g',{'clip-path':'url(#jclip)'},g);
+ if(s==0){const sc=1+k*7,r=56*sc,f=ease((p-4.8)/1);
+  if(k<=0)mk('circle',{cx:CX,cy:CY,r:104,fill:'rgba(255,215,107,.12)'},inn);
+  mk('circle',{cx:CX,cy:CY,r,fill:'rgba(201,178,255,.18)',stroke:'#c9b2ff','stroke-width':2},inn);
+  if(f>0)mk('circle',{cx:CX,cy:CY,r,fill:'url(#jgu)',opacity:.85*f},inn);   // 온도가 고르게 된 우주
+  mk('circle',{cx:CX,cy:CY,r:104,fill:'none',stroke:'#ffd76b','stroke-width':1.6,'stroke-dasharray':'5 4'},inn);
+  jDots(inn,CX,CY,sc,m,6);
+  if(k<=0){txt('정보 전달 가능 영역',{x:CX+76,y:CY-84,fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
+   txt('우주의 크기',{x:CX,y:CY+76,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800},inn);
+   txt(m<1?'에너지를 주고받는 중…':'온도가 고르게 됨',{x:CX,y:286,'text-anchor':'middle',fill:m<1?'#cfd6ee':'#b58cff','font-size':13,'font-weight':800},inn)}
+  else{txt('정보 전달 가능 영역',{x:CX,y:CY-82,'text-anchor':'middle',fill:k>.5?'#7a4a00':'#ffd76b','font-size':12.5,'font-weight':800},inn);
+   if(k>=1)txt('우주의 크기 > 정보 전달 가능 영역',{x:CX,y:286,'text-anchor':'middle',fill:'#4a2a9a','font-size':13.5,'font-weight':800},inn)}}
+ if(s==1){mk('rect',{x:20,y:44,width:500,height:252,fill:'url(#jgu)',opacity:.85},inn);
+  mk('circle',{cx:CX,cy:CY,r:96,fill:'rgba(255,246,200,.55)',stroke:'#c99a00','stroke-width':1.8,'stroke-dasharray':'5 4'},inn);
+  zEarthAt(inn,CX,CY);txt('지구',{x:CX,y:CY+30,'text-anchor':'middle',fill:'#2a2550','font-size':12.5,'font-weight':800},inn);
+  [[CX-96,'A',-16],[CX+96,'B',16]].forEach(([x,l,dx])=>{mk('circle',{cx:x,cy:CY,r:6,fill:'#7c5cd6',stroke:'#fff','stroke-width':1.2},inn);
+   txt(l,{x:x+dx,y:CY+6,'text-anchor':'middle',fill:'#2a2550','font-size':17,'font-weight':800},inn);
+   mk('rect',{x:x-30+(dx<0?34:-34),y:CY-38,width:60,height:22,rx:11,fill:'#fff',opacity:.75},inn);txt('약 2.7 K',{x:x+(dx<0?34:-34),y:CY-22,'text-anchor':'middle',fill:'#4a2a9a','font-size':12.5,'font-weight':800},inn)});
+  txt('우주의 지평선 (관측 가능한 우주)',{x:CX,y:CY-104,'text-anchor':'middle',fill:'#2a2550','font-size':12.5,'font-weight':800},inn);
+  txt('급팽창 후 우주의 크기: 지평선보다 훨씬 큼 (실제 크기는 알 수 없음)',{x:CX,y:288,'text-anchor':'middle',fill:'#2a2550','font-size':12,'font-weight':700},inn)}
+ pPanel(g,JS[s][0]);const T=PT(g,734);
+ if(s==0){pBox(g,84,[['급팽창 이전: 우주 < 정보 전달 가능 영역'],['→ 서로 상호작용하여 온도가 고르게 됨','#ffd76b',13.5]],'#ffd76b');
+  const g2=mk('g',{opacity:.25+.75*ease((p-6)/.6)},g);   // 급팽창이 시작되면 아래 내용이 또렷해짐
+  txt('▼',{x:734,y:164,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g2);
+  pBox(g2,172,[['급팽창: 빛보다 빠른 급격한 팽창'],['→ 고른 온도 그대로 크기만 커짐','#c9b2ff',13.5]],'#c9b2ff');
+  pPill(g2,734,248,'우주의 크기 > 정보 전달 가능 영역','#ffd76b',13.5,280);
+  pNote(g,288,'(그림의 색은 온도를 나타냄)')}
+ if(s==1){pBox(g,88,[['지평선 안쪽은 급팽창 이전에'],['서로 상호작용했던 영역']],'#c9b2ff');
+  [[572,'A 방향'],[740,'B 방향']].forEach(([x,a])=>{pCard(g,x,166,156,58,'#c9b2ff');txt(a,{x:x+78,y:186,'text-anchor':'middle',fill:'#c9b2ff','font-size':13,'font-weight':800},g);
+   txt('약 2.7 K',{x:x+78,y:212,'text-anchor':'middle',fill:'#e8ecff','font-size':19,'font-weight':800},g)});
+  pPill(g,734,240,'✔ 지평선 문제 해결','#6fe08f',15,200)}
+}
+function zEarthAt(g,x,y){mk('circle',{cx:x,cy:y,r:12,fill:'url(#jearth)',stroke:'#fff','stroke-width':1},g);   // 그라디언트는 같은 그림판 안의 것을 써야 숨긴 그림판 문제 없이 보임
+ mk('path',{d:`M${x-7},${y-5}q4,-4 8,0q-1,5 -5,6q-4,-1 -3,-6zM${x+2},${y+4}q4,-2 6,1q-2,4 -6,3z`,fill:'#5fbf6a',opacity:.9},g)}
+const J=stepper(JS,jstep,jprev,jnext,jnum,jcue,jDraw);
+
+// 평탄성 문제 해결 (교과서 그림 참고): 작은 풍선 위의 개미 → 풍선이 엄청나게 커지면 → 급팽창과 평탄한 우주
+const KS=[
+ ['작은 풍선 위의 개미','작은 풍선 위에 있는 개미는 자기 주변의 표면이 <em>둥글게 휘어 있다</em>는 것을 쉽게 알 수 있습니다. 오른쪽 네모는 개미 주변을 크게 확대한 모습입니다.'],
+ ['풍선이 엄청나게 커지면','풍선이 엄청나게 커지면 개미가 볼 수 있는 좁은 영역은 <em>거의 평평하게</em> 보입니다. 둥근 지구의 표면이 우리에게 평평하게 느껴지는 것도 같은 까닭입니다.'],
+ ['급팽창과 평탄성 문제','급팽창 시기에 우주의 크기가 급격하게 커졌으므로, 우주가 완벽하게 평탄하지 않더라도 <em>현재 관측되는 우주 영역은 평탄하게</em> 보일 수 있습니다. 따라서 초기 우주의 밀도가 <em>반드시 특정한 값이어야 하는 까닭은 없습니다</em>.']];
+function kAnt(g,x,y,sc){const q=mk('g',{transform:`translate(${x},${y}) scale(${sc})`},g);   // 개미 (위에서 옆으로 본 모습, 크기 sc배)
+ [[-9,-3],[-3,-3],[3,-3]].forEach(([lx])=>{mk('path',{d:`M${lx},-4l-4,4M${lx},-4l4,4`,stroke:'#1b1b1b','stroke-width':1.1,fill:'none'},q)});
+ mk('ellipse',{cx:-11,cy:-6,rx:4.5,ry:3.6,fill:'#1b1b1b'},q);mk('ellipse',{cx:-3,cy:-6,rx:3.6,ry:2.6,fill:'#1b1b1b'},q);mk('ellipse',{cx:6,cy:-7,rx:6,ry:4.4,fill:'#1b1b1b'},q);
+ mk('path',{d:'M14,-8q5,-6 8,-4M14,-8q6,-2 8,2',stroke:'#1b1b1b','stroke-width':.9,fill:'none'},q)}
+function kScene(g,R,label){const AX=170,AY=118,CY=AY+R;   // 풍선(반지름 R)의 꼭대기에 개미, 오른쪽 네모에 확대한 모습
+ const inn=mk('g',{'clip-path':'url(#kclip)'},g);
+ mk('circle',{cx:AX,cy:CY,r:R,fill:'url(#kgb)'},inn);kAnt(inn,AX,AY,.9);
+ mk('rect',{x:AX-24,y:AY-24,width:48,height:48,fill:'none',stroke:'#ff4d4d','stroke-width':2},inn);
+ mk('path',{d:`M${AX+24},${AY-24}L352,82M${AX+24},${AY+24}L352,230`,stroke:'#ff4d4d','stroke-width':1,'stroke-dasharray':'3 3',opacity:.8},inn);
+ const Z=3.1,zc=mk('g',{'clip-path':'url(#kzclip)'},g);mk('rect',{x:352,y:82,width:148,height:148,fill:'#9fd0f0'},zc);
+ mk('circle',{cx:426,cy:150+R*Z,r:R*Z,fill:'url(#kgb)'},zc);kAnt(zc,426,150,2.6);
+ mk('rect',{x:352,y:82,width:148,height:148,fill:'none',stroke:'#ff4d4d','stroke-width':2.4},g);
+ kPill(g,426,250,'개미 주변을 확대','#b3261e',12.5);
+ if(label)kPill(g,426,276,label,'#7a4a00',14)}
+function kPill(g,x,y,s,c,fs){const w=s.length*fs*.92+18;mk('rect',{x:x-w/2,y:y-fs-3,width:w,height:fs+10,rx:(fs+10)/2,fill:'#fff',opacity:.85},g);
+ txt(s,{x,y,'text-anchor':'middle',fill:c,'font-size':fs,'font-weight':800},g)}   // 노란 풍선 위에서도 읽히도록 흰 바탕
+function kDraw(t){const g=kg;g.innerHTML='';const s=K.s;
+ iHead(g,['작은 풍선','풍선이 엄청나게 커지면','급팽창으로 커진 우주'][s]);
+ mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#cfe8f8',stroke:'rgba(255,255,255,.18)'},g);
+ if(s==0)kScene(g,62,'둥글게 휘어 보임');
+ if(s==1){const k=ease(((t%7)-.8)/2.6),R=62*Math.pow(40,k);kScene(g,R,k<1?'':'거의 평평하게 보임')}
+ if(s==2){kScene(g,62*40,'관측 가능한 우주: 평탄');kPill(g,170,166,'관측 가능한 우주','#b3261e',12.5);
+  kPill(g,170,226,'급팽창으로 엄청나게 커진 우주','#5b4a10',12.5);
+  txt('(개미 = 관측자, 풍선 = 우주)',{x:170,y:284,'text-anchor':'middle',fill:'#5b4a10','font-size':12},g)}
+ pPanel(g,KS[s][0]);const T=PT(g,734);
+ if(s<2){const big=s==1;pCard(g,572,88,324,112,'#ffd76b',.07);   // 왼쪽: 풍선, 오른쪽: 개미가 보는 표면의 모양
+  if(big){mk('path',{d:'M580,192Q626,112 672,192Z',fill:'#e3c53a'},g);mk('circle',{cx:626,cy:153,r:2.6,fill:'#1b1b1b'},g)}
+  else{mk('circle',{cx:626,cy:150,r:26,fill:'#e3c53a'},g);mk('circle',{cx:626,cy:124,r:2.6,fill:'#1b1b1b'},g)}
+  txt(big?'엄청나게 커진 풍선':'작은 풍선',{x:626,y:big?108:192,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g);
+  mk('rect',{x:700,y:100,width:180,height:70,rx:6,fill:'#9fd0f0',opacity:.18},g);
+  mk('path',{d:big?'M708,150Q790,140 872,150':'M708,166Q790,92 872,166',fill:'none',stroke:'#e3c53a','stroke-width':3.2},g);
+  mk('circle',{cx:790,cy:big?145:129,r:3.2,fill:'#fff'},g);
+  txt('개미가 보는 표면',{x:790,y:190,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g);
+  if(!big)pBox(g,214,[['풍선이 작으면 표면이'],['둥글게 휘어 보임','#ffd76b',15]],'#ffd76b');
+  else pBox(g,214,[['좁은 영역은 거의 평평하게 보임','#ffd76b',15],['(둥근 지구가 평평하게 느껴지는 것과 같음)','#a9b1cc',12]],'#ffd76b')}
+ if(s==2){pBox(g,88,[['급팽창: 우주가 급격하게 커짐'],['→ 관측되는 우주 영역은 평탄하게 보임','#ffd76b']],'#7faaff');
+  pBox(g,166,[['초기 우주의 밀도가'],['특정한 값일 필요가 없음','#ffd76b',15]],'#ffd76b');
+  pPill(g,734,244,'✔ 평탄성 문제 해결','#6fe08f',15,200)}
+}
+const K=stepper(KS,kstep,kprev,knext,knum,kcue,kDraw);
+I.go(0);J.go(0);K.go(0);
+(function iLoop(now){if(!p4.hidden){const t=(now/1000-TB);if(!iva.hidden)iDraw(t);else if(!ivb.hidden)jDraw(t);else kDraw(t)}requestAnimationFrame(iLoop)})(performance.now());
+// 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
+[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
+ const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
+</script>
+<script src="../copyright.js"></script>
+</body>
+</html>

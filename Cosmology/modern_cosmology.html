@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>현대 우주론</title>
+<style>
+/* expansion.html과 같은 규칙
+   색: 남색 하나를 기본 강조색으로 / 상자: 옅은 회색 판 / 모서리: 판 14px, 버튼 10px / 그림판: 밤하늘 남색 */
+:root{--bg:#fff;--fg:#1b1f2a;--card:#f3f4f8;--bd:#d5d8e2;--bline:#d9d9d6;--bcard:#fff;--bfg:#1c1c1c;--acc:#5468d4;--acc-bg:#eef0fc;--acc-bd:#c3caf2;--on-acc:#fff;--frame:transparent;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}
+/* 탭 안에서 고르는 단추는 라벤더(연보라) (위쪽 큰 탭의 남색과 구분) */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+/* 기억하기(꼭 기억할 내용) 꼬리표: 생각해 보기(남색)와 구분되는 주황색 */
+:root{--mem:#c2620a;--on-mem:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mem:#ffb357;--on-mem:#2a1600}}
+:root[data-theme="dark"]{--mem:#ffb357;--on-mem:#2a1600}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
+button,input{font-family:inherit}
+main{max-width:960px;margin:0 auto;padding:14px}
+/* 제목 줄: 제목 …… [← 돌아가기] (좁은 화면에서는 줄바꿈) */
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
+.pnum{margin:0;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;text-wrap:balance}
+.back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--bline)}
+/* 학습 메뉴 탭 (expansion.html과 같은 모양) */
+/* 탭: 넓은 화면은 한 줄, 좁으면 여러 줄 */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.tabs button{flex:1 1 150px}
+.tabs button{padding:9px 8px;font-size:.95rem;line-height:1.3;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.note{margin-bottom:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem}
+.note p{margin:0}
+/* 탭을 바꿀 때 내용이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+/* 그림판: 패드에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한 */
+svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
+section svg{max-height:max(300px,calc(100vh - 300px))}
+section svg{max-height:max(300px,calc(100dvh - 300px))}
+/* 그림 아래 조작 줄 */
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
+.pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
+.pb:disabled{opacity:.4;cursor:default}
+/* 과정 단계가 끝나면 관측 결과 단추가 되풀이하여 빛남 */
+.pb.glow{animation:pbGlow 1.6s ease-in-out infinite}
+@keyframes pbGlow{0%,100%{box-shadow:0 0 0 0 rgba(84,104,212,.55);filter:brightness(1)}50%{box-shadow:0 0 0 7px rgba(84,104,212,0),0 0 16px 3px rgba(84,104,212,.55);filter:brightness(1.18)}}
+@media (prefers-reduced-motion:reduce){.pb.glow{animation:none;box-shadow:0 0 0 3px rgba(84,104,212,.45)}}
+/* 학생에게 할 일을 알려 주는 말: 실행 단추와 같은 남색 굵은 글씨로 설명과 구분 */
+.go{color:var(--acc);font-weight:700}
+/* 글 속의 단추 이름 꼬리표: 실제 단추와 같은 색의 작은 상자 (.kb 실행 단추=남색, .kb.sub 선택 단추=연보라) */
+.kb{display:inline-block;padding:0 .45em;margin:0 .1em;border-radius:6px;background:var(--acc);color:var(--on-acc);font-size:.9em;font-weight:700;line-height:1.55;vertical-align:.05em;white-space:nowrap}
+.kb.sub{background:var(--sub-bg);color:var(--sub-tx);border:1px solid var(--sub-bd)}
+/* 생각해 보기: 한 줄에 [꼬리표(남색)] 질문 [정답 확인(흰 바탕, 파란 글씨·테두리)] → 누르면 팝업에 질문과 답 */
+.note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
+.note.ask p{margin:0;font-weight:600}
+.ask2{margin-top:6px!important}
+.tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.tag.mem{background:var(--mem);color:var(--on-mem)}
+.memo .mtx{margin:0;font-weight:700;color:var(--mem);font-size:.95rem}
+.open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
+.open-think:hover{background:var(--card)}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
+.think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg);font-family:inherit}
+.think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
+.think .exp{margin:0;font-size:.93rem;line-height:1.6}
+.think .exp+.exp{margin-top:6px}
+/* ① 현대 우주론: 정상 우주론과 빅뱅 우주론 그림판을 나란히 (좁은 화면에서는 위아래로) */
+/* 위: 두 그림판 / 가운데: 안내 문장과 정답 확인 / 아래: 두 우주론의 질량·밀도·온도 고르기 */
+.cpair{display:flex;gap:10px}
+.cpair>svg,.cpair>.cq{flex:1 1 0;min-width:0}
+.cpair>svg{max-height:max(220px,calc(100vh - 425px))}
+.cpair>svg{max-height:max(220px,calc(100dvh - 425px))}
+.cpair+.cpair{margin-top:6px}
+.cq .th{display:none;grid-column:1/-1;font-size:.9rem}
+@media (max-width:600px){.cpair{flex-direction:column}.cpair>svg,.cpair>.cq{flex:none}.cq .th{display:block}}
+.crow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:8px 2px 0}
+#ccue{flex:0 1 auto;font-size:.95rem}
+/* 고르기 줄: [이름] [증가|일정|감소] (연보라 선택 단추) [맞음·틀림 표시] */
+:root{--ok:#13894a;--no:#d0353b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ok:#6fe08f;--no:#ff7b7b}}
+:root[data-theme="dark"]{--ok:#6fe08f;--no:#ff7b7b}
+.cq{background:var(--card);border-radius:14px;padding:8px 14px;display:grid;grid-template-columns:auto 1fr 6.6em;gap:6px 12px;align-items:center}
+.cq .nm{font-weight:700;font-size:.95rem}
+.bs{display:flex;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
+.bs button{flex:1 1 0;padding:6px 8px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.93rem;font-weight:600;cursor:pointer}
+.bs button+button{border-left:1px solid var(--sub-bd)}
+.bs button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
+.cq .mk{font-size:.86rem;font-weight:700}
+.cq .mk.ok{color:var(--ok)}.cq .mk.no{color:var(--no)}.cq .mk.na{opacity:.7}
+#ccheck{flex:none}
+/* 기억하기는 정답 확인을 누른 뒤에 보임 (자리는 미리 차지해 화면이 움직이지 않음) */
+#cmemo.wait{visibility:hidden}
+/* ② 빅뱅 우주론의 증거: 작은 메뉴(연보라)와 단계 설명 */
+.subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.subtabs button{padding:5px 16px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:700;cursor:pointer}
+.subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+#hsv,#bsv{max-height:max(240px,calc(100vh - 360px))}
+#hsv,#bsv{max-height:max(240px,calc(100dvh - 360px))}
+.stepbox{margin-top:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.55;min-height:4.4em}
+.stepbox b{color:var(--acc);flex:none;white-space:nowrap;margin-right:.45em}
+/* 단계 설명: 파란 제목 오른쪽에 설명을 두어, 둘째 줄부터 제목 끝에 맞춰 들여쓰기 (좁은 화면에서는 한 덩어리로) */
+.stepbox.sx{display:flex;align-items:baseline}
+.stepbox.sx>span{flex:1;min-width:0}
+@media (max-width:560px){.stepbox.sx{display:block}.stepbox.sx b{white-space:normal}}
+.stepbox em{font-style:normal;font-weight:700;color:#1747c8}   /* 설명 속 중요한 내용 (진한 파란색) */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stepbox em{color:#7fb0ff}}
+:root[data-theme="dark"] .stepbox em{color:#7fb0ff}
+#bstep,#istep,#jstep,#kstep,#rstep,#lstep,#astep,#qstep{min-height:calc(3 * 1.55em + 16px)}
+#zstep,#fstep{min-height:calc(2 * 1.55em + 16px)}   /* 빅뱅 우주론의 문제점: 설명이 모두 2줄 이하라 2줄 높이만 확보 */
+@media (max-width:900px){#zstep,#fstep{min-height:calc(3 * 1.55em + 16px)}}   /* 좁은 화면에서는 3줄이 되는 설명이 많아 3줄 높이 */
+#zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100vh - 360px))}
+#zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100dvh - 360px))}
+#zcue,#fcue,#icue,#jcue,#kcue,#rcue,#lcue,#acue,#qcue{flex:1 1 220px;font-size:.92rem}
+#zva[hidden],#zvb[hidden],#iva[hidden],#ivb[hidden],#ivc[hidden],#rva[hidden],#rvb[hidden],#ava[hidden],#avb[hidden]{display:none}   /* 우주 배경 복사: 단계마다 설명이 2~3줄로 달라도 아래 줄이 움직이지 않게 3줄 높이 확보 */
+.sn{font-size:.9rem;font-weight:700;opacity:.8}
+#hcue,#bcue{flex:1 1 220px;font-size:.92rem}
+#eva[hidden],#evb[hidden]{display:none}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
+<div class="titlebar"><p class="pnum">탐구 01</p><h1>현대 우주론</h1><a class="back" href="./Cosmology_index.html">← [현대 우주론의 정립] 메뉴로 돌아가기</a></div>
+
+<!-- ① 현대 우주론: 정상 우주론(왼쪽)과 빅뱅 우주론(오른쪽)을 같은 팽창으로 나란히 비교
+     원 = 우주의 일부분(평면으로 나타냄), 점 = 은하(알아보기 쉽게 규칙적으로 배열). 원의 색 = 온도
+     학생이 질량·밀도·온도의 변화를 직접 고른 뒤 정답 확인 -->
+<section id="p1">
+ <div class="note"><p>정상 우주론과 빅뱅 우주론을 비교해 봅시다. 원은 우주의 일부분을 평면으로 나타낸 것이고, 점은 은하입니다. 실제 은하는 불규칙하게 분포하지만, 변화를 알아보기 쉽도록 규칙적으로 배열하였습니다.</p></div>
+ <div class="cpair"><svg id="css" viewBox="0 0 460 312" aria-label="정상 우주론에 따라 팽창하는 우주"></svg><svg id="cbb" viewBox="0 0 460 312" aria-label="빅뱅 우주론에 따라 팽창하는 우주"></svg></div>
+ <div class="crow"><span class="go" id="ccue">팽창하는 두 우주를 관찰하고, 질량, 밀도, 온도 변화를 골라 보세요.</span><button type="button" class="open-think" id="ccheck">정답 확인</button></div>
+ <div class="cpair"><div class="cq" id="cqs"><b class="th" style="color:#0f9a86">정상 우주론</b></div><div class="cq" id="cqb"><b class="th" style="color:#c2620a">빅뱅 우주론</b></div></div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>두 우주론 중 어느 것이 옳은지 알아내려면 무엇을 관측해야 할까요?</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
+ <div class="note ask ask2 memo wait" id="cmemo"><span class="tag mem">기억하기</span><p class="mtx">정상 우주론: 질량 증가, 밀도·온도 일정 &nbsp;/&nbsp; 빅뱅 우주론: 질량 일정, 밀도·온도 감소</p></div>
+ <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 두 우주론 중 어느 것이 옳은지 알아내려면 무엇을 관측해야 할까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>두 우주론 중 어느 것이 옳은지 알아내려면 무엇을 관측해야 할까요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">과거의 우주가 지금과 달랐는지를 확인하면 됩니다.</p>
+  <p class="exp">정상 우주론에서는 우주가 언제나 지금과 같은 모습이지만, 빅뱅 우주론에서는 과거의 우주가 지금보다 훨씬 뜨겁고 밀도가 컸습니다. 따라서 뜨거웠던 초기 우주가 남긴 빛(우주 배경 복사)이 관측되거나, 먼 우주(과거의 우주)가 가까운 우주와 다르게 보인다면 빅뱅 우주론을 뒷받침하는 증거가 됩니다.</p>
+  <p class="exp">실제로 1965년에 우주 배경 복사가 발견되면서 빅뱅 우주론이 널리 받아들여졌습니다. 자세한 내용은 탐구 02(빅뱅 우주론)의 <b>빅뱅 우주론의 근거</b>에서 알아봅니다.</p>
+ </div></div>
+</section>
+</main>
+
+<script>
+let TB=0;const NOW=()=>performance.now()/1000-TB;
+function resetAll(){TB=performance.now()/1000;cR=C0;cHold=0}
+// 애니메이션 시계: TB는 마지막으로 탭이나 작은 메뉴를 누른 시각. 누를 때마다 시계를 0으로 돌리고 1단계부터 다시 시작
+
+// SVG 그리기 도우미
+const SVGNS='http://www.w3.org/2000/svg';
+function mk(t,a,p){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function txt(s,a,p){const e=mk('text',a,p);e.textContent=s;return e}
+// 단계 설명 상자: 파란 제목 + 설명. 비(7 : 1), 식(12 : 4 = 3 : 1), 수와 단위(2.7 K)가 줄 끝에서 갈라지지 않게
+function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=]) /g,'\u00a0$1\u00a0').replace(/ (K|mm)\b/g,'\u00a0$1')}</span>`}
+
+
+// ---- ① 현대 우주론: 정상 우주론 vs. 빅뱅 우주론 ----
+// 우주의 크기(배율) cR: 처음 C0 → 1 (2√2 ≈ 2.8배, 넓이 8배). 일정한 비율로 커지도록(지수적으로) 천천히 키우고, 끝나면 잠깐 멈췄다가 처음부터 되풀이 (페이지를 열면 바로 시작)
+// 은하는 우주와 함께 늘어나는 좌표(원의 반지름 = 1)의 격자점에 규칙적으로 놓음
+//  빅뱅 우주론: 처음 격자(간격 CA)의 은하만 그대로 → 은하 사이가 벌어짐(질량 일정, 밀도·온도 감소)
+//  정상 우주론: 넓이가 2배가 될 때마다 격자 사이(가운데 점 → 절반 간격 격자 …)에 새 은하가 생겨남 → 밀도 일정, 질량 증가
+//   새 은하는 넓이가 늘어나는 만큼 서서히 나타나며, 생겨나는 동안 초록색으로 표시
+const C0=1/(2*Math.SQRT2),CA=.45,CIN=.95,CCX=230,CCY=180,CRM=96,CGROW=12,CHOLD=2;
+const CPT=[];   // [x, y, 생겨나는 단계 L(0~3)]  (CA/4 간격 격자에서 고름. 넓이가 2배 될 때마다 한 단계)
+for(let i=-10;i<=10;i++)for(let j=-10;j<=10;j++){const x=i*CA/4,y=j*CA/4;if(Math.hypot(x,y)>CIN)continue;
+ const m=v=>((v%4)+4)%4,L=m(i)==0&&m(j)==0?0:m(i)==2&&m(j)==2?1:i%2==0&&j%2==0?2:Math.abs(i%2)==1&&Math.abs(j%2)==1?3:4;if(L<4)CPT.push([x,y,L])}
+let cR=C0,craf=0,cLast=0,cHold=0;
+function cDraw(svg,ss){svg.innerHTML='';const R=cR,rp=CRM*R,q=R/C0,col=ss?'#6fe0c8':'#ffb357';
+ txt('',{x:16,y:29,fill:col,'font-size':20,'font-weight':800},svg).innerHTML=(ss?'정상 우주론':'빅뱅 우주론')+`<tspan font-size="14" font-weight="700" dx="6">(${ss?'Steady State Theory':'Big Bang Theory'})</tspan>`;   // 우리말 이름 뒤 괄호 속 영어 이름
+ (ss?['우주가 팽창하여 생긴 공간에 새로운 물질이 계속 생겨난다.','우주의 시작과 끝이 없다.']
+    :['매우 뜨겁고 밀도가 큰 한 점에서 대폭발로 시작되어 팽창한다.','새로 생기는 물질이 없다.'])
+  .forEach((s,i)=>txt(s,{x:16,y:50+i*16,fill:'#c9d0ea','font-size':12.5},svg));
+ // 우주(원): 색으로 온도를 나타냄. 두 우주론 모두 같은 모습에서 출발하고, 빅뱅 우주론만 팽창할수록 식음(붉은빛 → 푸른빛)
+ const k=ss?0:(1-1/q)/(1-C0),mix=(a,b)=>Math.round(a+(b-a)*k);
+ mk('circle',{cx:CCX,cy:CCY,r:rp,fill:`rgba(${mix(255,70)},${mix(140,100)},${mix(70,190)},${(.34-.18*k).toFixed(3)})`,stroke:'rgba(200,215,255,.55)','stroke-dasharray':'4 4'},svg);
+ let n=0;
+ for(const [ux,uy,L] of CPT){let op=L==0?1:ss?Math.min(1,Math.max(0,q*q/2**(L-1)-1)):0;if(op<=0)continue;if(op>=.5)n++;
+  const x=CCX+ux*rp,y=CCY+uy*rp,nw=op<1;
+  mk('circle',{cx:x,cy:y,r:4.3,fill:nw?'#9dffb0':'#cfd8ff',opacity:(.2*op).toFixed(3)},svg);
+  mk('circle',{cx:x,cy:y,r:nw?2.9:2.5,fill:nw?'#9dffb0':'#fff',opacity:op.toFixed(3)},svg)}
+ const cn=txt('',{x:444,y:29,'text-anchor':'end',fill:'#e8ecff','font-size':13.5,'font-weight':700},svg);cn.textContent=`은하 수: ${n}개`;
+ // 범례: 원의 색(온도), 새로 생긴 은하
+ const lg=mk('linearGradient',{id:'cg'+(ss?'s':'b')},mk('defs',{},svg));
+ [['0','rgb(70,100,190)'],['1','rgb(255,140,70)']].forEach(([o,c])=>mk('stop',{offset:o,'stop-color':c},lg));
+ mk('rect',{x:16,y:294,width:44,height:8,rx:4,fill:`url(#cg${ss?'s':'b'})`},svg);
+ txt('원의 색: 온도 (붉을수록 높음)',{x:66,y:302,fill:'#a9b1cc','font-size':11.5},svg);
+ if(ss){mk('circle',{cx:356,cy:298,r:3.6,fill:'#9dffb0'},svg);txt('새로 생긴 은하',{x:444,y:302,'text-anchor':'end',fill:'#9dffb0','font-size':12,'font-weight':700},svg)}
+}
+function cAll(){cDraw(css,true);cDraw(cbb,false)}
+function cLoop(now){const dt=Math.min(.05,(now-cLast)/1000);cLast=now;
+ if(cR>=1){cHold+=dt;if(cHold>=CHOLD){cHold=0;cR=C0}}
+ else cR=Math.min(1,cR*Math.pow(1/C0,dt/CGROW));
+ cAll();craf=requestAnimationFrame(cLoop)}
+// 질량·밀도·온도 고르기 → 정답 확인
+const CQN=['질량','밀도','온도'],CQV=['증가','일정','감소'],CANS={s:['증가','일정','일정'],b:['일정','감소','감소']},cSel={s:[],b:[]};
+function cMark(clear){if(clear){ccue.className='go';ccue.textContent='팽창하는 두 우주를 관찰하고, 질량, 밀도, 온도 변화를 골라 보세요.'}for(const t of ['s','b'])CQN.forEach((nm,i)=>{const m=document.getElementById(`cm${t}${i}`);
+ if(clear){m.textContent='';m.className='mk';return}const v=cSel[t][i],a=CANS[t][i];
+ m.className='mk '+(v==null?'na':v==a?'ok':'no');m.textContent=v==null?`정답: ${a}`:v==a?'✔ 맞음':`✘ 정답: ${a}`})}
+for(const t of ['s','b']){const box=document.getElementById('cq'+t);
+ CQN.forEach((nm,i)=>{const l=document.createElement('span');l.className='nm';l.textContent=nm;box.appendChild(l);
+  const bs=document.createElement('div');bs.className='bs';bs.setAttribute('role','group');bs.setAttribute('aria-label',(t=='s'?'정상 우주론':'빅뱅 우주론')+'의 '+nm+' 변화');
+  CQV.forEach(v=>{const b=document.createElement('button');b.type='button';b.textContent=v;b.setAttribute('aria-pressed','false');
+   b.onclick=()=>{cSel[t][i]=v;bs.querySelectorAll('button').forEach(x=>{x.classList.toggle('on',x==b);x.setAttribute('aria-pressed',x==b)});cMark(true)};bs.appendChild(b)});
+  box.appendChild(bs);const m=document.createElement('span');m.id=`cm${t}${i}`;m.className='mk';box.appendChild(m)})}
+ccheck.onclick=()=>{cMark(false);cmemo.classList.remove('wait');
+ const ok=['s','b'].reduce((a,t)=>a+CANS[t].filter((v,i)=>cSel[t][i]==v).length,0);
+ ccue.className='';ccue.textContent=ok==6?'6개를 모두 맞혔습니다!':`6개 중 ${ok}개를 맞혔습니다. 그림을 다시 관찰하며 정답과 비교해 보세요.`};
+cAll();cLast=performance.now();craf=requestAnimationFrame(cLoop);   // 단추 없이 처음부터 천천히 되풀이
+
+// 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
+[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
+ const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
+</script>
+<script src="../copyright.js"></script>
+</body>
+</html>

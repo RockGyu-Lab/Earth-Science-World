@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>암흑 물질의 발견</title>
+<style>
+/* expansion.html과 같은 규칙
+   색: 남색 하나를 기본 강조색으로 / 상자: 옅은 회색 판 / 모서리: 판 14px, 버튼 10px / 그림판: 밤하늘 남색 */
+:root{--bg:#fff;--fg:#1b1f2a;--card:#f3f4f8;--bd:#d5d8e2;--bline:#d9d9d6;--bcard:#fff;--bfg:#1c1c1c;--acc:#5468d4;--acc-bg:#eef0fc;--acc-bd:#c3caf2;--on-acc:#fff;--frame:transparent;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}
+/* 탭 안에서 고르는 단추는 라벤더(연보라) (위쪽 큰 탭의 남색과 구분) */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+/* 기억하기(꼭 기억할 내용) 꼬리표: 생각해 보기(남색)와 구분되는 주황색 */
+:root{--mem:#c2620a;--on-mem:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mem:#ffb357;--on-mem:#2a1600}}
+:root[data-theme="dark"]{--mem:#ffb357;--on-mem:#2a1600}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
+button,input{font-family:inherit}
+main{max-width:960px;margin:0 auto;padding:14px}
+/* 제목 줄: 제목 …… [← 돌아가기] (좁은 화면에서는 줄바꿈) */
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
+.pnum{margin:0;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;text-wrap:balance}
+.back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--bline)}
+/* 학습 메뉴 탭 (expansion.html과 같은 모양) */
+/* 탭: 넓은 화면은 한 줄, 좁으면 여러 줄 */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.tabs button{flex:1 1 150px}
+.tabs button{padding:9px 8px;font-size:.95rem;line-height:1.3;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.note{margin-bottom:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem}
+.note p{margin:0}
+/* 탭을 바꿀 때 내용이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+/* 그림판: 패드에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한 */
+svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
+section svg{max-height:max(300px,calc(100vh - 300px))}
+section svg{max-height:max(300px,calc(100dvh - 300px))}
+/* 그림 아래 조작 줄 */
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
+.pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
+.pb:disabled{opacity:.4;cursor:default}
+/* 과정 단계가 끝나면 관측 결과 단추가 되풀이하여 빛남 */
+.pb.glow{animation:pbGlow 1.6s ease-in-out infinite}
+@keyframes pbGlow{0%,100%{box-shadow:0 0 0 0 rgba(84,104,212,.55);filter:brightness(1)}50%{box-shadow:0 0 0 7px rgba(84,104,212,0),0 0 16px 3px rgba(84,104,212,.55);filter:brightness(1.18)}}
+@media (prefers-reduced-motion:reduce){.pb.glow{animation:none;box-shadow:0 0 0 3px rgba(84,104,212,.45)}}
+/* 학생에게 할 일을 알려 주는 말: 실행 단추와 같은 남색 굵은 글씨로 설명과 구분 */
+.go{color:var(--acc);font-weight:700}
+/* 글 속의 단추 이름 꼬리표: 실제 단추와 같은 색의 작은 상자 (.kb 실행 단추=남색, .kb.sub 선택 단추=연보라) */
+.kb{display:inline-block;padding:0 .45em;margin:0 .1em;border-radius:6px;background:var(--acc);color:var(--on-acc);font-size:.9em;font-weight:700;line-height:1.55;vertical-align:.05em;white-space:nowrap}
+.kb.sub{background:var(--sub-bg);color:var(--sub-tx);border:1px solid var(--sub-bd)}
+/* 생각해 보기: 한 줄에 [꼬리표(남색)] 질문 [정답 확인(흰 바탕, 파란 글씨·테두리)] → 누르면 팝업에 질문과 답 */
+.note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
+.note.ask p{margin:0;font-weight:600}
+.ask2{margin-top:6px!important}
+.tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.tag.mem{background:var(--mem);color:var(--on-mem)}
+.memo .mtx{margin:0;font-weight:700;color:var(--mem);font-size:.95rem}
+.open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
+.open-think:hover{background:var(--card)}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
+.think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg);font-family:inherit}
+.think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
+.think .exp{margin:0;font-size:.93rem;line-height:1.6}
+.think .exp+.exp{margin-top:6px}
+/* ① 현대 우주론: 정상 우주론과 빅뱅 우주론 그림판을 나란히 (좁은 화면에서는 위아래로) */
+/* 위: 두 그림판 / 가운데: 안내 문장과 정답 확인 / 아래: 두 우주론의 질량·밀도·온도 고르기 */
+.cpair{display:flex;gap:10px}
+.cpair>svg,.cpair>.cq{flex:1 1 0;min-width:0}
+.cpair>svg{max-height:max(220px,calc(100vh - 425px))}
+.cpair>svg{max-height:max(220px,calc(100dvh - 425px))}
+.cpair+.cpair{margin-top:6px}
+.cq .th{display:none;grid-column:1/-1;font-size:.9rem}
+@media (max-width:600px){.cpair{flex-direction:column}.cpair>svg,.cpair>.cq{flex:none}.cq .th{display:block}}
+.crow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:8px 2px 0}
+#ccue{flex:0 1 auto;font-size:.95rem}
+/* 고르기 줄: [이름] [증가|일정|감소] (연보라 선택 단추) [맞음·틀림 표시] */
+:root{--ok:#13894a;--no:#d0353b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ok:#6fe08f;--no:#ff7b7b}}
+:root[data-theme="dark"]{--ok:#6fe08f;--no:#ff7b7b}
+.cq{background:var(--card);border-radius:14px;padding:8px 14px;display:grid;grid-template-columns:auto 1fr 6.6em;gap:6px 12px;align-items:center}
+.cq .nm{font-weight:700;font-size:.95rem}
+.bs{display:flex;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
+.bs button{flex:1 1 0;padding:6px 8px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.93rem;font-weight:600;cursor:pointer}
+.bs button+button{border-left:1px solid var(--sub-bd)}
+.bs button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
+.cq .mk{font-size:.86rem;font-weight:700}
+.cq .mk.ok{color:var(--ok)}.cq .mk.no{color:var(--no)}.cq .mk.na{opacity:.7}
+#ccheck{flex:none}
+/* 기억하기는 정답 확인을 누른 뒤에 보임 (자리는 미리 차지해 화면이 움직이지 않음) */
+#cmemo.wait{visibility:hidden}
+/* ② 빅뱅 우주론의 증거: 작은 메뉴(연보라)와 단계 설명 */
+.subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.subtabs button{padding:5px 16px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:700;cursor:pointer}
+.subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+#hsv,#bsv{max-height:max(240px,calc(100vh - 360px))}
+#hsv,#bsv{max-height:max(240px,calc(100dvh - 360px))}
+.stepbox{margin-top:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.55;min-height:4.4em}
+.stepbox b{color:var(--acc);flex:none;white-space:nowrap;margin-right:.45em}
+/* 단계 설명: 파란 제목 오른쪽에 설명을 두어, 둘째 줄부터 제목 끝에 맞춰 들여쓰기 (좁은 화면에서는 한 덩어리로) */
+.stepbox.sx{display:flex;align-items:baseline}
+.stepbox.sx>span{flex:1;min-width:0}
+@media (max-width:560px){.stepbox.sx{display:block}.stepbox.sx b{white-space:normal}}
+.stepbox em{font-style:normal;font-weight:700;color:#1747c8}   /* 설명 속 중요한 내용 (진한 파란색) */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stepbox em{color:#7fb0ff}}
+:root[data-theme="dark"] .stepbox em{color:#7fb0ff}
+#bstep,#istep,#jstep,#kstep,#rstep,#lstep,#astep,#qstep{min-height:calc(3 * 1.55em + 16px)}
+#zstep,#fstep{min-height:calc(2 * 1.55em + 16px)}   /* 빅뱅 우주론의 문제점: 설명이 모두 2줄 이하라 2줄 높이만 확보 */
+@media (max-width:900px){#zstep,#fstep{min-height:calc(3 * 1.55em + 16px)}}   /* 좁은 화면에서는 3줄이 되는 설명이 많아 3줄 높이 */
+#zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100vh - 360px))}
+#zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100dvh - 360px))}
+#zcue,#fcue,#icue,#jcue,#kcue,#rcue,#lcue,#acue,#qcue{flex:1 1 220px;font-size:.92rem}
+#zva[hidden],#zvb[hidden],#iva[hidden],#ivb[hidden],#ivc[hidden],#rva[hidden],#rvb[hidden],#ava[hidden],#avb[hidden]{display:none}   /* 우주 배경 복사: 단계마다 설명이 2~3줄로 달라도 아래 줄이 움직이지 않게 3줄 높이 확보 */
+.sn{font-size:.9rem;font-weight:700;opacity:.8}
+#hcue,#bcue{flex:1 1 220px;font-size:.92rem}
+#eva[hidden],#evb[hidden]{display:none}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
+<div class="titlebar"><p class="pnum">탐구 04</p><h1>암흑 물질의 발견</h1><a class="back" href="./Cosmology_index.html">← [현대 우주론의 정립] 메뉴로 돌아가기</a></div>
+
+<!-- ⑤ 암흑 물질의 발견: 위쪽 탭 [은하의 회전 속도] [중력 렌즈], 각각 4단계로 차례대로 -->
+<section id="p5">
+ <div class="tabs" role="tablist" aria-label="암흑 물질의 발견">
+  <button type="button" role="tab" id="d5a" class="on" aria-selected="true">은하의 회전 속도</button>
+  <button type="button" role="tab" id="d5b" aria-selected="false">중력 렌즈</button>
+ </div>
+ <div id="rva">
+  <svg id="rsv" viewBox="0 0 940 320" aria-label="나선 은하의 회전 속도를 예상과 관측으로 비교하여 암흑 물질이 있다는 것을 알아보는 과정"><defs>
+   <radialGradient id="rgd" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#b9c2ff" stop-opacity=".35"/><stop offset="1" stop-color="#b9c2ff" stop-opacity="0"/></radialGradient>
+   <radialGradient id="rgc" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fffbe8"/><stop offset=".45" stop-color="#ffe28a" stop-opacity=".85"/><stop offset="1" stop-color="#ffd76b" stop-opacity="0"/></radialGradient>
+   <radialGradient id="rgh" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#b58cff" stop-opacity=".42"/><stop offset=".7" stop-color="#b58cff" stop-opacity=".2"/><stop offset="1" stop-color="#b58cff" stop-opacity="0"/></radialGradient>
+   <linearGradient id="rspec"><stop offset="0" stop-color="#7a4dff"/><stop offset=".2" stop-color="#3d7bff"/><stop offset=".35" stop-color="#3fd0ff"/><stop offset=".5" stop-color="#5be36b"/><stop offset=".65" stop-color="#ffe14d"/><stop offset=".8" stop-color="#ff9a3c"/><stop offset="1" stop-color="#ff4d4d"/></linearGradient>
+   <marker id="rar" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L10,5L0,10z" fill="context-stroke"/></marker>
+   <clipPath id="rclip"><rect x="20" y="44" width="500" height="252" rx="12"/></clipPath></defs><g id="rgg"></g></svg>
+  <div class="stepbox sx" id="rstep"></div>
+  <div class="ctl">
+   <button class="pb" id="rprev">◀ 이전 단계</button><button class="pb" id="rnext">다음 단계 ▶</button>
+   <span class="sn" id="rnum"></span>
+   <span class="go" id="rcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+  </div>
+  <div class="note ask"><span class="tag">생각해 보기</span><p>태양계에서는 바깥쪽 행성일수록 공전 속도가 느린데, 은하의 바깥쪽 별은 왜 빠르게 돌고 있을까요?</p><button type="button" class="open-think" id="thb9">정답 확인</button></div>
+  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">은하의 회전 속도: 은하 바깥쪽에서도 회전 속도가 거의 일정함 → 보이지 않는 물질(암흑 물질)이 넓게 분포함</p></div>
+  <div class="ov" id="ov9" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 태양계에서는 바깥쪽 행성일수록 공전 속도가 느린데, 은하의 바깥쪽 별은 왜 빠르게 돌고 있을까요?">
+   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>태양계에서는 바깥쪽 행성일수록 공전 속도가 느린데, 은하의 바깥쪽 별은 왜 빠르게 돌고 있을까요?</b><button type="button" class="x" id="thx9" aria-label="닫기">닫기 ✕</button></div>
+   <p class="ans">은하에는 보이지 않는 암흑 물질이 바깥쪽까지 넓게 퍼져 있어서, 바깥쪽의 별도 큰 중력을 받기 때문입니다.</p>
+   <p class="exp">태양계는 질량의 대부분(약 99.8&nbsp;%)이 가운데의 태양에 모여 있습니다. 그래서 태양에서 멀수록 받는 중력이 약해지고, 바깥쪽 행성일수록 공전 속도가 느립니다.</p>
+   <p class="exp">은하에서 별이 도는 빠르기는 그 별의 궤도 안쪽에 있는 질량에 따라 달라집니다. 바깥쪽 별의 회전 속도가 줄지 않는다는 것은 바깥쪽으로 갈수록 궤도 안쪽의 질량이 계속 늘어난다는 뜻입니다. 빛을 내는 물질은 바깥쪽에 적으므로, 보이지 않는 암흑 물질이 넓게 분포한다고 생각합니다.</p>
+  </div></div>
+ </div>
+ <div id="rvb" hidden>
+  <svg id="lsv" viewBox="0 0 940 320" aria-label="질량이 큰 은하단이 멀리 있는 천체의 빛을 휘게 하는 중력 렌즈 현상으로 암흑 물질이 있다는 것을 알아보는 과정"><defs>
+   <radialGradient id="lgm" cx=".38" cy=".34" r=".7"><stop offset="0" stop-color="#fff6c8"/><stop offset=".6" stop-color="#ffcf5a"/><stop offset="1" stop-color="#d18a1e"/></radialGradient>
+   <radialGradient id="lgc" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fffbe8"/><stop offset=".5" stop-color="#ffd76b"/><stop offset="1" stop-color="#ffb357" stop-opacity=".15"/></radialGradient>
+   <radialGradient id="lgh" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#b58cff" stop-opacity=".55"/><stop offset=".6" stop-color="#b58cff" stop-opacity=".22"/><stop offset="1" stop-color="#b58cff" stop-opacity="0"/></radialGradient>
+   <radialGradient id="learth" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#bfe6ff"/><stop offset=".55" stop-color="#2f7fd8"/><stop offset="1" stop-color="#173f86"/></radialGradient>
+   <clipPath id="lclip"><rect x="20" y="44" width="500" height="252" rx="12"/></clipPath></defs><g id="lgg"></g></svg>
+  <div class="stepbox sx" id="lstep"></div>
+  <div class="ctl">
+   <button class="pb" id="lprev">◀ 이전 단계</button><button class="pb" id="lnext">다음 단계 ▶</button>
+   <span class="sn" id="lnum"></span>
+   <span class="go" id="lcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+  </div>
+  <div class="note ask"><span class="tag">생각해 보기</span><p>빛을 내지 않는 암흑 물질을 중력 렌즈 현상으로 알아낼 수 있는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb10">정답 확인</button></div>
+  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">중력 렌즈: 빛이 휘어진 정도로 구한 은하단의 질량 &gt; 보이는 물질의 질량 → 암흑 물질이 있음</p></div>
+  <div class="ov" id="ov10" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 빛을 내지 않는 암흑 물질을 중력 렌즈 현상으로 알아낼 수 있는 까닭은 무엇일까요?">
+   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>빛을 내지 않는 암흑 물질을 중력 렌즈 현상으로 알아낼 수 있는 까닭은 무엇일까요?</b><button type="button" class="x" id="thx10" aria-label="닫기">닫기 ✕</button></div>
+   <p class="ans">빛의 경로가 휘어지는 정도는 빛을 내는지와 관계없이, 렌즈 역할을 하는 천체의 전체 질량에 따라 달라지기 때문입니다.</p>
+   <p class="exp">암흑 물질은 빛을 내거나 반사하지 않아 망원경으로 직접 볼 수 없지만, 질량이 있으므로 주위의 공간을 휘게 하여 그 근처를 지나는 빛의 경로를 휘게 합니다.</p>
+   <p class="exp">따라서 멀리 있는 천체의 상이 휘어진 모습을 분석하면 은하단에 있는 보이는 물질과 보이지 않는 물질을 모두 합한 질량을 알 수 있습니다. 이 질량이 보이는 물질의 질량보다 훨씬 크므로, 은하단에 암흑 물질이 많이 있다는 것을 알 수 있습니다.</p>
+  </div></div>
+ </div>
+</section>
+</main>
+
+<script>
+let TB=0;const NOW=()=>performance.now()/1000-TB;
+function resetAll(){TB=performance.now()/1000;rLast=lLast=-1;[DR,DL].forEach(o=>o.go(0))}
+// 애니메이션 시계: TB는 마지막으로 탭이나 작은 메뉴를 누른 시각. 누를 때마다 시계를 0으로 돌리고 1단계부터 다시 시작
+
+// SVG 그리기 도우미
+const SVGNS='http://www.w3.org/2000/svg';
+function mk(t,a,p){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function txt(s,a,p){const e=mk('text',a,p);e.textContent=s;return e}
+// 단계 설명 상자: 파란 제목 + 설명. 비(7 : 1), 식(12 : 4 = 3 : 1), 수와 단위(2.7 K)가 줄 끝에서 갈라지지 않게
+function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=]) /g,'\u00a0$1\u00a0').replace(/ (K|mm)\b/g,'\u00a0$1')}</span>`}
+
+
+// 두 자료가 함께 쓰는 단계 넘기기: 이전·다음 단추, 단계 표시, 안내 문구 (마지막 단계에서 다음 단추는 처음으로)
+// 과정(시간 순서)인 자료는 제목이 'N단계'로 시작 → '다음 단계 ▶', 'n / N 단계'. 과정이 아닌 설명은 내용 제목만 → '다음 ▶', 'n / N'
+function stepper(S,box,prev,next,num,cue,draw){const ST=/^\d+단계/.test(S[0][0]),NX=ST?'다음 단계':'다음';prev.textContent=ST?'◀ 이전 단계':'◀ 이전';
+ const o={s:0,go(s){o.s=Math.max(0,Math.min(S.length-1,s));const[tt,tx]=S[o.s],last=o.s==S.length-1;
+  box.innerHTML=stepHTML(tt,tx);prev.disabled=o.s==0;next.textContent=last?'↺ 처음으로':NX+' ▶';num.textContent=`${o.s+1} / ${S.length}`+(ST?' 단계':'');
+  if(last){cue.className='';cue.textContent=''}else{cue.className='go';cue.innerHTML=`<span class="kb">${NX}</span>${ST?'를':'을'} 눌러 차례대로 알아보세요.`}draw(NOW())}};
+ prev.onclick=()=>o.go(o.s-1);next.onclick=()=>o.go(o.s==S.length-1?0:o.s+1);return o}
+const PT=(g,C)=>(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);   // 오른쪽 정리판 가운데 글
+// 오른쪽 정리판 꾸밈 도우미 (함수 선언이라 앞쪽 자료에서도 쓸 수 있음)
+// pCard: 색 상자, pPill: 둥근 꼬리표, pBox: 가운데 정렬 글줄을 담은 상자(lines: [글, 색, 크기]), pRow: 한 줄 상자(왼쪽 이름, 오른쪽 값), pNote: 아래쪽 회색 덧붙임
+// 그래프 세로축 이름: 축 왼쪽에 세로로(아래에서 위로) 쓰고, 축의 가운데에 맞춤
+function yLab(g,x,ya,yb,s){const y=(ya+yb)/2;return txt(s,{x,y,transform:`rotate(-90 ${x} ${y})`,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},g)}
+function pCard(g,x,y,w,h,c,o){return mk('rect',{x,y,width:w,height:h,rx:10,fill:c,'fill-opacity':o||.1,stroke:c,'stroke-opacity':.45},g)}
+function pPill(g,cx,y,s,c,fs,w){fs=fs||13.5;w=w||s.length*fs+24;mk('rect',{x:cx-w/2,y,width:w,height:fs+12,rx:(fs+12)/2,fill:c,'fill-opacity':.2,stroke:c,'stroke-opacity':.6},g);
+ txt(s,{x:cx,y:y+fs+4,'text-anchor':'middle',fill:c,'font-size':fs,'font-weight':800},g)}
+function pBox(g,y,lines,c){pCard(g,572,y,324,16+lines.length*24,c);lines.forEach(([s,col,fs],i)=>txt(s,{x:734,y:y+26+i*24,'text-anchor':'middle',fill:col||'#e8ecff','font-size':fs||14,'font-weight':fs&&fs<13?400:800},g));return y+16+lines.length*24}
+function pRow(g,y,a,b,c,ca){pCard(g,572,y,324,30,ca||'#ffffff',ca?.1:.05);txt(a,{x:588,y:y+20,fill:ca||'#e8ecff','font-size':14,'font-weight':800},g);txt(b,{x:880,y:y+20,'text-anchor':'end',fill:c,'font-size':14.5,'font-weight':800},g)}
+function pNote(g,y,s){txt(s,{x:734,y,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g)}
+function pArc(cx,cy,r,a0,a1){a0*=Math.PI/180;a1*=Math.PI/180;return`M${(cx+r*Math.cos(a0)).toFixed(1)},${(cy+r*Math.sin(a0)).toFixed(1)}A${r},${r} 0 ${a1-a0>Math.PI?1:0} 1 ${(cx+r*Math.cos(a1)).toFixed(1)},${(cy+r*Math.sin(a1)).toFixed(1)}`}
+function pPanel(g,title){mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
+ txt(title,{x:734,y:72,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g)}
+
+const iBox=g=>mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#10122a',stroke:'rgba(255,255,255,.18)'},g);
+const iHead=(g,s)=>txt(s,{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
+const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
+// ---- ⑤ 암흑 물질의 발견 ----
+// 작은 메뉴: 은하의 회전 속도 / 중력 렌즈
+[[d5a,rva],[d5b,rvb]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
+function rnd0(seed){let q=seed;return()=>(q=(q*16807)%2147483647)/2147483647}   // 늘 같은 모양을 그리는 의사 난수
+
+// 은하의 회전 속도: 측정 방법(도플러 효과) → 예상(빛을 내는 물질만) → 관측(거의 일정) → 암흑 물질
+const RS=[
+ ['은하의 회전 속도 측정','나선 은하의 별과 가스는 은하 중심을 돌고 있습니다. 은하의 한쪽은 우리에게 다가오고 다른 쪽은 멀어지므로, 스펙트럼의 <em>청색 편이</em>와 <em>적색 편이</em>를 측정하면 중심으로부터의 거리에 따른 <em>회전 속도</em>를 구할 수 있습니다.'],
+ ['예상한 회전 속도','은하에서 빛을 내는 물질(별, 가스)은 대부분 <em>중심부에 모여</em> 있습니다. 빛을 내는 물질만 있다면, 태양계에서 바깥쪽 행성일수록 공전 속도가 느린 것처럼 은하 중심에서 <em>멀수록 회전 속도가 느려져야</em> 합니다.'],
+ ['관측한 회전 속도','1970년대에 베라 루빈 등이 여러 나선 은하의 회전 속도를 측정했습니다. 그 결과 은하 바깥쪽의 별과 가스도 회전 속도가 줄어들지 않고 <em>거의 일정</em>하였습니다. 관측 결과가 <em>예상과 크게 다릅니다</em>.'],
+ ['암흑 물질','바깥쪽의 회전 속도가 줄지 않으려면 은하 바깥쪽까지 <em>많은 질량이 분포</em>해야 합니다. 즉, 은하에는 <em>빛을 내지 않아 보이지 않지만 질량이 있어 중력을 작용하는 물질</em>이 있으며, 이를 <em>암흑 물질</em>이라고 합니다.']];
+const GP=[];{const r=rnd0(7);   // 나선 은하: 나선팔 2개 + 원반의 별 (반지름 1로 맞춘 자리, 점 크기, 밝기)
+ for(let a=0;a<2;a++)for(let i=0;i<90;i++){const u=.1+.9*i/90,an=a*Math.PI+4.4*u+(r()-.5)*.45,uu=u+(r()-.5)*.06;GP.push([uu*Math.cos(an),uu*Math.sin(an),.9+r()*1.4,.45+r()*.5])}
+ for(let i=0;i<70;i++){const u=Math.sqrt(r())*.95,an=r()*2*Math.PI;GP.push([u*Math.cos(an),u*Math.sin(an),.7+r()*.8,.25+r()*.35])}}
+function galaxy(g,cx,cy,R,tilt){const q=mk('g',{transform:`translate(${cx},${cy}) scale(1,${tilt})`},g);
+ mk('circle',{cx:0,cy:0,r:R,fill:'url(#rgd)'},q);
+ GP.forEach(([x,y,s,o])=>mk('circle',{cx:x*R,cy:y*R,r:s*R/100,fill:'#dfe6ff',opacity:o},q));
+ mk('circle',{cx:0,cy:0,r:R*.3,fill:'url(#rgc)'},q)}
+// 회전 속도 곡선 (개념도, u: 중심으로부터의 거리 0~1)
+const RV=u=>.4457*u/Math.pow(u*u+.0144,.75),   // 예상: 빛을 내는 물질만 있을 때 (질량이 중심부에 모임 → 바깥쪽은 느려짐)
+      RO=u=>.8*(1-Math.exp(-u/.07))+.03*u;   // 관측: 바깥쪽에서도 거의 일정
+const RU=[.3,.6,.9],RCOL=['#ff9d9d','#7fe0a0','#7fd3ff'];
+let rLast=-1,rT0=0;   // 단계가 바뀐 시각: 그래프는 한 번만 그리고 그대로 유지
+function rDraw(t){const g=rgg;g.innerHTML='';const s=DR.s;if(s!=rLast){rLast=s;rT0=t}
+ iHead(g,['은하의 회전 (비스듬히 본 모습)','예상한 회전 속도 (개념도)','관측한 회전 속도 (개념도)','은하를 둘러싼 암흑 물질 (개념도)'][s]);iBox(g);
+ const inn=mk('g',{'clip-path':'url(#rclip)'},g);
+ if(s==0){const CX=360,CY=160,TY=CY-50,BY=CY+50;galaxy(inn,CX,CY,130,.34);mk('ellipse',{cx:CX,cy:CY,rx:147,ry:50,fill:'none',stroke:'#e8ecff','stroke-width':1,'stroke-dasharray':'3 5',opacity:.5},inn);   // 가장자리의 회전 궤도
+  // 지구는 그림의 왼쪽 멀리 있음: 시선 방향(가로)과 나란하게 움직이는 위쪽 가장자리는 다가오고, 아래쪽 가장자리는 멀어짐 (반시계 방향 회전)
+  [[TY,'#7fb8ff'],[BY,'#ff8a8a']].forEach(([y,c])=>mk('line',{x1:CX-24,y1:y,x2:72,y2:y,stroke:c,'stroke-width':1.4,'stroke-dasharray':'4 4','marker-end':'url(#rar)',opacity:.85},inn));
+  mk('line',{x1:CX+30,y1:TY,x2:CX-22,y2:TY,stroke:'#7fb8ff','stroke-width':3.2,'marker-end':'url(#rar)'},inn);
+  mk('line',{x1:CX-30,y1:BY,x2:CX+22,y2:BY,stroke:'#ff8a8a','stroke-width':3.2,'marker-end':'url(#rar)'},inn);
+  txt('다가옴',{x:CX+40,y:TY+5,fill:'#7fb8ff','font-size':15,'font-weight':800},inn);
+  txt('멀어짐',{x:CX+34,y:BY+5,fill:'#ff8a8a','font-size':15,'font-weight':800},inn);
+  txt('←',{x:48,y:CY+6,'text-anchor':'middle',fill:'#cfe6ff','font-size':18,'font-weight':800},inn);
+  txt('지구',{x:48,y:CY+26,'text-anchor':'middle',fill:'#cfe6ff','font-size':12.5,'font-weight':800},inn);
+  txt('방향',{x:48,y:CY+42,'text-anchor':'middle',fill:'#cfe6ff','font-size':12.5,'font-weight':800},inn);
+  [[TY+10,-24,'청색 편이 (다가오는 쪽)','#7fb8ff',TY+44],[BY-28,24,'적색 편이 (멀어지는 쪽)','#ff8a8a',BY-36]].forEach(([y,d,l,c,ly])=>{const x=86,w=160,m=x+w/2;
+   mk('rect',{x,y,width:w,height:18,fill:'url(#rspec)'},inn);
+   mk('line',{x1:m,y1:y-4,x2:m,y2:y+22,stroke:'#fff','stroke-width':1.3,'stroke-dasharray':'3 2'},inn);
+   mk('rect',{x:m+d-2,y,width:4,height:18,fill:'#111'},inn);
+   txt(l,{x:m,y:ly,'text-anchor':'middle',fill:c,'font-size':12.5,'font-weight':800},inn)});
+  txt('흡수선의 위치 (점선: 원래 위치)',{x:166,y:252,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},inn);
+  txt('시선 방향과 나란한 움직임을 측정',{x:CX,y:252,'text-anchor':'start',fill:'#a9b1cc','font-size':12},inn)}
+ if(s>=1){const GX=146,GY=170,GR=96,f=s==1?RV:RO;
+  if(s==3){mk('circle',{cx:GX,cy:GY,r:124,fill:'url(#rgh)'},inn);mk('circle',{cx:GX,cy:GY,r:116,fill:'none',stroke:'#c9b2ff','stroke-width':1.4,'stroke-dasharray':'5 4'},inn)}
+  galaxy(inn,GX,GY,GR,1);
+  RU.forEach((u,i)=>{const r=u*GR,v=f(u),a=-.6+i*2.1-v*26/r*t,x=GX+r*Math.cos(a),y=GY+r*Math.sin(a),L=44*v;   // 반시계 방향으로 돎, 화살표 길이 = 회전 속도
+   mk('circle',{cx:GX,cy:GY,r,fill:'none',stroke:RCOL[i],'stroke-width':1,'stroke-dasharray':'2 4',opacity:.6},inn);
+   mk('line',{x1:x,y1:y,x2:x+L*Math.sin(a),y2:y-L*Math.cos(a),stroke:RCOL[i],'stroke-width':2.4,'marker-end':'url(#rar)'},inn);
+   mk('circle',{cx:x,cy:y,r:4.5,fill:RCOL[i],stroke:'#fff','stroke-width':1.2},inn)});
+  txt(['빛을 내는 물질: 중심부에 집중','바깥쪽 별도 빠르게 회전','보라색: 암흑 물질 (실제로는 보이지 않음)'][s-1],{x:s==3?30:GX,y:290,'text-anchor':s==3?'start':'middle',fill:s==3?'#c9b2ff':'#cfd6ee','font-size':12,'font-weight':700},inn);
+  // 오른쪽: 회전 속도 곡선
+  const X=u=>290+u*210,Y=v=>266-v*190,u1=Math.min(1,(t-rT0)/5);
+  const path=(f,e)=>{let d='';for(let u=0;u<=e+1e-9;u+=.005)d+=(d?'L':'M')+X(u).toFixed(1)+','+Y(f(u)).toFixed(1);return d};
+  if(s==3){let d=path(RO,1);for(let u=1;u>=0;u-=.005)d+='L'+X(u).toFixed(1)+','+Y(RV(u)).toFixed(1);mk('path',{d:d+'Z',fill:'rgba(201,178,255,.22)'},inn)}
+  mk('line',{x1:290,y1:266,x2:506,y2:266,stroke:'#cfd6ee','stroke-width':1.2},inn);mk('line',{x1:290,y1:266,x2:290,y2:66,stroke:'#cfd6ee','stroke-width':1.2},inn);
+  yLab(inn,278,66,266,'회전 속도 →');txt('중심으로부터의 거리 →',{x:506,y:284,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},inn);
+  mk('path',{d:path(RV,s==1?u1:1),fill:'none',stroke:s==1?'#e8ecff':'#a9b1cc','stroke-width':2.4,'stroke-dasharray':s==1?'':'6 5'},inn);
+  if(s==1&&u1>=1||s>1)txt('예상 (빛을 내는 물질만)',{x:X(1),y:Y(RV(1))+22,'text-anchor':'end',fill:s==1?'#e8ecff':'#a9b1cc','font-size':12.5,'font-weight':800},inn);
+  if(s>=2){const e=s==2?u1:1;mk('path',{d:path(RO,e),fill:'none',stroke:'#ffd76b','stroke-width':2.6},inn);
+   for(let u=.1;u<=e+1e-9;u+=.1)mk('circle',{cx:X(u),cy:Y(RO(u)),r:3,fill:'#ffd76b'},inn);
+   if(e>=1)txt('관측',{x:X(1),y:Y(RO(1))-10,'text-anchor':'end',fill:'#ffd76b','font-size':13,'font-weight':800},inn)}
+  if(s==3)txt('암흑 물질의 영향',{x:X(.6),y:Y(.69)+5,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800},inn);
+  RU.forEach((u,i)=>{if(s==1&&u>u1||s==2&&u>u1)return;mk('circle',{cx:X(u),cy:Y(f(u)),r:4.5,fill:RCOL[i],stroke:'#fff','stroke-width':1.2},inn)})}
+ pPanel(g,RS[s][0]);const T=PT(g,734);
+ if(s==0){T('도플러 효과로 회전 속도를 측정',{y:104,'font-size':14.5});
+  [[572,'다가오는 쪽','청색 편이','#7fb8ff'],[740,'멀어지는 쪽','적색 편이','#ff8a8a']].forEach(([x,a,b,c])=>{pCard(g,x,118,156,74,c);
+   txt(a,{x:x+78,y:144,'text-anchor':'middle',fill:'#e8ecff','font-size':13,'font-weight':700},g);txt(b,{x:x+78,y:174,'text-anchor':'middle',fill:c,'font-size':18,'font-weight':800},g)});
+  pBox(g,206,[['편이가 클수록 빠르게 회전함','#ffd76b',15],['(중심으로부터의 거리마다 측정)','#a9b1cc',12]],'#ffd76b')}
+ if(s==1){pBox(g,86,[['빛을 내는 물질은 대부분 중심부에 모임'],['→ 중심에서 멀수록 회전 속도가 느려짐','#ffd76b']],'#ffd76b');
+  txt('비교: 태양계 행성의 공전 속도',{x:588,y:172,fill:'#a9b1cc','font-size':12.5,'font-weight':700},g);
+  [['수성',48],['지구',30],['해왕성',5]].forEach(([a,v],i)=>{const y=196+i*24;txt(a,{x:588,y,fill:'#e8ecff','font-size':13.5,'font-weight':800},g);
+   mk('rect',{x:640,y:y-10,width:150*v/48,height:11,rx:5,fill:'#7fd3ff'},g);txt(`약 ${v} km/s`,{x:880,y,'text-anchor':'end',fill:'#e8ecff','font-size':13.5,'font-weight':800},g)});
+  pNote(g,280,'(질량의 대부분이 태양에 모여 있음)')}
+ if(s==2){[[88,'예상','바깥쪽일수록 느려짐','#a9b1cc','M640,108Q652,98 662,104T696,126'],[146,'관측','바깥쪽에서도 거의 일정','#ffd76b','M640,186Q648,168 662,166L696,166']].forEach(([y,a,b,c,d])=>{
+   pCard(g,572,y,324,48,c);txt(a,{x:590,y:y+30,fill:c,'font-size':15,'font-weight':800},g);mk('path',{d,fill:'none',stroke:c,'stroke-width':2.4,'stroke-dasharray':a=='예상'?'5 4':''},g);
+   txt(b,{x:880,y:y+30,'text-anchor':'end',fill:c,'font-size':14.5,'font-weight':800},g)});
+  pPill(g,734,212,'예상과 관측이 크게 다르다','#ff9d9d',15,250);pNote(g,272,'(1970년대 베라 루빈 등의 관측)')}
+ if(s==3){pBox(g,88,[['회전 속도가 일정하려면'],['바깥쪽까지 많은 질량이 있어야 함']],'#ffffff');
+  txt('▼',{x:734,y:170,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
+  pBox(g,180,[['보이지 않는 물질 = 암흑 물질','#c9b2ff',16],['빛을 내지 않아 보이지 않지만','#cfd6ee',13],['질량이 있어 중력을 작용함','#cfd6ee',13]],'#c9b2ff')}
+}
+const DR=stepper(RS,rstep,rprev,rnext,rnum,rcue,rDraw);
+
+// 중력 렌즈: 휘어지는 빛의 경로 → 중력 렌즈 현상(옆에서 본 모습, 지구에서 본 모습) → 은하단의 질량과 암흑 물질
+const LS=[
+ ['휘어지는 빛의 경로','일반 상대성 이론에 따르면 질량이 큰 천체 주위에서는 <em>공간이 휘어지므로</em>, 그 근처를 지나는 <em>빛의 경로도 휘어집니다</em>. 천체의 <em>질량이 클수록</em> 빛의 경로가 더 많이 휘어집니다.'],
+ ['중력 렌즈 현상','멀리 있는 천체와 지구 사이에 질량이 큰 은하나 은하단이 있으면, 천체에서 나온 빛이 휘어져 지구에 도달합니다. 이를 <em>중력 렌즈 현상</em>이라고 합니다. 지구에서는 빛이 들어온 방향에 천체가 보이므로, 하나의 천체가 <em>여러 개</em>로 보이거나 <em>호 모양</em>, <em>고리 모양(아인슈타인 고리)</em>으로 보입니다.'],
+ ['은하단의 질량과 암흑 물질','빛이 휘어진 정도를 분석하면 렌즈 역할을 하는 은하단의 <em>전체 질량</em>을 구할 수 있습니다. 이렇게 구한 질량은 <em>보이는 물질의 질량보다 훨씬 커서</em>, 은하단에 보이지 않는 <em>암흑 물질</em>이 많이 있다는 것을 알 수 있습니다.']];
+const LCL=[[0,0,10,7.5],[-19,11,5.5,3.8],[17,-13,5.2,4],[23,15,4.4,3],[-13,-21,4.2,3],[-28,-5,3.6,2.6],[7,25,3.8,3],[30,-2,3,2.2]];   // 은하단의 은하들
+const LST=[];{const r=rnd0(11);for(let i=0;i<46;i++)LST.push([24+r()*492,48+r()*244,.4+r()*.8,.3+r()*.5])}
+function lCluster(g,cx,cy,sc){LCL.forEach(([x,y,a,b],i)=>{const px=cx+x*sc,py=cy+y*sc;mk('ellipse',{cx:px,cy:py,rx:a*sc,ry:b*sc,fill:'url(#lgc)',transform:`rotate(${(i*47)%180} ${px} ${py})`},g)})}
+// 하늘에서 본 모습: 질량이 한 점에 모인 렌즈로 단순화. 원 모양 천체(반지름 rs)의 테두리를 렌즈 방정식으로 옮겨 상 2개(또는 고리)를 그림
+function lSky(g,beta,halo,ph=-.6){const CX=270,CY=170,E=62,rs=13,c=[beta*Math.cos(ph),beta*Math.sin(ph)];
+ mk('rect',{x:20,y:44,width:500,height:252,fill:'#0a0c20'},g);
+ LST.forEach(([x,y,r,o])=>mk('circle',{cx:x,cy:y,r,fill:'#fff',opacity:o},g));
+ if(halo)mk('ellipse',{cx:CX,cy:CY,rx:150,ry:120,fill:'url(#lgh)'},g);
+ let dP='',dM='';for(let k=0;k<=72;k++){const a=k/72*2*Math.PI,sx=c[0]+rs*Math.cos(a),sy=c[1]+rs*Math.sin(a),b=Math.max(1e-6,Math.hypot(sx,sy)),q=Math.sqrt(b*b+4*E*E),tp=(b+q)/2/b,tm=(b-q)/2/b;
+  dP+=(k?'L':'M')+(CX+sx*tp).toFixed(1)+','+(CY+sy*tp).toFixed(1);dM+=(k?'L':'M')+(CX+sx*tm).toFixed(1)+','+(CY+sy*tm).toFixed(1)}
+ mk('path',{d:dP+'Z'+dM+'Z',fill:'#8fc2ff','fill-rule':'evenodd',stroke:'rgba(143,194,255,.35)','stroke-width':4},g);
+ mk('circle',{cx:CX+c[0],cy:CY+c[1],r:rs,fill:'none',stroke:'#cfd6ee','stroke-width':1.2,'stroke-dasharray':'3 3',opacity:.8},g);
+ lCluster(g,CX,CY,1)}
+function lDot(g,x,y,c,l){mk('circle',{cx:x,cy:y-4,r:4.5,fill:c},g);txt(l,{x:x+10,y,fill:'#cfd6ee','font-size':12,'font-weight':700},g)}
+let lLast=-1,lT0=0;   // 단계가 바뀐 시각
+function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;lT0=t}
+ iHead(g,['질량이 큰 천체 주위를 지나는 빛','옆에서 본 중력 렌즈 현상','중력 렌즈로 알아낸 질량 분포'][s]);iBox(g);
+ const inn=mk('g',{'clip-path':'url(#lclip)'},g);
+ if(s==0){const MX=270,MY=206,A=.5;   // 질량을 정해 두고, 빛이 한 번 지나간 뒤 그대로 유지
+  const W=(x,y)=>{const dx=x-MX,dy=y-MY,k=A*Math.exp(-(dx*dx+dy*dy)/7000);return[x-dx*k,y-dy*k]};   // 휘어진 공간(격자)
+  let d='';for(let y=56;y<=296;y+=20){for(let x=20;x<=520;x+=10){const[p,q]=W(x,y);d+=(x==20?'M':'L')+p.toFixed(1)+','+q.toFixed(1)}}
+  for(let x=30;x<=510;x+=24){for(let y=44;y<=296;y+=10){const[p,q]=W(x,y);d+=(y==44?'M':'L')+p.toFixed(1)+','+q.toFixed(1)}}
+  mk('path',{d,fill:'none',stroke:'rgba(127,170,255,.3)','stroke-width':1},inn);
+  mk('circle',{cx:MX,cy:MY,r:22,fill:'url(#lgm)'},inn);
+  txt('질량이 큰 천체',{x:MX,y:MY+48,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800},inn);
+  mk('line',{x1:20,y1:100,x2:500,y2:100,stroke:'#a9b1cc','stroke-width':1.4,'stroke-dasharray':'5 5'},inn);
+  txt('질량이 없을 때',{x:500,y:92,'text-anchor':'end',fill:'#a9b1cc','font-size':12,'font-weight':700},inn);
+  const xe=20+472*ease((t-lT0-.3)/4.5);let y=100,rd='M20,100';for(let x=20;x<xe;x+=4){const x2=Math.min(xe,x+4);y+=.26*(1+Math.tanh((x-MX)/45))/2*(x2-x);rd+='L'+x2.toFixed(1)+','+y.toFixed(1)}
+  if(xe>24)mk('path',{d:rd,fill:'none',stroke:'#ffd76b','stroke-width':2.6,'marker-end':'url(#rar)'},inn);   // 화살표: 빛의 진행 방향
+  txt('빛의 경로',{x:34,y:90,fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
+  txt('질량이 큰 천체 주위에서 빛의 경로가 휘어짐',{x:270,y:288,'text-anchor':'middle',fill:'#e8ecff','font-size':13,'font-weight':800},inn)}
+ if(s==1){mk('rect',{x:20,y:44,width:500,height:252,fill:'#0a0c20'},inn);
+  // 천체에서 같이 출발한 빛이 렌즈의 위와 아래로 휘어져 지구에 함께 도착 → 지구에서는 빛이 들어온 방향(위, 아래)에 천체가 보임. 9초마다 천천히 되풀이
+  const SX=66,LX=270,EX=478,CY=170,SY=CY-10,P=((t-lT0)%9)/9,f=ease(P/.5),gS=ease((P-.5)/.2),gI=ease((P-.66)/.1);
+  [CY-56,CY+36].forEach(by=>{const L1=Math.hypot(LX-SX,by-SY),L2=Math.hypot(EX-LX,CY-by),d=f*(L1+L2),s2=(CY-by)/(EX-LX),AY=CY+(58-EX)*s2;
+   mk('path',{d:`M${SX},${SY}L${LX},${by}L${EX},${CY}`,fill:'none',stroke:'#8fc2ff','stroke-width':1.6,opacity:.22,'stroke-linejoin':'round'},inn);
+   const [qx,qy]=d<L1?[SX+(LX-SX)*d/L1,SY+(by-SY)*d/L1]:[LX+(EX-LX)*(d-L1)/L2,by+(CY-by)*(d-L1)/L2];
+   mk('path',{d:`M${SX},${SY}`+(d>L1?`L${LX},${by}`:'')+`L${qx.toFixed(1)},${qy.toFixed(1)}`,fill:'none',stroke:'#8fc2ff','stroke-width':2.4,'stroke-linejoin':'round'},inn);
+   if(f<1)mk('circle',{cx:qx,cy:qy,r:4.5,fill:'#fff',stroke:'#8fc2ff','stroke-width':2},inn);
+   if(gS>0)mk('line',{x1:EX,y1:CY,x2:EX+(58-EX)*gS,y2:CY+(AY-CY)*gS,stroke:'#ffd76b','stroke-width':1.6,'stroke-dasharray':'5 4'},inn);   // 지구에서 바라본 방향
+   if(gI>0){mk('ellipse',{cx:58,cy:AY,rx:11,ry:6.5,fill:'#8fc2ff',opacity:.5*gI,stroke:'#8fc2ff','stroke-dasharray':'3 3'},inn);
+    txt('보이는 위치',{x:76,y:AY+4,fill:'#ffd76b','font-size':12,'font-weight':800,opacity:gI},inn)}});
+  mk('ellipse',{cx:SX-8,cy:SY,rx:11,ry:6.5,fill:'#8fc2ff'},inn);lCluster(inn,LX,CY,.75);
+  mk('circle',{cx:EX+8,cy:CY,r:11,fill:'url(#learth)',stroke:'#fff','stroke-width':1},inn);
+  txt('멀리 있는 천체',{x:30,y:194,fill:'#8fc2ff','font-size':12.5,'font-weight':800},inn);
+  txt('은하단 (렌즈)',{x:LX,y:CY+64,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
+  txt('지구',{x:EX+8,y:CY+30,'text-anchor':'middle',fill:'#cfe6ff','font-size':12.5,'font-weight':800},inn);
+  if(gI>0)txt('하나의 천체가 위와 아래 두 곳에 보임',{x:300,y:70,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800,opacity:gI},inn);
+  txt('(크기와 거리는 실제 비율과 다름)',{x:270,y:288,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},inn)}
+ if(s==2){lSky(inn,24,true);
+  txt('보라색: 중력 렌즈로 알아낸 질량 분포 (대부분 암흑 물질)',{x:270,y:288,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800},inn)}
+ pPanel(g,LS[s][0]);const T=PT(g,734);
+ if(s==0){pBox(g,88,[['질량이 큰 천체 주위: 공간이 휘어짐'],['→ 빛의 경로도 휘어짐','#ffd76b',14.5]],'#ffffff');
+  pCard(g,572,164,324,82,'#ffd76b',.07);   // 질량이 작을 때와 클 때 빛이 휘는 정도 비교
+  mk('path',{d:'M590,184Q650,184 712,192',fill:'none',stroke:'#ffd76b','stroke-width':2.4},g);mk('circle',{cx:650,cy:212,r:6,fill:'url(#lgm)'},g);
+  txt('질량 작음: 조금 휨',{x:650,y:238,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g);
+  mk('path',{d:'M758,182Q818,182 880,212',fill:'none',stroke:'#ffd76b','stroke-width':2.4},g);mk('circle',{cx:818,cy:212,r:12,fill:'url(#lgm)'},g);
+  txt('질량 큼: 많이 휨',{x:818,y:238,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g);
+  pNote(g,274,'(아인슈타인의 일반 상대성 이론)')}
+ if(s==1){const sky=mk('g',{transform:'translate(582.8,63.4) scale(.56)'},g);lSky(sky,20,false,-Math.PI/2);   // 지구에서 본 모습 (천체가 렌즈의 조금 위쪽 뒤에 있을 때)
+  mk('rect',{x:594,y:88,width:280,height:141,fill:'none',stroke:'#8fc2ff','stroke-opacity':.45},g);
+  txt('지구에서 본 모습',{x:602,y:106,fill:'#ffd76b','font-size':12.5,'font-weight':800},g);txt('점선: 실제 위치',{x:866,y:222,'text-anchor':'end',fill:'#cfd6ee','font-size':11.5},g);
+  [[572,'여러 개의 상',0],[682,'호 모양',1],[792,'아인슈타인 고리',2]].forEach(([x,a,k])=>{const cx=x+52,cy=256;
+   pCard(g,x,238,104,54,'#8fc2ff');mk('circle',{cx,cy,r:3,fill:'#ffd76b'},g);
+   if(k==0){mk('ellipse',{cx:cx-15,cy:cy-6,rx:5,ry:3.5,fill:'#8fc2ff'},g);mk('ellipse',{cx:cx+12,cy:cy+5,rx:4,ry:3,fill:'#8fc2ff'},g)}
+   if(k==1){mk('path',{d:pArc(cx,cy,13,-160,-20),fill:'none',stroke:'#8fc2ff','stroke-width':3.5,'stroke-linecap':'round'},g)}
+   if(k==2)mk('circle',{cx,cy,r:12,fill:'none',stroke:'#8fc2ff','stroke-width':3.5},g);
+   txt(a,{x:cx,y:284,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':800},g)})}
+ if(s==2){T('빛이 휘어진 정도 → 은하단의 전체 질량',{y:104,'font-size':14});
+  txt('보이는 물질(별, 가스)의 질량',{x:576,y:136,fill:'#e8ecff','font-size':13,'font-weight':700},g);mk('rect',{x:576,y:144,width:56,height:18,rx:4,fill:'#ffd76b'},g);
+  txt('중력 렌즈로 구한 전체 질량',{x:576,y:186,fill:'#e8ecff','font-size':13,'font-weight':700},g);
+  mk('rect',{x:576,y:194,width:56,height:18,rx:4,fill:'#ffd76b'},g);mk('rect',{x:632,y:194,width:264,height:18,rx:4,fill:'#b58cff'},g);
+  txt('보이지 않는 물질 (암흑 물질)',{x:764,y:207.5,'text-anchor':'middle',fill:'#1b1f2a','font-size':12,'font-weight':800},g);
+  pNote(g,232,'(막대 길이는 대략적인 비교)');
+  pPill(g,734,248,'은하단에 암흑 물질이 많이 있음','#c9b2ff',14.5,270)}
+}
+const DL=stepper(LS,lstep,lprev,lnext,lnum,lcue,lDraw);
+DR.go(0);DL.go(0);
+(function dLoop(now){if(!p5.hidden){const t=(now/1000-TB);if(!rva.hidden)rDraw(t);else lDraw(t)}requestAnimationFrame(dLoop)})(performance.now());
+// 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
+[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
+ const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
+</script>
+<script src="../copyright.js"></script>
+</body>
+</html>

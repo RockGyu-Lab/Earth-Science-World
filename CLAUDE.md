@@ -21,11 +21,11 @@ Expansion/                 허블-르메트르 법칙과 우주 팽창 학습실
   Expansion_index.html     학습실 메뉴 (탐구 01~03 카드)
   static_expanding.html, doppler.html, expansion.html
 Cosmology/                 현대 우주론의 정립 학습실
-  Cosmology_index.html     학습실 메뉴 (탐구 01 카드)
-  cosmology.html
-  lib/cmb_wmap.jpg         cosmology.html의 우주 배경 복사 관측 그림 (WMAP, 퍼블릭 도메인)
+  Cosmology_index.html     학습실 메뉴 (탐구 01~05 카드)
+  modern_cosmology.html, big_bang.html, inflation.html, dark_matter.html, accelerating.html
+  lib/cmb_wmap.jpg         big_bang.html의 우주 배경 복사 관측 그림 (WMAP, 퍼블릭 도메인)
 ```
-- `Expansion/`의 탐구 01~03과 `Cosmology/cosmology.html`은 테스트 사이트(Earth-Test-Lab)의 `expansion.html`, `cosmology.html`을 옮긴 것입니다(탐구 01·02는 예전 `expansion.html`의 탭을 따로 떼어 낸 것이고, 탐구 03 `expansion.html`은 나머지 탭을 모은 것). 정식 사이트로 옮긴 뒤에는 **정식 사이트만 고칩니다.** 테스트 사이트는 자료가 어느 정도 완성될 때까지만 쓰므로, 테스트 사이트에 남은 파일은 함께 고치지 않습니다.
+- `Expansion/`의 탐구 01~03과 `Cosmology/`의 탐구 01~05는 테스트 사이트(Earth-Test-Lab)의 `expansion.html`, `cosmology.html`을 옮긴 것입니다(Cosmology는 예전 `cosmology.html`의 탭 여섯 개를 탐구 01~05로 나누고 근거·문제점을 탐구 02 빅뱅 우주론의 탭으로 묶음. 탐구 01·02는 예전 `expansion.html`의 탭을 따로 떼어 낸 것이고, 탐구 03 `expansion.html`은 나머지 탭을 모은 것). 정식 사이트로 옮긴 뒤에는 **정식 사이트만 고칩니다.** 테스트 사이트는 자료가 어느 정도 완성될 때까지만 쓰므로, 테스트 사이트에 남은 파일은 함께 고치지 않습니다.
 - 빌드 도구나 패키지 없이, 각 자료는 CSS와 JS가 들어 있는 HTML 파일 하나입니다.
 - 학습실 메뉴 파일 이름은 `<폴더명>_index.html` 형식입니다(`Eclipse_index.html`은 예외로 단수형).
 
@@ -74,7 +74,7 @@ HTML 파일을 추가하거나 고치거나 이름을 바꾸면 다음을 확인
 - 단계 제목은 `1단계(불투명한 초기 우주)`, `관측 결과 1(스펙트럼)`처럼 괄호로 씁니다. `1단계 · 제목`처럼 점을 찍는 형식은 쓰지 않습니다.
 - '단계'는 실제로 시간 순서대로 일어나는 과정(예: 수소와 헬륨의 질량비, 우주 배경 복사, 급팽창 전후)에만 씁니다. 문제를 설명하거나 추론하는 순서(예: 지평선 문제, 암흑 물질의 발견)는 '단계' 없이 내용 제목만 쓰고, 단추는 '◀ 이전', '다음 ▶', 순서 표시는 '2 / 4'로 씁니다(`stepper`는 제목이 'N단계'로 시작하는지로 저절로 구분).
 - 그림 오른쪽 정리판의 첫 줄 제목(노란 글씨)은 정리판 가운데에 맞춥니다.
-- 그림 오른쪽 정리판은 글만 늘어놓지 않고 색 상자(카드), 둥근 꼬리표, 작은 그림으로 정리하여 빈 곳이 없게 합니다(`cosmology.html`의 `pCard`, `pPill`, `pBox`, `pRow` 참고).
+- 그림 오른쪽 정리판은 글만 늘어놓지 않고 색 상자(카드), 둥근 꼬리표, 작은 그림으로 정리하여 빈 곳이 없게 합니다(`Cosmology/` 자료의 `pCard`, `pPill`, `pBox`, `pRow` 참고).
 - 설명이 두 줄 이상이면 둘째 줄부터 파란 제목 끝에 맞춰 들여씁니다.
 - 설명 속 중요한 내용(비율, 수치, 핵심 용어 등)은 진한 파란색 굵은 글씨로 구분합니다.
 - 과정 단계가 끝나 다음 단추가 관측 결과 단추(`관측 결과 ▶` 등)로 바뀌면, 그 단추가 되풀이하여 빛나게 합니다.
