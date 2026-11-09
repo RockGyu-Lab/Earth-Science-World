@@ -267,7 +267,7 @@ function fmtYr(y){if(y>=1e8){const v=Math.round(y/1e7)/10;return v+'억 년'}if(
 // 중심부 온도 (모식적인 대략값): 성운 약 10 K → 원시별이 되며 수천 K → 주계열 도달 때 약 1,000만 K
 const Tc=s=>10**(s<.2?1+s/.2*.3:s<.4?1.3+(s-.2)/.2*2:3.3+(s-.4)/.6*3.7);
 const fmtK=T=>T>=1e4?Math.round(T/1e4).toLocaleString('ko-KR')+'만 K':(Math.round(T/10)*10).toLocaleString('ko-KR')+' K';
-let ps=0,mi=3,playing=false,raf=0;
+let ps=0,mi=0,playing=false,raf=0;
 
 // 왼쪽: 성운에서 별이 탄생하는 과정
 const BG=Array.from({length:60},(_,i)=>[(i*97)%430+10,(i*53)%330+10,(i%5==0)?1.3:.7]);
