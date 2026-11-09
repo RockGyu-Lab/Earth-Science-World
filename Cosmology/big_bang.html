@@ -367,11 +367,15 @@ function bPhStep(t){if(!bPh)bPh=[0,5,10,15,6].map(e0=>{const n=BNB[e0][0];return
 const BRAY=[[80,.3,1],[250,-.25,-1],[150,-.12,1],[200,.4,-1],[260,.18,1],[110,-.35,-1]];   // 빛줄기: [출발 높이, 기울기, 1=오른쪽으로 / -1=왼쪽으로]
 let bs=0,bm=0,bw=0,bT=0,bLast=0;   // bm: 원자 결합 정도(0~1), bw: 4단계의 파장 늘어남 정도(0~1)
 const hsh=(a,b)=>{const v=Math.sin(a*127.1+b*311.7)*43758.5453;return v-Math.floor(v)};
-function bWave(g,x,y,ang,L,lam,col,amp=4.5,w=2){const c=Math.cos(ang),s=Math.sin(ang);let d='';
- for(let u=0;u<=L;u+=1.5){const o=amp*Math.sin(2*Math.PI*u/lam),px=x+c*u-s*o,py=y+s*u+c*o;d+=(u?'L':'M')+px.toFixed(1)+','+py.toFixed(1)}
- mk('path',{d,fill:'none',stroke:col,'stroke-width':w,'stroke-linecap':'round'},g);
- const hx=x+c*L,hy=y+s*L,f=n=>n.toFixed(1);   // 화살촉
- mk('path',{d:`M${f(hx+c*8)},${f(hy+s*8)}L${f(hx-s*4.5)},${f(hy+c*4.5)}L${f(hx+s*4.5)},${f(hy-c*4.5)}Z`,fill:col},g)}
+// 빛(물결 화살표): 물결은 화살촉 조금 앞에서 진폭이 0으로 줄어 가운데 선에 닿고, 짧은 직선을 지나 화살촉으로 이어짐
+// (물결이 끝나는 자리에 바로 화살촉을 붙이면 화살촉이 옆으로 비뚤어져 보임)
+function bWave(g,x,y,ang,L,lam,col,amp=4.5,w=2){const c=Math.cos(ang),s=Math.sin(ang),st=Math.max(4,Math.min(10,L*.16)),Lw=L-st;let d='';
+ for(let u=0;u<=Lw+.01;u+=1.2){const k=Math.max(0,Math.min(1,(Lw-u)/(lam*.5))),o=amp*k*Math.sin(2*Math.PI*u/lam),px=x+c*u-s*o,py=y+s*u+c*o;d+=(u?'L':'M')+px.toFixed(1)+','+py.toFixed(1)}
+ const f=n=>n.toFixed(1),hx=x+c*L,hy=y+s*L;d+=`L${f(hx)},${f(hy)}`;
+ mk('path',{d,fill:'none',stroke:col,'stroke-width':w,'stroke-linecap':'round','stroke-linejoin':'round'},g);
+ // 화살촉: 가운데 선 위에서 앞으로 (밑변은 선 끝, 끝점은 그보다 앞)
+ const hw=Math.max(3.5,w*2),hl=hw*1.9;
+ mk('path',{d:`M${f(hx+c*hl)},${f(hy+s*hl)}L${f(hx-s*hw)},${f(hy+c*hw)}L${f(hx+s*hw)},${f(hy-c*hw)}Z`,fill:col},g)}
 function bNuc(g,x,y,r=10){mk('circle',{cx:x,cy:y,r,fill:'url(#bgn)',stroke:'#ffc4c4','stroke-width':1},g);txt('+',{x,y:y+r*.38,'text-anchor':'middle',fill:'#fff','font-size':r*1.2,'font-weight':800},g)}
 function bEl(g,x,y,r=5){mk('circle',{cx:x,cy:y,r,fill:'url(#bge)',stroke:'#cfe6ff','stroke-width':.8},g);if(r>4)txt('−',{x,y:y+r*.42,'text-anchor':'middle',fill:'#fff','font-size':r*1.6,'font-weight':800},g)}
 function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
@@ -393,8 +397,8 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
     mk('circle',{cx:b[0],cy:b[1],r:7,fill:'none',stroke:'#ffe9a8','stroke-width':1.2,opacity:.6*(1-f)},inn);
     bWave(inn,tx,ty,ang,L,9,'#ffd76b',4,2.2)})}
   else{const lam=bs==2?9*Math.pow(4,bw):9,col=bs==2?`rgb(255,${mix(215,110,bw)},${mix(107,90,bw)})`:'#ffd76b';
-   BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,len=90,per=700,u=((t*sp+i*131)%per)-110,a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a),
-     x=(dir>0?20:520)+c*u,y=44+y0+s*u;bWave(inn,x,y,a,len,lam,col,4.5,2.2)})}
+   BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,len=46*Math.pow(2,bs==2?bw:0),per=700,u=((t*sp+i*131)%per)-110,a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a),
+     x=(dir>0?20:520)+c*u,y=44+y0+s*u;bWave(inn,x,y,a,len,lam,col,4+2*(bs==2?bw:0),2.2)})}
   // 원자핵과 전자 (2단계부터 전자가 원자핵 둘레를 돎)
   BNU.forEach(([nx,ny],k)=>{const jx=(1-e)*4*Math.sin(t*2.3+k),jy=(1-e)*4*Math.cos(t*1.9+k*1.4),x=nx+jx,y=ny+jy;
    const [fjx,fjy]=bElPos(k,t),ang=t*2.2+k*1.1,ox=x+19*Math.cos(ang),oy=y+19*Math.sin(ang)*.6;
