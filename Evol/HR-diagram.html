@@ -178,10 +178,10 @@ for(let i=0;i<95;i++){const t=3.55+.18*rnd();PTS.push([t,1.6+(3.72-t)*8+.25*gs()
 for(let i=0;i<30;i++){const t=3.66+.03*gs();PTS.push([t,1.7+.15*gs(),'g'])}
 for(let i=0;i<34;i++){const t=3.5+1.0*rnd();PTS.push([t,4.4+1.3*rnd(),'sg'])}
 for(let i=0;i<45;i++){const t=3.82+.62*rnd();PTS.push([t,wdL(t)+.18*gs(),'wd'])}
-// 유명한 별 [이름, 분광형, 표면 온도 K, 광도(태양 = 1), 무리, 이름표를 왼쪽에 둘지]
+// 유명한 별 [이름, 분광형, 표면 온도 K, 광도(태양 = 1), 무리, 이름표를 왼쪽에 둘지, 덧붙임 설명]
 // 절대등급을 광도로부터 환산하므로, 환산값이 실제 절대등급과 크게 달라지는 매우 뜨겁거나 차가운 별은 넣지 않음
 // (시리우스 B는 사용자 요청으로 넣음: 환산값 약 +8.0등, 실제 안시 절대등급 약 +11.2등)
-const ST=[['태양','G2',5772,1,'ms'],['시리우스 A','A1',9940,25.4,'ms'],['베가','A0',9600,40,'ms',1],['프로키온 A','F5',6530,6.9,'ms'],['알파 센타우리 A','G2',5790,1.5,'ms'],
+const ST=[['태양','G2',5772,1,'ms'],['시리우스 A','A1',9940,25.4,'ms',0,'금속선이 강해 A1형으로 분류되지만, 표면 온도는 A0형인 베가보다 조금 높습니다.'],['베가','A0',9600,40,'ms',1],['프로키온 A','F5',6530,6.9,'ms'],['알파 센타우리 A','G2',5790,1.5,'ms'],
 ['아크투루스','K1.5',4290,170,'g',1],['폴룩스','K0',4670,33,'g',1],['리겔','B8',12100,120000,'sg'],['데네브','A2',8500,200000,'sg'],['시리우스 B','DA2',25000,.056,'wd'],['프로키온 B','DQZ',7740,.00049,'wd']];
 // 분광형 경계 (K)
 const SB=[[56000,'O'],[30000,'B'],[10000,'A'],[7500,'F'],[6000,'G'],[5200,'K'],[3700,'M'],[2400,'']];
@@ -218,12 +218,13 @@ function draw1(){frame(sv1,104,880,44,510);
   // 축 위의 값 표시
   pill(X0-8,y,YM=='L'?fmtL(s[3]):fmtM(lg(s[3])),'end');pill(x,Y1+25,XM=='T'?(Math.round(s[2]/100)*100).toLocaleString('ko-KR'):s[1],'middle');
   // 값 상자 (그림판 왼쪽 아래의 빈 곳)
-  const wd=s[4]=='wd',g=el('g',{'pointer-events':'none'}),bg=el('rect',{rx:10,fill:'#161c36',opacity:.92,stroke:'#3a4260'},g),bx=X0+14,by=Y1-92;
+  const wd=s[4]=='wd',g=el('g',{'pointer-events':'none'}),bg=el('rect',{rx:10,fill:'#161c36',opacity:.92,stroke:'#3a4260'},g),bx=X0+14,nt=s[6],by=Y1-(nt?116:92);
   lab(bx+12,by+24,s[0],17,'start','#fff',800,g);
   const row=(y,k,v)=>{const t=lab(bx+12,y,k+'  ',14,'start','#a9b1cc',600,g),ts=el('tspan',{fill:'#f5b942','font-weight':800},t);ts.textContent=v};
   row(by+50,XM=='T'?'표면 온도':'분광형',XM=='T'?fmtT(s[2]):s[1]+'형'+(wd?' (백색왜성의 분광형)':''));
   row(by+74,YM=='L'?'광도':'절대등급',YM=='L'?'약 '+fmtL(s[3])+' (태양 = 1)':'약 '+fmtM(lg(s[3]))+'등');
-  const b=g.getBBox();bg.setAttribute('x',bx);bg.setAttribute('y',by);bg.setAttribute('width',b.width+24);bg.setAttribute('height',88)}}
+  if(nt)lab(bx+12,by+98,nt,13,'start','#c3cae6',600,g);
+  const b=g.getBBox();bg.setAttribute('x',bx);bg.setAttribute('y',by);bg.setAttribute('width',b.width+24);bg.setAttribute('height',nt?112:88)}}
 function pill(x,y,t,an){const w=t.length*9+16,bx=an=='end'?x-w:x-w/2;
  el('rect',{x:bx,y:y-14,width:w,height:24,rx:7,fill:'#f5b942'});const e=el('text',{x:bx+w/2,y:y+4,fill:'#1b1f2a','font-size':15,'font-weight':800,'text-anchor':'middle'});e.textContent=t}
 
