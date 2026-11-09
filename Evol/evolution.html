@@ -344,6 +344,9 @@ function drawHR(G){S=hv;S.innerHTML='';const X0=78,X1=545,Y0=44,Y1=372,TA=4.62,T
  show.forEach(i=>{const M=MASS[i],me=i==mi,qi=G.q[i],c=me?'#f5b942':'#aab3d6',[t0,l0]=M.P[0],[t1,l1]=M.P[M.P.length-1];
   el('path',{d:path(M.C),fill:'none',stroke:c,'stroke-width':me?2:1.6,'stroke-dasharray':'5 6',opacity:me?.55:.45});
   lab(x(t0)+(me?8:6),y(l0)-(me?8:6),M.m+' M☉',me?15:13,'start',me?'#ffd166':'#cfd6ea',me?800:700);
+  // 원시별이 처음 나타난 자리(경로의 시작점): 고른 질량만 점선 고리와 '원시별' 이름표로 표시
+  if(me&&qi>=0){const X=x(t0),Y=y(l0);el('circle',{cx:X,cy:Y,r:12,fill:'none',stroke:'#ffd166','stroke-width':1.8,'stroke-dasharray':'3 3'});
+   lab(X-17,Y+5,'원시별',14,'end','#ffd166',800)}
   if(qi>=0){const n=Math.max(2,Math.round(qi*(M.C.length-1))),pt=along(M,qi);
    el('path',{d:path(M.C.slice(0,n).concat([pt])),fill:'none',stroke:c,'stroke-width':me?3.5:2.5,'stroke-linecap':'round'});
    el('circle',{cx:x(pt[0]),cy:y(pt[1]),r:me?13:9,fill:col(pt[0]),opacity:.35});el('circle',{cx:x(pt[0]),cy:y(pt[1]),r:me?7:5,fill:col(pt[0]),stroke:'#fff','stroke-width':1.5});
@@ -369,10 +372,13 @@ MASS.forEach((M,i)=>{const b=document.createElement('button');b.innerHTML=M.m+' 
 msel.children[mi].classList.add('on');
 prog.oninput=()=>{stop();setS(prog.value/1000)};allm.onchange=drawPre;
 bv.addEventListener('click',e=>{const g=e.target.closest('[data-s]');if(g){stop();setS(+g.dataset.s)}});
-// 재생: 처음부터 끝까지 약 9초
+// 재생: 처음부터 끝까지 약 9초. 원시별이 생기는 순간(진행 0.4)에 1.5초 멈췄다가 이어서 재생
 function stop(){playing=false;cancelAnimationFrame(raf);play.textContent='▶ 재생'}
 play.onclick=()=>{if(playing)return stop();if(ps>=1)ps=0;playing=true;play.textContent='❚❚ 멈춤';let last=performance.now();
- const step=now=>{if(!playing)return;setS(ps+(now-last)/(race()?14000:9000));last=now;if(ps>=1)return stop();raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)};
+ let hold=0;const step=now=>{if(!playing)return;const dt=now-last;last=now;
+  if(hold>0){hold-=dt;raf=requestAnimationFrame(step);return}
+  const nv=ps+dt/(race()?14000:9000);if(ps<.4&&nv>=.4){setS(.4);hold=1500;raf=requestAnimationFrame(step);return}
+  setS(nv);if(ps>=1)return stop();raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)};
 drawPre();
 
 // ---- ② 주계열 단계 ----
