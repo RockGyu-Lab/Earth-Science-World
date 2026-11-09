@@ -531,6 +531,16 @@ function drawPm0(){const d=el('defs',{});heads(d);const s=pmState(),C=[270,180];
  el('ellipse',{cx:880,cy:150,rx:42,ry:32,fill:'#ffb86b',opacity:.12});lab(880,108,'적색 거성',13,'middle','#ffb86b',700);
  const tr=PS.slice(0,pi_+1).map(p=>p.hr).concat(pT<1?[s.hr]:[]);
  el('path',{d:'M'+PS[0].hr.join(',')+PS.slice(1,pi_+1).map(p=>' L'+p.hr.join(',')).join(''),fill:'none',stroke:'#ffd166','stroke-width':2,'stroke-dasharray':'4 4',opacity:.8});
+ // 질량이 큰 별: 주계열 윗부분에서 광도가 거의 일정한 채 수평으로 이동해 초거성이 됨.
+ //  태양 정도인 별보다 훨씬 빠르게 진행하므로, 같은 단계 진행 동안 먼저 초거성에 도착하게 그림(진행 정도 ×2.5)
+ el('ellipse',{cx:880,cy:76,rx:46,ry:22,fill:'#c9a7ff',opacity:.12});lab(880,64,'초거성',13,'middle','#c9a7ff',700);
+ const ef=pT<1?pT*pT*(3-2*pT):1,gp=(pFrom+(pi_-pFrom)*ef)/(PS.length-1),mf=Math.min(1,gp*2.5),MA=[665,108],MB=[875,82];
+ const mp=[MA[0]+(MB[0]-MA[0])*mf,MA[1]+(MB[1]-MA[1])*mf];
+ if(mf>0)el('path',{d:`M${MA.join(',')} L${mp.map(v=>v.toFixed(1)).join(',')}`,fill:'none',stroke:'#c9a7ff','stroke-width':2,'stroke-dasharray':'4 4',opacity:.85});
+ el('circle',{cx:mp[0],cy:mp[1],r:8,fill:css(mix([159,195,255],[255,138,107],mf)),stroke:'#fff','stroke-width':2});
+ // 범례: 두 별의 진행 빠르기 비교
+ el('circle',{cx:626,cy:254,r:5,fill:'#ffd166'});lab(636,258,'질량이 태양 정도인 별',12,'start','#e8eaf2',700);
+ el('circle',{cx:626,cy:276,r:5,fill:'#9fc3ff'});lab(636,280,'질량이 큰 별: 훨씬 빠르게 진행',12,'start','#c9a7ff',800);
  el('circle',{cx:s.hr[0],cy:s.hr[1],r:9,fill:css(s.oc),stroke:'#fff','stroke-width':2})}
 
 // ② 거성과 초거성의 내부 구조 (층의 두께는 실제 비율과 다름)
