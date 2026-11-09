@@ -102,11 +102,13 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 /* 글 속의 단추 이름 꼬리표: 실제 단추와 같은 색의 작은 상자 (.kb 실행 단추=남색, .kb.sub 선택 단추=연보라) */
 .kb{display:inline-block;padding:0 .45em;margin:0 .1em;border-radius:6px;background:var(--acc);color:var(--on-acc);font-size:.9em;font-weight:700;line-height:1.55;vertical-align:.05em;white-space:nowrap}
 .kb.sub{background:var(--sub-bg);color:var(--sub-tx);border:1px solid var(--sub-bd)}
-.lq .from,.rq .from{display:block;text-align:right;padding-right:.5em}
+/* 보낸 사람은 본문 마지막 줄 오른쪽 끝에 (자리가 없으면 다음 줄 오른쪽) */
+.lq .from,.rq .from{float:right;padding:0 .5em 0 1em;font-style:normal}
+.lq .body,.rq .body{display:flow-root}
 .srow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
 /* 왼쪽·오른쪽 그림판의 높이를 똑같이 맞춤 (화면 높이에 따라 정하고, 그림은 가운데에 맞춰 그림) */
-.duo svg{height:min(290px,max(190px,calc(100vh - 484px)));max-height:none}
-.duo svg{height:min(290px,max(190px,calc(100dvh - 484px)))}
+.duo svg{height:min(290px,max(190px,calc(100vh - 434px)));max-height:none}
+.duo svg{height:min(290px,max(190px,calc(100dvh - 434px)))}
 .pb:disabled{opacity:.4;cursor:default}
 /* ② 도플러 효과: 작은 학습 화면 단추 + 설명 + 그림판 + 조작 줄 */
 #hnote p{margin:2px 0 0}
