@@ -17,7 +17,15 @@ Star/                      별의 물리량 학습실
 Evol/                      H-R도와 별의 진화 학습실
   Evol_index.html          학습실 메뉴 (탐구 01~02 카드)
   HR-diagram.html, evolution.html
+Expansion/                 허블-르메트르 법칙과 우주 팽창 학습실
+  Expansion_index.html     학습실 메뉴 (탐구 01 카드)
+  expansion.html
+Cosmology/                 현대 우주론의 정립 학습실
+  Cosmology_index.html     학습실 메뉴 (탐구 01 카드)
+  cosmology.html
+  lib/cmb_wmap.jpg         cosmology.html의 우주 배경 복사 관측 그림 (WMAP, 퍼블릭 도메인)
 ```
+- `Expansion/expansion.html`과 `Cosmology/cosmology.html`은 테스트 사이트(Earth-Test-Lab)의 `expansion.html`, `cosmology.html`을 옮긴 것입니다. 테스트 사이트에도 같은 파일이 남아 있으므로, 고칠 때는 두 곳을 함께 고칩니다(정식 사이트 쪽은 `noindex` 없음, 제목 앞 `탐구 01`, 돌아가기 링크와 `../copyright.js` 경로만 다름).
 - 빌드 도구나 패키지 없이, 각 자료는 CSS와 JS가 들어 있는 HTML 파일 하나입니다.
 - 학습실 메뉴 파일 이름은 `<폴더명>_index.html` 형식입니다(`Eclipse_index.html`은 예외로 단수형).
 
