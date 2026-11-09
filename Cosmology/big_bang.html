@@ -397,7 +397,7 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
     mk('circle',{cx:b[0],cy:b[1],r:7,fill:'none',stroke:'#ffe9a8','stroke-width':1.2,opacity:.6*(1-f)},inn);
     bWave(inn,tx,ty,ang,L,9,'#ffd76b',4,2.2)})}
   else{const lam=bs==2?9*Math.pow(4,bw):9,col=bs==2?`rgb(255,${mix(215,110,bw)},${mix(107,90,bw)})`:'#ffd76b';
-   BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,len=46*Math.pow(2,bs==2?bw:0),per=700,u=((t*sp+i*131)%per)-110,a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a),
+   BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,len=46,per=700,u=((t*sp+i*131)%per)-110,a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a),
      x=(dir>0?20:520)+c*u,y=44+y0+s*u;bWave(inn,x,y,a,len,lam,col,4+2*(bs==2?bw:0),2.2)})}
   // 원자핵과 전자 (2단계부터 전자가 원자핵 둘레를 돎)
   BNU.forEach(([nx,ny],k)=>{const jx=(1-e)*4*Math.sin(t*2.3+k),jy=(1-e)*4*Math.cos(t*1.9+k*1.4),x=nx+jx,y=ny+jy;
