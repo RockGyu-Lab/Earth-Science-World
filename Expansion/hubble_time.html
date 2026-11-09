@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>허블 시간</title>
+<style>
+/* evolution.html, HR-diagram.html과 같은 규칙
+   색: 남색 하나를 기본 강조색으로 / 상자: 옅은 회색 판 / 모서리: 판 14px, 버튼 10px / 그림판: 밤하늘 남색 */
+:root{--bg:#fff;--fg:#1b1f2a;--card:#f3f4f8;--bd:#d5d8e2;--bline:#d9d9d6;--bcard:#fff;--bfg:#1c1c1c;--acc:#5468d4;--acc-bg:#eef0fc;--acc-bd:#c3caf2;--on-acc:#fff;--frame:transparent;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}
+/* 탭 안에서 고르는 단추는 라벤더(연보라) (위쪽 큰 탭의 남색과 구분) */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+/* 해보기(직접 해 보는 활동) 꼬리표와 열기 단추: 생각해 보기(남색)와 구분되는 청록색 */
+:root{--try:#0d8577;--on-try:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--try:#4fd1bf;--on-try:#0b2420}}
+:root[data-theme="dark"]{--try:#4fd1bf;--on-try:#0b2420}
+/* 기억하기(꼭 기억할 식) 꼬리표: 생각해 보기(남색), 해보기(청록)와 구분되는 주황색 */
+:root{--mem:#c2620a;--on-mem:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mem:#ffb357;--on-mem:#2a1600}}
+:root[data-theme="dark"]{--mem:#ffb357;--on-mem:#2a1600}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
+button,input{font-family:inherit}
+main{max-width:960px;margin:0 auto;padding:14px}
+/* 제목 줄: 제목 …… [← 돌아가기] (좁은 화면에서는 줄바꿈) */
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
+.pnum{margin:0;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;text-wrap:balance}
+.back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--bline)}
+.intro{margin:0 0 8px;font-size:.93rem}
+/* 학습 메뉴 탭 (evolution.html과 같은 모양) */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.tabs button{flex:1 1 140px;padding:9px 8px;font-size:.95rem;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.note{margin-bottom:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem}
+.note .nh{font-weight:700;color:var(--acc)}
+.note .ex{font-weight:500;color:var(--fg);opacity:.75;font-size:.88rem}
+/* 탭을 바꿀 때 내용이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+/* 그림판: 패드에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한 */
+svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
+section svg{max-height:max(300px,calc(100vh - 300px))}
+section svg{max-height:max(300px,calc(100dvh - 300px))}
+@media (max-width:640px){.tabs button{flex-basis:40%}}
+/* 그림 아래 조작 줄 */
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
+#p1 .ctl{min-height:60px}
+#p1 .lc{gap:8px}#p1 .lc .pb{padding:6px 11px}#p1 .lc .hint{flex:1 1 0;min-width:0;font-size:.84rem}
+.ctl[hidden],.seg[hidden]{display:none}
+.unit{font-size:.85rem;opacity:.75}
+.hint{flex:1 1 260px;font-size:.86rem;line-height:1.45}
+.hint.tri{padding-left:1.2em;text-indent:-1.2em}
+/* 도플러 효과 안내 글: 늘 두 줄 높이를 차지해, 글 길이가 바뀌어도 아래 생각해 보기의 위치가 움직이지 않음 */
+/* 단추 옆 안내 글과 결과 설명은 쓰지 않음 (소리·빛 모두) */
+#dhint,#lhint{display:none}
+.pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
+/* 탭 안에서 고르는 단추: 라벤더(연보라) */
+.subtabs{display:flex;flex-wrap:wrap;gap:6px}
+.subtabs button{padding:5px 16px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:700;cursor:pointer}
+.subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+.seg{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700}
+.seg .bs{display:flex;flex-wrap:wrap;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
+.seg .bs button{padding:6px 11px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.88rem;font-weight:600;cursor:pointer}
+.seg .bs button+button{border-left:1px solid var(--sub-bd)}
+.seg .bs button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
+.sl{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700}
+.sl input{width:170px;accent-color:var(--acc)}
+.sl b{min-width:5.5em;color:var(--acc)}
+/* ① 정적 우주와 팽창 우주: 왼쪽 1/3 벤틀리의 질문(문제) | 오른쪽 2/3 세 과학자의 해결 아이디어(골라 보기)
+   두 칸의 설명·그림·조작 줄이 같은 높이에 오도록 격자로 배치. 좁은 화면에서는 위아래로 쌓음 */
+.duo{display:grid;grid-template-columns:2fr 3fr;grid-template-rows:auto 1fr auto auto;gap:8px 12px;align-items:start}
+.duo>.lq{grid-column:1;grid-row:1/3;align-self:stretch}
+.duo>.rh{grid-column:2;grid-row:1/3;align-self:stretch}
+#snote{margin-top:8px;padding-top:6px;border-top:1px solid var(--bd)}
+.duo>.lv{grid-column:1;grid-row:3}
+.duo>.rv{grid-column:2;grid-row:3}
+.duo>.lc{grid-column:1;grid-row:4;align-self:stretch}
+.duo>.rc{grid-column:2;grid-row:4;align-self:stretch}
+.duo .note,.duo .ctl{margin:0}
+.duo .note p{margin:2px 0 0}
+/* 벤틀리의 질문: 줄 쳐진 편지 모양 (본문 끝에 보낸 사람을 오른쪽으로) */
+/* 편지지: 크림색 종이, 파란 줄, 왼쪽 붉은 여백선 */
+:root{--paper:#fffaee;--pline:#c9d8ee;--pmar:#eeaaaa;--pbd:#eadfc6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#29271f;--pline:#3c475c;--pmar:#7a4040;--pbd:#3d3a2e}}
+:root[data-theme="dark"]{--paper:#29271f;--pline:#3c475c;--pmar:#7a4040;--pbd:#3d3a2e}
+.duo>.lq{align-self:start!important;display:flex;flex-direction:column;padding:10px 14px 8px 40px;background:linear-gradient(90deg,transparent 27px,var(--pmar) 27px 28px,transparent 28px 30px,var(--pmar) 30px 31px,transparent 31px),var(--paper);border:1px solid var(--pbd);border-radius:6px;box-shadow:0 2px 6px rgba(60,40,0,.12)}
+.lq .body{flex:1;margin:4px 0 0;font-style:italic;line-height:1.75;background:repeating-linear-gradient(transparent 0 calc(1.75em - 1px),var(--pline) calc(1.75em - 1px) 1.75em)}
+.aside{opacity:.72;font-size:.9em}
+/* 학생에게 할 일을 알려 주는 말: 재생 단추와 같은 남색 굵은 글씨로 설명과 구분 */
+.go{color:var(--acc);font-weight:700}
+/* 글 속의 단추 이름 꼬리표: 실제 단추와 같은 색의 작은 상자 (.kb 실행 단추=남색, .kb.sub 선택 단추=연보라) */
+.kb{display:inline-block;padding:0 .45em;margin:0 .1em;border-radius:6px;background:var(--acc);color:var(--on-acc);font-size:.9em;font-weight:700;line-height:1.55;vertical-align:.05em;white-space:nowrap}
+.kb.sub{background:var(--sub-bg);color:var(--sub-tx);border:1px solid var(--sub-bd)}
+.lq .from{display:block;text-align:right;padding-right:.5em}
+.srow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+/* 왼쪽·오른쪽 그림판의 높이를 똑같이 맞춤 (화면 높이에 따라 정하고, 그림은 가운데에 맞춰 그림) */
+.duo svg{height:min(270px,max(190px,calc(100vh - 508px)));max-height:none}
+.duo svg{height:min(270px,max(190px,calc(100dvh - 508px)))}
+.pb:disabled{opacity:.4;cursor:default}
+/* ② 도플러 효과: 작은 학습 화면 단추 + 설명 + 그림판 + 조작 줄 */
+#hnote p{margin:2px 0 0}
+/* 빛(전자기파)의 도플러 효과: 위 그림판(별과 망원경)과 아래 스펙트럼 비교 칸 (소리와 같은 높이 규칙) */
+#lview{display:flex;flex-direction:column;gap:8px}
+#lview[hidden],#lask[hidden]{display:none}
+#lsc{max-height:max(120px,calc((100vh - 400px)*.58 - 28px))}
+#lsc{max-height:max(120px,calc((100dvh - 400px)*.58 - 28px))}
+#lspec{max-height:max(100px,calc((100vh - 400px)*.42))}
+#lspec{max-height:max(100px,calc((100dvh - 400px)*.42))}
+/* 소리(음파)와 물결파의 도플러 효과: 위 그림판(구급차 또는 오리)과 아래 파동의 모습이 함께 화면 높이에 맞춰 줄어듦 */
+#sview{display:flex;flex-direction:column;gap:8px}
+#sview[hidden],svg[hidden],.sndb[hidden]{display:none}
+.dwrap{position:relative}
+#dsc{max-height:max(170px,calc((100vh - 400px)*.58))}
+#dsc{max-height:max(170px,calc((100dvh - 400px)*.58))}
+#dwave{max-height:max(100px,calc((100vh - 400px)*.42))}
+#dwave{max-height:max(100px,calc((100dvh - 400px)*.42))}
+/* 해보기 팝업(오리가 만든 물결파): 넓은 팝업 안에서 그림판이 화면 높이에 맞춰 줄어듦 */
+.think.wide{width:min(980px,100%)}
+#dslot{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+#dslot #dsc{max-height:max(170px,calc((100vh - 260px)*.63))}
+#dslot #dwave{max-height:max(100px,calc((100vh - 260px)*.37))}
+#dslot .ctl{margin:0}
+/* 그림판 귀퉁이의 소리 켬·끔 단추 (연보라) */
+.sndb{position:absolute;top:8px;right:8px;padding:4px 12px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.85rem;font-weight:700;cursor:pointer}
+.sndb.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+@media (max-width:820px){.duo{grid-template-columns:1fr;grid-template-rows:none}.duo>*{grid-column:1!important;grid-row:auto!important}.duo svg,.duo svg{height:26vh}.duo>.rh{margin-top:10px}}
+/* 생각해 보기: 정식 사이트(eclipses.html 심화 질문, luminosity.html)와 같은 형식
+   상자 없이 한 줄에 [꼬리표(남색)] 질문 [정답 확인(남색 테두리)] → 누르면 팝업에 질문과 답 */
+.note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
+.note.ask p{margin:0;font-weight:600}
+.ask2{margin-top:6px!important}
+.note.ask[hidden],#dask[hidden],.seg[hidden]{display:none}
+.tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.tag.try{background:var(--try);color:var(--on-try)}
+.open-think.try{border-color:var(--try);color:var(--try)}
+.tag.mem{background:var(--mem);color:var(--on-mem)}
+.memo .eq{font-size:1.15rem;line-height:1;font-weight:700;color:var(--mem);font-family:"Times New Roman",serif;display:flex;align-items:center;gap:6px;white-space:nowrap}
+/* 분수: 분자와 분모를 위아래로 쌓고 가운데 가로줄 */
+.frac{display:inline-flex;flex-direction:column;align-items:center}
+.frac>span{padding:0 4px}
+.frac>span:first-child{border-bottom:1.6px solid currentColor;padding-bottom:1px}
+.frac>span:last-child{padding-top:2px}
+.memo .eqs{font-size:1.2em}
+#lask .memo{margin-top:4px!important}
+.memo .eqx{font-weight:400;font-size:.85rem;color:var(--fg);opacity:.8}
+.open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
+.open-think:hover{background:var(--card)}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
+.think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg);font-family:inherit}
+.think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
+.think .exp{margin:0;font-size:.93rem;line-height:1.6}
+.think .exp+.exp{margin-top:6px}
+/* 개미 B 생각해 보기의 그림 두 개 (좁은 화면에서는 위아래로) */
+.cfig{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 28px;margin:8px 0}
+.cfig figure{flex:0 1 250px;margin:0}
+.cfig svg{display:block;width:100%;height:auto;max-height:none;color:var(--fg);background:none;border-radius:0;box-shadow:none}
+.cfig figcaption{text-align:center;font-size:.86rem;font-weight:700;margin-top:3px}
+@keyframes cfgrow{from{transform:scale(0)}to{transform:scale(1)}}
+.cfig .cfc{animation:cfgrow linear both}.cfig .cfa{animation:cfgrow .35s ease-out both}
+@media (prefers-reduced-motion:reduce){.cfig .cfc,.cfig .cfa{animation:none}}
+/* 세 사람의 생각 비교 표 */
+.cmp{width:100%;border-collapse:collapse;font-size:.9rem;line-height:1.45}
+.cmp th,.cmp td{border:1px solid var(--bd);padding:7px 9px;text-align:left;vertical-align:top}
+.cmp thead th{background:var(--acc-bg);color:var(--acc);text-align:center}
+.cmp tbody th{background:var(--card);white-space:nowrap}
+/* 첫째 열(항목 이름)과 짧은 답이 들어가는 둘째·셋째 행은 가운데 정렬 */
+.cmp tbody th,.cmp tbody tr:nth-child(-n+2) td{text-align:center;vertical-align:middle}
+/* ③ 허블-르메트르 법칙: 은하 카드·스펙트럼 측정·그래프를 한 그림판에 (끌어서 조작하므로 터치 스크롤을 막음) */
+/* 두 그림판(왼쪽 스펙트럼 측정, 오른쪽 그래프)을 나란히: 너비를 viewBox 너비에 비례하게 나눠 높이가 같게 됨 */
+.hpair{display:flex;gap:10px}
+#hsv{flex:589 1 0;min-width:0;touch-action:none}#hgr{flex:364 1 0;min-width:0}
+#hsv,#hgr{max-height:max(280px,calc(100vh - 380px))}
+#hsv,#hgr{max-height:max(280px,calc(100dvh - 380px))}
+#hsv:focus{outline:none}
+#hmemo{margin-top:4px!important}
+.hcue{margin:6px 2px 0;font-size:.92rem}
+.pb[hidden]{display:none}
+/* 다섯 은하를 모두 표시하면 나타나는 '직선 긋기' 단추: 다음 단계임을 알리도록 반짝임 */
+/* 다음에 누를 단추를 알려 주는 반짝임: 노란빛으로 크게 깜빡임 (다음 은하 단추, '직선 긋기' 단추) */
+/* 스크립트가 0.45초마다 .fl을 붙였다 떼어 주황색과 원래 색을 번갈아 보여 줌 (CSS 애니메이션이 꺼진 기기에서도 보이도록) */
+.pb.blink,.seg .bs button.blink{transition:background .15s,color .15s,box-shadow .15s}
+.pb.blink.fl{background:#ff9f1a;border-color:#ff9f1a;color:#1b1f2a;box-shadow:0 0 0 3px #ffe08a,0 0 18px 6px rgba(255,159,26,.85)}
+.seg .bs button.blink{background:#fff1c2;color:#7a4b00}
+.seg .bs button.blink.fl{background:#ff9f1a;color:#1b1f2a;font-weight:800}
+#hall{margin-left:auto}
+/* ④ 팽창하는 우주: 왼쪽 풍선 그림판과 오른쪽 표·그래프를 나란히 (높이가 같도록 viewBox 너비에 비례해 나눔) */
+#esv{flex:560 1 0;min-width:0}#egr{flex:380 1 0;min-width:0}
+#esv,#egr{max-height:max(250px,calc(100vh - 380px))}
+#esv,#egr{max-height:max(250px,calc(100dvh - 386px))}
+#eask1[hidden],#eask2[hidden]{display:none}
+.memo .mtx{margin:0;font-weight:700;color:var(--mem);font-size:.95rem}
+/* ⑤ 허블 시간: 왼쪽 시간 되감기 그림판, 오른쪽 표·계산 (팽창하는 우주와 같은 크기 규칙) */
+#usv{flex:560 1 0;min-width:0}#ugr{flex:380 1 0;min-width:0}
+#usv,#ugr{max-height:max(250px,calc(100vh - 386px))}
+#usv,#ugr{max-height:max(250px,calc(100dvh - 386px))}
+#ucue{flex:1 1 200px;font-size:.92rem}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
+<div class="titlebar"><p class="pnum">탐구 05</p><h1>허블 시간</h1><a class="back" href="./Expansion_index.html">← [허블-르메트르 법칙과 우주 팽창] 메뉴로 돌아가기</a></div>
+
+<!-- 화살표 머리 (두 그림판이 함께 씀) -->
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;box-shadow:none"><defs>
+ <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffb066"/></marker>
+ <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#6fd3ff"/></marker>
+ <marker id="ay" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffd76b"/></marker>
+ <marker id="av" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#7be08f"/></marker>
+ <marker id="aw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffd76b"/></marker>
+ <!-- 도플러 효과 그림판의 색 번짐(그러데이션)과 빛 번짐 효과 -->
+ <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0f26"/><stop offset="1" stop-color="#141a38"/></linearGradient>
+ <linearGradient id="gRoad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3254"/><stop offset="1" stop-color="#20263f"/></linearGradient>
+ <linearGradient id="gWalk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a2038"/><stop offset="1" stop-color="#0d1124"/></linearGradient>
+ <radialGradient id="gPond" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#16557f"/><stop offset="1" stop-color="#0a2840"/></radialGradient>
+ <linearGradient id="gStrip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e1430"/><stop offset="1" stop-color="#090d22"/></linearGradient>
+ <linearGradient id="gWaveA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff" stop-opacity=".55"/><stop offset=".5" stop-color="#8fd3ff" stop-opacity="0"/><stop offset="1" stop-color="#8fd3ff" stop-opacity=".25"/></linearGradient>
+ <linearGradient id="gWaveD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6f4ff" stop-opacity=".5"/><stop offset=".5" stop-color="#e6f4ff" stop-opacity="0"/><stop offset="1" stop-color="#e6f4ff" stop-opacity=".22"/></linearGradient>
+ <linearGradient id="gGauge" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6fd3ff"/><stop offset=".5" stop-color="#ffd76b"/><stop offset="1" stop-color="#ff8a7a"/></linearGradient>
+ <linearGradient id="gAmb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9dfea"/></linearGradient>
+ <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b9dcff"/><stop offset="1" stop-color="#4f7fb8"/></linearGradient>
+ <linearGradient id="gShirt" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2f6cc4"/><stop offset=".5" stop-color="#4a8ae4"/><stop offset="1" stop-color="#2f6cc4"/></linearGradient>
+ <linearGradient id="gPants" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#262f4b"/><stop offset="1" stop-color="#36436a"/></linearGradient>
+ <radialGradient id="gBal" cx=".38" cy=".34" r=".78"><stop offset="0" stop-color="#ff9fb2"/><stop offset=".55" stop-color="#d9476a"/><stop offset="1" stop-color="#8a2342"/></radialGradient>
+ <filter id="fGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs></svg>
+
+<!-- ⑤ 허블 시간: 지금 1 Mpc 떨어진 두 은하를 시간을 거꾸로 되돌려 봄 (우주가 과거로 갈수록 작아져 처음의 한 점으로 모임)
+     → 두 은하가 1 Mpc 멀어지는 데 걸린 시간 = 1 Mpc ÷ (H × 1 Mpc) = 1/H = 허블 시간 (우주의 나이를 어림한 값, 실제 우주의 나이는 약 138억 년) -->
+<section id="p5">
+ <div class="note"><p style="margin:0">허블-르메트르 법칙을 이용하여 우주가 언제부터 팽창했는지 어림해 봅시다. 지금 1 Mpc 떨어져 있는 두 은하는 허블 상수만큼의 속도(<i>v</i> = <i>H</i> × 1 Mpc)로 멀어지고 있습니다. 시간을 거꾸로 되돌리면 두 은하는 언제 한곳에 모일까요? 이렇게 구한 시간을 <b>허블 시간</b>이라고 합니다.</p></div>
+ <div class="hpair"><svg id="usv" viewBox="0 0 560 290" aria-label="시간을 거꾸로 되돌릴수록 작아지는 우주와 두 은하"></svg><svg id="ugr" viewBox="0 0 380 290" aria-label="두 은하 사이의 거리와 허블 시간 계산"></svg></div>
+ <div class="ctl">
+  <button class="pb" id="uplay">◀ 시간 되감기</button><button class="pb" id="urst">↺ 처음으로</button><span class="go" id="ucue"><span class="kb">시간 되감기</span>를 눌러 보세요.</span>
+  <div class="seg"><span>허블 상수(km/s/Mpc)</span><div class="bs" id="uh"><button data-v="50">50</button><button data-v="70" class="on">70</button><button data-v="100">100</button></div></div>
+ </div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>2 Mpc 떨어진 두 은하가 한곳에 모이는 시간은 어떻게 될까요?</p><button type="button" class="open-think" id="thb16">정답 확인</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>허블 상수와 허블 시간은 어떤 관계가 있나요?</p><button type="button" class="open-think" id="thb17">정답 확인</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>허블 시간(약 140억 년)과 실제 우주의 나이(약 138억 년)는 왜 차이가 날까요?</p><button type="button" class="open-think" id="thb18">정답 확인</button></div>
+ <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="eq"><i>t</i><span style="font-family:'Pretendard Variable',Pretendard,system-ui,'Noto Sans KR',sans-serif;font-size:.85em;margin-left:-3px">(허블 시간)</span><span class="eqs">=</span><span class="frac"><span>1</span><span><i>H</i></span></span></p>
+  <p class="eqx">우주가 처음부터 지금까지 같은 속도로 팽창했다고 가정하고 어림한 우주의 나이<br>실제 우주의 나이는 약 138억 년입니다.</p></div>
+ <div class="ov" id="ov16" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 2 Mpc 떨어진 두 은하가 한곳에 모이는 시간은 어떻게 될까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>2 Mpc 떨어진 두 은하가 한곳에 모이는 시간은 어떻게 될까요?</b><button type="button" class="x" id="thx16" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">1 Mpc 떨어진 두 은하와 같습니다. 거리가 2배이지만, 허블-르메트르 법칙에 따라 멀어지는 속도도 2배이기 때문입니다.</p>
+  <p class="exp">허블 상수가 70 km/s/Mpc이면 2 Mpc 떨어진 두 은하는 140 km/s로 멀어지므로, 걸리는 시간은 2 Mpc ÷ 140 km/s = 1 Mpc ÷ 70 km/s로 같습니다. 일반적으로 이 시간은 <i>t</i> = <i>r</i> ÷ <i>v</i> = <i>r</i> ÷ (<i>H</i> × <i>r</i>) = 1/<i>H</i>로, 두 은하 사이의 거리와 관계없이 허블 상수만으로 정해집니다.</p>
+  <p class="exp">곧 시간을 거꾸로 되돌리면 우주의 모든 은하가 같은 때(1/<i>H</i> 전)에 한곳에 모입니다. 따라서 과거에는 우주의 모든 물질이 한곳에 모여 있었고 그때부터 팽창해 왔다고 생각할 수 있으며, 이렇게 구한 1/<i>H</i>를 허블 시간이라고 하며, 우주의 나이를 어림하는 데 씁니다.</p>
+ </div></div>
+ <div class="ov" id="ov17" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 허블 상수와 허블 시간은 어떤 관계가 있나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>허블 상수와 허블 시간은 어떤 관계가 있나요?</b><button type="button" class="x" id="thx17" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">허블 시간(1/<i>H</i>)은 허블 상수에 반비례합니다. 허블 상수가 클수록 허블 시간은 짧아집니다.</p>
+  <p class="exp">허블 상수가 크다는 것은 같은 거리에 있는 은하가 더 빠르게 멀어진다는 뜻이므로, 지금의 거리까지 오는 데 걸린 시간이 짧습니다. 허블 상수가 50 km/s/Mpc이면 약 196억 년, 70이면 약 140억 년, 100이면 약 98억 년입니다. <span class="go"><span class="kb sub">허블 상수</span> 단추를 바꿔 가며 비교해 보세요.</span></p>
+ </div></div>
+ <div class="ov" id="ov18" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 허블 시간(약 140억 년)과 실제 우주의 나이(약 138억 년)는 왜 차이가 날까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>허블 시간(약 140억 년)과 실제 우주의 나이(약 138억 년)는 왜 차이가 날까요?</b><button type="button" class="x" id="thx18" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">허블 시간은 우주가 처음부터 지금과 같은 빠르기로 팽창해 왔다고 가정하고 구한 값이지만, 실제 우주는 팽창하는 빠르기가 시간에 따라 변해 왔기 때문입니다.</p>
+  <p class="exp">우주 초기에는 물질의 중력 때문에 팽창 속도가 점점 느려졌고(감속 팽창), 약 50억~60억 년 전부터는 암흑 에너지 때문에 팽창 속도가 점점 빨라지고 있습니다(가속 팽창). 이처럼 팽창 속도가 일정하지 않았으므로 허블 시간은 우주의 나이를 어림한 값일 뿐, 실제 우주의 나이와 꼭 같지는 않습니다.</p>
+  <p class="exp">또 허블 상수 자체도 관측 방법에 따라 약 67~73 km/s/Mpc로 조금씩 다르게 측정됩니다. 실제 우주의 나이는 우주 배경 복사를 비롯한 여러 관측 자료와 팽창 속도의 변화를 함께 고려하여 구하며, 약 138억 년입니다.</p>
+ </div></div>
+</section>
+<script>
+
+// ---- 공통: 그리기 도구 ----
+const NS="http://www.w3.org/2000/svg";
+function mk(tag,at,par){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e}
+function txt(s,at,par){const e=mk('text',at,par);e.textContent=s;return e}
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function arrow(x1,y1,x2,y2,c,m,par){return mk('line',{x1,y1,x2,y2,stroke:c,'stroke-width':3,'marker-end':`url(#${m})`},par)}
+function label(s,x,y,par,anchor='start',col='#e8ecff',size=19){const g=mk('g',{},par);const t=txt(s,{x,y,'text-anchor':anchor,fill:col,'font-size':size,'font-weight':600},g);
+ const b=t.getBBox?t.getBBox():null;if(b&&b.width){g.insertBefore(mk('rect',{x:b.x-6,y:b.y-3,width:b.width+12,height:b.height+6,rx:6,fill:'#0b1026',opacity:.8}),t)}return g}
+// 별 배치: 반지름 SR인 둥근 영역 안에 거의 고르게(조금씩 불규칙하게) 놓인 별들 (처음에 멈춰 있음)
+const SR=120,SSP=22;
+function makeStars(){const r=rng(5),a=[];
+ for(let j=-6;j<=6;j++)for(let i=-6;i<=6;i++){const x=i*SSP+(r()-.5)*18,y=j*SSP+(r()-.5)*18;if(x*x+y*y<=SR*SR)a.push({x,y,vx:0,vy:0,m:1})}
+ return a}
+const fRad=m=>2.6*Math.pow(m,.4);
+
+function segPick(box,v){box.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v==v))}
+// ---- ⑤ 허블 시간: 지금 1 Mpc 떨어진 두 은하를 시간을 거꾸로 되돌려 봄 ----
+// 두 은하는 v = H × 1 Mpc의 일정한 빠르기로 멀어져 왔다고 가정 → 거리가 0이 될 때까지 걸린 시간 t = 1 Mpc ÷ v = 1/H
+// 그림: 우주(구)가 시간축을 따라 과거로 갈수록 작아지며 '처음'의 한 점으로 모임 (시간축 눈금은 허블 상수와 관계없이 고정)
+// 1/H 계산: 1 Mpc ≈ 3.09×10^19 km, 1년 ≈ 3.16×10^7 s
+const UCY=144,UR0=80,UXN=104,UK=1.95,UTM=200,UAY=264;
+let uH=70,ut=0,uraf=0,uLast=0;   // ut: 되돌린 시간(억 년)
+const uAge=H=>3.09e19/H/3.16e7/1e8;   // 1/H (억 년)
+const uxt=t=>UXN+t*UK;
+function uGal(g,x,y,s){const e=mk('g',{transform:`translate(${x.toFixed(1)},${y.toFixed(1)}) scale(${s.toFixed(3)}) rotate(-12)`},g);
+ mk('ellipse',{rx:20,ry:8,fill:'rgba(190,205,255,.22)'},e);mk('ellipse',{rx:13,ry:4.8,fill:'#cfd8ff',filter:'url(#fGlow)'},e);mk('circle',{r:3,fill:'#fff'},e)}
+// 우주(구)와 그 위의 두 은하
+function uSphere(g,cx,R,f){mk('circle',{cx,cy:UCY,r:R,fill:'url(#uSph)',stroke:'rgba(170,195,255,.45)','stroke-width':1.2},g);
+ if(R>5){const s=Math.max(.25,f);uGal(g,cx-.12*R,UCY-.6*R,s);uGal(g,cx-.12*R,UCY+.6*R,s)}
+ // 두 은하 사이의 거리(주황 화살표와 값): 구가 충분히 클 때만
+ if(R>26){mk('path',{d:`M${cx+.05*R},${UCY-.4*R}Q${cx+.42*R},${UCY} ${cx+.05*R},${UCY+.4*R}`,fill:'none',stroke:'#ffa040','stroke-width':2,'marker-start':'url(#uor)','marker-end':'url(#uor)'},g);
+  txt(f==1?'1 Mpc':`${f.toFixed(2)} Mpc`,{x:cx+.1*R,y:UCY+4,'text-anchor':'end',fill:'#fff','font-size':12.5,'font-weight':700},g)}}
+function uDraw(){usv.innerHTML='';const T=uAge(uH),tc=Math.min(ut,T),f=1-tc/T,done=ut>=T,R=UR0*f,cx=uxt(tc),xT=uxt(T);
+ mk('defs',{},usv).innerHTML='<radialGradient id="uSph" cx=".38" cy=".34" r=".7"><stop offset="0" stop-color="#56658c"/><stop offset=".55" stop-color="#1f2840"/><stop offset="1" stop-color="#0a0e1a"/></radialGradient>'+
+  '<linearGradient id="uCone" x1="0" x2="1"><stop offset="0" stop-color="#9fd0ff" stop-opacity=".5"/><stop offset="1" stop-color="#9fd0ff" stop-opacity=".18"/></linearGradient>'+
+  '<marker id="uor" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffa040"/></marker>'+
+  '<marker id="uwh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#e8ecff"/></marker>';
+ const g=mk('g',{},usv);
+ txt('시간을 거꾸로 되돌린 우주',{x:14,y:26,fill:'#e8ecff','font-size':14,'font-weight':700},g);
+ txt('우주가 지금과 같은 빠르기로 팽창해 왔다고 가정한 모형',{x:14,y:47,fill:'#8fd8ff','font-size':13.5,'font-weight':700},g);
+ txt(tc>0?`지금으로부터 약 ${Math.round(tc)}억 년 전`:'지금',{x:546,y:26,'text-anchor':'end',fill:'#ffd76b','font-size':14,'font-weight':700},g);
+ // 시간축 (오른쪽으로 갈수록 과거)
+ mk('line',{x1:UXN,y1:UAY,x2:uxt(UTM),y2:UAY,stroke:'#cfd6ee','stroke-width':1.2},g);
+ for(let t=0;t<=UTM;t+=50){mk('line',{x1:uxt(t),y1:UAY,x2:uxt(t),y2:UAY+5,stroke:'#cfd6ee'},g);txt(t?t:'현재',{x:uxt(t),y:UAY+18,'text-anchor':'middle',fill:t?'#cfd6ee':'#ffd76b','font-size':t?10.5:11.5,'font-weight':t?400:700},g)}
+ txt('억 년 전',{x:uxt(UTM)+12,y:UAY+4,fill:'#e8ecff','font-size':11,'font-weight':600},g);
+ // 되돌린 자취(원뿔)와 그 위에 지금의 우주
+ if(tc>0){mk('path',{d:`M${UXN},${UCY-UR0}L${cx.toFixed(1)},${(UCY-R).toFixed(1)}L${cx.toFixed(1)},${(UCY+R).toFixed(1)}L${UXN},${UCY+UR0}Z`,fill:'url(#uCone)'},g);
+  uSphere(g,UXN,UR0,1)}
+ // 되돌린 때의 우주와 두 은하 (주황 화살표: 두 은하 사이의 거리)
+ if(R>.5)uSphere(g,cx,R,f);
+
+
+ if(tc>0&&!done)mk('line',{x1:cx,y1:UCY+R+3,x2:cx,y2:UAY,stroke:'#ffd76b','stroke-dasharray':'3 3',opacity:.7},g);
+ if(done){mk('line',{x1:xT,y1:UCY+6,x2:xT,y2:UAY,stroke:'#cfd6ee','stroke-dasharray':'2 3',opacity:.8},g);
+  mk('circle',{cx:xT,cy:UCY,r:4,fill:'#fff',filter:'url(#fGlow)'},g);txt('처음',{x:xT+9,y:UCY+5,fill:'#fff','font-size':13,'font-weight':700},g);
+  mk('line',{x1:UXN+2,y1:UAY-16,x2:xT-2,y2:UAY-16,stroke:'#e8ecff','stroke-width':1.4,'marker-start':'url(#uwh)','marker-end':'url(#uwh)'},g);
+  txt(`두 은하가 1 Mpc 멀어지는 데 걸린 시간: 약 ${Math.round(T)}억 년`,{x:(UXN+xT)/2,y:UAY-23,'text-anchor':'middle',fill:'#ffb357','font-size':12,'font-weight':800},g)}}
+// 오른쪽: 두 은하 사이의 거리·속도와 1/H 계산
+function uSci(x){const e=Math.floor(Math.log10(x)),m=x/10**e,SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';return m.toFixed(1)+'×10'+String(e).split('').map(c=>SUP[c]).join('')}
+function uGraph(){ugr.innerHTML='';const g=mk('g',{},ugr),T=uAge(uH),tc=Math.min(ut,T),f=1-tc/T,done=ut>=T;
+ mk('rect',{x:6,y:8,width:368,height:274,rx:10,fill:'url(#gStrip)',stroke:'rgba(255,255,255,.16)'},g);
+ const tl=txt('',{x:18,y:28,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);tl.innerHTML='두 은하가 한곳에 모이는 데 걸린 시간 = <tspan fill="#ffb357">허블 시간</tspan>';
+ const row=(y,a,b,c)=>{txt(a,{x:18,y,fill:'#cfd6ee','font-size':12},g);txt(b,{x:362,y,'text-anchor':'end',fill:c,'font-size':12.5,'font-weight':700},g)};
+ row(54,'지금 두 은하 사이의 거리','r = 1 Mpc','#e8ecff');
+ row(74,'두 은하가 멀어지는 속도',`v = H × r = ${uH} km/s`,'#7be08f');
+ mk('line',{x1:18,y1:84,x2:362,y2:84,stroke:'rgba(255,255,255,.2)'},g);
+ row(104,'되돌린 시간',tc>0?`약 ${Math.round(tc)}억 년`:'0','#ffd76b');
+ row(124,'그때 두 은하 사이의 거리',`${f.toFixed(2)} Mpc`,'#ffa040');
+ mk('rect',{x:18,y:132,width:344,height:7,rx:3.5,fill:'rgba(255,255,255,.1)'},g);
+ if(f>0)mk('rect',{x:18,y:132,width:344*f,height:7,rx:3.5,fill:'#ffa040'},g);
+ const by=160;
+ if(!done){txt('시간을 되감아 두 은하 사이의 거리가 0이 될 때까지',{x:190,y:by+44,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
+  txt('걸린 시간을 계산해 봅니다.',{x:190,y:by+62,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);return}
+ // 계산 (기억하기와 같은 주황색 상자): 나눗셈은 모두 분수(분자·가로줄·분모)로 나타냄
+ const bx=146;
+ mk('rect',{x:16,y:bx,width:348,height:130,rx:9,fill:'rgba(255,179,87,.12)',stroke:'#ffb357','stroke-width':1.6},g);
+ const I=s=>`<tspan font-style="italic">${s}</tspan>`,s=3.09e19/uH;
+ uEq(g,28,bx+27,[I('t')+' = ',{n:I('r'),d:I('v')},' = ',{n:I('r'),d:I('H')+' × '+I('r')},' = ',{n:'1',d:I('H')}],
+  {fill:'#ffb357','font-size':17,'font-weight':800,'font-family':'Times New Roman,serif'});
+ uEq(g,28,bx+72,[{n:'1',d:I('H')},' = ',{n:'1 Mpc',d:`${uH} km/s`},' = ',{n:'3.09×10¹⁹ km',d:`${uH} km/s`},` ≈ ${uSci(s)} s`],
+  {fill:'#ffd9a8','font-size':13,'font-weight':600});
+ const r3=txt('',{x:40,y:bx+110,fill:'#ffb357','font-size':14,'font-weight':800},g);r3.textContent=`≈ 약 ${Math.round(T)}억 년 (허블 시간)`;
+ txt('1 Mpc ≈ 3.09×10¹⁹ km, 1년 ≈ 3.16×10⁷ s',{x:356,y:bx+125,'text-anchor':'end',fill:'#a9b1cc','font-size':9.5},g)}
+// 식 한 줄을 왼쪽부터 차례로 놓음: 글자는 그대로, {n,d}는 분자 위·분모 아래에 가로줄을 그은 분수 (cy: 가로줄 높이)
+function uEq(g,x,cy,parts,st){const fs=st['font-size'];let cx=x;
+ for(const p of parts){
+  if(typeof p=='string'){const t=txt('',{...st,x:cx,y:cy+fs*.33,style:'white-space:pre'},g);t.innerHTML=p;cx+=t.getComputedTextLength();continue}
+  const a=txt('',{...st,y:cy-fs*.28,'text-anchor':'middle',style:'white-space:pre'},g),b=txt('',{...st,y:cy+fs*.95,'text-anchor':'middle',style:'white-space:pre'},g);
+  a.innerHTML=p.n;b.innerHTML=p.d;const w=Math.max(a.getComputedTextLength(),b.getComputedTextLength())+8;
+  a.setAttribute('x',cx+w/2);b.setAttribute('x',cx+w/2);
+  mk('line',{x1:cx+2,y1:cy,x2:cx+w-2,y2:cy,stroke:st.fill,'stroke-width':1.3},g);cx+=w}}
+function uAll(){uDraw();uGraph()}
+function uStop(){cancelAnimationFrame(uraf);uraf=0;uplay.textContent='◀ 시간 되감기'}
+// 약 20억 년을 1초로 되감음 (허블 상수 70이면 약 7초)
+function uLoop(now){const T=uAge(uH);ut=Math.min(T,ut+20*Math.min(.05,(now-uLast)/1000));uLast=now;
+ if(ut>=T){uStop();uAll();return}
+ uAll();uraf=requestAnimationFrame(uLoop)}
+uplay.onclick=()=>{if(uraf){uStop();return}if(ut>=uAge(uH))ut=0;uplay.textContent='⏸ 멈춤';uLast=performance.now();uraf=requestAnimationFrame(uLoop)};
+urst.onclick=()=>{uStop();ut=0;uAll()};
+uh.onclick=e=>{const b=e.target.closest('button');if(!b)return;uH=+b.dataset.v;segPick(uh,b.dataset.v);uStop();ut=0;uAll()};
+uAll();
+// 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
+[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13'],['ov14','thb14','thx14'],['ov15','thb15','thx15'],['ov16','thb16','thx16'],['ov17','thb17','thx17'],['ov18','thb18','thx18']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
+ const closeTh=()=>{ov.hidden=true;btn.focus()};
+ btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
+ ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})});
+</script></main><script src="../copyright.js"></script>

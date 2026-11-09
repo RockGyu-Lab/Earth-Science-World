@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>도플러 효과</title>
+<style>
+/* evolution.html, HR-diagram.html과 같은 규칙
+   색: 남색 하나를 기본 강조색으로 / 상자: 옅은 회색 판 / 모서리: 판 14px, 버튼 10px / 그림판: 밤하늘 남색 */
+:root{--bg:#fff;--fg:#1b1f2a;--card:#f3f4f8;--bd:#d5d8e2;--bline:#d9d9d6;--bcard:#fff;--bfg:#1c1c1c;--acc:#5468d4;--acc-bg:#eef0fc;--acc-bd:#c3caf2;--on-acc:#fff;--frame:transparent;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}
+/* 탭 안에서 고르는 단추는 라벤더(연보라) (위쪽 큰 탭의 남색과 구분) */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+/* 해보기(직접 해 보는 활동) 꼬리표와 열기 단추: 생각해 보기(남색)와 구분되는 청록색 */
+:root{--try:#0d8577;--on-try:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--try:#4fd1bf;--on-try:#0b2420}}
+:root[data-theme="dark"]{--try:#4fd1bf;--on-try:#0b2420}
+/* 기억하기(꼭 기억할 식) 꼬리표: 생각해 보기(남색), 해보기(청록)와 구분되는 주황색 */
+:root{--mem:#c2620a;--on-mem:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mem:#ffb357;--on-mem:#2a1600}}
+:root[data-theme="dark"]{--mem:#ffb357;--on-mem:#2a1600}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
+button,input{font-family:inherit}
+main{max-width:960px;margin:0 auto;padding:14px}
+/* 제목 줄: 제목 …… [← 돌아가기] (좁은 화면에서는 줄바꿈) */
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
+.pnum{margin:0;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;text-wrap:balance}
+.back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--bline)}
+.intro{margin:0 0 8px;font-size:.93rem}
+/* 학습 메뉴 탭 (evolution.html과 같은 모양) */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.tabs button{flex:1 1 140px;padding:9px 8px;font-size:.95rem;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.tabs button[aria-selected="true"],.tabs button.on{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.note{margin-bottom:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem}
+.note .nh{font-weight:700;color:var(--acc)}
+.note .ex{font-weight:500;color:var(--fg);opacity:.75;font-size:.88rem}
+/* 탭을 바꿀 때 내용이 살짝 떠오르며 나타남 */
+@keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.enter{animation:enter .28s ease-out}
+@media (prefers-reduced-motion:reduce){.enter{animation:none}}
+/* 그림판: 패드에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한 */
+svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
+section svg{max-height:max(300px,calc(100vh - 300px))}
+section svg{max-height:max(300px,calc(100dvh - 300px))}
+@media (max-width:640px){.tabs button{flex-basis:40%}}
+/* 그림 아래 조작 줄 */
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
+#p1 .ctl{min-height:60px}
+#p1 .lc{gap:8px}#p1 .lc .pb{padding:6px 11px}#p1 .lc .hint{flex:1 1 0;min-width:0;font-size:.84rem}
+.ctl[hidden],.seg[hidden]{display:none}
+.unit{font-size:.85rem;opacity:.75}
+.hint{flex:1 1 260px;font-size:.86rem;line-height:1.45}
+.hint.tri{padding-left:1.2em;text-indent:-1.2em}
+/* 도플러 효과 안내 글: 늘 두 줄 높이를 차지해, 글 길이가 바뀌어도 아래 생각해 보기의 위치가 움직이지 않음 */
+/* 단추 옆 안내 글과 결과 설명은 쓰지 않음 (소리·빛 모두) */
+#dhint,#lhint{display:none}
+.pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
+/* 탭 안에서 고르는 단추: 라벤더(연보라) */
+.subtabs{display:flex;flex-wrap:wrap;gap:6px}
+.subtabs button{padding:5px 16px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:700;cursor:pointer}
+.subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+.seg{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700}
+.seg .bs{display:flex;flex-wrap:wrap;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
+.seg .bs button{padding:6px 11px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.88rem;font-weight:600;cursor:pointer}
+.seg .bs button+button{border-left:1px solid var(--sub-bd)}
+.seg .bs button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
+.sl{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700}
+.sl input{width:170px;accent-color:var(--acc)}
+.sl b{min-width:5.5em;color:var(--acc)}
+/* ① 정적 우주와 팽창 우주: 왼쪽 1/3 벤틀리의 질문(문제) | 오른쪽 2/3 세 과학자의 해결 아이디어(골라 보기)
+   두 칸의 설명·그림·조작 줄이 같은 높이에 오도록 격자로 배치. 좁은 화면에서는 위아래로 쌓음 */
+.duo{display:grid;grid-template-columns:2fr 3fr;grid-template-rows:auto 1fr auto auto;gap:8px 12px;align-items:start}
+.duo>.lq{grid-column:1;grid-row:1/3;align-self:stretch}
+.duo>.rh{grid-column:2;grid-row:1/3;align-self:stretch}
+#snote{margin-top:8px;padding-top:6px;border-top:1px solid var(--bd)}
+.duo>.lv{grid-column:1;grid-row:3}
+.duo>.rv{grid-column:2;grid-row:3}
+.duo>.lc{grid-column:1;grid-row:4;align-self:stretch}
+.duo>.rc{grid-column:2;grid-row:4;align-self:stretch}
+.duo .note,.duo .ctl{margin:0}
+.duo .note p{margin:2px 0 0}
+/* 벤틀리의 질문: 줄 쳐진 편지 모양 (본문 끝에 보낸 사람을 오른쪽으로) */
+/* 편지지: 크림색 종이, 파란 줄, 왼쪽 붉은 여백선 */
+:root{--paper:#fffaee;--pline:#c9d8ee;--pmar:#eeaaaa;--pbd:#eadfc6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#29271f;--pline:#3c475c;--pmar:#7a4040;--pbd:#3d3a2e}}
+:root[data-theme="dark"]{--paper:#29271f;--pline:#3c475c;--pmar:#7a4040;--pbd:#3d3a2e}
+.duo>.lq{align-self:start!important;display:flex;flex-direction:column;padding:10px 14px 8px 40px;background:linear-gradient(90deg,transparent 27px,var(--pmar) 27px 28px,transparent 28px 30px,var(--pmar) 30px 31px,transparent 31px),var(--paper);border:1px solid var(--pbd);border-radius:6px;box-shadow:0 2px 6px rgba(60,40,0,.12)}
+.lq .body{flex:1;margin:4px 0 0;font-style:italic;line-height:1.75;background:repeating-linear-gradient(transparent 0 calc(1.75em - 1px),var(--pline) calc(1.75em - 1px) 1.75em)}
+.aside{opacity:.72;font-size:.9em}
+/* 학생에게 할 일을 알려 주는 말: 재생 단추와 같은 남색 굵은 글씨로 설명과 구분 */
+.go{color:var(--acc);font-weight:700}
+/* 글 속의 단추 이름 꼬리표: 실제 단추와 같은 색의 작은 상자 (.kb 실행 단추=남색, .kb.sub 선택 단추=연보라) */
+.kb{display:inline-block;padding:0 .45em;margin:0 .1em;border-radius:6px;background:var(--acc);color:var(--on-acc);font-size:.9em;font-weight:700;line-height:1.55;vertical-align:.05em;white-space:nowrap}
+.kb.sub{background:var(--sub-bg);color:var(--sub-tx);border:1px solid var(--sub-bd)}
+.lq .from{display:block;text-align:right;padding-right:.5em}
+.srow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+/* 왼쪽·오른쪽 그림판의 높이를 똑같이 맞춤 (화면 높이에 따라 정하고, 그림은 가운데에 맞춰 그림) */
+.duo svg{height:min(270px,max(190px,calc(100vh - 508px)));max-height:none}
+.duo svg{height:min(270px,max(190px,calc(100dvh - 508px)))}
+.pb:disabled{opacity:.4;cursor:default}
+/* ② 도플러 효과: 작은 학습 화면 단추 + 설명 + 그림판 + 조작 줄 */
+#hnote p{margin:2px 0 0}
+/* 빛(전자기파)의 도플러 효과: 위 그림판(별과 망원경)과 아래 스펙트럼 비교 칸 (소리와 같은 높이 규칙) */
+#lview{display:flex;flex-direction:column;gap:8px}
+#lview[hidden],#lask[hidden]{display:none}
+#lsc{max-height:max(120px,calc((100vh - 400px)*.58 - 28px))}
+#lsc{max-height:max(120px,calc((100dvh - 400px)*.58 - 28px))}
+#lspec{max-height:max(100px,calc((100vh - 400px)*.42))}
+#lspec{max-height:max(100px,calc((100dvh - 400px)*.42))}
+/* 소리(음파)와 물결파의 도플러 효과: 위 그림판(구급차 또는 오리)과 아래 파동의 모습이 함께 화면 높이에 맞춰 줄어듦 */
+#sview{display:flex;flex-direction:column;gap:8px}
+#sview[hidden],svg[hidden],.sndb[hidden]{display:none}
+.dwrap{position:relative}
+#dsc{max-height:max(170px,calc((100vh - 400px)*.58))}
+#dsc{max-height:max(170px,calc((100dvh - 400px)*.58))}
+#dwave{max-height:max(100px,calc((100vh - 400px)*.42))}
+#dwave{max-height:max(100px,calc((100dvh - 400px)*.42))}
+/* 해보기 팝업(오리가 만든 물결파): 넓은 팝업 안에서 그림판이 화면 높이에 맞춰 줄어듦 */
+.think.wide{width:min(980px,100%)}
+#dslot{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+#dslot #dsc{max-height:max(170px,calc((100vh - 260px)*.63))}
+#dslot #dwave{max-height:max(100px,calc((100vh - 260px)*.37))}
+#dslot .ctl{margin:0}
+/* 그림판 귀퉁이의 소리 켬·끔 단추 (연보라) */
+.sndb{position:absolute;top:8px;right:8px;padding:4px 12px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.85rem;font-weight:700;cursor:pointer}
+.sndb.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+@media (max-width:820px){.duo{grid-template-columns:1fr;grid-template-rows:none}.duo>*{grid-column:1!important;grid-row:auto!important}.duo svg,.duo svg{height:26vh}.duo>.rh{margin-top:10px}}
+/* 생각해 보기: 정식 사이트(eclipses.html 심화 질문, luminosity.html)와 같은 형식
+   상자 없이 한 줄에 [꼬리표(남색)] 질문 [정답 확인(남색 테두리)] → 누르면 팝업에 질문과 답 */
+.note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
+.note.ask p{margin:0;font-weight:600}
+.ask2{margin-top:6px!important}
+.note.ask[hidden],#dask[hidden],.seg[hidden]{display:none}
+.tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.tag.try{background:var(--try);color:var(--on-try)}
+.open-think.try{border-color:var(--try);color:var(--try)}
+.tag.mem{background:var(--mem);color:var(--on-mem)}
+.memo .eq{font-size:1.15rem;line-height:1;font-weight:700;color:var(--mem);font-family:"Times New Roman",serif;display:flex;align-items:center;gap:6px;white-space:nowrap}
+/* 분수: 분자와 분모를 위아래로 쌓고 가운데 가로줄 */
+.frac{display:inline-flex;flex-direction:column;align-items:center}
+.frac>span{padding:0 4px}
+.frac>span:first-child{border-bottom:1.6px solid currentColor;padding-bottom:1px}
+.frac>span:last-child{padding-top:2px}
+.memo .eqs{font-size:1.2em}
+#lask .memo{margin-top:4px!important}
+.memo .eqx{font-weight:400;font-size:.85rem;color:var(--fg);opacity:.8}
+.open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
+.open-think:hover{background:var(--card)}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
+.think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg);font-family:inherit}
+.think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
+.think .exp{margin:0;font-size:.93rem;line-height:1.6}
+.think .exp+.exp{margin-top:6px}
+/* 개미 B 생각해 보기의 그림 두 개 (좁은 화면에서는 위아래로) */
+.cfig{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 28px;margin:8px 0}
+.cfig figure{flex:0 1 250px;margin:0}
+.cfig svg{display:block;width:100%;height:auto;max-height:none;color:var(--fg);background:none;border-radius:0;box-shadow:none}
+.cfig figcaption{text-align:center;font-size:.86rem;font-weight:700;margin-top:3px}
+@keyframes cfgrow{from{transform:scale(0)}to{transform:scale(1)}}
+.cfig .cfc{animation:cfgrow linear both}.cfig .cfa{animation:cfgrow .35s ease-out both}
+@media (prefers-reduced-motion:reduce){.cfig .cfc,.cfig .cfa{animation:none}}
+/* 세 사람의 생각 비교 표 */
+.cmp{width:100%;border-collapse:collapse;font-size:.9rem;line-height:1.45}
+.cmp th,.cmp td{border:1px solid var(--bd);padding:7px 9px;text-align:left;vertical-align:top}
+.cmp thead th{background:var(--acc-bg);color:var(--acc);text-align:center}
+.cmp tbody th{background:var(--card);white-space:nowrap}
+/* 첫째 열(항목 이름)과 짧은 답이 들어가는 둘째·셋째 행은 가운데 정렬 */
+.cmp tbody th,.cmp tbody tr:nth-child(-n+2) td{text-align:center;vertical-align:middle}
+/* ③ 허블-르메트르 법칙: 은하 카드·스펙트럼 측정·그래프를 한 그림판에 (끌어서 조작하므로 터치 스크롤을 막음) */
+/* 두 그림판(왼쪽 스펙트럼 측정, 오른쪽 그래프)을 나란히: 너비를 viewBox 너비에 비례하게 나눠 높이가 같게 됨 */
+.hpair{display:flex;gap:10px}
+#hsv{flex:589 1 0;min-width:0;touch-action:none}#hgr{flex:364 1 0;min-width:0}
+#hsv,#hgr{max-height:max(280px,calc(100vh - 380px))}
+#hsv,#hgr{max-height:max(280px,calc(100dvh - 380px))}
+#hsv:focus{outline:none}
+#hmemo{margin-top:4px!important}
+.hcue{margin:6px 2px 0;font-size:.92rem}
+.pb[hidden]{display:none}
+/* 다섯 은하를 모두 표시하면 나타나는 '직선 긋기' 단추: 다음 단계임을 알리도록 반짝임 */
+/* 다음에 누를 단추를 알려 주는 반짝임: 노란빛으로 크게 깜빡임 (다음 은하 단추, '직선 긋기' 단추) */
+/* 스크립트가 0.45초마다 .fl을 붙였다 떼어 주황색과 원래 색을 번갈아 보여 줌 (CSS 애니메이션이 꺼진 기기에서도 보이도록) */
+.pb.blink,.seg .bs button.blink{transition:background .15s,color .15s,box-shadow .15s}
+.pb.blink.fl{background:#ff9f1a;border-color:#ff9f1a;color:#1b1f2a;box-shadow:0 0 0 3px #ffe08a,0 0 18px 6px rgba(255,159,26,.85)}
+.seg .bs button.blink{background:#fff1c2;color:#7a4b00}
+.seg .bs button.blink.fl{background:#ff9f1a;color:#1b1f2a;font-weight:800}
+#hall{margin-left:auto}
+/* ④ 팽창하는 우주: 왼쪽 풍선 그림판과 오른쪽 표·그래프를 나란히 (높이가 같도록 viewBox 너비에 비례해 나눔) */
+#esv{flex:560 1 0;min-width:0}#egr{flex:380 1 0;min-width:0}
+#esv,#egr{max-height:max(250px,calc(100vh - 380px))}
+#esv,#egr{max-height:max(250px,calc(100dvh - 386px))}
+#eask1[hidden],#eask2[hidden]{display:none}
+.memo .mtx{margin:0;font-weight:700;color:var(--mem);font-size:.95rem}
+/* ⑤ 허블 시간: 왼쪽 시간 되감기 그림판, 오른쪽 표·계산 (팽창하는 우주와 같은 크기 규칙) */
+#usv{flex:560 1 0;min-width:0}#ugr{flex:380 1 0;min-width:0}
+#usv,#ugr{max-height:max(250px,calc(100vh - 386px))}
+#usv,#ugr{max-height:max(250px,calc(100dvh - 386px))}
+#ucue{flex:1 1 200px;font-size:.92rem}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
+<div class="titlebar"><p class="pnum">탐구 02</p><h1>도플러 효과</h1><a class="back" href="./Expansion_index.html">← [허블-르메트르 법칙과 우주 팽창] 메뉴로 돌아가기</a></div>
+
+<!-- 화살표 머리 (두 그림판이 함께 씀) -->
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;box-shadow:none"><defs>
+ <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffb066"/></marker>
+ <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#6fd3ff"/></marker>
+ <marker id="ay" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffd76b"/></marker>
+ <marker id="av" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#7be08f"/></marker>
+ <marker id="aw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffd76b"/></marker>
+ <!-- 도플러 효과 그림판의 색 번짐(그러데이션)과 빛 번짐 효과 -->
+ <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0f26"/><stop offset="1" stop-color="#141a38"/></linearGradient>
+ <linearGradient id="gRoad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3254"/><stop offset="1" stop-color="#20263f"/></linearGradient>
+ <linearGradient id="gWalk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a2038"/><stop offset="1" stop-color="#0d1124"/></linearGradient>
+ <radialGradient id="gPond" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#16557f"/><stop offset="1" stop-color="#0a2840"/></radialGradient>
+ <linearGradient id="gStrip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e1430"/><stop offset="1" stop-color="#090d22"/></linearGradient>
+ <linearGradient id="gWaveA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff" stop-opacity=".55"/><stop offset=".5" stop-color="#8fd3ff" stop-opacity="0"/><stop offset="1" stop-color="#8fd3ff" stop-opacity=".25"/></linearGradient>
+ <linearGradient id="gWaveD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6f4ff" stop-opacity=".5"/><stop offset=".5" stop-color="#e6f4ff" stop-opacity="0"/><stop offset="1" stop-color="#e6f4ff" stop-opacity=".22"/></linearGradient>
+ <linearGradient id="gGauge" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6fd3ff"/><stop offset=".5" stop-color="#ffd76b"/><stop offset="1" stop-color="#ff8a7a"/></linearGradient>
+ <linearGradient id="gAmb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9dfea"/></linearGradient>
+ <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b9dcff"/><stop offset="1" stop-color="#4f7fb8"/></linearGradient>
+ <linearGradient id="gShirt" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2f6cc4"/><stop offset=".5" stop-color="#4a8ae4"/><stop offset="1" stop-color="#2f6cc4"/></linearGradient>
+ <linearGradient id="gPants" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#262f4b"/><stop offset="1" stop-color="#36436a"/></linearGradient>
+ <radialGradient id="gBal" cx=".38" cy=".34" r=".78"><stop offset="0" stop-color="#ff9fb2"/><stop offset=".55" stop-color="#d9476a"/><stop offset="1" stop-color="#8a2342"/></radialGradient>
+ <filter id="fGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs></svg>
+
+<!-- ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)의 도플러 효과] [빛(전자기파)의 도플러 효과] (내용 준비 중) -->
+<section id="p2">
+ <div class="tabs" id="hsel" role="tablist" aria-label="학습 메뉴"><button role="tab" aria-selected="true" data-v="s" class="on">소리(음파)의 도플러 효과</button><button role="tab" aria-selected="false" data-v="l">빛(전자기파)의 도플러 효과</button></div>
+ <div class="note" id="hnote"></div>
+ <!-- 소리(음파)와 물결파의 도플러 효과: 위 칸 구급차(소리), 아래 칸 파동의 모습
+      [해보기]를 누르면 이 그림판과 조작 줄이 팝업으로 옮겨 가서 오리(물결파)를 보여 주고, 닫으면 제자리로 돌아와 구급차를 보여 줌 -->
+ <div id="sview">
+  <div class="dwrap"><svg id="dsc" viewBox="0 0 960 220"></svg>
+   <button type="button" class="sndb on" id="sndb" aria-pressed="true">🔊 소리 켬</button></div>
+  <svg id="dwave" viewBox="0 0 960 130"></svg>
+ </div>
+ <!-- 빛(전자기파)의 도플러 효과: 위 칸 별과 망원경(다가오거나 멀어지는 별의 빛), 아래 칸 세 경우의 흡수 스펙트럼 비교 -->
+ <div id="lview" hidden>
+  <svg id="lsc" viewBox="0 0 960 180"></svg>
+  <svg id="lspec" viewBox="0 0 960 130"></svg>
+ </div>
+ <div class="ctl" id="dctl">
+  <button class="pb" id="dplay">▶ 재생</button><button class="pb" id="dreset">↺ 처음으로</button>
+  <div class="seg"><div class="bs" id="dmov"><button data-v="0" class="on">정지하고 있을 때</button><button data-v="1">천천히 움직일 때</button><button data-v="2">빨리 움직일 때(2배)</button></div></div>
+  <span class="hint" id="dhint"></span>
+ </div>
+ <div class="ctl" id="lctl" hidden>
+  <button class="pb" id="lplay">▶ 재생</button>
+  <div class="seg"><div class="bs" id="lmov"><button data-v="0" class="on">정지하고 있을 때</button><button data-v="1">천천히 다가올 때</button><button data-v="2">빨리 다가올 때(2배)</button><button data-v="-1">천천히 멀어질 때</button><button data-v="-2">빨리 멀어질 때(2배)</button></div></div>
+  <span class="hint" id="lhint"></span>
+ </div>
+ <!-- 빛의 도플러 효과: 생각해 보기 2개 -->
+ <div id="lask" hidden>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?</p><button type="button" class="open-think" id="thb7">정답 확인</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?</p><button type="button" class="open-think" id="thb8">정답 확인</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>멀어지는 별에서 적색 편이가 나타나면, 별이 실제로 붉게 보일까요?</p><button type="button" class="open-think" id="thb9">정답 확인</button></div>
+ <!-- 기억하기: 도플러 효과의 식 (빛의 속력보다 매우 느리게 움직일 때) -->
+ <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="eq"><i>v</i><span class="eqs">=</span><span class="frac"><span>Δλ</span><span>λ<sub>0</sub></span></span><span class="eqs">×</span><i>c</i></p>
+  <p class="eqx">λ<sub>0</sub>: 원래 파장 · Δλ: 파장의 변화량(관측 파장 − 원래 파장) · <i>v</i>: 다가오거나 멀어지는 속력 · <i>c</i>: 빛의 속력</p></div>
+ </div>
+ <div class="ov" id="ov7" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?</b><button type="button" class="x" id="thx7" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">다가올 때는 원래보다 짧아지고(청색 편이), 멀어질 때는 원래보다 길어집니다(적색 편이).</p>
+  <p class="exp">별은 파면 하나를 내보낸 뒤 다음 파면을 내보낼 때까지 움직입니다. 그래서 별이 다가오는 쪽에서는 파면 사이의 간격(파장)이 좁아지고, 멀어지는 쪽에서는 넓어집니다.</p>
+  <p class="exp">이 때문에 스펙트럼의 흡수선이 다가올 때는 짧은 파장(파란색) 쪽으로, 멀어질 때는 긴 파장(빨간색) 쪽으로 옮겨 갑니다.</p>
+ </div></div>
+ <div class="ov" id="ov8" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?</b><button type="button" class="x" id="thx8" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">파장이 더 많이 길어집니다. 적색 편이가 커져서 흡수선이 긴 파장 쪽으로 더 멀리 옮겨 갑니다.</p>
+  <p class="exp">파장의 변화량은 별이 멀어지는 속력에 비례합니다(Δλ/λ<sub>0</sub> = <i>v</i>/<i>c</i>). 이 그림에서 별이 빛 속력의 0.05배로 멀어지면 파장이 원래의 1.05배가 되고, 그 2배인 0.1배로 멀어지면 1.1배가 됩니다. 곧 속력이 2배가 되면 파장이 늘어난 양도 2배가 됩니다. <span class="go"><span class="kb sub">천천히 멀어질 때</span>와 <span class="kb sub">빨리 멀어질 때(2배)</span>를 눌러 비교해 보세요.</span></p>
+  <p class="exp">멀리 있는 은하일수록 적색 편이가 크게 관측된다는 사실은 탐구 03(허블-르메트르 법칙)에서 살펴봅니다.</p>
+ </div></div>
+ <div class="ov" id="ov9" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 멀어지는 별에서 적색 편이가 나타나면, 별이 실제로 붉게 보일까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>멀어지는 별에서 적색 편이가 나타나면, 별이 실제로 붉게 보일까요?</b><button type="button" class="x" id="thx9" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">아니요. 별빛의 파장이 모두 조금씩 길어질 뿐, 별의 색이 눈에 띄게 붉어지는 것은 아닙니다.</p>
+  <p class="exp">별빛은 여러 파장의 빛이 섞여 있습니다. 파장이 모두 길어지면 파란빛은 초록빛 쪽으로, 초록빛은 노란빛 쪽으로 옮겨 가지만, 그만큼 보라색 바깥(자외선)에 있던 빛이 보라색 쪽으로 들어와 별의 전체 색은 거의 그대로입니다. 게다가 실제 별의 속력은 빛 속력보다 매우 느려서 파장의 변화도 아주 작습니다.</p>
+  <p class="exp">그래서 적색 편이는 별의 색이 아니라, 원래 위치를 알고 있는 <b>흡수선</b>이 파장이 긴 쪽으로 옮겨 간 것을 보고 확인합니다.</p>
+ </div></div>
+ <!-- 해보기(오리가 만든 물결파 팝업) + 생각해 보기 2개 (꼬리표 + 질문 + 정답 확인 팝업) -->
+ <div id="dask">
+ <div class="note ask"><span class="tag">생각해 보기</span><p>음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb5">정답 확인</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb6">정답 확인</button></div>
+ <div class="note ask ask2"><span class="tag try">해보기</span><p>헤엄치는 오리가 만든 물결파에서도 도플러 효과가 나타나는지 확인해 보세요.</p><button type="button" class="open-think try" id="dtryb">열기</button></div>
+ </div>
+ <div class="ov" id="ovd" hidden><div class="think wide" role="dialog" aria-modal="true" aria-label="해보기: 헤엄치는 오리가 만든 물결파">
+  <div class="think-h"><b class="think-t"><span class="tag try">해보기</span>헤엄치는 오리가 만든 물결파</b><button type="button" class="x" id="dtryx" aria-label="닫기">닫기 ✕</button></div>
+  <p class="exp">물 위에 떠 있는 나뭇잎을 관찰자로 보고, 오리가 정지하고 있을 때, 다가올 때, 멀어질 때 나뭇잎이 흔들리는 빠르기(진동수)를 비교해 보세요.</p>
+  <div id="dslot"></div>
+ </div></div>
+ <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">음원이 다가올 때는 관찰자 쪽의 파장이 짧아지고, 멀어질 때는 파장이 길어집니다.</p>
+  <p class="exp">음원은 파면 하나를 내보낸 뒤 다음 파면을 내보낼 때까지 앞으로 이동합니다. 그래서 음원이 나아가는 앞쪽에서는 파면 사이의 간격(파장)이 좁아지고, 뒤쪽에서는 넓어집니다.</p>
+  <p class="exp">파동이 퍼지는 속력은 그대로이므로, 파장이 짧아진 쪽에서는 진동수가 커지고(소리는 높게 들림), 파장이 길어진 쪽에서는 진동수가 작아집니다(소리는 낮게 들림). 이때 구급차의 사이렌이 내는 소리 자체는 바뀌지 않습니다.</p>
+ </div></div>
+ <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">음원이 빠르게 움직일수록 파장의 변화 폭이 커집니다. 앞쪽의 파장은 더 짧아지고, 뒤쪽의 파장은 더 길어집니다.</p>
+  <p class="exp">음원은 파면을 한 번 내보내고 다음 파면을 내보낼 때까지(한 주기 동안) 일정한 거리를 이동하고, 앞쪽 파장은 이 거리만큼 짧아지고 뒤쪽 파장은 이 거리만큼 길어집니다. 음원이 빨라지면 한 주기 동안 이동하는 거리가 늘어나므로 파장의 변화도 커집니다.</p>
+  <p class="exp">예를 들어 구급차가 소리 속력의 0.3배로 움직이면 앞쪽 파장은 원래의 0.7배, 뒤쪽 파장은 1.3배가 됩니다. 속력을 2배(소리 속력의 0.6배)로 하면 앞쪽은 0.4배, 뒤쪽은 1.6배가 됩니다. <span class="go"><span class="kb sub">천천히 움직일 때</span>와 <span class="kb sub">빨리 움직일 때(2배)</span>를 눌러 비교해 보세요.</span></p>
+ </div></div>
+</section>
+<script>
+
+// ---- 공통: 그리기 도구 ----
+const NS="http://www.w3.org/2000/svg";
+function mk(tag,at,par){const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e}
+function txt(s,at,par){const e=mk('text',at,par);e.textContent=s;return e}
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function arrow(x1,y1,x2,y2,c,m,par){return mk('line',{x1,y1,x2,y2,stroke:c,'stroke-width':3,'marker-end':`url(#${m})`},par)}
+function label(s,x,y,par,anchor='start',col='#e8ecff',size=19){const g=mk('g',{},par);const t=txt(s,{x,y,'text-anchor':anchor,fill:col,'font-size':size,'font-weight':600},g);
+ const b=t.getBBox?t.getBBox():null;if(b&&b.width){g.insertBefore(mk('rect',{x:b.x-6,y:b.y-3,width:b.width+12,height:b.height+6,rx:6,fill:'#0b1026',opacity:.8}),t)}return g}
+// 별 배치: 반지름 SR인 둥근 영역 안에 거의 고르게(조금씩 불규칙하게) 놓인 별들 (처음에 멈춰 있음)
+const SR=120,SSP=22;
+function makeStars(){const r=rng(5),a=[];
+ for(let j=-6;j<=6;j++)for(let i=-6;i<=6;i++){const x=i*SSP+(r()-.5)*18,y=j*SSP+(r()-.5)*18;if(x*x+y*y<=SR*SR)a.push({x,y,vx:0,vy:0,m:1})}
+ return a}
+const fRad=m=>2.6*Math.pow(m,.4);
+
+// ---- 소리(음파)와 물결파의 도플러 효과: [구급차] 사이렌 소리를 듣고 파면을 봄 / [오리] 물결파의 파장을 봄 (둘 중 하나를 골라 봄) ----
+// 위 그림판: 파원과 파면 / 아래 그림판: 파원이 지나는 직선을 따라 본 파동의 모습(마루와 골)
+// 파원은 일정한 시간 간격(T)마다 파면(마루)을 내보내고, 각 파면은 내보낸 자리에서 일정한 속력(c)으로 둥글게 퍼짐
+// 재생 전부터 소리가 나고 있었던 것으로 보고, 처음부터 파면이 그림판을 채운 채 시작함 (재생하자마자 소리가 들리도록)
+const DS={a:{c:300,v:90,T:.35,x0:55,xs:55,y:75,R:950,m:54,end:12.2},
+          d:{c:160,v:64,T:.5,x0:60,xs:480,y:80,R:900,m:44,end:14.5}};
+const OBS={x:480,y:172};
+// 오리 그림의 관찰자: 오리가 지나가는 길 가운데에서 조금 떨어진 물 위에 떠 있는 나뭇잎 한 장
+const LEAF=[{x:480,y:132,n:'나뭇잎'}];
+let dsrc='a',dmv=0,dsnd=1,dk=1,dT=0,draf=0,dLast=0;
+// 파원의 속력: 기본 또는 2배(dk)
+const vS=P=>dmv?P.v*dk:0,vr=P=>+(P.v*dk/P.c).toFixed(1);
+// 움직일 때는 재생 전부터 같은 속력으로 달려오고 있던 것으로 보고, 화면 밖에서 낸 파면까지 그림판을 채운 채 시작함
+const srcX=(P,te)=>dmv?P.x0+vS(P)*te:P.xs;
+const kMin=P=>-Math.ceil(P.R/P.c/P.T);
+const dEnd=()=>dmv?DS[dsrc].end/dk:10;
+
+// 관찰자에게 지금 들리는 소리: 이 순간 관찰자의 귀에 도착한 파면을 내보낸 때(te)와 자리를 찾아 진동수 배율을 구함
+// 배율 = 1 / (1 - (관찰자 쪽으로 다가오는 속력) / 소리 속력)
+const EAR={x:OBS.x+5,y:OBS.y-74};
+// (ox, oy) 지점이 시각 t에 받는 파동: 진동수 배율 f, 크기 vol, 변위 y(마루 1, 골 -1)
+function recv(P,ox,oy,t){let te=t,d=0;
+ for(let i=0;i<30;i++){d=Math.hypot(ox-srcX(P,te),oy-P.y);te=t-d/P.c}
+ const ux=(ox-srcX(P,te))/Math.max(d,1e-6),v=vS(P);
+ return{te,f:1/(1-v*ux/P.c),vol:1/(1+d/260),y:Math.cos(2*Math.PI*te/P.T)}}
+const heard=t=>recv(DS.a,EAR.x,EAR.y,t);
+
+// 사이렌 소리 (Web Audio). 높은음·낮은음을 번갈아 내며, 들리는 진동수 = 원래 진동수 × 배율
+let AC=null,osc=null,gn=null,aOn=false;
+function aStart(){try{if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();osc=AC.createOscillator();osc.type='sawtooth';
+ const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1800;gn=AC.createGain();gn.gain.value=0;
+ osc.connect(lp);lp.connect(gn);gn.connect(AC.destination);osc.start()}if(AC.state!='running')AC.resume()}catch(e){}}
+// 소리가 꺼져 있다가 켜질 때는 진동수를 미끄러지지 않고 바로 맞춤
+function aSet(f,v){if(!AC)return;const n=AC.currentTime;
+ if(f){if(!aOn){osc.frequency.cancelScheduledValues(n);osc.frequency.setValueAtTime(f,n)}else osc.frequency.setTargetAtTime(f,n,.008)}
+ gn.gain.setTargetAtTime(v,n,aOn||!v?.03:.005);aOn=v>0}
+const siren=te=>Math.floor((te+100)/.55)%2?770:960;
+
+// ---- 그림 조각 ----
+// 그림판 위의 글씨: 둥근 알약 모양의 반투명 바탕
+function pl(s,x,y,par,anchor='start',col='#e8ecff',size=14,w=600){const g=mk('g',{},par);
+ const t=txt(s,{x,y,'text-anchor':anchor,fill:col,'font-size':size,'font-weight':w},g),b=t.getBBox?t.getBBox():null;
+ if(b&&b.width){const h=b.height+6;g.insertBefore(mk('rect',{x:b.x-9,y:b.y-3,width:b.width+18,height:h,rx:h/2,fill:'rgba(8,12,32,.74)',stroke:'rgba(255,255,255,.12)'},g),t)}return g}
+// 구급차 (옆모습, 오른쪽을 향함)
+function ambulance(g,x,y,t){const b=mk('g',{transform:`translate(${x},${y})`},g),on=Math.floor(t*4)%2;
+ mk('ellipse',{cx:2,cy:25,rx:56,ry:4,fill:'#000',opacity:.35},b);
+ mk('rect',{x:-50,y:-28,width:72,height:44,rx:6,fill:'url(#gAmb)'},b);
+ mk('path',{d:'M20,-18L35,-18Q40,-18 43,-14L51,-3Q53,0 53,4L53,13Q53,16 50,16L20,16Z',fill:'url(#gAmb)'},b);
+ mk('path',{d:'M25,-14L35,-14Q37.5,-14 39,-12L46,-3L25,-3Z',fill:'url(#gGlass)'},b);
+ mk('rect',{x:-6,y:-21,width:22,height:12,rx:2.5,fill:'url(#gGlass)'},b);
+ mk('rect',{x:-50,y:1,width:103,height:4,fill:'#e0453a'},b);mk('rect',{x:-50,y:6.5,width:103,height:1.6,fill:'#2f6fe0'},b);
+ mk('path',{d:'M-33,-23h6v6h6v6h-6v6h-6v-6h-6v-6h6Z',fill:'#e0453a'},b);
+ mk('rect',{x:49,y:-1,width:4,height:4,rx:1,fill:'#ffe9a6'},b);
+ // 지붕의 경광등: 빨강·파랑이 번갈아 빛남
+ mk('rect',{x:-14,y:-34,width:26,height:6,rx:3,fill:'#2a2f3f'},b);
+ mk('rect',{x:-13,y:-33.5,width:12,height:5,rx:2.5,fill:'#ff4a4a',opacity:on?1:.25,...(on?{filter:'url(#fGlow)'}:{})},b);
+ mk('rect',{x:-1,y:-33.5,width:12,height:5,rx:2.5,fill:'#4a8bff',opacity:on?.25:1,...(on?{}:{filter:'url(#fGlow)'})},b);
+ [-30,33].forEach(cx=>{mk('circle',{cx,cy:17,r:8.5,fill:'#1a1d26'},b);mk('circle',{cx,cy:17,r:4,fill:'#b9c0cc'},b);mk('circle',{cx,cy:17,r:1.5,fill:'#5b6272'},b)})}
+// 관찰자: 인도에 서서 한 손을 귀에 대고 구급차 소리를 듣는 사람 (뒤에서 본 모습, 실제 사람의 비율로 작게 그림)
+function observer(g){const b=mk('g',{transform:`translate(${OBS.x},${OBS.y}) scale(.5)`},g),sk='#e9b995',sk2='#c99470',jk='url(#gShirt)',jk2='#244f93',pt='url(#gPants)';
+ mk('ellipse',{cx:0,cy:0,rx:24,ry:4.5,fill:'#000',opacity:.45},b);
+ // 다리(청바지)와 운동화
+ mk('path',{d:'M-14,-88C-14.5,-60 -12.5,-30 -11,-9L-3.5,-9C-3,-30 -1.8,-60 -0.6,-88Z',fill:pt},b);
+ mk('path',{d:'M14,-88C14.5,-60 12.5,-30 11,-9L3.5,-9C3,-30 1.8,-60 0.6,-88Z',fill:pt},b);
+ mk('path',{d:'M-0.6,-88L0.6,-88L0,-70Z',fill:'#1a2036'},b);
+ mk('path',{d:'M-12,-10L-3,-10C-2.2,-5 -2,-1 -3.5,0L-13.5,0C-14.5,-3 -13.8,-7 -12,-10Z',fill:'#2a2c33'},b);
+ mk('path',{d:'M12,-10L3,-10C2.2,-5 2,-1 3.5,0L13.5,0C14.5,-3 13.8,-7 12,-10Z',fill:'#2a2c33'},b);
+ mk('path',{d:'M-13.6,-1.2L-3.3,-1.2M13.6,-1.2L3.3,-1.2',stroke:'#e6e6e6','stroke-width':1.6},b);
+ // 내린 팔(왼쪽): 소매와 손
+ mk('path',{d:'M-15.5,-131C-22,-121 -23.5,-106 -22,-93L-15.8,-93C-16,-105 -14.6,-117 -10.5,-127Z',fill:jk2},b);
+ mk('ellipse',{cx:-19,cy:-88.5,rx:3.4,ry:4.6,fill:sk},b);
+ // 몸통(겉옷): 어깨에서 엉덩이까지, 가운데 솔기와 아랫단, 깃
+ mk('path',{d:'M-17,-131C-10,-137 10,-137 17,-131C19.5,-117 18.5,-100 16.5,-84L-16.5,-84C-18.5,-100 -19.5,-117 -17,-131Z',fill:jk},b);
+ mk('path',{d:'M0,-135L0,-86',stroke:jk2,'stroke-width':1.2,opacity:.6},b);
+ mk('path',{d:'M-16.6,-87L16.6,-87',stroke:jk2,'stroke-width':3,opacity:.8},b);
+ mk('path',{d:'M-8.5,-135.5C-4,-132 4,-132 8.5,-135.5L7.5,-130C3,-128 -3,-128 -7.5,-130Z',fill:jk2},b);
+ // 목, 머리, 귀, 머리카락(뒤통수)
+ mk('rect',{x:-3.2,y:-141,width:6.4,height:7,fill:sk2},b);
+ mk('ellipse',{cx:0,cy:-151,rx:8.6,ry:10.2,fill:sk},b);
+ mk('ellipse',{cx:-8.4,cy:-150,rx:1.9,ry:3.1,fill:sk2},b);
+ mk('path',{d:'M-8.9,-149C-10.2,-165 10.2,-165 8.9,-149C8.6,-144 5.2,-141.2 0,-141.2C-5.2,-141.2 -8.6,-144 -8.9,-149Z',fill:'#2b1f17'},b);
+ mk('path',{d:'M-5,-160C-2,-162.5 3,-162.5 5.5,-159.5',fill:'none',stroke:'#5a4332','stroke-width':1.3,opacity:.8},b);
+ // 귀에 댄 팔(오른쪽): 어깨 → 팔꿈치(옆으로 벌림) → 귀 옆의 손
+ mk('path',{d:'M12,-133C18,-133 24,-130 27,-124L21.5,-120.5C19.5,-124 16,-126 12.5,-126.5Z',fill:jk2},b);
+ mk('path',{d:'M27,-124C25,-134 19,-143 13.5,-147.5L10,-143C14.5,-139 19.5,-130 21.5,-120.5Z',fill:'#3a74c9'},b);
+ mk('ellipse',{cx:10.6,cy:-149,rx:3.6,ry:4.8,fill:sk,transform:'rotate(-20 10.6 -149)'},b);
+ pl('관찰자',OBS.x+16,OBS.y-58,g,'start','#ffd76b',13,700)}
+// 흰 오리를 위에서 본 모습, 오른쪽을 향함
+function duck(g,x,y){const b=mk('g',{transform:`translate(${x},${y}) scale(1.25)`},g),ol={stroke:'#c9c9be','stroke-width':.8};
+ mk('ellipse',{cx:2,cy:2.5,rx:34,ry:17,fill:'#000',opacity:.22},b);
+ mk('path',{d:'M-29,-5L-40,0L-29,5Z',fill:'#e9e9e1',...ol},b);
+ mk('path',{d:'M-30,0C-30,-14 -12,-17 6,-15C18,-13 24,-7 24,0C24,7 18,13 6,15C-12,17 -30,14 -30,0Z',fill:'#fbfbf6',...ol},b);
+ mk('path',{d:'M-26,-2C-18,-13 0,-14 13,-9C4,-4 -10,-2 -26,-2Z',fill:'#ecece3',...ol},b);
+ mk('path',{d:'M-26,2C-18,13 0,14 13,9C4,4 -10,2 -26,2Z',fill:'#ecece3',...ol},b);
+ mk('ellipse',{cx:16,cy:0,rx:8,ry:9,fill:'#fbfbf6'},b);
+ mk('ellipse',{cx:27,cy:0,rx:9,ry:7.8,fill:'#fdfdf9',...ol},b);
+ mk('path',{d:'M34.5,-3.4C42,-3.4 45,-1.2 45,0C45,1.2 42,3.4 34.5,3.4Z',fill:'#f29a2e'},b);
+ mk('circle',{cx:29.5,cy:-5,r:1.3,fill:'#111'},b);mk('circle',{cx:29.5,cy:5,r:1.3,fill:'#111'},b)}
+// 두 마루 사이의 간격(파장)을 양쪽 화살표로 표시
+function span(g,x1,x2,y,s){if(Math.max(x1,x2)<10||Math.min(x1,x2)>950)return;
+ [x1,x2].forEach(xx=>mk('line',{x1:xx,y1:y-5,x2:xx,y2:y+5,stroke:'#ffd76b','stroke-width':1.5,opacity:.8},g));
+ mk('line',{x1,y1:y,x2,y2:y,stroke:'#ffd76b','stroke-width':2,'marker-start':'url(#aw)','marker-end':'url(#aw)'},g);
+ pl(s,(x1+x2)/2,y-13,g,'middle','#ffd76b',13,700)}
+// 파원 바로 앞쪽과 뒤쪽에서 이웃한 두 마루를 찾아 파장을 표시
+function spans(g,P,x,t,y){const kmax=Math.floor(t/P.T);let f=null,b=null;
+ for(let k=kmax;k>kMin(P);k--){const te=k*P.T,r=P.c*(t-te);
+  if(f==null&&srcX(P,te)+r>x+P.m)f=k;if(b==null&&srcX(P,te)-r<x-P.m)b=k;if(f!=null&&b!=null)break}
+ const pt=(k,s)=>srcX(P,k*P.T)+s*P.c*(t-k*P.T);
+ if(f!=null)span(g,pt(f,1),pt(f-1,1),y,dmv?'파장 짧음 · 진동수 큼':'파장');
+ if(b!=null)span(g,pt(b,-1),pt(b-1,-1),y,dmv?'파장 김 · 진동수 작음':'파장')}
+// 파면: 내보낸 지 오래된 것일수록 크고 흐림 (가는 선 + 옅은 번짐)
+function fronts(g,P,t,col){const fg=mk('g',{},g);for(let k=Math.floor(t/P.T);k>=kMin(P);k--){const te=k*P.T,r=P.c*(t-te);if(r>P.R)break;
+ const o=Math.max(.08,1-r/P.R),cx=srcX(P,te),rr=Math.max(r,.1);
+ mk('circle',{cx,cy:P.y,r:rr,fill:'none',stroke:col,'stroke-width':6,opacity:o*.12},fg);
+ mk('circle',{cx,cy:P.y,r:rr,fill:'none',stroke:col,'stroke-width':1.6,opacity:o*.95},fg)}}
+// 진동 기록계: 관찰자 자리(ox, oy)에서 시간에 따라 파동이 오르내리는 모습(최근 2초)을 그리고, 진동수가 원래의 몇 배인지 보여 줌
+// (아래 그림판이 '한 순간의 파동 → 파장'이라면, 이것은 '한 지점의 시간에 따른 진동 → 진동수')
+// 진동 기록: 시각 t까지 최근 RW초 동안 (ox, oy) 지점이 받은 변위 (t0보다 앞의 시각은 비워 둠)
+// 위 그림판의 기록계와 아래 칸의 기록이 같은 시간 폭(RW초)과 같은 가로 길이(280)를 써서, 두 곳의 물결 간격이 똑같이 보임
+const RW=2,RN=160,RL=280;
+function trace(P,ox,oy,t,t0=-1e9){const a=[];for(let i=0;i<=RN;i++){const s=t-RW+RW*i/RN;a.push(s<t0?null:recv(P,ox,oy,s).y)}return a}
+function tpath(a,x0,yc,A){let d='',pen=0;a.forEach((y,i)=>{if(y==null){pen=0;return}d+=(pen?'L':'M')+(x0+RL*i/RN).toFixed(1)+','+(yc-A*y).toFixed(1);pen=1});return d}
+function recorder(g,P,ox,oy,t,bx,by,bw,bh,title,sound){const b=mk('g',{},g),h=recv(P,ox,oy,t),x0=bx+12,x1=x0+RL,A=8,yc=by+35;
+ const col=h.f>1.02?'#ff8a7a':h.f<.98?'#6fd3ff':'#ffd76b';
+ mk('rect',{x:bx,y:by,width:bw,height:bh,rx:12,fill:'rgba(8,12,32,.8)',stroke:'rgba(143,156,240,.35)'},b);
+ txt(title,{x:x0,y:by+17,fill:'#e8ecff','font-size':13,'font-weight':700},b);
+ txt('시간 →',{x:x1,y:by+17,'text-anchor':'end',fill:'#a9b1cc','font-size':11},b);
+ mk('line',{x1:x0,y1:yc,x2:x1,y2:yc,stroke:'rgba(143,156,240,.3)','stroke-width':1,'stroke-dasharray':'3 4'},b);
+ mk('path',{d:tpath(trace(P,ox,oy,t),x0,yc,A),fill:'none',stroke:col,'stroke-width':2,'stroke-linejoin':'round'},b);
+ mk('circle',{cx:x1,cy:yc-A*h.y,r:3.5,fill:'#fff',stroke:col,'stroke-width':2},b);
+ const tv=txt('',{x:x0,y:by+bh-9,fill:'#e8ecff','font-size':12,'font-weight':600},b);
+ tv.innerHTML=`진동수: 원래의 <tspan fill="${col}" font-weight="800">${h.f.toFixed(2)}</tspan>배`+(sound?` · ${h.f>1.02?'높은 소리':h.f<.98?'낮은 소리':'원래 높이의 소리'}`:'')}
+// 물 위에 떠 있는 나뭇잎 (물결에 따라 오르내리는 것을 크기 변화로 나타냄)
+function leaf(g,L,s){const b=mk('g',{transform:`translate(${L.x},${L.y}) rotate(-25) scale(${1+.14*s})`},g);
+ mk('ellipse',{cx:1,cy:2,rx:13,ry:6,fill:'#000',opacity:.25},b);
+ mk('path',{d:'M-13,0C-7,-8 7,-8 13,0C7,8 -7,8 -13,0Z',fill:'#6cc25a',stroke:'#3f8a33','stroke-width':1},b);
+ mk('path',{d:'M-13,0L13,0',stroke:'#3f8a33','stroke-width':1},b);mk('path',{d:'M-17,1L-13,0',stroke:'#3f8a33','stroke-width':1.5},b)}
+
+// 아래 칸: 세 경우를 나란히 비교하고, 재생하면서 관찰자가 실제로 받은 진동을 기록해 남겨 둠
+//  구급차: 정지하고 있을 때 / 천천히 움직일 때(다가올 때·멀어질 때) / 빨리 움직일 때(2배)(다가올 때·멀어질 때)
+//  오리:   정지하고 있을 때 / 오리가 다가올 때 / 오리가 멀어질 때 (가운데 나뭇잎이 관찰자)
+// 기록은 위 그림판의 기록계처럼 오른쪽에서 밀려 들어오며 RW초 동안 채워진 뒤 멈춰 남음
+// (처음으로를 누르거나 다른 경우를 골라도 다 채워진 기록은 유지, 채우는 중이던 기록은 지움)
+// 파장 배율은 소리(물결) 속력이 일정하므로 진동수 배율의 역수 (v = fλ)
+const DREC={a:[{},{},{}],d:{}};
+const fx=n=>String(+n.toFixed(2));
+function dRecord(h){const a=dsrc=='a',P=DS[dsrc],R=a?DREC.a[dmv?dk:0]:DREC.d,ox=a?EAR.x:LEAF[0].x,oy=a?EAR.y:LEAF[0].y;
+ const ff=a?h.f:recv(P,ox,oy,dT).f,k=!dmv?'s':ff>1.02?'a':ff<.98?'r':'';if(!k)return;
+ const r=R[k]||(R[k]={t0:dT});if(r.done)return;r.pts=trace(P,ox,oy,dT,r.t0);r.f=dmv?ff:1;if(dT-r.t0>=RW)r.done=1}
+function dDropPartial(){[...DREC.a,DREC.d].forEach(R=>{for(const k in R)if(!R[k].done)delete R[k]})}
+function cmpPanels(){dwave.innerHTML='';const g=mk('g',{},dwave),W=306;let cards;
+ if(dsrc=='a'){const cur=dmv?dk:0;
+  cards=['정지하고 있을 때','천천히 움직일 때','빨리 움직일 때(2배)'].map((nm,i)=>{const R=DREC.a[i];
+   return{nm,on:i==cur,sub:'같은 시간 동안 관찰자가 듣는 진동',rows:i?[['다가올 때','#ff8a7a',R.a,50],['멀어질 때','#6fd3ff',R.r,92]]:[['원래 소리','#ffd76b',R.s,70]]}})}
+ else{const R=DREC.d,f=recv(DS.d,LEAF[0].x,LEAF[0].y,dT).f,ph=!dmv?0:f>1.02?1:f<.98?2:-1;
+  cards=[['정지하고 있을 때','#ffd76b',R.s],['오리가 다가올 때','#ff8a7a',R.a],['오리가 멀어질 때','#6fd3ff',R.r]]
+   .map(([nm,col,r],i)=>({nm,on:i==ph,sub:'같은 시간 동안 나뭇잎의 진동',rows:[['',col,r,70]]}))}
+ cards.forEach(({nm,on,sub,rows},i)=>{const X=12+i*(W+9);
+  mk('rect',{x:X,y:4,width:W,height:122,rx:10,fill:'url(#gStrip)',stroke:on?'#ffd76b':'rgba(255,255,255,.16)','stroke-width':on?1.6:1},g);
+  txt(nm,{x:X+12,y:23,fill:on?'#ffd76b':'#e8ecff','font-size':13,'font-weight':700},g);
+  txt(sub,{x:X+W-10,y:23,'text-anchor':'end',fill:'#a9b1cc','font-size':10},g);
+  rows.forEach(([lb,col,r,cy])=>{const pre=lb?lb+' · ':'';
+   if(!r){txt(pre+'재생하면 기록됩니다',{x:X+12,y:cy+6,fill:'#a9b1cc','font-size':11,opacity:.75},g);return}
+   txt(r.done?`${pre}파장 ${fx(1/r.f)}배 · 진동수 ${fx(r.f)}배`:pre+'기록하는 중…',{x:X+12,y:cy-6,fill:col,'font-size':11.5,'font-weight':700},g);
+   mk('line',{x1:X+12,y1:cy+12,x2:X+12+RL,y2:cy+12,stroke:'rgba(143,156,240,.25)','stroke-width':1,'stroke-dasharray':'3 4'},g);
+   mk('path',{d:tpath(r.pts,X+12,cy+12,8),fill:'none',stroke:col,'stroke-width':1.8,'stroke-linejoin':'round'},g)})})}
+function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';dsc.setAttribute('viewBox',dsrc=='a'?'0 0 960 180':'0 0 960 220');const g=mk('g',{},dsc),x=srcX(P,t);
+ if(dsrc=='a'){
+  // 구급차와 관찰자: 밤하늘, 찻길, 인도
+  mk('rect',{x:-3000,y:-500,width:7000,height:550,fill:'#0a0f26'},g);mk('rect',{x:-3000,y:0,width:7000,height:50,fill:'url(#gSky)'},g);
+  mk('rect',{x:-3000,y:50,width:7000,height:50,fill:'url(#gRoad)'},g);
+  mk('line',{x1:-3000,y1:51,x2:4000,y2:51,stroke:'rgba(255,255,255,.18)','stroke-width':1},g);
+  mk('line',{x1:-3000,y1:75,x2:4000,y2:75,stroke:'#e8ecff','stroke-dasharray':'22 18',opacity:.35,'stroke-width':1.6},g);
+  mk('rect',{x:-3000,y:100,width:7000,height:5,fill:'#3a4262'},g);
+  mk('rect',{x:-3000,y:105,width:7000,height:115,fill:'url(#gWalk)'},g);
+  fronts(g,P,t,'#8fd3ff');ambulance(g,x,P.y,t);observer(g);recorder(g,P,EAR.x,EAR.y,t,642,102,306,72,'관찰자가 받는 소리의 진동',1);
+  txt(`구급차 속력: 소리 속력의 ${vr(P)}배 (실제보다 빠르게 나타냄)`,{x:12,y:172,fill:'#a9b1cc','font-size':12,opacity:.85},g);
+ }else{
+  // 연못의 오리 (위에서 본 모습)
+  mk('rect',{x:-3000,y:-1000,width:7000,height:3000,fill:'#0a2840'},g);mk('rect',{x:-200,y:-120,width:1360,height:460,fill:'url(#gPond)'},g);
+  fronts(g,P,t,'#e6f4ff');
+  LEAF.forEach(L=>{leaf(g,L,recv(P,L.x,L.y,t).y);pl(L.n,L.x,L.y-16,g,'middle','#ffd76b',12,700)});
+  duck(g,x,P.y);
+  pl('위에서 본 연못의 오리',948,28,g,'end','#e8ecff',14);
+  recorder(g,P,LEAF[0].x,LEAF[0].y,t,640,148,306,68,'나뭇잎의 진동',0);
+  txt('물결이 같은 속력으로 퍼진다고 가정하고,',{x:14,y:196,fill:'#cfe3f5','font-size':12,opacity:.85},g);
+  txt(`차이가 잘 드러나도록 오리를 물결파 속력의 ${vr(P)}배로 빠르게 나타냄`,{x:14,y:211,fill:'#cfe3f5','font-size':12,opacity:.85},g)}
+ cmpPanels()}
+
+const DN='<p style="margin:0">구급차가 멈춰 있을 때, 천천히 이동할 때, 빠르게 이동할 때 들리는 소리의 차이를 비교해 보세요.</p>';
+const dInitMsg=()=>dsrc=='a'?'<span class="go"><span class="kb">재생</span>을 눌러 구급차 사이렌 소리를 들어 보세요.</span>':'<span class="go"><span class="kb">재생</span>을 눌러 나뭇잎이 흔들리는 모습을 살펴보세요.</span>';
+function dMsg(h){if(dsrc=='d'){if(!dmv)return'정지하고 있을 때: 물결이 같은 간격으로 퍼져, 나뭇잎이 원래 진동수로 흔들립니다.';
+  const f=recv(DS.d,LEAF[0].x,LEAF[0].y,dT).f;
+  return f>1.02?'오리가 다가오는 동안: 파장이 짧아지고, 나뭇잎이 더 자주 흔들립니다(진동수 큼).'
+   :f<.98?'오리가 멀어지는 동안: 파장이 길어지고, 나뭇잎이 더 드물게 흔들립니다(진동수 작음).'
+   :'오리가 나뭇잎 옆을 지나는 순간: 진동수가 바뀝니다.'}
+ if(!dmv)return'정지하고 있을 때: 파면이 같은 간격(파장)으로 퍼져, 원래 높이의 소리가 들립니다.';
+ return h.f>1.02?'다가오는 동안: 파장이 짧아지고 진동수가 커져, 원래보다 높은 소리가 들립니다.'
+  :h.f<.98?'멀어지는 동안: 파장이 길어지고 진동수가 작아져, 원래보다 낮은 소리가 들립니다.'
+  :'구급차가 관찰자 앞을 지나는 순간: 소리의 높이가 바뀝니다.'}
+// ▶로 시작하는 안내 글은 두 줄이 되면 둘째 줄을 ▶ 안쪽으로 들여 씀
+function dSetHint(s){if(dhint.innerHTML!=s){dhint.innerHTML=s;dhint.classList.toggle('tri',s.includes('▶'))}}
+function dStop(){cancelAnimationFrame(draf);draf=0;dplay.textContent='▶ 재생';aSet(0,0)}
+function dSound(){const h=heard(dT);
+ // 아래 칸 기록: 관찰자가 받은 진동을 정지하고 있을 때, 다가올 때, 멀어질 때로 나누어 기록
+ if(draf)dRecord(h);
+if(dsrc=='a'&&dsnd&&draf)aSet(siren(h.te)*h.f,.16*h.vol);else aSet(0,0);return h}
+// 진행 상황을 알아보기 쉽도록 실제 시간의 0.5배 빠르기로 천천히 움직임
+const DSPD=.5;
+function dLoop(now){dT+=DSPD*Math.min(.05,(now-dLast)/1000);dLast=now;const end=dEnd();
+ // 끝까지 가면 마지막 장면에서 멈춤 (반복하지 않음, 다시 ▶를 누르면 처음부터 재생)
+ if(dT>=end){dT=end;const h=dSound();dDraw();dSetHint(dMsg(h));dStop();return}
+ const h=dSound();dDraw();dSetHint(dMsg(h));draf=requestAnimationFrame(dLoop)}
+function dPlay(){if(draf){dStop();return}if(dT>=dEnd())dT=0;if(dsrc=='a'&&dsnd)aStart();
+ dplay.textContent='⏸ 멈춤';dLast=performance.now();draf=1;dSound();draf=requestAnimationFrame(dLoop)}
+function dInit(){dStop();dT=0;dDropPartial();hnote.innerHTML=DN;sndb.hidden=dsrc!='a';dDraw();dSetHint(dInitMsg())}
+function segPick(box,v){box.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v))}
+// 경우를 고르면 처음부터 바로 재생 (재생 단추는 멈춤·다시 재생에만 씀)
+dplay.onclick=dPlay;
+// 처음으로: 고른 경우는 그대로 두고, 구급차(오리)를 처음 위치로 되돌림
+dreset.onclick=dInit;
+dmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;dmv=+b.dataset.v?1:0;dk=b.dataset.v=='2'?2:1;segPick(dmov,b.dataset.v);dInit();dPlay()};
+// 해보기: 그림판(sview)과 조작 줄(dctl)을 팝업 안으로 옮겨 오리(물결파)를 보여 주고, 닫으면 제자리로 돌려 구급차를 보여 줌
+// 팝업이 열려 있는 동안 뒤쪽 화면이 줄어들지 않도록 같은 높이의 빈 칸을 남겨 둠
+const dhold=document.createElement('div');let dSaved=null;
+function dTry(open){dStop();const bs=dmov.querySelectorAll('button');
+ // 오리는 정지하고 있을 때와 움직일 때 두 가지만 봄 (2배 단추는 숨김)
+ bs[1].textContent=open?'움직일 때':'천천히 움직일 때';bs[2].hidden=!!open;
+ // 오리 팝업은 늘 정지하고 있을 때로 시작하고, 닫으면 구급차는 열기 전에 고른 경우로 돌아감
+ if(open){dSaved=[dmv,dk];dmv=0;dk=1}else if(dSaved){[dmv,dk]=dSaved}segPick(dmov,String(dmv?dk:0));
+ if(open){dhold.style.height=(sview.offsetHeight+dctl.offsetHeight+8)+'px';sview.before(dhold);dslot.append(sview,dctl);dsrc='d';ovd.hidden=false;dtryx.focus()}
+ else{dhold.before(sview,dctl);dhold.remove();dsrc='a';ovd.hidden=true;dtryb.focus()}
+ dInit()}
+dtryb.onclick=()=>dTry(1);dtryx.onclick=()=>dTry(0);
+ovd.addEventListener('click',e=>{if(e.target===ovd)dTry(0)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ovd.hidden)dTry(0)});
+sndb.onclick=()=>{dsnd=dsnd?0:1;sndb.classList.toggle('on',!!dsnd);sndb.textContent=dsnd?'🔊 소리 켬':'🔇 소리 끔';sndb.setAttribute('aria-pressed',!!dsnd);
+ if(dsnd&&draf){aStart();dSound()}if(!dsnd)aSet(0,0)};
+
+// ==== 빛(전자기파)의 도플러 효과: 별이 망원경(관찰자)을 향해 곧장 다가오거나 곧장 멀어짐 ====
+// 위 그림판: 별, 파면(원), 별빛 가운데 한 가지 파장(초록빛, 540 nm)만 골라 색으로 칠한 빛의 파동, 망원경
+// 아래 그림판: 정지하고 있을 때 / 다가올 때 / 멀어질 때의 흡수 스펙트럼 (위: 정지한 별의 기준 스펙트럼, 아래: 관측한 스펙트럼)
+// 단순화한 모형: 별의 속력을 빛 속력의 0.05배(기본) 또는 0.1배(2배)로 매우 빠르게 나타냄 (실제 별은 빛 속력의 1만분의 1 정도)
+//  파장 배율 = 1 - (다가오는 속력)/(빛 속력)  → 다가올 때 0.95배·0.9배(청색 편이), 멀어질 때 1.05배·1.1배(적색 편이)
+const LP={c:300,T:.2,y:72,R:1150,B:.05,L0:540,TX:900,end:8};
+const LX0={0:300,1:150,'-1':450};
+const LLINE=[434.0,486.1,656.3];        // 수소의 흡수선 Hγ, Hβ, Hα (nm)
+const SPMIN=380,SPMAX=750;              // 스펙트럼에 그리는 파장 범위 (가시광선)
+let lmv=0,lk=1,lT=0,lraf=0,lLast=0;const LREC={0:0,1:{},'-1':{}};
+const lV=()=>lmv*lk*LP.B*LP.c;
+const lSrc=te=>LX0[lmv]+lV()*te;
+// 파장(nm) → 색 (가시광선의 대략적인 색)
+function wl2rgb(w){let r=0,g=0,b=0;
+ if(w<440){r=-(w-440)/60;b=1}else if(w<490){g=(w-440)/50;b=1}else if(w<510){g=1;b=-(w-510)/20}
+ else if(w<580){r=(w-510)/70;g=1}else if(w<645){r=1;g=-(w-645)/65}else r=1;
+ const f=w<420?.3+.7*(w-380)/40:w>700?.3+.7*(750-w)/50:1,c=v=>Math.round(255*Math.pow(Math.max(0,Math.min(1,v*f)),.8));
+ return`rgb(${c(r)},${c(g)},${c(b)})`}
+// 스펙트럼 띠의 무지개색(기존 defs에 한 번만 만듦)
+(function(){const df=document.querySelector('svg defs');const lg=mk('linearGradient',{id:'gSpec',x1:0,y1:0,x2:1,y2:0},df);
+ for(let w=SPMIN;w<=SPMAX;w+=10)mk('stop',{offset:((w-SPMIN)/(SPMAX-SPMIN)).toFixed(3),'stop-color':wl2rgb(w)},lg)})();
+// 별과 망원경
+function lStar(g,x,y){const b=mk('g',{transform:`translate(${x},${y})`},g);
+ mk('circle',{r:26,fill:'#fff3c4',opacity:.12},b);mk('circle',{r:17,fill:'#fff3c4',opacity:.25},b);
+ mk('circle',{r:11,fill:'#fffbe8',filter:'url(#fGlow)'},b);
+ pl('별',0,-34,b,'middle','#ffd76b',12,700)}
+function lScope(g){const b=mk('g',{transform:`translate(${LP.TX},${LP.y})`},g);
+ mk('path',{d:'M8,10L-6,62M8,10L22,62M8,10L8,64',stroke:'#7b84a8','stroke-width':2.2,'stroke-linecap':'round'},b);
+ mk('rect',{x:-12,y:-9,width:44,height:16,rx:3,fill:'#cfd6ee',stroke:'#8a93b8'},b);
+ mk('rect',{x:-20,y:-11,width:10,height:20,rx:2,fill:'#aeb8dc',stroke:'#8a93b8'},b);
+ mk('rect',{x:30,y:-5,width:10,height:9,rx:2,fill:'#59607e'},b);
+ pl('관찰자(망원경)',10,-26,b,'middle','#ffd76b',12,700)}
+// 망원경이 받는 빛의 파장 배율 (별이 망원경 쪽으로 다가오면 1보다 작음)
+const lRatio=()=>1-lmv*lk*LP.B;
+function lDraw(){const t=lT,P=LP,x=lSrc(t);lsc.innerHTML='';const g0=mk('g',{},lsc);
+ mk('rect',{x:-3000,y:-1000,width:7000,height:3000,fill:'#070b1d'},g0);
+ [[60,20],[210,150],[330,30],[470,160],[610,24],[700,140],[800,36],[150,96],[520,118],[380,140],[90,160],[940,20]].forEach(([a,b],i)=>mk('circle',{cx:a,cy:b,r:i%3?1:1.5,fill:'#cfd8ff',opacity:.55},g0));
+ // 파면(마루): 일정한 시간 간격마다 그때 별이 있던 자리에서 둥글게 퍼짐 (재생 전부터 같은 속력으로 움직이고 있었다고 봄)
+ const fg=mk('g',{},g0);for(let k=Math.floor(t/P.T);k>-60;k--){const te=k*P.T,r=P.c*(t-te);if(r>P.R)break;
+  mk('circle',{cx:lSrc(te),cy:P.y,r:Math.max(r,.1),fill:'none',stroke:'#e8ecff','stroke-width':1,opacity:Math.max(.06,.5*(1-r/P.R))},fg)}
+ // 별과 망원경을 잇는 직선 위의 빛의 파동 (오른쪽: 망원경 쪽, 왼쪽: 반대쪽), 파장에 맞는 색으로 칠함
+ const side=(x1,x2,s)=>{let d='';for(let px=x1;s>0?px<=x2:px>=x2;px+=3*s){let te=t;for(let i=0;i<12;i++)te=t-Math.abs(px-lSrc(te))/P.c;
+   d+=(d?'L':'M')+px+','+(P.y-12*Math.cos(2*Math.PI*te/P.T)).toFixed(1)}return d};
+ const wr=P.L0*lRatio(),wl=P.L0*(1+lmv*lk*P.B);
+ [[x+14,P.TX-22,1,wr],[x-14,-60,-1,wl]].forEach(([a,b,s,w])=>{if(s>0&&a>=b)return;const d=side(a,b,s),col=wl2rgb(w);
+  mk('path',{d,fill:'none',stroke:col,'stroke-width':5,opacity:.25},g0);mk('path',{d,fill:'none',stroke:col,'stroke-width':2.2},g0)});
+ lStar(g0,x,P.y);lScope(g0);
+ // 망원경이 받는 빛
+ const bx=560,by=106,col=wl2rgb(wr),rt=lRatio(),b=mk('g',{},g0);
+ mk('rect',{x:bx,y:by,width:306,height:64,rx:12,fill:'rgba(8,12,32,.85)',stroke:'rgba(143,156,240,.35)'},b);
+ txt('관찰자가 받는 빛의 파장',{x:bx+12,y:by+19,fill:'#e8ecff','font-size':13,'font-weight':700},b);
+ mk('rect',{x:bx+12,y:by+30,width:26,height:22,rx:4,fill:col},b);
+ const tv=txt('',{x:bx+48,y:by+46,fill:'#e8ecff','font-size':12.5,'font-weight':600},b);
+ tv.innerHTML=`${Math.round(wr)} nm · 원래의 <tspan fill="${col}" font-weight="800">${rt.toFixed(2)}</tspan>배`+(lmv>0?' · 청색 편이':lmv<0?' · 적색 편이':' · 원래 파장');
+ txt(`별의 속력: 빛 속력의 ${fx(lk*LP.B)}배 (실제보다 매우 빠르게 나타냄)`,{x:12,y:156,fill:'#a9b1cc','font-size':12,opacity:.85},g0);
+ txt('별빛 가운데 한 가지 파장(초록빛, 540 nm)만 골라 색으로 나타냄',{x:12,y:172,fill:'#a9b1cc','font-size':12,opacity:.85},g0)}
+// 아래 칸: 세 경우의 흡수 스펙트럼. 재생하면 그 경우(다가올 때·멀어질 때는 기본 속력과 2배를 따로)가 기록되어 남음
+// 같은 흡수선끼리 흰 점선으로 이어(기준 → 기본 → 2배), 어느 쪽으로 얼마나 옮겨 갔는지 보여 줌
+function lPanels(){lspec.innerHTML='';const g=mk('g',{},lspec),W=306,SW=230,sx=w=>(w-SPMIN)/(SPMAX-SPMIN)*SW;
+ [['정지하고 있을 때',0],['다가올 때',1],['멀어질 때',-1]].forEach(([nm,m],i)=>{const X=12+i*(W+9),on=m==lmv,x0=X+62;
+  mk('rect',{x:X,y:4,width:W,height:122,rx:10,fill:'url(#gStrip)',stroke:on?'#ffd76b':'rgba(255,255,255,.16)','stroke-width':on?1.6:1},g);
+  txt(nm,{x:X+12,y:23,fill:on?'#ffd76b':'#e8ecff','font-size':13,'font-weight':700},g);
+  txt('수소의 흡수 스펙트럼',{x:X+W-10,y:23,'text-anchor':'end',fill:'#a9b1cc','font-size':10},g);
+  const strip=(y,h,lab,k,dim)=>{txt(lab,{x:X+12,y:y+h/2+4,fill:dim?'#a9b1cc':'#cfd6ee','font-size':11,'font-weight':600,opacity:dim?.75:1},g);
+   if(dim){txt('재생하면 기록됩니다',{x:x0,y:y+h/2+4,fill:'#a9b1cc','font-size':11,opacity:.75},g);return}
+   mk('rect',{x:x0,y,width:SW,height:h,fill:'url(#gSpec)'},g);
+   LLINE.forEach(w=>{const ww=w*k;if(ww>SPMIN&&ww<SPMAX)mk('rect',{x:x0+sx(ww)-1.4,y,width:2.8,height:h,fill:'#05060c'},g)})};
+  const link=(k1,y1,k2,y2)=>LLINE.forEach(w=>mk('line',{x1:x0+sx(w*k1),y1,x2:x0+sx(w*k2),y2,stroke:'#fff','stroke-width':1.4,'stroke-dasharray':'2.5 2',opacity:.95},g));
+  strip(32,12,'기준',1);
+  // 줄마다 [이름, 파장 배율, 기록 여부, 띠의 위쪽 y]
+  const rows=m?[['천천히',1-m*LP.B,LREC[m][1],54],['빨리',1-2*m*LP.B,LREC[m][2],78]]:[['관측',1,LREC[0],54]];
+  let pk=1,py=44;rows.forEach(([lb,k,done,y])=>{strip(y,14,lb,k,!done);if(done){link(pk,py,k,y);pk=k;py=y+14}});
+  txt('← 짧은 파장',{x:x0,y:m?103:81,fill:'#8f98c4','font-size':10},g);txt('긴 파장 →',{x:x0+SW,y:m?103:81,'text-anchor':'end',fill:'#8f98c4','font-size':10},g);
+  if(!rows.some(r=>r[2]))return;  // 기록된 줄이 없으면 결과 문구를 숨김
+  const tt=txt('',{x:X+W/2,y:118,'text-anchor':'middle',fill:'#e8ecff','font-size':11.5,'font-weight':700},g),bf=fx(1-m*LP.B),df=fx(1-2*m*LP.B);
+  const got=rows.filter(r=>r[2]).map(r=>r[0]+' '+fx(r[1])+'배').join(', ');  // 기록된 줄의 값만 보여 줌
+  tt.innerHTML=m>0?'<tspan fill="#8fb8ff" font-size="13.5">청색 편이</tspan> · '+got:m<0?'<tspan fill="#ff8a7a" font-size="13.5">적색 편이</tspan> · '+got:'흡수선이 기준과 같은 자리 (1배)'})}
+const LN='<p style="margin:0">별이 정지하고 있을 때, 다가올 때, 멀어질 때 관측되는 빛의 파장과 흡수 스펙트럼을 비교해 보세요.</p>';
+const lMsg=()=>lmv>0?'다가오는 동안: 별빛의 파장이 짧아져, 흡수선이 짧은 파장(파란색) 쪽으로 이동합니다(청색 편이).'
+ :lmv<0?'멀어지는 동안: 별빛의 파장이 길어져, 흡수선이 긴 파장(빨간색) 쪽으로 이동합니다(적색 편이).'
+ :'정지하고 있을 때: 파면이 같은 간격으로 퍼져, 원래 파장의 빛이 관측됩니다.';
+function lSetHint(s){if(lhint.innerHTML!=s){lhint.innerHTML=s;lhint.classList.toggle('tri',s.includes('▶'))}}
+function lStop(){cancelAnimationFrame(lraf);lraf=0;lplay.textContent='▶ 재생'}
+function lLoop(now){lT+=.5*Math.min(.05,(now-lLast)/1000);lLast=now;
+ if(lT>=LP.end)lT=0;lDraw();  // 끝까지 가면 처음부터 다시 반복
+ lraf=requestAnimationFrame(lLoop)}
+function lPlay(){if(lraf){lStop();return}if(lT>=LP.end)lT=0;lplay.textContent='⏸ 멈춤';
+ // 이 경우(다가올 때·멀어질 때는 속력별로)를 처음 재생하면 아래 칸에 기록
+ if(lmv?!LREC[lmv][lk]:!LREC[0]){if(lmv)LREC[lmv][lk]=1;else LREC[0]=1;lPanels()}lSetHint(lMsg());lLast=performance.now();lraf=requestAnimationFrame(lLoop)}
+function lInit(){lStop();lT=0;hnote.innerHTML=LN;lDraw();lPanels();lSetHint('<span class="go"><span class="kb">재생</span>을 눌러 별빛을 관측해 보세요.</span>')}
+lplay.onclick=lPlay;
+// 다섯 경우: 부호는 다가옴(+)·멀어짐(-), 크기는 속력(1: 천천히, 2: 빨리)
+lmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;const v=+b.dataset.v;lmv=Math.sign(v);lk=Math.abs(v)||1;segPick(lmov,b.dataset.v);lInit();lPlay()};
+
+// ==== ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)의 도플러 효과] [빛(전자기파)의 도플러 효과] ====
+let hcur='s';
+function hpick(v){hcur=v;hsel.querySelectorAll('button').forEach(b=>{b.classList.toggle('on',b.dataset.v==v);b.setAttribute('aria-selected',b.dataset.v==v)});
+ dStop();lStop();dctl.hidden=sview.hidden=dask.hidden=v!='s';lctl.hidden=lview.hidden=lask.hidden=v!='l';
+ if(v=='s')dInit();else lInit()}
+hsel.addEventListener('click',e=>{const b=e.target.closest('button');if(b)hpick(b.dataset.v)});
+hpick('s');
+
+// 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
+[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13'],['ov14','thb14','thx14'],['ov15','thb15','thx15'],['ov16','thb16','thx16'],['ov17','thb17','thx17'],['ov18','thb18','thx18']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
+ const closeTh=()=>{ov.hidden=true;btn.focus()};
+ btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
+ ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})});
+</script></main><script src="../copyright.js"></script>
