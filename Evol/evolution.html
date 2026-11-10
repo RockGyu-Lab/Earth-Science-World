@@ -624,6 +624,8 @@ function drawPm(){S=pmv;S.innerHTML='';[drawPm0,drawPm1,drawPm2][pv]();
  const desc=pv==0?`<b>${PS[pi_].n}</b> ${PS[pi_].d}`:pv==1?'<b>거성과 초거성</b> 질량이 큰 별일수록 중심부 온도가 높아, 더 무거운 원소까지 핵융합 반응이 일어납니다.':`<b>${ND[nsel].n}</b> ${ND[nsel].d}`;
  pmnote.innerHTML=`<div class="nh">${PMH}</div><p>${desc}</p>`;pmstep.textContent=`${pi_+1} / ${PS.length} 단계`;
  pmstp.style.display=pmplay.style.display=pv!=0?'none':'';pmhint.hidden=pv==0;
+ // 생각해 보기는 '질량에 따른 진화 경로'에서만 보임
+ p3.querySelectorAll('.note.ask').forEach(d=>d.style.display=pv==2?'':'none');
  pmhint.innerHTML=pv==1?'<b>수명</b> 질량이 큰 별일수록 핵융합 반응이 빨리 일어나 수명이 짧습니다. (질량이 태양 정도인 별 약 100억 년, 질량이 태양의 약 10배 이상인 별 수천만 년 이하)':'<span class="go">그림의 각 단계를 눌러 보세요.</span>'}
 function pmGo(i,then){cancelAnimationFrame(pRaf);pFrom=pi_;pi_=i;pT=0;const t0=performance.now();
  const st=now=>{pT=Math.min(1,(now-t0)/1300);drawPm();if(pT<1)pRaf=requestAnimationFrame(st);else if(then)then()};pRaf=requestAnimationFrame(st)}
