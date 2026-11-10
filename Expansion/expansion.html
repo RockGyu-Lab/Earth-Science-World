@@ -282,6 +282,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div id="eask1">
  <div class="note ask"><span class="tag">생각해 보기</span><p>풍선이 부푸는 동안 개미는 걸어가지 않았습니다. 그런데도 개미들이 서로 멀어지는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb12">정답 확인</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>개미 A에게서 멀리 있는 개미일수록 더 빨리 멀어지는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb13">정답 확인</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>우주가 팽창을 한다면, 태양과 지구 사이의 거리는 점점 멀어지는 것일까요?</p><button type="button" class="open-think" id="thb19">정답 확인</button></div>
  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">멀리 있는 은하일수록 빠르게 멀어지는 허블-르메트르 법칙은 <b style="font-size:1.25em;font-weight:800">우주가 팽창</b>하고 있다는 증거이다.</p></div>
  </div>
  <!-- 팽창하는 우주의 중심: 생각해 보기 2개 + 기억하기 -->
@@ -301,6 +302,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <p class="ans">풍선 표면이 모든 곳에서 같은 비율로 늘어나므로, 처음 거리가 멀수록 같은 시간 동안 늘어나는 거리도 크기 때문입니다.</p>
   <p class="exp">풍선이 10초 동안 2배로 부풀면, 1 cm 떨어져 있던 개미 B는 1 cm, 3 cm 떨어져 있던 개미 C는 3 cm, 4 cm 떨어져 있던 개미 D는 4 cm 더 멀어집니다. 그래서 멀어지는 속도가 거리에 비례하고, 그래프는 원점을 지나는 직선이 됩니다.</p>
   <p class="exp">은하를 관측하여 얻은 허블-르메트르 법칙(<i>v</i> = <i>H</i> × <i>r</i>)도 이와 같은 모양입니다. 곧 멀리 있는 은하일수록 빠르게 멀어진다는 관측 결과는 우주가 팽창하고 있다는 증거입니다.</p>
+ </div></div>
+ <div class="ov" id="ov19" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우주가 팽창을 한다면, 태양과 지구 사이의 거리는 점점 멀어지는 것일까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우주가 팽창을 한다면, 태양과 지구 사이의 거리는 점점 멀어지는 것일까요?</b><button type="button" class="x" id="thx19" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">아니요. 태양과 지구는 서로 중력으로 단단히 묶여 있으므로, 우주가 팽창해도 둘 사이의 거리는 늘어나지 않습니다.</p>
+  <p class="exp">풍선이 부풀어도 개미의 크기가 변하지 않는 것처럼, 태양계나 은하처럼 중력으로 묶여 있는 천체들은 우주 팽창으로 커지지 않습니다.</p>
+  <p class="exp">우주 팽창은 중력으로 서로 묶여 있지 않은, 아주 멀리 떨어진 은하들 사이에서 나타납니다.</p>
  </div></div>
  <div class="ov" id="ov14" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 개미 B의 입장에서 보아도 개미 A의 입장과 같은 결과가 나올까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>개미 B의 입장에서 보아도 개미 A의 입장과 같은 결과가 나올까요?</b><button type="button" class="x" id="thx14" aria-label="닫기">닫기 ✕</button></div>
@@ -727,7 +734,7 @@ function cFig(svg,ref){svg.innerHTML='';const U=40,T=.45,K=.28,C=160,RG=150,RM=3
 thb14.addEventListener('click',()=>{cFig(cfA,'A');cFig(cfB,'B')});
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13'],['ov14','thb14','thx14'],['ov15','thb15','thx15'],['ov16','thb16','thx16'],['ov17','thb17','thx17'],['ov18','thb18','thx18']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
+[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13'],['ov14','thb14','thx14'],['ov15','thb15','thx15'],['ov16','thb16','thx16'],['ov17','thb17','thx17'],['ov18','thb18','thx18'],['ov19','thb19','thx19']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
  const closeTh=()=>{ov.hidden=true;btn.focus()};
  btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
