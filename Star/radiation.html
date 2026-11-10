@@ -144,7 +144,8 @@ main{max-width:max(560px,min(1080px,calc((100dvh - 352px) * 2.34 + 46px)))}
 /* 빈의 변위 법칙·슈테판-볼츠만 법칙: 그림 아래 생각해 보기(약 66px)까지 한 화면에 들어오도록 main을 더 줄임 */
 @media (min-width:900px) and (orientation:landscape){#p3 .grid{align-items:start;row-gap:6px}#p3 .grid>svg{grid-column:1;grid-row:1}#p3 .grid>.side{grid-column:2;grid-row:1/3}#p3 .grid>.askq{grid-column:1;grid-row:2;margin:0}}
 main:has(#p4:not([hidden])){max-width:max(560px,min(1080px,calc((100dvh - 370px) * 2.34 + 46px)))}#p4 .askq{margin-top:4px}
-@media (orientation:portrait){main:has(#p3:not([hidden])){max-width:max(360px,min(1080px,calc(100dvh - 450px)))}main:has(#p4:not([hidden])){max-width:max(360px,min(1080px,calc(100dvh - 400px)))}}
+/* 세로 화면(패드 768×1000): 네 탭 모두 같은 폭으로 줄이고, 위쪽 탭 단추가 한 줄에 들어가게 함 */
+@media (orientation:portrait){main,main:has(#p3:not([hidden])),main:has(#p4:not([hidden])){max-width:max(360px,min(1080px,calc(100dvh - 404px)))}.tabs button{flex-basis:120px;padding:8px 4px;font-size:.9rem;white-space:nowrap}}
 body{font-family:"Pretendard Variable",Pretendard,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;word-break:keep-all}
 /* 수식 변수(기울임꼴): 기울어진 글자가 옆 글자와 겹치지 않도록 좌우에 작은 여백 */
 var,.think .q var{font-family:"Times New Roman",Cambria,serif;font-style:italic;font-size:1.1em;line-height:1;padding:0 .09em 0 .03em}
