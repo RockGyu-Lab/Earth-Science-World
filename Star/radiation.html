@@ -141,6 +141,10 @@ sup{font-size:.8em;margin-left:.18em;line-height:0}
    위아래 글·단추 높이 약 350px + 그래프 높이(=본문 폭의 약 0.41배) ≤ 화면 높이 */
 main{max-width:max(560px,min(1080px,calc((100vh - 352px) * 2.34 + 46px)))}
 main{max-width:max(560px,min(1080px,calc((100dvh - 352px) * 2.34 + 46px)))}
+/* 빈의 변위 법칙·슈테판-볼츠만 법칙: 그림 아래 생각해 보기(약 66px)까지 한 화면에 들어오도록 main을 더 줄임 */
+@media (min-width:900px) and (orientation:landscape){#p3 .grid{align-items:start;row-gap:6px}#p3 .grid>svg{grid-column:1;grid-row:1}#p3 .grid>.side{grid-column:2;grid-row:1/3}#p3 .grid>.askq{grid-column:1;grid-row:2;margin:0}}
+main:has(#p4:not([hidden])){max-width:max(560px,min(1080px,calc((100dvh - 370px) * 2.34 + 46px)))}#p4 .askq{margin-top:4px}
+@media (orientation:portrait){main:has(#p3:not([hidden])){max-width:max(360px,min(1080px,calc(100dvh - 450px)))}main:has(#p4:not([hidden])){max-width:max(360px,min(1080px,calc(100dvh - 400px)))}}
 body{font-family:"Pretendard Variable",Pretendard,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;word-break:keep-all}
 /* 수식 변수(기울임꼴): 기울어진 글자가 옆 글자와 겹치지 않도록 좌우에 작은 여백 */
 var,.think .q var{font-family:"Times New Roman",Cambria,serif;font-style:italic;font-size:1.1em;line-height:1;padding:0 .09em 0 .03em}
@@ -168,6 +172,17 @@ var+sup{margin-left:.03em}
 .think .ch button.chk{background:var(--bg);border-color:var(--acc);color:var(--acc);font-weight:700}
 .ov .think{border:0;border-radius:14px}
 .ov .think .ch button:not(.sel):not(.chk){background:var(--card);box-shadow:none}
+/* 생각해 보기: 그림 아래에 문제(꼬리표 + 질문)와 보기를 바로 보여 줌 */
+.askq{margin:8px 0 0;line-height:1.9}
+.askq>p:first-child{display:inline;margin:0 10px 0 0;font-weight:600;font-size:.93rem}
+.askq .tag,.ov .tag{display:inline-block;margin-right:8px;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;vertical-align:.08em}
+.askq var{font-family:"Times New Roman",Cambria,serif;font-style:italic;font-size:1.1em;line-height:1;padding:0 .09em 0 .03em}
+.askq .ch{display:inline-flex;flex-wrap:wrap;gap:4px 6px;vertical-align:middle}
+.askq .ch button{font-size:.88rem;padding:2px 11px;line-height:1.4;background:var(--card);border:1px solid transparent;border-radius:10px;cursor:pointer;color:var(--fg);font-family:inherit}
+.askq .ch button:hover{border-color:var(--acc)}
+.askq .ch button.sel{border-color:var(--acc);background:var(--acc-bg);color:var(--acc);font-weight:700}
+.askq .ch button.chk{margin-left:4px;background:var(--bg);border-color:var(--acc);color:var(--acc);font-weight:700}
+.ov .qq{margin:0;font-weight:600;line-height:1.5}.ov .fbq{margin:0;line-height:1.6}.ov .qq var{font-family:"Times New Roman",Cambria,serif;font-style:italic;font-size:1.1em}
 /* 별 그림: 밝은 중심 → 별의 색 → 어두운 가장자리, 배경에 옅은 별밭 */
 .sky{border-radius:14px;background:radial-gradient(1px 1px at 18% 24%,#dfe5ff99,transparent),radial-gradient(1px 1px at 72% 16%,#dfe5ff66,transparent),radial-gradient(1.2px 1.2px at 84% 70%,#dfe5ff88,transparent),radial-gradient(1px 1px at 30% 82%,#dfe5ff55,transparent),radial-gradient(1px 1px at 58% 46%,#dfe5ff44,transparent),radial-gradient(130% 100% at 50% 0%,#1c2340 0%,#111729 55%,#0b0f1c 100%)}
 #orb{background:radial-gradient(circle at 42% 38%,#fffef9 0%,var(--star,#fff) 48%,color-mix(in srgb,var(--star,#fff) 78%,#8a3c10) 100%)}
@@ -229,7 +244,7 @@ var+sup{margin-left:.03em}
 <!-- ③ 빈의 변위 법칙 -->
 <section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
   <p class="explain"><b>빈의 변위 법칙(Wien's displacement law)</b>은 온도와, 최대 에너지를 방출하는 파장 사이의 관계를 나타낸 법칙입니다.<br><span class="cue">높은 온도부터 차례대로 버튼을 눌러서 최대 에너지 파장과 온도의 관계를 살펴보세요.</span></p>
-  <div class="bar"><div class="lg" id="lg3" role="group" aria-label="봉우리 표시 켜고 끄기"></div><button type="button" class="open-think" id="thb3">생각해 보기</button></div>
+  <div class="bar"><div class="lg" id="lg3" role="group" aria-label="봉우리 표시 켜고 끄기"></div></div>
   <div class="grid top">
     <svg id="c3" viewBox="32 0 768 500" role="img" aria-label="플랑크 곡선의 봉우리를 이은 곡선"></svg>
     <div class="side row2">
@@ -239,37 +254,33 @@ var+sup{margin-left:.03em}
         <div class="formula" id="fm3" aria-live="polite" hidden><var>T</var> × <var>λ</var><sub>max</sub> = 일정<br>∴ <span class="final"><var>λ</var><sub>max</sub> = <span class="frac"><span><var>a</var></span><span><var>T</var></span></span></span> <small>(<var>a</var> ≈ 2.90×10⁶ nm·K)</small></div>
       </div>
     </div>
+  <!-- 생각해 보기: 그림 아래에 문제와 보기를 바로 보여 줌 (가로 화면에서는 그림 아래 빈 곳) -->
+  <div class="q askq" data-ans="1" data-exp="빈의 변위 법칙 λmax ∝ 1/T 이므로, 온도가 2T인 별이 최대 에너지를 방출하는 파장은 온도가 T인 별의 1/2배입니다.">
+    <p><span class="tag">생각해 보기</span>별이 최대 에너지를 방출하는 파장은 온도가 2<var>T</var>인 별이 온도가 <var>T</var>인 별의 몇 배인가?</p>
+    <div class="ch"><button type="button">① 2배</button><button type="button">② 1/2배</button><button type="button">③ 4배</button><button type="button">④ 1/4배</button><button type="button" class="chk">정답 확인</button></div>
+
   </div>
-<div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기">
-        <div class="think-h"><b class="think-t">생각해 보기</b><button type="button" class="x" id="thx3" aria-label="닫기">닫기 ✕</button></div>
-        <div class="q" data-ans="1" data-exp="빈의 변위 법칙 λmax ∝ 1/T 이므로, 온도가 2T인 별이 최대 에너지를 방출하는 파장은 온도가 T인 별의 1/2배입니다.">
-          <p>별이 최대 에너지를 방출하는 파장은 온도가 2<var>T</var>인 별이 온도가 <var>T</var>인 별의 몇 배인가?</p>
-          <div class="ch"><button type="button">① 2배</button><button type="button">② 1/2배</button><button type="button">③ 4배</button><button type="button">④ 1/4배</button><button type="button" class="chk">정답 확인</button></div>
-          <p class="fb" aria-live="polite"></p>
-        </div>
-      </div></div>
+  </div>
 </section>
 
 <!-- ④ 슈테판-볼츠만 법칙 -->
 <section id="p4" role="tabpanel" aria-labelledby="tab4" hidden>
   <p class="explain"><b>슈테판-볼츠만 법칙(Stefan–Boltzmann law)</b>은 흑체가 단위 시간, 단위 면적당 방출하는 전체 에너지(<var>E</var>)와 온도 사이의 관계를 나타낸 법칙입니다. <var>E</var>는 플랑크 곡선 아래의 전체 면적으로 구합니다.<br><span class="cue">높은 온도부터 차례대로 버튼을 눌러서 방출 에너지와 온도의 관계를 살펴보세요.</span></p>
-  <div class="bar"><div class="lg" id="lg4" role="group" aria-label="곡선 아래 면적 표시 켜고 끄기"></div><button type="button" class="open-think" id="thb">생각해 보기</button></div>
+  <div class="bar"><div class="lg" id="lg4" role="group" aria-label="곡선 아래 면적 표시 켜고 끄기"></div></div>
   <div class="grid top">
     <div class="stack">
       <svg id="c4" viewBox="32 0 768 500" role="img" aria-label="플랑크 곡선 아래 면적"></svg>
-      <div class="ov" id="ov" hidden><div class="think" id="think" role="dialog" aria-modal="true" aria-label="생각해 보기">
-        <div class="think-h"><b class="think-t">생각해 보기</b><button type="button" class="x" id="thx" aria-label="닫기">닫기 ✕</button></div>
-        <div class="q" data-ans="3" data-exp="슈테판-볼츠만 법칙 E ∝ T⁴ 이므로, 온도가 2T인 별이 단위 시간 동안 단위 면적에서 방출하는 복사 에너지양은 온도가 T인 별의 2⁴ = 16배입니다.">
-          <p>별이 단위 시간 동안 단위 면적에서 방출하는 복사 에너지양은 온도가 2<var>T</var>인 별이 온도가 <var>T</var>인 별의 몇 배인가?</p>
-          <div class="ch"><button type="button">① 2배</button><button type="button">② 4배</button><button type="button">③ 8배</button><button type="button">④ 16배</button><button type="button" class="chk">정답 확인</button></div>
-          <p class="fb" aria-live="polite"></p>
-        </div>
-      </div></div>
     </div>
     <div class="card tight-card">
       <table class="tb tight"><thead><tr><th><var>T</var><br>(온도)</th><th><var>E</var><br>(방출 에너지)</th><th><span class="frac"><span><var>E</var></span><span><var>T</var><sup>4</sup></span></span><br>(방출 에너지 ÷ 온도<sup>4</sup>)</th></tr></thead><tbody id="tb4"></tbody></table>
       <div class="formula" id="fm4" aria-live="polite" hidden><span class="frac"><span><var>E</var></span><span><var>T</var><sup>4</sup></span></span> = 일정<br>∴ <var>E</var> ∝ <var>T</var><sup>4</sup><br><span class="final"><var>E</var> = <var>σ</var><var>T</var><sup>4</sup></span> <small>(<var>σ</var> ≈ 5.67×10⁻⁸ W/(m²·K⁴))</small></div>
     </div>
+  </div>
+  <!-- 생각해 보기: 그림 아래에 문제와 보기를 바로 보여 줌 -->
+  <div class="q askq" data-ans="3" data-exp="슈테판-볼츠만 법칙 E ∝ T⁴ 이므로, 온도가 2T인 별이 단위 시간 동안 단위 면적에서 방출하는 복사 에너지양은 온도가 T인 별의 2⁴ = 16배입니다.">
+    <p><span class="tag">생각해 보기</span>별이 단위 시간 동안 단위 면적에서 방출하는 복사 에너지양은 온도가 2<var>T</var>인 별이 온도가 <var>T</var>인 별의 몇 배인가?</p>
+    <div class="ch"><button type="button">① 2배</button><button type="button">② 4배</button><button type="button">③ 8배</button><button type="button">④ 16배</button><button type="button" class="chk">정답 확인</button></div>
+
   </div>
 </section>
 </main>
@@ -556,22 +567,25 @@ tabs.forEach((t, i) => {
 render1(); select2(6000); render3(); render4();
 
 
-[['ov','thb','thx'],['ov3','thb3','thx3']].forEach(([o, bt, x]) => {
-  const ov = $(o), btn = $(bt), cl = $(x);
-  const closeTh = () => { ov.hidden = true; btn.focus(); };
-  btn.addEventListener('click', () => { ov.hidden = false; cl.focus(); });
-  cl.addEventListener('click', closeTh);
-  ov.addEventListener('click', (e) => { if (e.target === ov) closeTh(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ov.hidden) closeTh(); });
-});
-/* 생각해 보기: 보기를 고른 뒤 '정답 확인' */
-document.querySelectorAll('.think .q').forEach((q) => {
-  const bs = [...q.querySelectorAll('.ch button:not(.chk)')], fb = q.querySelector('.fb'); let sel = -1;
-  bs.forEach((b, i) => b.addEventListener('click', () => { sel = i; bs.forEach((x, j) => x.classList.toggle('sel', j === i)); fb.textContent = ''; }));
-  q.querySelector('.chk').addEventListener('click', () => {
-    if (sel < 0) { fb.innerHTML = '<span class="cue">먼저 보기를 하나 골라 보세요.</span>'; return; }
+/* 생각해 보기: 보기를 고른 뒤 '정답 확인' → 결과와 풀이는 팝업으로 (그림 아래 줄 수가 늘지 않아 한 화면 유지) */
+const qov = document.createElement('div'); qov.className = 'ov'; qov.hidden = true;
+qov.innerHTML = '<div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기"><div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span></b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div><p class="qq"></p><p class="fbq" aria-live="polite"></p></div>';
+document.body.appendChild(qov);
+let qBtn = null;
+const qClose = () => { qov.hidden = true; if (qBtn) qBtn.focus(); };
+qov.querySelector('.x').addEventListener('click', qClose);
+qov.addEventListener('click', (e) => { if (e.target === qov) qClose(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !qov.hidden) qClose(); });
+document.querySelectorAll('.askq').forEach((q) => {
+  const bs = [...q.querySelectorAll('.ch button:not(.chk)')], chk = q.querySelector('.chk'), qp = q.querySelector('p').cloneNode(true); let sel = -1;
+  qp.querySelector('.tag').remove();
+  bs.forEach((b, i) => b.addEventListener('click', () => { sel = i; bs.forEach((x, j) => x.classList.toggle('sel', j === i)); }));
+  chk.addEventListener('click', () => {
     const ok = sel === +q.dataset.ans;
-    fb.innerHTML = (ok ? '<span class="ok">✔ 정답입니다.</span> ' : '<span class="bad">✘ 다시 생각해 보세요.</span> 정답: <b>' + bs[+q.dataset.ans].textContent.replace(/^[①-④]\s*/, '') + '</b>. ') + (ok ? '' : '') + q.dataset.exp;
+    qov.querySelector('.qq').innerHTML = qp.innerHTML;
+    qov.querySelector('.fbq').innerHTML = sel < 0 ? '<span class="cue">먼저 보기를 하나 골라 보세요.</span>'
+      : (ok ? '<span class="ok">✔ 정답입니다.</span> ' : '<span class="bad">✘ 다시 생각해 보세요.</span> 정답: <b>' + bs[+q.dataset.ans].textContent.replace(/^[①-④]\s*/, '') + '</b>. ') + q.dataset.exp;
+    qBtn = chk; qov.hidden = false; qov.querySelector('.x').focus();
   });
 });
 
