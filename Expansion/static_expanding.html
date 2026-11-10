@@ -105,6 +105,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 /* 보낸 사람은 본문 마지막 줄 오른쪽 끝에 (자리가 없으면 다음 줄 오른쪽) */
 .lq .from,.rq .from{float:right;padding:0 .5em 0 1em;font-style:normal}
 .lq .body,.rq .body{display:flow-root}
+/* 편지·생각 글의 중요한 말: 굵은 진한 파란색 (Cosmology의 .stepbox em과 같은 색) */
+.lq .body b,.rq .body b,.lh p b,.rh p b{color:#1747c8;font-weight:800}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(.lq .body,.rq .body,.lh p,.rh p) b{color:#7fb0ff}}
+:root[data-theme="dark"] :is(.lq .body,.rq .body,.lh p,.rh p) b{color:#7fb0ff}
 .srow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
 /* 왼쪽·오른쪽 그림판의 높이를 똑같이 맞춤 (화면 높이에 따라 정하고, 그림은 가운데에 맞춰 그림) */
 .duo svg{height:min(290px,max(190px,calc(100vh - 434px)));max-height:none}
