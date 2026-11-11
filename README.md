@@ -28,7 +28,7 @@
   - `expansion.html`: 탐구 03 · 허블-르메트르 법칙과 우주 팽창 (허블-르메트르 법칙, 허블-르메트르 법칙의 의미, 팽창하는 우주의 중심, 허블 시간 탭)
 - `Cosmology/`: 현대 우주론의 정립 학습실
   - `Cosmology_index.html`: 학습실 메뉴
-  - `modern_cosmology.html`: 탐구 01 · 현대 우주론
+  - `modern_cosmology.html`: 탐구 01 · 현대 우주론의 시작
   - `big_bang.html`: 탐구 02 · 빅뱅 우주론 (빅뱅 우주론의 근거, 빅뱅 우주론의 문제점 탭)
   - `inflation.html`: 탐구 03 · 급팽창 이론 (급팽창 이론, 지평선 문제의 해결, 평탄성 문제의 해결 탭)
   - `dark_matter.html`: 탐구 04 · 암흑 물질의 발견 (은하의 회전 속도, 중력 렌즈 탭)
