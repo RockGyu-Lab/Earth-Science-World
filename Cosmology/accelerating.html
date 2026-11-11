@@ -237,7 +237,7 @@ function rnd0(seed){let q=seed;return()=>(q=(q*16807)%2147483647)/2147483647}   
 [[a6a,ava],[a6b,avb]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
 // 우주의 크기 (개념도, u: 시간 0~1, 현재 u = 0.54)
 // AA: 물질 + 암흑 에너지 (처음에는 감속, 뒤에는 가속), AD: 암흑 에너지가 없었다면 (계속 감속)
-const AA=u=>.3*Math.pow(Math.sinh(2.2*u),2/3),AD=u=>.3*Math.pow(2.2*u,2/3),ANOW=.54,AINF=.3;
+const AA=u=>.3*Math.pow(Math.sinh(2.2*u),2/3),AD=u=>.3*Math.pow(2.2*u,2/3),ANOW=.54,AINF=.3,UEQ=Math.asinh(Math.sqrt(.45)*Math.sinh(2.2*ANOW))/2.2;   // UEQ ≈ 0.40: 물질과 암흑 에너지의 밀도가 같은 때 (현재 0.54 = 138억 년 → 약 102억 년)
 const AXES=(g,x0,x1,y0,y1,xl,yl)=>{mk('line',{x1:x0,y1:y0,x2:x1,y2:y0,stroke:'#cfd6ee','stroke-width':1.2},g);mk('line',{x1:x0,y1:y0,x2:x0,y2:y1,stroke:'#cfd6ee','stroke-width':1.2},g);
  txt(xl,{x:x1,y:y0+18,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},g);yLab(g,x0-10,y1,y0,yl)};
 const curve=(f,X,Y,a,b)=>{let d='';for(let u=a;u<=b+1e-9;u+=.004)d+=(d?'L':'M')+X(u).toFixed(1)+','+Y(f(u)).toFixed(1);return d};
@@ -359,10 +359,14 @@ function qDraw(t){const g=qgg;g.innerHTML='';const s=DQ.s;if(s!=qLast){qLast=s;q
   const X=u=>294+u*206,Y=v=>262-v*190,DL0=.3,DM=u=>Math.min(1.1,DL0*.45*Math.pow(AA(ANOW)/AA(u),3));
   AXES(inn,294,504,262,66,'시간 →','밀도 →');
   mk('line',{x1:X(ANOW),y1:84,x2:X(ANOW),y2:262,stroke:'#e8ecff','stroke-width':1,'stroke-dasharray':'4 4',opacity:.6},inn);txt('현재',{x:X(ANOW),y:80,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},inn);
+  if(u>=UEQ){const o=ease((u-UEQ)/.06);   // 물질의 밀도 = 암흑 에너지의 밀도인 때 (우주의 나이 약 102억 년)
+   mk('line',{x1:X(UEQ),y1:Y(DL0),x2:X(UEQ),y2:262,stroke:'#9ff0c8','stroke-width':1.2,'stroke-dasharray':'3 3',opacity:o},inn);
+   txt('약 102억 년 (밀도가 같음)',{x:X(UEQ),y:277,'text-anchor':'middle',fill:'#9ff0c8','font-size':11.5,'font-weight':800,opacity:o},inn)}
   mk('path',{d:curve(DM,X,Y,U0,u),fill:'none',stroke:'#ffd76b','stroke-width':2.6},inn);
   mk('line',{x1:X(U0),y1:Y(DL0),x2:X(u),y2:Y(DL0),stroke:'#c9b2ff','stroke-width':2.6},inn);
   mk('circle',{cx:X(u),cy:Y(DM(u)),r:4.5,fill:'#ffd76b',stroke:'#fff','stroke-width':1},inn);mk('circle',{cx:X(u),cy:Y(DL0),r:4.5,fill:'#c9b2ff',stroke:'#fff','stroke-width':1},inn);
   txt('물질의 밀도',{x:X(.27)+8,y:Y(.75),fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
+  if(u>=UEQ)mk('circle',{cx:X(UEQ),cy:Y(DL0),r:5,fill:'none',stroke:'#9ff0c8','stroke-width':2,opacity:ease((u-UEQ)/.06)},inn);
   txt('암흑 에너지의 밀도',{x:X(1),y:Y(DL0)-10,'text-anchor':'end',fill:'#c9b2ff','font-size':12.5,'font-weight':800,opacity:ease((u-.7)/.2)},inn)}
  if(s==2){const k=ease((t-qT0)/2.2),CX=150,CY=170,r=78,C=2*Math.PI*r,P=[['암흑 에너지','약 68 %',.683,'#b58cff'],['암흑 물질','약 27 %',.268,'#7fa8ff'],['보통 물질','약 5 %',.049,'#ffd76b']];
   let st=0;P.forEach(([,,v,c])=>{const w=Math.max(0,Math.min(v,k-st));if(w>0)mk('circle',{cx:CX,cy:CY,r,fill:'none',stroke:c,'stroke-width':40,'stroke-dasharray':`${w*C} ${C}`,'stroke-dashoffset':-st*C,transform:`rotate(-90 ${CX} ${CY})`},inn);st+=v});
