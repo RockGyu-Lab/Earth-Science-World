@@ -106,9 +106,9 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .lq .from,.rq .from{float:right;padding:0 .5em 0 1em;font-style:normal}
 .lq .body,.rq .body{display:flow-root}
 /* 편지·생각 글의 중요한 말: 굵은 진한 파란색 (Cosmology의 .stepbox em과 같은 색) */
-.lq .body b,.rq .body b,.lh p b,.rh p b{color:#1747c8;font-weight:800}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(.lq .body,.rq .body,.lh p,.rh p) b{color:#7fb0ff}}
-:root[data-theme="dark"] :is(.lq .body,.rq .body,.lh p,.rh p) b{color:#7fb0ff}
+.lq .body b,.rq .body b,.lh p b,.rh p b,.hint b{color:#1747c8;font-weight:800}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) :is(.lq .body,.rq .body,.lh p,.rh p,.hint) b{color:#7fb0ff}}
+:root[data-theme="dark"] :is(.lq .body,.rq .body,.lh p,.rh p,.hint) b{color:#7fb0ff}
 .srow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
 /* 왼쪽·오른쪽 그림판의 높이를 똑같이 맞춤 (화면 높이에 따라 정하고, 그림은 가운데에 맞춰 그림) */
 .duo svg{height:min(290px,max(190px,calc(100vh - 434px)));max-height:none}
@@ -363,7 +363,7 @@ function bDraw(){if(bG)bG.remove();bG=mk('g',{},bv);
  label('우주 전체를 둥근 영역으로 나타냄',8,330,bG,'start','#a9b1cc',15)}
 function bLoop(){for(let k=0;k<4;k++)finStep(1/240);bTime+=1/60;
  if(BS.length==1||bTime>15){bDone=BS.length==1;bDraw();bStop();
-  bhint.textContent='별들이 한 점으로 모입니다.';return}
+  bhint.innerHTML='별들이 한 점으로 모입니다. 이 문제를 <b>벤틀리의 역설(Bentley’s paradox)</b>이라고 합니다.';return}
  bDraw();braf=requestAnimationFrame(bLoop)}
 // 재생을 눌러 달라는 안내 (남색 굵은 글씨)
 const GO='<span class="go"><span class="kb">재생</span> 버튼을 눌러주세요.</span>';
