@@ -65,6 +65,23 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .memo .mtx{margin:0;font-weight:700;color:var(--mem);font-size:.95rem}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
+/* 자세히 살펴보기: 단계 설명 상자 오른쪽 아래에 두는 단추. 실행(남색)·선택(연보라)·기억하기(주황)와 구분되는 청록색 */
+:root{--more:#0f8b7d;--on-more:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--more:#3ccfb9;--on-more:#06231f}}
+:root[data-theme="dark"]{--more:#3ccfb9;--on-more:#06231f}
+.stepbox.sx{position:relative}
+.morebtn{position:absolute;right:10px;bottom:8px;padding:5px 14px;border:0;border-radius:10px;background:var(--more);color:var(--on-more);font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.morebtn:hover{filter:brightness(1.08)}
+@media (max-width:1000px){.stepbox.hasmore{padding-bottom:42px}}
+.tag.more{background:var(--more);color:var(--on-more)}
+/* 자세히 살펴보기 팝업: 화면 높이에 맞춰 폭을 줄여 그림이 한 화면에 들어오게 함 */
+.think.big{width:min(1000px,100%,calc((100vh - 240px) * 2.04 + 32px));padding:12px 16px}
+.think.big{width:min(1000px,100%,calc((100dvh - 240px) * 2.04 + 32px))}
+.adnote{margin:0 0 8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.5}
+.adnote p{margin:0}
+.adnote .em{color:var(--acc)}
+#adcv{display:block;width:100%;height:auto;aspect-ratio:940/460;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
+#adcue{flex:1 1 220px;font-size:.92rem}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .ov[hidden]{display:none}
 .think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
@@ -168,6 +185,13 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <p class="exp">백색 왜성이 가까이 있는 동반성(적색 거성)의 물질을 끌어당겨 질량이 늘어나다가, 태양 질량의 약 1.4배에 이르면 폭발합니다.</p>
    <p class="exp">Ia형 초신성은 가장 밝을 때 태양보다 수십억 배나 밝아서, 은하 하나가 내는 빛과 맞먹을 정도입니다. 그래서 수십억 광년 떨어진 먼 은하에서 폭발해도 관측할 수 있습니다.</p>
    <p class="exp">또 거의 같은 질량에서 폭발하므로 최대 밝기가 거의 일정합니다. 그래서 겉보기 밝기를 측정하면 거리를 구할 수 있어, 먼 은하까지의 거리를 재는 기준(표준 촛불)으로 씁니다.</p>
+  </div></div>
+  <div class="ov" id="ov14" hidden><div class="think big" role="dialog" aria-modal="true" aria-label="자세히 살펴보기: 적색 편이가 같아도 거리가 다른 까닭">
+   <div class="think-h"><b class="think-t"><span class="tag more">자세히 살펴보기</span>적색 편이가 같아도 거리가 다른 까닭</b><button type="button" class="x" id="thx14" aria-label="닫기">닫기 ✕</button></div>
+   <div class="adnote"><p><b class="em">적색 편이 z = 1</b>: 관측한 빛의 파장이 처음의 <b class="em">2배</b>로 늘어났다는 뜻입니다. 빛이 오는 동안 우주(공간)도 <b class="em">2배</b>로 커졌습니다.</p>
+<p>z = (관측한 파장 − 원래 파장) ÷ 원래 파장 = (2 − 1) ÷ 1 = 1</p></div>
+   <canvas id="adcv" width="940" height="460" aria-label="등속·가속·감속 팽창하는 세 고무줄(우주)이 1에서 2로 늘어나는 데 걸린 시간을 시계로 보여 주고, 같은 시간축 위에 늘어나는 빠르기 그래프와 빛이 온 거리 막대를 그린 그림"></canvas>
+   <div class="ctl"><button type="button" class="pb" id="adplay">▶ 재생</button><button type="button" class="pb" id="adreset">↺ 처음부터</button><span id="adcue"></span></div>
   </div></div>
  </div>
  <div id="avb" hidden>
@@ -328,6 +352,12 @@ function aDraw(t){const g=agg;g.innerHTML='';const s=DA.s;if(s!=aLast){aLast=s;a
   pPill(g,734,250,'우주의 가속 팽창','#ffd76b',16,200)}
 }
 const DA=stepper(AS,astep,aprev,anext,anum,acue,aDraw);
+// 2단계(예상보다 어두운 초신성) 설명 상자 오른쪽 아래의 [자세히 살펴보기]: z = 1인 빛이 오는 데 걸린 시간 비교(ov14 팝업)를 띄움
+const moreBtn=document.createElement('button');moreBtn.type='button';moreBtn.className='morebtn';moreBtn.textContent='🔍 자세히 살펴보기';
+{const g0=DA.go;DA.go=s=>{g0(s);astep.classList.toggle('hasmore',DA.s==1);if(DA.s==1)astep.append(moreBtn)}}
+{const close=()=>{ov14.hidden=true;adClose();moreBtn.focus()};
+ moreBtn.onclick=()=>{ov14.hidden=false;adOpen();thx14.focus()};thx14.onclick=close;   // 열 때마다 처음부터
+ ov14.addEventListener('click',e=>{if(e.target===ov14)close()});ov14.addEventListener('keydown',e=>{if(e.key=='Escape')close()})}
 
 // 암흑 에너지: 가속 팽창의 원인 → 암흑 에너지의 특징(밀도 변화) → 우주의 구성
 const QS=[
@@ -406,6 +436,109 @@ DA.go(0);DQ.go(0);
 thb13.addEventListener('click',()=>{iaT0=NOW()});
 thb11.addEventListener('click',()=>{th11g.innerHTML='';iBox(th11g);aObs(th11g,1,true)});   // 생각해 보기 답 창: 관측 그래프를 다 그린 모습으로 다시 보여 줌
 iare.onclick=()=>{iaT0=NOW()};
+</script>
+<script>
+// 자세히 살펴보기 팝업(ov14): z = 1인 빛이 오는 동안 등속·가속·감속 팽창하는 우주가 2배로 커지는 데 걸린 시간과 빛이 온 거리 비교
+// (테스트 사이트 accel_universe.html을 옮김. 이름이 겹치지 않도록 함수 안에 둠)
+(()=>{
+// ---------- 물리 모형 ----------
+// 시간 t: 빛이 출발한 때(고무줄 길이 L = 1) = 0인 억 년 단위. z = 1이므로 지금은 L = 2.
+// 세 모형 모두 지금의 허블 상수 H0 = 1/140 (1/억 년, 약 70 km/s/Mpc)로 같음 → 마지막 순간의 늘어나는 빠르기 dL/dt = H0 × 2 = 1/70로 같음
+const TN=280/3,T0=TN/Math.pow(2,1.5);   // 감속(물질만): L = 2((t+T0)/TN)^(2/3), TN = 2/(3H0)
+const M=[
+ {nm:'등속 팽창',sub:'늘 같은 빠르기로 늘어남',col:'#b9c0d4',T:70,L:t=>1+t/70,v:t=>1},
+ {nm:'가속 팽창',sub:'점점 빠르게 늘어남',col:'#ff6b6b',T:140*Math.LN2,L:t=>Math.exp(t/140),v:t=>Math.exp(t/140)/2},
+ {nm:'감속 팽창',sub:'점점 느리게 늘어남',col:'#5aa9ff',T:TN-T0,L:t=>2*Math.pow((t+T0)/TN,2/3),v:t=>Math.pow((t+T0)/TN,-1/3)}];
+// v: 고무줄이 늘어나는 빠르기 dL/dt (마지막 순간 = 1로 나타냄). 빛은 1억 년에 1억 광년을 옴
+const TMAX=M[1].T;
+let t=0,play=false;
+
+// ---------- 그리기 도구 ----------
+const cv=document.getElementById('adcv'),ctx=cv.getContext('2d'),W=940,HH=460;
+function fit(){const r=Math.min(3,Math.max(1,window.devicePixelRatio||1));cv.width=W*r;cv.height=HH*r;ctx.setTransform(r,0,0,r,0,0);draw()}
+const F=(sz,w=700)=>`${w} ${sz}px "Pretendard Variable",Pretendard,system-ui,"Noto Sans KR",sans-serif`;
+function T(s,x,y,o={}){ctx.font=F(o.sz||13,o.w||700);ctx.fillStyle=o.c||'#e8ecff';ctx.textAlign=o.al||'left';ctx.textBaseline='alphabetic';ctx.fillText(s,x,y)}
+function rr(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke()}}
+function line(x1,y1,x2,y2,c,w=1,dash){ctx.beginPath();ctx.setLineDash(dash||[]);ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=c;ctx.lineWidth=w;ctx.stroke();ctx.setLineDash([])}
+function dot(x,y,r,c,st){ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle=c;ctx.fill();if(st){ctx.strokeStyle=st;ctx.lineWidth=1.4;ctx.stroke()}}
+const f1=v=>v.toFixed(1),f2=v=>v.toFixed(2);
+function wave(x0,y,len,lam,A,c,w=2.2){ctx.beginPath();for(let x=0;x<=len;x+=1.5){const yy=y-A*Math.sin(2*Math.PI*x/lam);x?ctx.lineTo(x0+x,yy):ctx.moveTo(x0,yy)}ctx.strokeStyle=c;ctx.lineWidth=w;ctx.stroke()}
+// 시계: 0~100억 년 한 바퀴, 지난 시간만큼 색칠
+function clock(x,y,r,tt,col,done){ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle='#10122a';ctx.fill();ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1.4;ctx.stroke();
+ const a0=-Math.PI/2,a1=a0+2*Math.PI*Math.min(tt,100)/100;
+ if(tt>0){ctx.beginPath();ctx.moveTo(x,y);ctx.arc(x,y,r-3,a0,a1);ctx.closePath();ctx.fillStyle=col+(done?'77':'55');ctx.fill()}
+ for(let k=0;k<10;k++){const a=a0+k*Math.PI/5,q=k%5==0?r-8:r-5;line(x+Math.cos(a)*q,y+Math.sin(a)*q,x+Math.cos(a)*(r-1.5),y+Math.sin(a)*(r-1.5),'rgba(255,255,255,.55)',k%5==0?1.6:1)}
+ line(x,y,x+Math.cos(a1)*(r-5),y+Math.sin(a1)*(r-5),'#fff',2.2);dot(x,y,2.6,'#fff')}
+function card(x,y,w,h,title){rr(x,y,w,h,12,'#10122a','rgba(255,255,255,.18)');if(title)T(title,x+w/2,y+24,{al:'center',c:'#ffd76b',sz:14})}
+
+// ---------- 그림 ----------
+const X0=170,U=190,BY=[72,144,216];   // U: 고무줄 길이 1의 px, BY: 고무줄 줄의 y
+function draw(){ctx.clearRect(0,0,W,HH);
+ T('고무줄(우주)이 1에서 2로 늘어나는 데 걸린 시간',18,30,{c:'#ffd76b',sz:14});
+ T('시계 (한 바퀴 100억 년)',650,30,{al:'center',c:'#a9b1cc',sz:11.5,w:600});
+ M.forEach((m,i)=>{const y=BY[i],tt=Math.min(t,m.T),L=m.L(tt),done=t>=m.T;
+  T(m.nm,18,y-2,{c:m.col,sz:15.5,w:800});T(m.sub,18,y+16,{c:'#a9b1cc',sz:11.5,w:600});
+  // 고무줄(우주)과 그 위의 한 파장, 길이 1과 2 표시
+  rr(X0,y-12,U*L,24,12,m.col+'2a',m.col+'aa');wave(X0,y,U*L,U*L,8,'#ffffffcc',1.8);dot(X0,y,3.5,'#fff');
+  line(X0+U,y-17,X0+U,y+17,'rgba(255,255,255,.3)',1,[3,3]);line(X0+U*2,y-17,X0+U*2,y+17,'rgba(255,215,107,.6)',1,[3,3]);
+  if(i==0){T('1',X0+U,y-21,{al:'center',c:'#cfd6ee',sz:11.5});T('2배 (z = 1)',X0+U*2,y-21,{al:'center',c:'#ffd76b',sz:11.5})}
+  // 오른쪽: 시계와 숫자
+  clock(650,y,26,tt,m.col,done);
+  T(`${f1(tt)}억 년`,688,y-4,{c:m.col,sz:15,w:800});
+  T(done?'2배 도착!':`길이 ×${f2(L)}`,688,y+15,{c:done?'#ffd76b':'#cfd6ee',sz:12.5,w:600});
+  T(`빠르기 ${f2(m.v(tt))}`,790,y+15,{c:'#cfd6ee',sz:12.5,w:600})});
+ // 아래 왼쪽: 같은 시간축 위에 늘어나는 빠르기 그래프와 빛이 온 거리 막대
+ rr(14,256,586,194,12,'#10122a','rgba(255,255,255,.18)');
+ const tn=Math.min(t,TMAX),gx0=132,gx1=584,gy0=376,gy1=294,BAR=[393,408,423],gx=s=>gx0+s/100*(gx1-gx0),gy=v=>gy0-v/1.6*(gy0-gy1);
+ T('늘어나는 빠르기와 빛이 온 거리',28,278,{c:'#ffd76b',sz:13});
+ T('가로축: 지난 시간 (억 년)',gx1,278,{al:'right',sz:11.5,c:'#cfd6ee',w:600});
+ for(let s=0;s<=100;s+=20){line(gx(s),gy1-4,gx(s),BAR[2]+8,'rgba(255,255,255,.07)',1);T(s+'',gx(s),444,{al:'center',sz:11,c:'#a9b1cc',w:600})}
+ // 빠르기 그래프
+ T('빠르기',28,340,{c:'#cfd6ee',sz:12});
+ line(gx0,gy0,gx1,gy0,'rgba(255,255,255,.45)',1.2);line(gx0,gy0,gx0,gy1-6,'rgba(255,255,255,.45)',1.2);
+ [0.5,1,1.5].forEach(v=>{line(gx0-4,gy(v),gx0,gy(v),'rgba(255,255,255,.5)');T(v+'',gx0-8,gy(v)+4,{al:'right',sz:11,c:'#a9b1cc',w:600})});
+ line(gx0,gy(1),gx1,gy(1),'rgba(255,215,107,.35)',1,[4,4]);
+ M.forEach(m=>{if(t>=m.T)line(gx(m.T),gy(1),gx(m.T),BAR[2]+8,m.col+'88',1,[3,3])});   // 2배가 된 때
+ if(tn>0)line(gx(tn),gy1-4,gx(tn),BAR[2]+8,'rgba(255,215,107,.7)',1.4);   // 지금 시각
+ M.forEach(m=>{const pth=(b,c,w)=>{ctx.beginPath();for(let s=0;s<=b+1e-9;s+=.5){const q=Math.min(s,b),x=gx(q),y=gy(m.v(q));s?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.strokeStyle=c;ctx.lineWidth=w;ctx.stroke()};
+  pth(m.T,m.col+'40',2);const tt=Math.min(t,m.T);if(tt>0)pth(tt,m.col,2.8);dot(gx(tt),gy(m.v(tt)),4.5,m.col,'#fff')});
+ if(t>=TMAX)T('마지막 순간의 빠르기는 셋 다 같음',gx(96)-12,gy(1)-9,{al:'right',sz:12,c:'#ffd76b'});
+ // 빛이 온 거리 막대: 빛은 1억 년에 1억 광년을 오므로 막대 길이 = 빛의 속도 × 걸린 시간
+ T('빛이 온',28,404,{c:'#ffd76b',sz:12});T('거리',28,420,{c:'#ffd76b',sz:12});
+ M.forEach((m,i)=>{const y=BAR[i],tt=Math.min(t,m.T),done=t>=m.T;T(m.nm.slice(0,2),gx0-8,y+4,{al:'right',c:m.col,sz:11.5});
+  rr(gx0,y-6,gx(100)-gx0,12,6,'rgba(255,255,255,.05)');
+  if(tt>0){rr(gx0,y-6,gx(tt)-gx0,12,6,done?m.col+'cc':m.col+'88');
+   if(!done){ctx.shadowColor='#ffd76b';ctx.shadowBlur=10;dot(gx(tt),y,5,'#ffd76b','#7a5a00');ctx.shadowBlur=0}
+   else T(`${f1(m.T)}억 광년`,gx(tt)-6,y+4,{al:'right',c:'#10122a',sz:11,w:800})}});
+ // 아래 오른쪽: 결과
+ card(612,256,314,194,'결과 (z = 1)');
+ const cx=[628,782,890,908];
+ T('걸린 시간',cx[1],310,{al:'right',sz:11.5,c:'#a9b1cc',w:600});T('빛이 온 거리',cx[2],310,{al:'right',sz:11.5,c:'#a9b1cc',w:600});
+ line(624,318,914,318,'rgba(255,255,255,.18)');
+ M.forEach((m,i)=>{const y=342+i*26,done=t>=m.T;T(m.nm,cx[0],y,{c:m.col,sz:13.5});
+  T(done?f1(m.T)+'억 년':'…',cx[1],y,{al:'right',sz:13.5});T(done?f1(m.T)+'억 광년':'…',cx[2],y,{al:'right',sz:13.5,c:'#ffd76b'});
+  // 초신성 밝기: 멀수록 어둡게 (거리의 제곱에 반비례, 감속 = 1)
+  if(done){const b=Math.pow(60.3/m.T,2),r=9*b+3,g=ctx.createRadialGradient(cx[3],y-5,0,cx[3],y-5,r);g.addColorStop(0,'rgba(255,250,230,'+Math.min(1,.35+b*.65)+')');g.addColorStop(1,'rgba(255,250,230,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx[3],y-5,r,0,7);ctx.fill()}});
+ T('밝기',cx[3],310,{al:'center',sz:11.5,c:'#a9b1cc',w:600});
+ T(t>=TMAX?'오래 걸릴수록 멀리서 출발 → 초신성이 어둡게 보임':'빛이 도착하면 결과가 나타납니다',769,422,{al:'center',sz:11.5,c:t>=TMAX?'#ffd76b':'#a9b1cc'});
+ T('※ 빛이 오는 동안 공간도 늘어나 은하는 지금 더 멀리 있음(순서는 같음)',769,440,{al:'center',sz:10.5,c:'#a9b1cc',w:600})}
+
+// ---------- 조작 ----------
+const $=id=>document.getElementById(id),cue=$('adcue');
+function upd(){$('adplay').textContent=play?'⏸ 일시정지':'▶ 재생';
+ if(t>=TMAX){cue.className='';cue.textContent='세 우주에서 걸린 시간과 빛이 온 거리, 처음의 늘어나는 빠르기를 비교해 보세요.'}
+ else if(!play){cue.className='go';cue.innerHTML='<span class="kb">재생</span>을 눌러 세 고무줄이 2배로 늘어나는 동안 빛이 얼마나 오는지 보세요.'}
+ else{cue.className='';cue.textContent='빛은 세 우주에서 같은 빠르기로 옵니다. 어느 고무줄이 가장 늦게 2배가 되는지 보세요.'}
+ draw()}
+$('adplay').onclick=()=>{if(t>=TMAX)t=0;play=!play;upd()};
+$('adreset').onclick=()=>{t=0;play=false;upd()};
+let last=performance.now();
+(function loop(now){const dt=Math.min(.1,(now-last)/1000);last=now;
+ if(play&&!ov14.hidden){t=Math.min(TMAX,t+dt*10);if(t>=TMAX){play=false;upd()}else draw()}   // 1초에 10억 년 (팝업이 열려 있을 때만)
+ requestAnimationFrame(loop)})(last);
+window.adOpen=()=>{t=0;play=false;fit();upd()};window.adClose=()=>{play=false;upd()};
+window.addEventListener('resize',()=>{if(!ov14.hidden)fit()});
+})();
 </script>
 <script src="../copyright.js"></script>
 </body>
