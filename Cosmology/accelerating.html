@@ -65,7 +65,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .memo .mtx{margin:0;font-weight:700;color:var(--mem);font-size:.95rem}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
-/* 자세히 살펴보기: 단계 설명 상자 오른쪽 아래에 두는 단추. 실행(남색)·선택(연보라)·기억하기(주황)와 구분되는 청록색 */
+/* 자세히 이해하기: 단계 설명 상자 오른쪽 아래에 두는 단추. 실행(남색)·선택(연보라)·기억하기(주황)와 구분되는 청록색 */
 :root{--more:#0f8b7d;--on-more:#fff}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--more:#3ccfb9;--on-more:#06231f}}
 :root[data-theme="dark"]{--more:#3ccfb9;--on-more:#06231f}
@@ -74,7 +74,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .morebtn:hover{filter:brightness(1.08)}
 @media (max-width:1000px){.stepbox.hasmore{padding-bottom:42px}}
 .tag.more{background:var(--more);color:var(--on-more)}
-/* 자세히 살펴보기 팝업: 화면 높이에 맞춰 폭을 줄여 그림이 한 화면에 들어오게 함 */
+/* 자세히 이해하기 팝업: 화면 높이에 맞춰 폭을 줄여 그림이 한 화면에 들어오게 함 */
 .think.big{width:min(1000px,100%,calc((100vh - 240px) * 2.04 + 32px));padding:12px 16px}
 .think.big{width:min(1000px,100%,calc((100dvh - 240px) * 2.04 + 32px))}
 .adnote{margin:0 0 8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.5}
@@ -186,8 +186,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <p class="exp">Ia형 초신성은 가장 밝을 때 태양보다 수십억 배나 밝아서, 은하 하나가 내는 빛과 맞먹을 정도입니다. 그래서 수십억 광년 떨어진 먼 은하에서 폭발해도 관측할 수 있습니다.</p>
    <p class="exp">또 거의 같은 질량에서 폭발하므로 최대 밝기가 거의 일정합니다. 그래서 겉보기 밝기를 측정하면 거리를 구할 수 있어, 먼 은하까지의 거리를 재는 기준(표준 촛불)으로 씁니다.</p>
   </div></div>
-  <div class="ov" id="ov14" hidden><div class="think big" role="dialog" aria-modal="true" aria-label="자세히 살펴보기: 적색 편이가 같아도 거리가 다른 까닭">
-   <div class="think-h"><b class="think-t"><span class="tag more">자세히 살펴보기</span>적색 편이가 같아도 거리가 다른 까닭</b><button type="button" class="x" id="thx14" aria-label="닫기">닫기 ✕</button></div>
+  <div class="ov" id="ov14" hidden><div class="think big" role="dialog" aria-modal="true" aria-label="자세히 이해하기: 적색 편이가 같아도 거리가 다른 까닭">
+   <div class="think-h"><b class="think-t"><span class="tag more">자세히 이해하기</span>적색 편이가 같아도 거리가 다른 까닭</b><button type="button" class="x" id="thx14" aria-label="닫기">닫기 ✕</button></div>
    <div class="adnote"><p><b class="em">적색 편이 z = 1</b>: 관측한 빛의 파장이 처음의 <b class="em">2배</b>로 늘어났다는 뜻입니다. 빛이 오는 동안 우주(공간)도 <b class="em">2배</b>로 커졌습니다.</p>
 <p>z = (관측한 파장 − 원래 파장) ÷ 원래 파장 = (2 − 1) ÷ 1 = 1</p></div>
    <canvas id="adcv" width="940" height="460" aria-label="등속·가속·감속 팽창하는 세 고무줄(우주)이 1에서 2로 늘어나는 데 걸린 시간을 시계로 보여 주고, 같은 시간축 위에 늘어나는 빠르기 그래프와 빛이 온 거리 막대를 그린 그림"></canvas>
@@ -352,8 +352,8 @@ function aDraw(t){const g=agg;g.innerHTML='';const s=DA.s;if(s!=aLast){aLast=s;a
   pPill(g,734,250,'우주의 가속 팽창','#ffd76b',16,200)}
 }
 const DA=stepper(AS,astep,aprev,anext,anum,acue,aDraw);
-// 2단계(예상보다 어두운 초신성) 설명 상자 오른쪽 아래의 [자세히 살펴보기]: z = 1인 빛이 오는 데 걸린 시간 비교(ov14 팝업)를 띄움
-const moreBtn=document.createElement('button');moreBtn.type='button';moreBtn.className='morebtn';moreBtn.textContent='🔍 자세히 살펴보기';
+// 2단계(예상보다 어두운 초신성) 설명 상자 오른쪽 아래의 [자세히 이해하기]: z = 1인 빛이 오는 데 걸린 시간 비교(ov14 팝업)를 띄움
+const moreBtn=document.createElement('button');moreBtn.type='button';moreBtn.className='morebtn';moreBtn.textContent='🔍 자세히 이해하기';
 {const g0=DA.go;DA.go=s=>{g0(s);astep.classList.toggle('hasmore',DA.s==1);if(DA.s==1)astep.append(moreBtn)}}
 {const close=()=>{ov14.hidden=true;adClose();moreBtn.focus()};
  moreBtn.onclick=()=>{ov14.hidden=false;adOpen();thx14.focus()};thx14.onclick=close;   // 열 때마다 처음부터
@@ -438,7 +438,7 @@ thb11.addEventListener('click',()=>{th11g.innerHTML='';iBox(th11g);aObs(th11g,1,
 iare.onclick=()=>{iaT0=NOW()};
 </script>
 <script>
-// 자세히 살펴보기 팝업(ov14): z = 1인 빛이 오는 동안 등속·가속·감속 팽창하는 우주가 2배로 커지는 데 걸린 시간과 빛이 온 거리 비교
+// 자세히 이해하기 팝업(ov14): z = 1인 빛이 오는 동안 등속·가속·감속 팽창하는 우주가 2배로 커지는 데 걸린 시간과 빛이 온 거리 비교
 // (테스트 사이트 accel_universe.html을 옮김. 이름이 겹치지 않도록 함수 안에 둠)
 (()=>{
 // ---------- 물리 모형 ----------
