@@ -299,8 +299,8 @@ function aObs(inn,u1,near){const X=u=>80+u*410,Y=v=>266-v*200,dec=u=>.6*u+.08*u*
   mk('path',{d:curve(dec,X,Y,0,1),fill:'none',stroke:'#a9b1cc','stroke-width':2.2,'stroke-dasharray':'6 5'},inn);
   mk('path',{d:curve(coa,X,Y,0,1),fill:'none',stroke:'#7fd3ff','stroke-width':2.2,'stroke-dasharray':'2 4'},inn);
   if(u1>=1){mk('path',{d:curve(acc,X,Y,0,1),fill:'none',stroke:'#c9b2ff','stroke-width':2.2},inn);
-   mk('line',{x1:X(.85),y1:Y(coa(.85))-4,x2:X(.85),y2:Y(acc(.85))+6,stroke:'#ff9d9d','stroke-width':2,'marker-start':'url(#aar)','marker-end':'url(#aar)'},inn);
-   txt('먼 초신성: 등속 팽창보다도 어두움',{x:500,y:214,'text-anchor':'end',fill:'#ff9d9d','font-size':12.5,'font-weight':800},inn);
+   mk('line',{x1:X(.85),y1:Y(dec(.85))-4,x2:X(.85),y2:Y(acc(.85))+6,stroke:'#ff9d9d','stroke-width':2,'marker-start':'url(#aar)','marker-end':'url(#aar)'},inn);
+   txt('먼 초신성: 감속 팽창보다도 어두움',{x:500,y:214,'text-anchor':'end',fill:'#ff9d9d','font-size':12.5,'font-weight':800},inn);
    txt('→ 예상보다 더 멀리 있음',{x:500,y:234,'text-anchor':'end',fill:'#ff9d9d','font-size':12.5,'font-weight':800},inn)}
   ASN.forEach(([u,j])=>{if(u<=u1)mk('circle',{cx:X(u),cy:Y(acc(u)+j),r:4,fill:'#ffd76b',stroke:'#fff','stroke-width':.8},inn)});
   mk('circle',{cx:100,cy:82,r:4,fill:'#ffd76b'},inn);txt('관측한 Ia형 초신성',{x:112,y:86,fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
@@ -343,7 +343,7 @@ function aDraw(t){const g=agg;g.innerHTML='';const s=DA.s;if(s!=aLast){aLast=s;a
    txt(l,{x,y:240,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g)});
   pPill(g,734,254,'겉보기 밝기 측정 → 거리 계산','#ffd76b',14,260)}
  if(s==1){T('1998년 두 연구팀의 관측',{y:100,'font-size':13,fill:'#a9b1cc','font-weight':400});
-  pRow(g,112,'가까운 초신성','예상과 비슷','#e8ecff');pRow(g,150,'먼 초신성','등속 팽창보다도 어두움','#ff9d9d','#ff9d9d');
+  pRow(g,112,'가까운 초신성','예상과 비슷','#e8ecff');pRow(g,150,'먼 초신성','감속 팽창보다도 어두움','#ff9d9d','#ff9d9d');
   pBox(g,196,[['어둡다 = 예상보다 멀리 있다','#ffd76b',15.5]],'#ffd76b');
   pNote(g,268,'(펄머터, 슈미트, 리스: 2011년 노벨 물리학상)')}
  if(s==2){pBox(g,88,[['초기: 물질의 중력이 우세'],['팽창 속도가 점점 느려짐 (감속 팽창)','#7fd3ff',13.5]],'#7fd3ff');
