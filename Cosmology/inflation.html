@@ -47,6 +47,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
 .pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
 .pb:disabled{opacity:.4;cursor:default}
+/* 다시 보기: 단계의 움직이는 그림이 끝나면 조작 줄 오른쪽 끝에 나타남 (움직이는 그림이 없는 단계에는 없음) */
+.pb.rp{margin-left:auto}.pb.rp.off{visibility:hidden}
 /* 과정 단계가 끝나면 관측 결과 단추가 되풀이하여 빛남 */
 .pb.glow{animation:pbGlow 1.6s ease-in-out infinite}
 @keyframes pbGlow{0%,100%{box-shadow:0 0 0 0 rgba(84,104,212,.55);filter:brightness(1)}50%{box-shadow:0 0 0 7px rgba(84,104,212,0),0 0 16px 3px rgba(84,104,212,.55);filter:brightness(1.18)}}
@@ -200,7 +202,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 
 <script>
 let TB=0;const NOW=()=>performance.now()/1000-TB;
-function resetAll(){TB=performance.now()/1000;jLast=-1;[I,J,K].forEach(o=>o.go(0))}
+function resetAll(){TB=performance.now()/1000;[I,J,K].forEach(o=>o.go(0))}
 // 애니메이션 시계: TB는 마지막으로 탭이나 작은 메뉴를 누른 시각. 누를 때마다 시계를 0으로 돌리고 1단계부터 다시 시작
 
 // SVG 그리기 도우미
@@ -213,8 +215,11 @@ function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=]) /g,'\u0
 
 // 두 자료가 함께 쓰는 단계 넘기기: 이전·다음 단추, 단계 표시, 안내 문구 (마지막 단계에서 다음 단추는 처음으로)
 // 과정(시간 순서)인 자료는 제목이 'N단계'로 시작 → '다음 단계 ▶', 'n / N 단계'. 과정이 아닌 설명은 내용 제목만 → '다음 ▶', 'n / N'
-function stepper(S,box,prev,next,num,cue,draw){const ST=/^\d+단계/.test(S[0][0]),NX=ST?'다음 단계':'다음';prev.textContent=ST?'◀ 이전 단계':'◀ 이전';
- const o={s:0,go(s){o.s=Math.max(0,Math.min(S.length-1,s));const[tt,tx]=S[o.s],last=o.s==S.length-1;
+// DUR: 단계마다 움직이는 그림이 끝나는 시각(초, 0 = 움직이는 그림 없음). 끝나면 '↺ 다시 보기'가 나타나고, 누르면 그 단계를 처음부터 다시 보여 줌
+function stepper(S,box,prev,next,num,cue,draw,DUR){const ST=/^\d+단계/.test(S[0][0]),NX=ST?'다음 단계':'다음';prev.textContent=ST?'◀ 이전 단계':'◀ 이전';
+ const rp=document.createElement('button');rp.className='pb rp off';rp.type='button';rp.textContent='↺ 다시 보기';next.parentNode.appendChild(rp);
+ rp.onclick=()=>{o.t0=NOW();o.tick(o.t0)};
+ const o={s:0,t0:0,tick(t){const d=DUR[o.s];rp.hidden=!d;rp.classList.toggle('off',!d||t-o.t0<d)},go(s){o.s=Math.max(0,Math.min(S.length-1,s));o.t0=NOW();o.tick(o.t0);const[tt,tx]=S[o.s],last=o.s==S.length-1;
   box.innerHTML=stepHTML(tt,tx);prev.disabled=o.s==0;next.textContent=last?'↺ 처음으로':NX+' ▶';num.textContent=`${o.s+1} / ${S.length}`+(ST?' 단계':'');
   if(last){cue.className='';cue.textContent=''}else{cue.className='go';cue.innerHTML=`<span class="kb">${NX}</span>${ST?'를':'을'} 눌러 차례대로 알아보세요.`}draw(NOW())}};
  prev.onclick=()=>o.go(o.s-1);next.onclick=()=>o.go(o.s==S.length-1?0:o.s+1);return o}
@@ -248,13 +253,13 @@ const IS=[
 function iDraw(t){const g=ig;g.innerHTML='';const s=I.s;
  iHead(g,['빅뱅 직후의 급팽창','우주의 크기 변화 (개념도)','급팽창 이론이 해결한 문제'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#iclip)'},g);
- if(s==0){const CY=170,p=(t%10),k=ease((p-1.5)/1.2),r=8+k*88;   // 1.5초 멈춤 → 1.2초 동안 급격히 커짐 → 약 7초 동안 멈춤 → 다시 처음부터
+ if(s==0){const CY=170,p=t-I.t0,k=ease((p-1.5)/1.2),r=8+k*88;   // 1.5초 멈춤 → 1.2초 동안 급격히 커짐 → 그대로 (다시 보기로 처음부터)
   mk('circle',{cx:270,cy:CY,r:8,fill:'none',stroke:'#cfd6ee','stroke-width':1.2,'stroke-dasharray':'3 3'},inn);
   mk('circle',{cx:270,cy:CY,r,fill:'rgba(127,170,255,.22)',stroke:'#7faaff','stroke-width':2},inn);
   for(let a=0;a<8;a++){const c=Math.cos(a*Math.PI/4),sn=Math.sin(a*Math.PI/4),r1=r+6;if(k>0&&k<1)mk('line',{x1:270+c*r1,y1:CY+sn*r1,x2:270+c*(r1+18),y2:CY+sn*(r1+18),stroke:'#ffd76b','stroke-width':2.2,'stroke-linecap':'round'},inn)}
   txt(k<.05?'급팽창 전':k<1?'급팽창!':'급팽창 후',{x:270,y:286,'text-anchor':'middle',fill:'#ffd76b','font-size':16,'font-weight':800},inn);   // 글씨는 그림 아래: 안쪽의 급팽창 전 크기(점선 원)를 가리지 않게
   txt('빅뱅 후 약 10⁻³⁶초 ~ 10⁻³⁴초',{x:36,y:72,fill:'#cfd6ee','font-size':12.5,'font-weight':700},inn)}
- if(s==1){const X=u=>70+u*420,Y=v=>270-v*200,u1=Math.min(1,(t%7)/5);
+ if(s==1){const X=u=>70+u*420,Y=v=>270-v*200,u1=Math.min(1,(t-I.t0)/5);
   const yes=u=>u<.12?.04+.05*u/.12:u<.2?.09+.53*ease((u-.12)/.08):.62+.3*Math.pow((u-.2)/.8,.6),no=u=>u<.12?.04+.05*u/.12:.09+.12*Math.pow((u-.12)/.88,.6);
   mk('rect',{x:X(.12),y:62,width:X(.2)-X(.12),height:208,fill:'rgba(255,215,107,.13)'},inn);
   txt('급팽창',{x:(X(.12)+X(.2))/2,y:80,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800},inn);
@@ -281,7 +286,7 @@ function iDraw(t){const g=ig;g.innerHTML='';const s=I.s;
   pPill(g,652,184,'✔ 지평선 문제 해결','#6fe08f',14,156);pPill(g,816,184,'✔ 평탄성 문제 해결','#6fe08f',14,156);
   pNote(g,244,'(어떻게 해결하는지는 다음 두 메뉴에서 알아봅니다)')}
 }
-const I=stepper(IS,istep,iprev,inext,inum,icue,iDraw);
+const I=stepper(IS,istep,iprev,inext,inum,icue,iDraw,[3.6,5.4,0]);
 
 // 지평선 문제 해결 (교과서 그림 참고): 급팽창 이전 우주 < 정보 전달 가능 영역 → 급팽창 → 지평선 안쪽이 균질
 // 1단계는 '온도가 고르게 됨 → 급팽창'을 한 번에 이어서 진행하고 마지막 모습을 유지
@@ -291,9 +296,9 @@ const JS=[
 const JP=[];for(let r=0;r<3;r++)for(let k=0;k<(r?6*r:1);k++){const a=k*2*Math.PI/(r?6*r:1)+r*.3;JP.push([r*18*Math.cos(a),r*18*Math.sin(a),(k*37+r*11)%2])}   // 우주 안의 입자(가운데 1 + 6 + 12), 처음 온도: 높음/낮음
 const JC=[[255,125,105],[90,160,255]],JU=[181,140,255];
 function jDots(g,cx,cy,sc,m,rr){JP.forEach(([x,y,h])=>{const c=JC[h].map((v,i)=>Math.round(v+(JU[i]-v)*m));mk('circle',{cx:cx+x*sc,cy:cy+y*sc,r:rr,fill:`rgb(${c})`,stroke:'rgba(255,255,255,.6)','stroke-width':.8},g)})}
-let jLast=-1,jT0=0;   // 단계가 바뀐 시각: 애니메이션은 한 번만 진행하고 마지막 모습을 유지
-function jDraw(t){const g=jg;g.innerHTML='';const s=J.s,CX=270,CY=170;if(s!=jLast){jLast=s;jT0=t}
- const p=t-jT0,m=ease((p-.8)/4),k=ease((p-6)/1.8);   // 0.8~4.8초: 온도가 고르게 됨, 6~7.8초: 급팽창
+// 애니메이션은 한 번만 진행하고 마지막 모습을 유지 (J.t0: 단계가 바뀌거나 다시 보기를 누른 시각)
+function jDraw(t){const g=jg;g.innerHTML='';const s=J.s,CX=270,CY=170;
+ const p=t-J.t0,m=ease((p-.8)/4),k=ease((p-6)/1.8);   // 0.8~4.8초: 온도가 고르게 됨, 6~7.8초: 급팽창
  iHead(g,[k>0?'급팽창 (빛보다 빠른 팽창)':'급팽창 이전 (우주 < 정보 전달 가능 영역)','급팽창 이후 (지금)'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#jclip)'},g);
  if(s==0){const sc=1+k*7,r=56*sc,f=ease((p-4.8)/1);
@@ -329,7 +334,7 @@ function jDraw(t){const g=jg;g.innerHTML='';const s=J.s,CX=270,CY=170;if(s!=jLas
 }
 function zEarthAt(g,x,y){mk('circle',{cx:x,cy:y,r:12,fill:'url(#jearth)',stroke:'#fff','stroke-width':1},g);   // 그라디언트는 같은 그림판 안의 것을 써야 숨긴 그림판 문제 없이 보임
  mk('path',{d:`M${x-7},${y-5}q4,-4 8,0q-1,5 -5,6q-4,-1 -3,-6zM${x+2},${y+4}q4,-2 6,1q-2,4 -6,3z`,fill:'#5fbf6a',opacity:.9},g)}
-const J=stepper(JS,jstep,jprev,jnext,jnum,jcue,jDraw);
+const J=stepper(JS,jstep,jprev,jnext,jnum,jcue,jDraw,[8.4,0]);
 
 // 평탄성 문제 해결 (교과서 그림 참고): 작은 풍선 위의 개미 → 풍선이 엄청나게 커지면 → 급팽창과 평탄한 우주
 const KS=[
@@ -356,7 +361,7 @@ function kDraw(t){const g=kg;g.innerHTML='';const s=K.s;
  iHead(g,['작은 풍선','풍선이 엄청나게 커지면','급팽창으로 커진 우주'][s]);
  mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#cfe8f8',stroke:'rgba(255,255,255,.18)'},g);
  if(s==0)kScene(g,62,'둥글게 휘어 보임');
- if(s==1){const k=ease(((t%7)-.8)/2.6),R=62*Math.pow(40,k);kScene(g,R,k<1?'':'거의 평평하게 보임')}
+ if(s==1){const k=ease((t-K.t0-.8)/2.6),R=62*Math.pow(40,k);kScene(g,R,k<1?'':'거의 평평하게 보임')}
  if(s==2){kScene(g,62*40,'관측 가능한 우주: 평탄');kPill(g,170,166,'관측 가능한 우주','#b3261e',12.5);
   kPill(g,170,226,'급팽창으로 엄청나게 커진 우주','#5b4a10',12.5);
   txt('(개미 = 관측자, 풍선 = 우주)',{x:170,y:284,'text-anchor':'middle',fill:'#5b4a10','font-size':12},g)}
@@ -375,9 +380,9 @@ function kDraw(t){const g=kg;g.innerHTML='';const s=K.s;
   pBox(g,166,[['초기 우주의 밀도가'],['특정한 값일 필요가 없음','#ffd76b',15]],'#ffd76b');
   pPill(g,734,244,'✔ 평탄성 문제 해결','#6fe08f',15,200)}
 }
-const K=stepper(KS,kstep,kprev,knext,knum,kcue,kDraw);
+const K=stepper(KS,kstep,kprev,knext,knum,kcue,kDraw,[0,3.8,0]);
 I.go(0);J.go(0);K.go(0);
-(function iLoop(now){if(!p4.hidden){const t=(now/1000-TB);if(!iva.hidden)iDraw(t);else if(!ivb.hidden)jDraw(t);else kDraw(t)}requestAnimationFrame(iLoop)})(performance.now());
+(function iLoop(now){if(!p4.hidden){const t=(now/1000-TB);if(!iva.hidden){I.tick(t);iDraw(t)}else if(!ivb.hidden){J.tick(t);jDraw(t)}else{K.tick(t);kDraw(t)}}requestAnimationFrame(iLoop)})(performance.now());
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
  const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
