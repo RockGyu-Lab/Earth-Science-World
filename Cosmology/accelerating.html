@@ -352,9 +352,9 @@ function aDraw(t){const g=agg;g.innerHTML='';const s=DA.s;if(s!=aLast){aLast=s;a
   pPill(g,734,250,'우주의 가속 팽창','#ffd76b',16,200)}
 }
 const DA=stepper(AS,astep,aprev,anext,anum,acue,aDraw);
-// 2단계(예상보다 어두운 초신성) 설명 상자 오른쪽 아래의 [자세히 이해하기]: z = 1인 빛이 오는 데 걸린 시간 비교(ov14 팝업)를 띄움
+// 2·3단계(예상보다 어두운 초신성, 우주의 가속 팽창) 설명 상자 오른쪽 아래의 [자세히 이해하기]: z = 1인 빛이 오는 데 걸린 시간 비교(ov14 팝업)를 띄움
 const moreBtn=document.createElement('button');moreBtn.type='button';moreBtn.className='morebtn';moreBtn.textContent='🔍 자세히 이해하기';
-{const g0=DA.go;DA.go=s=>{g0(s);astep.classList.toggle('hasmore',DA.s==1);if(DA.s==1)astep.append(moreBtn)}}
+{const g0=DA.go;DA.go=s=>{g0(s);astep.classList.toggle('hasmore',DA.s>=1);if(DA.s>=1)astep.append(moreBtn)}}
 {const close=()=>{ov14.hidden=true;adClose();moreBtn.focus()};
  moreBtn.onclick=()=>{ov14.hidden=false;adOpen();thx14.focus()};thx14.onclick=close;   // 열 때마다 처음부터
  ov14.addEventListener('click',e=>{if(e.target===ov14)close()});ov14.addEventListener('keydown',e=>{if(e.key=='Escape')close()})}
@@ -447,8 +447,8 @@ iare.onclick=()=>{iaT0=NOW()};
 const TN=280/3,T0=TN/Math.pow(2,1.5);   // 감속(물질만): L = 2((t+T0)/TN)^(2/3), TN = 2/(3H0)
 const M=[
  {nm:'등속 팽창',sub:'늘 같은 빠르기로 늘어남',col:'#b9c0d4',T:70,L:t=>1+t/70,v:t=>1},
- {nm:'가속 팽창',sub:'점점 빠르게 늘어남',col:'#ff6b6b',T:140*Math.LN2,L:t=>Math.exp(t/140),v:t=>Math.exp(t/140)/2},
- {nm:'감속 팽창',sub:'점점 느리게 늘어남',col:'#5aa9ff',T:TN-T0,L:t=>2*Math.pow((t+T0)/TN,2/3),v:t=>Math.pow((t+T0)/TN,-1/3)}];
+ {nm:'가속 팽창',sub:['점점 빠르게 늘어나','마지막에는 등속 팽창','속도와 같아짐'],col:'#ff6b6b',T:140*Math.LN2,L:t=>Math.exp(t/140),v:t=>Math.exp(t/140)/2},
+ {nm:'감속 팽창',sub:['점점 느리게 늘어나','마지막에는 등속 팽창','속도와 같아짐'],col:'#5aa9ff',T:TN-T0,L:t=>2*Math.pow((t+T0)/TN,2/3),v:t=>Math.pow((t+T0)/TN,-1/3)}];
 // v: 고무줄이 늘어나는 빠르기 dL/dt (마지막 순간 = 1로 나타냄). 빛은 1억 년에 1억 광년을 옴
 const TMAX=M[1].T;
 let t=0,play=false;
@@ -472,12 +472,12 @@ function clock(x,y,r,tt,col,done){ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillSty
 function card(x,y,w,h,title){rr(x,y,w,h,12,'#10122a','rgba(255,255,255,.18)');if(title)T(title,x+w/2,y+24,{al:'center',c:'#ffd76b',sz:14})}
 
 // ---------- 그림 ----------
-const X0=170,U=190,BY=[72,144,216];   // U: 고무줄 길이 1의 px, BY: 고무줄 줄의 y
+const X0=170,U=190,BY=[68,132,196];   // U: 고무줄 길이 1의 px, BY: 고무줄 줄의 y
 function draw(){ctx.clearRect(0,0,W,HH);
  T('고무줄(우주)이 1에서 2로 늘어나는 데 걸린 시간',18,30,{c:'#ffd76b',sz:14});
  T('시계 (한 바퀴 100억 년)',650,30,{al:'center',c:'#a9b1cc',sz:11.5,w:600});
  M.forEach((m,i)=>{const y=BY[i],tt=Math.min(t,m.T),L=m.L(tt),done=t>=m.T;
-  T(m.nm,18,y-2,{c:m.col,sz:15.5,w:800});T(m.sub,18,y+16,{c:'#a9b1cc',sz:11.5,w:600});
+  T(m.nm,18,y-2,{c:m.col,sz:15.5,w:800});[].concat(m.sub).forEach((s,j)=>T(s,18,y+14+j*13,{c:'#a9b1cc',sz:11.5,w:600}));
   // 고무줄(우주)과 그 위의 한 파장, 길이 1과 2 표시
   rr(X0,y-12,U*L,24,12,m.col+'2a',m.col+'aa');wave(X0,y,U*L,U*L,8,'#ffffffcc',1.8);dot(X0,y,3.5,'#fff');
   line(X0+U,y-17,X0+U,y+17,'rgba(255,255,255,.3)',1,[3,3]);line(X0+U*2,y-17,X0+U*2,y+17,'rgba(255,215,107,.6)',1,[3,3]);
