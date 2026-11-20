@@ -269,7 +269,8 @@ function rDraw(t){const g=rgg;g.innerHTML='';const s=DR.s;if(s!=rLast){rLast=s;r
  if(s>=1){const GX=146,GY=170,GR=96,f=s==1?RV:RO;
   if(s==3){mk('circle',{cx:GX,cy:GY,r:124,fill:'url(#rgh)'},inn);mk('circle',{cx:GX,cy:GY,r:116,fill:'none',stroke:'#c9b2ff','stroke-width':1.4,'stroke-dasharray':'5 4'},inn)}
   galaxy(inn,GX,GY,GR,1);
-  RU.forEach((u,i)=>{const r=u*GR,v=f(u),a=-.6+i*2.1-v*26/r*t,x=GX+r*Math.cos(a),y=GY+r*Math.sin(a),L=44*v;   // 반시계 방향으로 돎, 화살표 길이 = 회전 속도
+  mk('line',{x1:GX,y1:GY,x2:GX+GR+8,y2:GY,stroke:'#ffffff','stroke-width':1.2,'stroke-dasharray':'4 3',opacity:.55},inn);   // 출발선: 세 점이 단계를 시작할 때 이 선 위에서 함께 출발
+  RU.forEach((u,i)=>{const r=u*GR,v=f(u),a=-v*26/r*(t-rT0),x=GX+r*Math.cos(a),y=GY+r*Math.sin(a),L=44*v;   // 중심에서 오른쪽으로 그은 선 위에서 함께 출발하여 반시계 방향으로 돎, 화살표 길이 = 회전 속도
    mk('circle',{cx:GX,cy:GY,r,fill:'none',stroke:RCOL[i],'stroke-width':1,'stroke-dasharray':'2 4',opacity:.6},inn);
    mk('line',{x1:x,y1:y,x2:x+L*Math.sin(a),y2:y-L*Math.cos(a),stroke:RCOL[i],'stroke-width':2.4,'marker-end':'url(#rar)'},inn);
    mk('circle',{cx:x,cy:y,r:4.5,fill:RCOL[i],stroke:'#fff','stroke-width':1.2},inn)});
