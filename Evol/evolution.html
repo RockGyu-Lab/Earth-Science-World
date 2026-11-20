@@ -488,7 +488,7 @@ fmode.querySelectorAll('button').forEach(b=>b.onclick=()=>{fmode.querySelectorAl
 fprev.onclick=()=>{fstop();fi=(fi+NST()-1)%NST();runStep()};fnext.onclick=()=>{fstop();fi=(fi+1)%NST();runStep()};
 fplay.onclick=()=>fPlay?fstop():fauto(fT>=1?(fi+1)%NST():fi);
 // 주계열 단계 탭을 열면 자동 진행 시작, 다른 탭으로 가면 멈춤
-window.onTab=i=>{if(i==3)placeCyb();if(i==1)fauto(0);else fstop();if(i==2&&pv==0)pmAuto();else if(window.pmStop)pmStop();if(i!=3&&window.cyStop)cyStop()};
+window.onTab=i=>{if(i==3){placeCyb();cysel.querySelector('button').click()}if(i==1)fauto(0);else fstop();if(i==2)pmsel.querySelector('button').click();else if(window.pmStop)pmStop();if(i!=3&&window.cyStop)cyStop()};   // 큰 탭을 누르면 안의 작은 메뉴는 항상 첫 번째부터
 drawEq();drawFu();fstop();
 
 // ---- ③ 후주계열 단계 ----

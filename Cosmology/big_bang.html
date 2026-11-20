@@ -252,7 +252,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 // 위쪽 탭: 빅뱅 우주론의 근거 / 빅뱅 우주론의 문제점 (왼쪽·오른쪽 화살표 키로도 이동)
 const TABS=[tab1,tab2],PANES=[p2,p3];
 function openTab(i){TABS.forEach((t,j)=>{t.setAttribute("aria-selected",i==j);t.tabIndex=i==j?0:-1;PANES[j].hidden=i!=j});
- PANES[i].classList.remove("enter");void PANES[i].offsetWidth;PANES[i].classList.add("enter");resetAll()}   // 탭을 누를 때마다 처음 단계, 처음 장면부터 시작
+ PANES[i].classList.remove("enter");void PANES[i].offsetWidth;PANES[i].classList.add("enter");[e2a,z3a].forEach(b=>{const p=b.parentNode;[...p.querySelectorAll('button')].forEach(x=>{const on=x==b;x.classList.toggle('on',on);x.setAttribute('aria-selected',on)})});eva.hidden=zva.hidden=false;evb.hidden=zvb.hidden=true;resetAll()}   // 탭을 누를 때마다 작은 메뉴는 첫 번째, 처음 단계, 처음 장면부터 시작
 TABS.forEach((t,i)=>{t.onclick=()=>openTab(i);t.onkeydown=e=>{if(e.key=="ArrowRight"||e.key=="ArrowLeft"){const j=(i+(e.key=="ArrowRight"?1:TABS.length-1))%TABS.length;TABS[j].focus();openTab(j)}}});
 let TB=0;const NOW=()=>performance.now()/1000-TB;
 function resetAll(){TB=performance.now()/1000;hm=0;bm=0;bT=0;bw=0;hGo(0);bGo(0);[Z,F].forEach(o=>o.go(0))}
