@@ -245,13 +245,12 @@ const iBox=g=>mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#10122a',str
 const iHead=(g,s)=>txt(s,{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
 const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
 
-// 급팽창 이론 소개: 등장 → 우주의 크기 변화(개념도) → 빅뱅 우주론의 보완
+// 급팽창 이론 소개: 등장 → 우주의 크기 변화(개념도)와 빅뱅 우주론의 보완
 const IS=[
  ['급팽창 이론의 등장','1980년대 초 <em>앨런 구스</em>는 빅뱅 우주론의 문제점을 해결하기 위해 급팽창 이론을 제안했습니다. 급팽창 이론에 따르면 빅뱅 직후 <em>약 10<sup>−36</sup>초에서 10<sup>−34</sup>초</em> 사이의 아주 짧은 시간 동안 우주가 <em>빛보다 빠른 속도로 급격하게 팽창</em>했습니다.'],
- ['우주의 크기 변화','급팽창 시기에 우주의 크기는 <em>아주 짧은 시간 동안 엄청나게</em> 커졌습니다. 급팽창이 끝난 뒤에는 빅뱅 우주론에서 설명하는 것처럼 우주가 계속 팽창하며 식어 갔습니다. (그래프는 크기 변화를 알아보기 쉽게 나타낸 개념도입니다.)'],
- ['빅뱅 우주론의 보완','급팽창 이론은 빅뱅 우주론을 버리는 것이 아니라 <em>빅뱅 직후의 아주 짧은 시기를 보완</em>하는 이론입니다. 급팽창 이론으로 빅뱅 우주론이 설명하기 어려웠던 <em>지평선 문제</em>와 <em>평탄성 문제</em>를 해결할 수 있습니다.']];
+ ['우주의 크기 변화','급팽창 시기에 우주의 크기는 <em>아주 짧은 시간 동안 엄청나게</em> 커졌고, 급팽창이 끝난 뒤에는 빅뱅 우주론에서 설명하는 것처럼 우주가 계속 팽창하며 식어 갔습니다. 이처럼 급팽창 이론은 빅뱅 우주론을 버리는 것이 아니라 <em>빅뱅 직후의 아주 짧은 시기를 보완</em>하는 이론으로, 빅뱅 우주론의 <em>지평선 문제</em>와 <em>평탄성 문제</em>를 해결할 수 있습니다.']];
 function iDraw(t){const g=ig;g.innerHTML='';const s=I.s;
- iHead(g,['빅뱅 직후의 급팽창','우주의 크기 변화 (개념도)','급팽창 이론이 해결한 문제'][s]);iBox(g);
+ iHead(g,['빅뱅 직후의 급팽창','우주의 크기 변화 (개념도)'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#iclip)'},g);
  if(s==0){const CY=170,p=t-I.t0,k=ease((p-1.5)/1.2),r=8+k*88;   // 1.5초 멈춤 → 1.2초 동안 급격히 커짐 → 그대로 (다시 보기로 처음부터)
   mk('circle',{cx:270,cy:CY,r:8,fill:'none',stroke:'#cfd6ee','stroke-width':1.2,'stroke-dasharray':'3 3'},inn);
@@ -268,25 +267,17 @@ function iDraw(t){const g=ig;g.innerHTML='';const s=I.s;
   [[yes,'#7faaff',''],[no,'#a9b1cc','5 5']].forEach(([f,c,da])=>{let d='';for(let u=0;u<=u1+1e-9;u+=.004)d+=(d?'L':'M')+X(u).toFixed(1)+','+Y(f(u)).toFixed(1);mk('path',{d,fill:'none',stroke:c,'stroke-width':2.6,'stroke-dasharray':da},inn)});
   if(u1>=1){txt('급팽창이 있었던 우주',{x:X(1)-4,y:Y(yes(1))+22,'text-anchor':'end',fill:'#7faaff','font-size':12.5,'font-weight':800},inn);
    txt('급팽창이 없었다면',{x:X(1)-4,y:Y(no(1))-10,'text-anchor':'end',fill:'#a9b1cc','font-size':12.5,'font-weight':700},inn)}}
- if(s==2){[['지평선 문제',['급팽창 이전에 우주 전체의','온도가 고르게 됨'],50],['평탄성 문제',['급팽창으로 커진 우주는','평탄하게 보임'],286]].forEach(([a,[b1,b2],x])=>{
-   mk('rect',{x,y:86,width:204,height:170,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.2)'},inn);
-   txt(a,{x:x+102,y:124,'text-anchor':'middle',fill:'#e8ecff','font-size':17,'font-weight':800},inn);
-   txt(b1,{x:x+102,y:166,'text-anchor':'middle',fill:'#cfd6ee','font-size':13},inn);txt(b2,{x:x+102,y:188,'text-anchor':'middle',fill:'#cfd6ee','font-size':13},inn);
-   mk('rect',{x:x+56,y:208,width:92,height:30,rx:15,fill:'#6fe08f',opacity:.2},inn);txt('✔ 해결',{x:x+102,y:229,'text-anchor':'middle',fill:'#6fe08f','font-size':15,'font-weight':800},inn)})}
  pPanel(g,IS[s][0]);const T=PT(g,734);
  if(s==0){[['제안','앨런 구스 (1980년대 초)'],['시기','빅뱅 후 약 10⁻³⁶초 ~ 10⁻³⁴초'],['내용','빛보다 빠른 급격한 팽창']].forEach(([a,b],i)=>{const y=88+i*42;
    pCard(g,572,y,324,34,'#ffffff',.05);txt(a,{x:590,y:y+22,fill:'#a9b1cc','font-size':13,'font-weight':800},g);txt(b,{x:638,y:y+22,fill:'#e8ecff','font-size':14.5,'font-weight':800},g)});
   pPill(g,734,224,'공간 자체가 빠르게 늘어남','#7faaff',14,240)}
- if(s==1){pBox(g,88,[['급팽창 시기','#ffd76b',14],['아주 짧은 시간 동안 크기가 엄청나게 커짐']],'#ffd76b');
-  txt('▼',{x:734,y:166,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
-  pBox(g,174,[['급팽창 이후','#7faaff',14],['빅뱅 우주론처럼 팽창하며 식어 감']],'#7faaff');
-  pNote(g,272,'(그래프는 개념도이며, 실제 비율과 다름)')}
- if(s==2){pBox(g,88,[['빅뱅 우주론 + 급팽창 이론','#e8ecff',16],['빅뱅 직후의 아주 짧은 시기를 보완','#cfd6ee',13.5]],'#7faaff');
-  txt('▼',{x:734,y:172,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
-  pPill(g,652,184,'✔ 지평선 문제 해결','#6fe08f',14,156);pPill(g,816,184,'✔ 평탄성 문제 해결','#6fe08f',14,156);
-  pNote(g,244,'(어떻게 해결하는지는 다음 두 메뉴에서 알아봅니다)')}
+ if(s==1){pBox(g,82,[['급팽창 시기','#ffd76b',14],['아주 짧은 시간 동안 크기가 엄청나게 커짐']],'#ffd76b');
+  txt('▼',{x:734,y:158,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
+  pBox(g,164,[['급팽창 이후','#7faaff',14],['빅뱅 우주론처럼 팽창하며 식어 감']],'#7faaff');
+  pPill(g,652,238,'✔ 지평선 문제 해결','#6fe08f',14,156);pPill(g,816,238,'✔ 평탄성 문제 해결','#6fe08f',14,156);   // 빅뱅 우주론의 보완
+  pNote(g,286,'(그래프는 개념도이며, 실제 비율과 다름)')}
 }
-const I=stepper(IS,istep,iprev,inext,inum,icue,iDraw,[3.6,5.4,0]);
+const I=stepper(IS,istep,iprev,inext,inum,icue,iDraw,[3.6,5.4]);
 
 // 지평선 문제 해결 (교과서 그림 참고): 급팽창 이전 우주 < 정보 전달 가능 영역 → 급팽창 → 지평선 안쪽이 균질
 // 1단계는 '온도가 고르게 됨 → 급팽창'을 한 번에 이어서 진행하고 마지막 모습을 유지
