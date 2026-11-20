@@ -173,6 +173,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <button class="pb" id="lprev">◀ 이전 단계</button><button class="pb" id="lnext">다음 단계 ▶</button>
    <span class="sn" id="lnum"></span>
    <span class="go" id="lcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+   <button type="button" class="pb rp off" id="lrp">↺ 다시 보기</button>
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>빛을 내지 않는 암흑 물질을 중력 렌즈 현상으로 알아낼 수 있는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb10">정답 확인</button></div>
   <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">중력 렌즈: 빛이 휘어진 정도로 구한 은하단의 질량 &gt; 보이는 물질의 질량 → 암흑 물질이 있음</p></div>
@@ -320,18 +321,22 @@ const LCL=[[0,0,10,7.5],[-19,11,5.5,3.8],[17,-13,5.2,4],[23,15,4.4,3],[-13,-21,4
 const LST=[];{const r=rnd0(11);for(let i=0;i<46;i++)LST.push([24+r()*492,48+r()*244,.4+r()*.8,.3+r()*.5])}
 function lCluster(g,cx,cy,sc){LCL.forEach(([x,y,a,b],i)=>{const px=cx+x*sc,py=cy+y*sc;mk('ellipse',{cx:px,cy:py,rx:a*sc,ry:b*sc,fill:'url(#lgc)',transform:`rotate(${(i*47)%180} ${px} ${py})`},g)})}
 // 하늘에서 본 모습: 질량이 한 점에 모인 렌즈로 단순화. 원 모양 천체(반지름 rs)의 테두리를 렌즈 방정식으로 옮겨 상 2개(또는 고리)를 그림
-function lSky(g,beta,halo,ph=-.6){const CX=270,CY=170,E=62,rs=13,c=[beta*Math.cos(ph),beta*Math.sin(ph)];
+// E: 아인슈타인 반지름(질량의 제곱근에 비례), halo: 암흑 물질 후광의 짙기(0~1), ghost: 보이는 질량만으로 예상한 상(초록 점선)의 짙기
+function lSky(g,beta,halo,ph=-.6,E=62,ghost=0){const CX=270,CY=170,rs=13,c=[beta*Math.cos(ph),beta*Math.sin(ph)];
+ const img=E=>{let dP='',dM='';for(let k=0;k<=72;k++){const a=k/72*2*Math.PI,sx=c[0]+rs*Math.cos(a),sy=c[1]+rs*Math.sin(a),b=Math.max(1e-6,Math.hypot(sx,sy)),q=Math.sqrt(b*b+4*E*E),tp=(b+q)/2/b,tm=(b-q)/2/b;
+  dP+=(k?'L':'M')+(CX+sx*tp).toFixed(1)+','+(CY+sy*tp).toFixed(1);dM+=(k?'L':'M')+(CX+sx*tm).toFixed(1)+','+(CY+sy*tm).toFixed(1)}return dP+'Z'+dM+'Z'};
  mk('rect',{x:20,y:44,width:500,height:252,fill:'#0a0c20'},g);
  LST.forEach(([x,y,r,o])=>mk('circle',{cx:x,cy:y,r,fill:'#fff',opacity:o},g));
- if(halo)mk('ellipse',{cx:CX,cy:CY,rx:150,ry:120,fill:'url(#lgh)'},g);
- let dP='',dM='';for(let k=0;k<=72;k++){const a=k/72*2*Math.PI,sx=c[0]+rs*Math.cos(a),sy=c[1]+rs*Math.sin(a),b=Math.max(1e-6,Math.hypot(sx,sy)),q=Math.sqrt(b*b+4*E*E),tp=(b+q)/2/b,tm=(b-q)/2/b;
-  dP+=(k?'L':'M')+(CX+sx*tp).toFixed(1)+','+(CY+sy*tp).toFixed(1);dM+=(k?'L':'M')+(CX+sx*tm).toFixed(1)+','+(CY+sy*tm).toFixed(1)}
- mk('path',{d:dP+'Z'+dM+'Z',fill:'#8fc2ff','fill-rule':'evenodd',stroke:'rgba(143,194,255,.35)','stroke-width':4},g);
+ if(halo)mk('ellipse',{cx:CX,cy:CY,rx:150,ry:120,fill:'url(#lgh)',opacity:+halo},g);
+ mk('path',{d:img(E),fill:'#8fc2ff','fill-rule':'evenodd',stroke:'rgba(143,194,255,.35)','stroke-width':4},g);
  mk('circle',{cx:CX+c[0],cy:CY+c[1],r:rs,fill:'none',stroke:'#cfd6ee','stroke-width':1.2,'stroke-dasharray':'3 3',opacity:.8},g);
- lCluster(g,CX,CY,1)}
+ lCluster(g,CX,CY,1);
+ if(ghost>0)mk('path',{d:img(LEV),fill:'none',stroke:'#6fe3c1','stroke-width':1.8,'stroke-dasharray':'5 3',opacity:ghost},g)}
+const LEV=62*Math.sqrt(.15);   // 보이는 물질(전체의 약 15 %)만 있을 때의 아인슈타인 반지름
 function lDot(g,x,y,c,l){mk('circle',{cx:x,cy:y-4,r:4.5,fill:c},g);txt(l,{x:x+10,y,fill:'#cfd6ee','font-size':12,'font-weight':700},g)}
 let lLast=-1,lT0=0;   // 단계가 바뀐 시각
-function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;lT0=t}
+lrp.onclick=()=>{lLast=-1};   // 다시 보기: 단계의 움직이는 그림을 처음부터 다시 보여 줌
+function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;lT0=t}lrp.classList.toggle('off',s==1||t-lT0<5.2);   // 1·3단계: 그림이 끝나면 나타남(2단계는 저절로 되풀이)
  iHead(g,['질량이 큰 천체 주위를 지나는 빛','옆에서 본 중력 렌즈 현상','중력 렌즈로 알아낸 질량 분포'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#lclip)'},g);
  if(s==0){const MX=270,MY=206,A=.5;   // 질량을 정해 두고, 빛이 한 번 지나간 뒤 그대로 유지
@@ -365,8 +370,14 @@ function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;l
   txt('지구',{x:EX+8,y:CY+30,'text-anchor':'middle',fill:'#cfe6ff','font-size':12.5,'font-weight':800},inn);
   if(gI>0)txt('하나의 천체가 위와 아래 두 곳에 보임',{x:300,y:70,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800,opacity:gI},inn);
   txt('(크기와 거리는 실제 비율과 다름)',{x:270,y:288,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},inn)}
- if(s==2){lSky(inn,24,true);
-  txt('보라색: 중력 렌즈로 알아낸 질량 분포 (대부분 암흑 물질)',{x:270,y:288,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800},inn)}
+ const lg=s==2?ease((t-lT0-2)/3):0;   // 3단계: 보이는 질량만으로 예상한 모습(2초) → 질량이 늘어나며 실제 관측 모습으로 바뀜(3초)
+ if(s==2){lSky(inn,24,lg,-.6,LEV+(62-LEV)*lg,ease(lg/.3));
+  txt('보이는 물질의 질량만 있다면',{x:32,y:66,fill:'#ffd76b','font-size':13,'font-weight':800,opacity:1-lg},inn);
+  txt('실제로 관측되는 모습',{x:32,y:66,fill:'#ffd76b','font-size':13,'font-weight':800,opacity:lg},inn);
+  txt('초록 점선: 보이는 질량만으로 예상한 상',{x:510,y:66,'text-anchor':'end',fill:'#6fe3c1','font-size':12,'font-weight':700,opacity:ease(lg/.3)},inn);
+  txt('(질량을 한 점에 모은 단순한 모형)',{x:510,y:82,'text-anchor':'end',fill:'#a9b1cc','font-size':11.5},inn);
+  txt('상이 중심 가까이 생기고 조금만 휨',{x:270,y:288,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':800,opacity:1-lg},inn);
+  txt('보라색: 중력 렌즈로 알아낸 질량 분포 (대부분 암흑 물질)',{x:270,y:288,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800,opacity:lg},inn)}
  pPanel(g,LS[s][0]);const T=PT(g,734);
  if(s==0){pBox(g,88,[['질량이 큰 천체 주위: 공간이 휘어짐'],['→ 빛의 경로도 휘어짐','#ffd76b',14.5]],'#ffffff');
   pCard(g,572,164,324,82,'#ffd76b',.07);   // 질량이 작을 때와 클 때 빛이 휘는 정도 비교
@@ -387,10 +398,10 @@ function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;l
  if(s==2){T('빛이 휘어진 정도 → 은하단의 전체 질량',{y:104,'font-size':14});
   txt('보이는 물질(별, 가스)의 질량',{x:576,y:136,fill:'#e8ecff','font-size':13,'font-weight':700},g);mk('rect',{x:576,y:144,width:56,height:18,rx:4,fill:'#ffd76b'},g);
   txt('중력 렌즈로 구한 전체 질량',{x:576,y:186,fill:'#e8ecff','font-size':13,'font-weight':700},g);
-  mk('rect',{x:576,y:194,width:56,height:18,rx:4,fill:'#ffd76b'},g);mk('rect',{x:632,y:194,width:264,height:18,rx:4,fill:'#b58cff'},g);
-  txt('보이지 않는 물질 (암흑 물질)',{x:764,y:207.5,'text-anchor':'middle',fill:'#1b1f2a','font-size':12,'font-weight':800},g);
+  mk('rect',{x:576,y:194,width:56,height:18,rx:4,fill:'#ffd76b'},g);if(lg>0)mk('rect',{x:632,y:194,width:264*lg,height:18,rx:4,fill:'#b58cff'},g);   // 그림의 질량이 늘어나는 만큼 함께 늘어남
+  txt('보이지 않는 물질 (암흑 물질)',{x:764,y:207.5,'text-anchor':'middle',fill:'#1b1f2a','font-size':12,'font-weight':800,opacity:ease((lg-.6)/.4)},g);
   pNote(g,232,'(막대 길이는 대략적인 비교)');
-  pPill(g,734,248,'은하단에 암흑 물질이 많이 있음','#c9b2ff',14.5,270)}
+  pPill(mk('g',{opacity:ease((lg-.8)/.2)},g),734,248,'은하단에 암흑 물질이 많이 있음','#c9b2ff',14.5,270)}
 }
 const DL=stepper(LS,lstep,lprev,lnext,lnum,lcue,lDraw);
 DR.go(0);DL.go(0);
