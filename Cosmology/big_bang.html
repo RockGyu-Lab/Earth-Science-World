@@ -546,7 +546,7 @@ function zDraw(t){const g=zg;g.innerHTML='';const s=Z.s;if(s!=zLast){zLast=s;zT0
   T('A와 B에서 온 우주 배경 복사의 온도',{y:168,'font-size':12.5,fill:'#a9b1cc','font-weight':400});
   [[572,'A 방향',ZCA],[740,'B 방향',ZCB]].forEach(([x,a,c])=>{pCard(g,x,178,156,56,c);
    txt(a,{x:x+40,y:212,'text-anchor':'middle',fill:c,'font-size':13.5,'font-weight':800},g);txt('약 2.7 K',{x:x+106,y:214,'text-anchor':'middle',fill:c,'font-size':19,'font-weight':800},g)});
-  pPill(g,734,244,'반대 방향인데도 온도가 거의 같다','#ffd76b',13.5,280);pNote(g,288,'(우주 팽창은 생각하지 않은 단순한 그림)')}
+  pPill(g,734,244,'지구에서 볼 때 정반대 방향인데도 온도가 거의 같다','#ffd76b',12.5,318);pNote(g,288,'(우주 팽창은 생각하지 않은 단순한 그림)')}
  if(s==1){const glow=(y,h,p0)=>{if(zgl(p0))mk('rect',{x:570,y:y-2,width:328,height:h+4,rx:12,fill:'none',stroke:'#ffd76b','stroke-width':2.6,opacity:.5+.5*Math.cos((zp-p0)*2*Math.PI/.4)},g)};   // 반짝이는 테두리
   [[88,'A → 지구','138억 년','#e8ecff',null,1.6],[124,'A → B','276억 년','#ffb357','#ffb357',2.6],[160,'우주의 나이','약 138억 년','#e8ecff',null,4.6]].forEach(([y,a,b,c,ca,p0])=>{
    pRow(mk('g',{opacity:zp<p0?.3:zbk(p0)},g),y,a,b,c,ca);glow(y,30,p0)});
