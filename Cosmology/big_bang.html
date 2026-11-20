@@ -361,10 +361,12 @@ const BS=[
 const BNU=[],BEL=[];for(let r=0;r<4;r++)for(let c=0;c<4;c++){const k=r*4+c;BNU.push([82+c*120+((k*37)%23-11),80+r*64+((k*53)%17-8)]);BEL.push([118+c*112+(r%2)*44+((k*29)%19-9),(r==3?68:114+r*64)+((k*41)%15-7)])}
 const bElPos=(k,t)=>[BEL[k][0]+8*Math.sin(t*3.1+k*2.1),BEL[k][1]+8*Math.cos(t*2.7+k*1.3)];   // 떠도는 전자의 지금 자리
 // 빛이 부딪히는 차례: 가까운 전자 6개 중 하나로 날아가 부딪힌 뒤 다시 다른 전자로 (바로 전에 온 전자로는 되돌아가지 않음)
-const BNB=BEL.map(([x,y],k)=>BEL.map(([u,v],j)=>[j,Math.hypot(u-x,v-y)]).filter(([j])=>j!=k).sort((a,b)=>a[1]-b[1]).slice(0,6).map(([j])=>j));
+const BNA=BEL.map(([x,y],k)=>BEL.map(([u,v],j)=>[j,Math.hypot(u-x,v-y)]).filter(([j])=>j!=k).sort((a,b)=>a[1]-b[1]).map(([j])=>j)),BNB=BNA.map(a=>a.slice(0,6));   // BNA: 가까운 차례로 모든 전자, BNB: 가까운 6개
 let bPh=null;
-function bPhStep(t){if(!bPh)bPh=[0,5,10,15,6].map(e0=>{const n=BNB[e0][0];return{p2:e0,p1:e0,a:e0,b:n,t0:t,D:.8}});
- for(const q of bPh){while(t-q.t0>q.D){const c=BNB[q.b].filter(j=>j!=q.a),n=c[Math.floor(Math.random()*c.length)];
+// 빛 여러 개가 같은 전자에 거의 동시에 부딪히지 않도록, 다른 빛이 향하고 있거나 막 떠난 전자는 고르지 않음
+const bBusy=q=>new Set(bPh.filter(o=>o!==q).flatMap(o=>[o.a,o.b]));
+function bPhStep(t){if(!bPh){bPh=[];[0,5,10,15,6].forEach(e0=>{const used=new Set(bPh.flatMap(o=>[o.a,o.b])),n=BNB[e0].find(j=>!used.has(j))??BNB[e0][0];bPh.push({p2:e0,p1:e0,a:e0,b:n,t0:t,D:.8})})}
+ for(const q of bPh){while(t-q.t0>q.D){const busy=bBusy(q),c0=BNB[q.b].filter(j=>j!=q.a),c1=c0.filter(j=>!busy.has(j)),c=c1.length?c1:[BNA[q.b].find(j=>j!=q.a&&!busy.has(j))],n=c[Math.floor(Math.random()*c.length)];
    q.p2=q.p1;q.p1=q.a;q.a=q.b;q.b=n;q.t0+=q.D;if(t-q.t0>3)q.t0=t;const [ax,ay]=BEL[q.a],[bx,by]=BEL[q.b];q.D=Math.hypot(bx-ax,by-ay)/120}}}
 const BRAY=[[80,.3,1],[250,-.25,-1],[150,-.12,1],[200,.4,-1],[260,.18,1],[110,-.35,-1]];   // 빛줄기: [출발 높이, 기울기, 1=오른쪽으로 / -1=왼쪽으로]
 let bs=0,bm=0,bw=0,bT=0,bLast=0;   // bm: 원자 결합 정도(0~1), bw: 4단계의 파장 늘어남 정도(0~1)
