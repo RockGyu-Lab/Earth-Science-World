@@ -341,10 +341,9 @@ function zEarthAt(g,x,y){mk('circle',{cx:x,cy:y,r:12,fill:'url(#jearth)',stroke:
  mk('path',{d:`M${x-7},${y-5}q4,-4 8,0q-1,5 -5,6q-4,-1 -3,-6zM${x+2},${y+4}q4,-2 6,1q-2,4 -6,3z`,fill:'#5fbf6a',opacity:.9},g)}
 const J=stepper(JS,jstep,jprev,jnext,jnum,jcue,jDraw,[10.2,0]);
 
-// 평탄성 문제 해결 (교과서 그림 참고): 작은 풍선 위의 개미 → 풍선이 엄청나게 커지면 → 급팽창과 평탄한 우주
+// 평탄성 문제 해결 (교과서 그림 참고): 작은 풍선 위의 개미 → 풍선이 엄청나게 커지면 평평하게 보임 → 급팽창과 평탄한 우주
 const KS=[
- ['작은 풍선 위의 개미','작은 풍선 위에 있는 개미는 자기 주변의 표면이 <em>둥글게 휘어 있다</em>는 것을 쉽게 알 수 있습니다. 오른쪽 네모는 개미 주변을 크게 확대한 모습입니다.'],
- ['풍선이 엄청나게 커지면','풍선이 엄청나게 커지면 개미가 볼 수 있는 좁은 영역은 <em>거의 평평하게</em> 보입니다. 둥근 지구의 표면이 우리에게 평평하게 느껴지는 것도 같은 까닭입니다.'],
+ ['풍선 위의 개미','작은 풍선 위에 있는 개미는 주변의 표면이 <em>둥글게 휘어 있다</em>는 것을 쉽게 알 수 있지만, 풍선이 엄청나게 커지면 개미가 볼 수 있는 좁은 영역은 <em>거의 평평하게</em> 보입니다. 둥근 지구의 표면이 우리에게 평평하게 느껴지는 것도 같은 까닭입니다. (오른쪽 네모는 개미 주변을 확대한 모습)'],
  ['급팽창과 평탄성 문제','급팽창 시기에 우주의 크기가 급격하게 커졌으므로, 우주가 완벽하게 평탄하지 않더라도 <em>현재 관측되는 우주 영역은 평탄하게</em> 보일 수 있습니다. 따라서 초기 우주의 밀도가 <em>반드시 특정한 값이어야 하는 까닭은 없습니다</em>.']];
 function kAnt(g,x,y,sc){const q=mk('g',{transform:`translate(${x},${y}) scale(${sc})`},g);   // 개미 (위에서 옆으로 본 모습, 크기 sc배)
  [[-9,-3],[-3,-3],[3,-3]].forEach(([lx])=>{mk('path',{d:`M${lx},-4l-4,4M${lx},-4l4,4`,stroke:'#1b1b1b','stroke-width':1.1,fill:'none'},q)});
@@ -363,29 +362,30 @@ function kScene(g,R,label){const AX=170,AY=118,CY=AY+R;   // 풍선(반지름 R)
 function kPill(g,x,y,s,c,fs){const w=s.length*fs*.92+18;mk('rect',{x:x-w/2,y:y-fs-3,width:w,height:fs+10,rx:(fs+10)/2,fill:'#fff',opacity:.85},g);
  txt(s,{x,y,'text-anchor':'middle',fill:c,'font-size':fs,'font-weight':800},g)}   // 노란 풍선 위에서도 읽히도록 흰 바탕
 function kDraw(t){const g=kg;g.innerHTML='';const s=K.s;
- iHead(g,['작은 풍선','풍선이 엄청나게 커지면','급팽창으로 커진 우주'][s]);
+ const k=s==0?ease((t-K.t0-2)/2.6):1;   // 1단계: 작은 풍선(2초) → 2.6초 동안 엄청나게 커짐
+ iHead(g,['풍선이 엄청나게 커지면','급팽창으로 커진 우주'][s]);
  mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#cfe8f8',stroke:'rgba(255,255,255,.18)'},g);
- if(s==0)kScene(g,62,'둥글게 휘어 보임');
- if(s==1){const k=ease((t-K.t0-.8)/2.6),R=62*Math.pow(40,k);kScene(g,R,k<1?'':'거의 평평하게 보임')}
- if(s==2){kScene(g,62*40,'관측 가능한 우주: 평탄');kPill(g,170,166,'관측 가능한 우주','#b3261e',12.5);
+ if(s==0)kScene(g,62*Math.pow(40,k),k<=0?'둥글게 휘어 보임':k>=1?'거의 평평하게 보임':'');
+ if(s==1){kScene(g,62*40,'관측 가능한 우주: 평탄');kPill(g,170,166,'관측 가능한 우주','#b3261e',12.5);
   kPill(g,170,226,'급팽창으로 엄청나게 커진 우주','#5b4a10',12.5);
   txt('(개미 = 관측자, 풍선 = 우주)',{x:170,y:284,'text-anchor':'middle',fill:'#5b4a10','font-size':12},g)}
- pPanel(g,KS[s][0]);const T=PT(g,734);
- if(s<2){const big=s==1;pCard(g,572,88,324,112,'#ffd76b',.07);   // 왼쪽: 풍선, 오른쪽: 개미가 보는 표면의 모양
-  if(big){mk('path',{d:'M580,192Q626,112 672,192Z',fill:'#e3c53a'},g);mk('circle',{cx:626,cy:153,r:2.6,fill:'#1b1b1b'},g)}
-  else{mk('circle',{cx:626,cy:150,r:26,fill:'#e3c53a'},g);mk('circle',{cx:626,cy:124,r:2.6,fill:'#1b1b1b'},g)}
-  txt(big?'엄청나게 커진 풍선':'작은 풍선',{x:626,y:big?108:192,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g);
-  mk('rect',{x:700,y:100,width:180,height:70,rx:6,fill:'#9fd0f0',opacity:.18},g);
-  mk('path',{d:big?'M708,150Q790,140 872,150':'M708,166Q790,92 872,166',fill:'none',stroke:'#e3c53a','stroke-width':3.2},g);
-  mk('circle',{cx:790,cy:big?145:129,r:3.2,fill:'#fff'},g);
-  txt('개미가 보는 표면',{x:790,y:190,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g);
-  if(!big)pBox(g,214,[['풍선이 작으면 표면이'],['둥글게 휘어 보임','#ffd76b',15]],'#ffd76b');
-  else pBox(g,214,[['좁은 영역은 거의 평평하게 보임','#ffd76b',15],['(둥근 지구가 평평하게 느껴지는 것과 같음)','#a9b1cc',12]],'#ffd76b')}
- if(s==2){pBox(g,88,[['급팽창: 우주가 급격하게 커짐'],['→ 관측되는 우주 영역은 평탄하게 보임','#ffd76b']],'#7faaff');
+ pPanel(g,KS[s][0]);
+ if(s==0){[[572,0,'작은 풍선','둥글게 휘어 보임'],[746,1,'엄청나게 커진 풍선','거의 평평하게 보임']].forEach(([x,big,a,b])=>{const o=big?.3+.7*ease((k-.9)/.1):1,q=mk('g',{opacity:o},g),cx=x+75;   // 작은 풍선과 커진 풍선에서 개미가 보는 표면 비교 (커진 풍선은 다 커지면 또렷해짐)
+   pCard(q,x,86,150,124,'#ffd76b',.07);txt(a,{x:cx,y:106,'text-anchor':'middle',fill:'#e8ecff','font-size':13,'font-weight':800},q);
+   mk('rect',{x:x+12,y:116,width:126,height:56,rx:6,fill:'#9fd0f0',opacity:.18},q);
+   mk('path',{d:big?`M${x+16},${160}Q${cx},${152} ${x+134},${160}`:`M${x+16},${168}Q${cx},${110} ${x+134},${168}`,fill:'none',stroke:'#e3c53a','stroke-width':3.2},q);
+   mk('circle',{cx,cy:big?153:136,r:3.2,fill:'#fff'},q);
+   txt(b,{x:cx,y:196,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':800},q)});
+  txt('▶',{x:734,y:152,'text-anchor':'middle',fill:'#a9b1cc','font-size':14},g);
+  pBox(g,222,[['개미가 보는 표면 (흰 점: 개미)','#cfd6ee',13],['(둥근 지구가 평평하게 느껴지는 것과 같음)','#a9b1cc',12]],'#ffd76b')}
+ if(s==1){pBox(g,88,[['급팽창: 우주가 급격하게 커짐'],['→ 관측되는 우주 영역은 평탄하게 보임','#ffd76b']],'#7faaff');
   pBox(g,166,[['초기 우주의 밀도가'],['특정한 값일 필요가 없음','#ffd76b',15]],'#ffd76b');
   pPill(g,734,244,'✔ 평탄성 문제 해결','#6fe08f',15,200)}
 }
-const K=stepper(KS,kstep,kprev,knext,knum,kcue,kDraw,[0,3.8,0]);
+const K=stepper(KS,kstep,kprev,knext,knum,kcue,kDraw,[5.2,0]);
+function kFit(){if(!kstep.offsetParent)return;const keep=kstep.innerHTML;let h=0;kstep.style.minHeight='0';   // 설명 상자 높이를 두 단계 중 긴 글에 맞춤(빈 줄이 남지 않게)
+ KS.forEach(([tt,tx])=>{kstep.innerHTML=stepHTML(tt,tx);h=Math.max(h,kstep.offsetHeight)});kstep.innerHTML=keep;kstep.style.minHeight=h+'px'}
+i4c.addEventListener('click',()=>requestAnimationFrame(kFit));addEventListener('resize',kFit);
 I.go(0);J.go(0);K.go(0);
 (function iLoop(now){if(!p4.hidden){const t=(now/1000-TB);if(!iva.hidden){I.tick(t);iDraw(t)}else if(!ivb.hidden){J.tick(t);jDraw(t)}else{K.tick(t);kDraw(t)}}requestAnimationFrame(iLoop)})(performance.now());
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
