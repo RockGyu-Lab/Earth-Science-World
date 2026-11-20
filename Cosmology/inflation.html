@@ -289,7 +289,7 @@ const JC=[[255,125,105],[90,160,255]],JU=[181,140,255];
 function jDots(g,cx,cy,sc,m,rr){JP.forEach(([x,y,h])=>{const c=JC[h].map((v,i)=>Math.round(v+(JU[i]-v)*m));mk('circle',{cx:cx+x*sc,cy:cy+y*sc,r:rr,fill:`rgb(${c})`,stroke:'rgba(255,255,255,.6)','stroke-width':.8},g)})}
 // 애니메이션은 한 번만 진행하고 마지막 모습을 유지 (J.t0: 단계가 바뀌거나 다시 보기를 누른 시각)
 function jDraw(t){const g=jg;g.innerHTML='';const s=J.s,CX=270,CY=170;
- const p=t-J.t0,m=ease((p-.8)/4),mv=ease((p-6)/1.2),k=ease((p-7.4)/1.8),ky=ease((p-7.4)/3.4),h=ease((p-10.8)/.6);   // 0.8~4.8초: 온도가 고르게 됨, 6~7.2초: 급팽창 전 그림을 왼쪽으로 옮김, 7.4~9.2초: 급팽창(우주), 7.4~10.8초: 정보 전달 가능 영역이 천천히 커짐, 10.8초~: 이름표
+ const p=t-J.t0,m=ease((p-.8)/4),mv=ease((p-6)/1.2),k=ease((p-7.4)/1.8),ky=k,h=ease((p-9.4)/.6);   // 0.8~4.8초: 온도가 고르게 됨, 6~7.2초: 급팽창 전 그림을 왼쪽으로 옮김, 7.4~9.2초: 급팽창(우주와 정보 전달 가능 영역이 같은 시간 동안 커짐, 우주가 훨씬 많이), 9.4초~: 이름표
  iHead(g,[mv>0?'급팽창 전과 후':'급팽창 이전 (우주 < 정보 전달 가능 영역)','급팽창 이후 (지금)'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#jclip)'},g);
  if(s==0){const f=ease((p-4.8)/1),LX=100,RX=360,q=1-.62*mv,bx=CX+(LX-CX)*mv,ur=56*q,er=104*q;   // 교과서 그림처럼 급팽창 전(왼쪽)과 후(오른쪽)를 나란히 놓음
@@ -339,7 +339,7 @@ function jDraw(t){const g=jg;g.innerHTML='';const s=J.s,CX=270,CY=170;
 }
 function zEarthAt(g,x,y){mk('circle',{cx:x,cy:y,r:12,fill:'url(#jearth)',stroke:'#fff','stroke-width':1},g);   // 그라디언트는 같은 그림판 안의 것을 써야 숨긴 그림판 문제 없이 보임
  mk('path',{d:`M${x-7},${y-5}q4,-4 8,0q-1,5 -5,6q-4,-1 -3,-6zM${x+2},${y+4}q4,-2 6,1q-2,4 -6,3z`,fill:'#5fbf6a',opacity:.9},g)}
-const J=stepper(JS,jstep,jprev,jnext,jnum,jcue,jDraw,[11.6,0]);
+const J=stepper(JS,jstep,jprev,jnext,jnum,jcue,jDraw,[10.2,0]);
 
 // 평탄성 문제 해결 (교과서 그림 참고): 작은 풍선 위의 개미 → 풍선이 엄청나게 커지면 → 급팽창과 평탄한 우주
 const KS=[
