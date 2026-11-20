@@ -120,8 +120,9 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #bstep,#istep,#jstep,#kstep,#rstep,#lstep,#astep,#qstep{min-height:calc(3 * 1.55em + 16px)}
 #zstep,#fstep{min-height:calc(2 * 1.55em + 16px)}   /* 빅뱅 우주론의 문제점: 설명이 모두 2줄 이하라 2줄 높이만 확보 */
 @media (max-width:900px){#zstep,#fstep{min-height:calc(3 * 1.55em + 16px)}}   /* 좁은 화면에서는 3줄이 되는 설명이 많아 3줄 높이 */
-#zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100vh - 360px))}
-#zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100dvh - 360px))}
+#zsv,#fsv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100vh - 360px))}
+#zsv,#fsv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100dvh - 360px))}
+#isv{max-height:max(280px,calc(100vh - 300px));max-height:max(280px,calc(100dvh - 300px))}   /* 급팽창 이론: 단추 줄이 없어 그림을 세로로 더 크게 */
 #iva>.ctl{display:none}   /* 급팽창 이론: 한 화면이고 다시 보기도 없어서 단추 줄을 숨김 */
 #zcue,#fcue,#icue,#jcue,#kcue,#rcue,#lcue,#acue,#qcue{flex:1 1 220px;font-size:.92rem}
 #zva[hidden],#zvb[hidden],#iva[hidden],#ivb[hidden],#ivc[hidden],#rva[hidden],#rvb[hidden],#ava[hidden],#avb[hidden]{display:none}   /* 우주 배경 복사: 단계마다 설명이 2~3줄로 달라도 아래 줄이 움직이지 않게 3줄 높이 확보 */
@@ -141,7 +142,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <button type="button" role="tab" id="i4c" aria-selected="false">평탄성 문제의 해결</button>
  </div>
  <div id="iva">
-  <svg id="isv" viewBox="0 0 940 320" aria-label="빅뱅 직후 매우 짧은 시간 동안 우주가 급격하게 팽창했다는 급팽창 이론"><defs><clipPath id="iclip"><rect x="20" y="44" width="500" height="252" rx="12"/></clipPath></defs><g id="ig"></g></svg>
+  <svg id="isv" viewBox="0 0 940 356" aria-label="빅뱅 직후 매우 짧은 시간 동안 우주가 급격하게 팽창했다는 급팽창 이론"><defs><clipPath id="iclip"><rect x="20" y="44" width="500" height="288" rx="12"/></clipPath></defs><g id="ig"></g></svg>
   <div class="stepbox sx" id="istep"></div>
   <div class="ctl">
    <button class="pb" id="iprev" style="display:none">◀ 이전 단계</button><button class="pb" id="inext" style="display:none">다음 단계 ▶</button>
@@ -236,7 +237,7 @@ function pBox(g,y,lines,c){pCard(g,572,y,324,16+lines.length*24,c);lines.forEach
 function pRow(g,y,a,b,c,ca){pCard(g,572,y,324,30,ca||'#ffffff',ca?.1:.05);txt(a,{x:588,y:y+20,fill:ca||'#e8ecff','font-size':14,'font-weight':800},g);txt(b,{x:880,y:y+20,'text-anchor':'end',fill:c,'font-size':14.5,'font-weight':800},g)}
 function pNote(g,y,s){txt(s,{x:734,y,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g)}
 function pArc(cx,cy,r,a0,a1){a0*=Math.PI/180;a1*=Math.PI/180;return`M${(cx+r*Math.cos(a0)).toFixed(1)},${(cy+r*Math.sin(a0)).toFixed(1)}A${r},${r} 0 ${a1-a0>Math.PI?1:0} 1 ${(cx+r*Math.cos(a1)).toFixed(1)},${(cy+r*Math.sin(a1)).toFixed(1)}`}
-function pPanel(g,title){mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
+function pPanel(g,title,h=252){mk('rect',{x:548,y:44,width:372,height:h,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
  txt(title,{x:734,y:72,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g)}
 
 // ---- ④ 급팽창 이론 ----
@@ -250,29 +251,29 @@ const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
 const IS=[
  ['급팽창 이론','1980년대 초 <em>앨런 구스</em>는 빅뱅 우주론의 문제점을 해결하기 위해 급팽창 이론을 제안했습니다. 이 이론에 따르면 빅뱅 직후 <em>약 10<sup>−36</sup>초에서 10<sup>−34</sup>초</em> 사이의 아주 짧은 시간 동안 우주가 <em>빛보다 빠른 속도로 급격하게 팽창</em>하여 크기가 <em>적어도 약 10<sup>26</sup>배</em> 커졌고, 그 뒤에는 빅뱅 우주론에서 설명하는 것처럼 계속 팽창하며 식어 갔습니다. 급팽창 이론은 빅뱅 우주론을 버리는 것이 아니라 <em>빅뱅 직후의 아주 짧은 시기를 보완</em>하는 이론으로, <em>지평선 문제</em>와 <em>평탄성 문제</em>를 해결할 수 있습니다.']];
 function iDraw(t){const g=ig;g.innerHTML='';
- iHead(g,'급팽창 모형과 기존의 빅뱅 우주론 모형 비교');iBox(g);
+ iHead(g,'급팽창 모형과 기존의 빅뱅 우주론 모형 비교');mk('rect',{x:20,y:44,width:500,height:288,rx:12,fill:'#10122a',stroke:'rgba(255,255,255,.18)'},g);   // 이 탭만 그림판을 세로로 키움(viewBox 높이 356)
  const inn=mk('g',{'clip-path':'url(#iclip)'},g);
  // 교과서 그림처럼 가로(시간, 초)·세로(우주의 상대적 크기)를 10의 거듭제곱 눈금으로 나타냄. 급팽창이 끝난 때(10⁻³⁴초)의 크기를 1로 잡음
  // 기존 모형: 크기 ∝ 시간^(1/2) (복사 시기), 10¹²초 이후 ∝ 시간^(2/3) (물질 시기). 급팽창 모형: 급팽창 이전에는 훨씬 작았다가 10⁻³⁶~10⁻³⁴초에 급격히 커지고, 그 뒤로는 기존 모형과 같음
- {const X=L=>92+(L+45)/63*408,Y=L=>262-(L+60)/100*188,u1=Math.min(1,(t-I.t0)/5),Le=-45+63*u1;
+ {const X=L=>92+(L+45)/63*408,Y=L=>298-(L+60)/100*224,u1=Math.min(1,(t-I.t0)/5),Le=-45+63*u1;
   const after=l=>l<=12?.5*(l+34):23+(l-12)*2/3,old=l=>l<-34?.5*(l+34):after(l),inf=l=>l<-36?-54+.5*(l+36):l<-34?-54+54*ease((l+36)/2):after(l);
-  mk('rect',{x:X(-36),y:74,width:X(-34)-X(-36),height:188,fill:'rgba(255,215,107,.18)'},inn);
+  mk('rect',{x:X(-36),y:74,width:X(-34)-X(-36),height:224,fill:'rgba(255,215,107,.18)'},inn);
   txt('급팽창',{x:(X(-36)+X(-34))/2,y:68,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800},inn);
-  mk('line',{x1:92,y1:262,x2:506,y2:262,stroke:'#cfd6ee','stroke-width':1.2},inn);mk('line',{x1:92,y1:262,x2:92,y2:70,stroke:'#cfd6ee','stroke-width':1.2},inn);
+  mk('line',{x1:92,y1:298,x2:506,y2:298,stroke:'#cfd6ee','stroke-width':1.2},inn);mk('line',{x1:92,y1:298,x2:92,y2:70,stroke:'#cfd6ee','stroke-width':1.2},inn);
   const pw=(L,a)=>{const e=txt(L?'10':'1',{fill:'#cfd6ee','font-size':11.5,...a},inn);if(L)mk('tspan',{dy:-5,'font-size':8.5},e).textContent=String(L).replace('-','−')};   // 10의 거듭제곱 눈금 글씨(지수는 위첨자)
   [-60,-40,-20,0,20,40].forEach(L=>{mk('line',{x1:92,y1:Y(L),x2:97,y2:Y(L),stroke:'#cfd6ee'},inn);pw(L,{x:88,y:Y(L)+4,'text-anchor':'end'})});
-  [-45,-25,-5,15].forEach(L=>{mk('line',{x1:X(L),y1:262,x2:X(L),y2:257,stroke:'#cfd6ee'},inn);pw(L,{x:X(L)-5,y:279,'text-anchor':'middle'})});
-  txt('시간(초) →',{x:506,y:292,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},inn);yLab(inn,34,74,262,'우주의 상대적 크기 →');
+  [-45,-25,-5,15].forEach(L=>{mk('line',{x1:X(L),y1:298,x2:X(L),y2:293,stroke:'#cfd6ee'},inn);pw(L,{x:X(L)-5,y:315,'text-anchor':'middle'})});
+  txt('시간(초) →',{x:506,y:330,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},inn);yLab(inn,34,74,298,'우주의 상대적 크기 →');
   const path=(f,a,b)=>{let d='';for(let l=a;l<=Math.min(b,Le)+1e-9;l+=.05)d+=(d?'L':'M')+X(l).toFixed(1)+','+Y(f(l)).toFixed(1);return d};
   mk('path',{d:path(inf,-45,18),fill:'none',stroke:'#7faaff','stroke-width':3},inn);   // 급팽창 모형 (실선)
   mk('path',{d:path(old,-45,18),fill:'none',stroke:'#ffb357','stroke-width':2.6,'stroke-dasharray':'7 5'},inn);   // 기존의 빅뱅 우주론 모형 (점선): 급팽창 이후에는 실선과 겹침
   [['#7faaff','','급팽창 모형'],['#ffb357','7 5','기존의 빅뱅 우주론 모형']].forEach(([c,da,s],i)=>{const y=86+i*18;mk('line',{x1:196,y1:y-4,x2:222,y2:y-4,stroke:c,'stroke-width':3,'stroke-dasharray':da},inn);txt(s,{x:228,y,fill:c,'font-size':12.5,'font-weight':800},inn)});
   if(u1>=1)txt('급팽창 이후에는 두 모형이 같음',{x:X(-2),y:Y(after(-2))+30,fill:'#cfd6ee','font-size':12,'font-weight':700},inn)}
- pPanel(g,IS[0][0]);
- [['제안','앨런 구스 (1980년대 초)'],['시기','빅뱅 후 약 10⁻³⁶초 ~ 10⁻³⁴초']].forEach(([a,b],i)=>{const y=80+i*36;
-  pCard(g,572,y,324,30,'#ffffff',.05);txt(a,{x:590,y:y+20,fill:'#a9b1cc','font-size':13,'font-weight':800},g);txt(b,{x:638,y:y+20,fill:'#e8ecff','font-size':14,'font-weight':800},g)});
- pBox(g,152,[['급팽창: 빛보다 빠른 급격한 팽창','#ffd76b',14],['아주 짧은 시간 동안 크기가 10²⁶배 이상 커짐',null,13.5],['이후: 빅뱅 우주론처럼 팽창하며 식어 감','#7faaff',13.5]],'#ffd76b');
- pPill(g,652,250,'✔ 지평선 문제 해결','#6fe08f',14,156);pPill(g,816,250,'✔ 평탄성 문제 해결','#6fe08f',14,156);   // 빅뱅 우주론의 보완
+ pPanel(g,IS[0][0],288);
+ [['제안','앨런 구스 (1980년대 초)'],['시기','빅뱅 후 약 10⁻³⁶초 ~ 10⁻³⁴초']].forEach(([a,b],i)=>{const y=86+i*42;
+  pCard(g,572,y,324,34,'#ffffff',.05);txt(a,{x:590,y:y+22,fill:'#a9b1cc','font-size':13,'font-weight':800},g);txt(b,{x:638,y:y+22,fill:'#e8ecff','font-size':14,'font-weight':800},g)});
+ pBox(g,176,[['급팽창: 빛보다 빠른 급격한 팽창','#ffd76b',14],['아주 짧은 시간 동안 크기가 10²⁶배 이상 커짐',null,13.5],['이후: 빅뱅 우주론처럼 팽창하며 식어 감','#7faaff',13.5]],'#ffd76b');
+ pPill(g,652,280,'✔ 지평선 문제 해결','#6fe08f',14,156);pPill(g,816,280,'✔ 평탄성 문제 해결','#6fe08f',14,156);   // 빅뱅 우주론의 보완
 }
 const I=stepper(IS,istep,iprev,inext,inum,icue,iDraw,[0]);   // 한 화면: 단추 줄(이전·다음·다시 보기)은 숨김, 그래프는 처음 열 때 한 번 그려짐
 
