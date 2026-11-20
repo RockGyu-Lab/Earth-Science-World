@@ -401,7 +401,7 @@ function qDraw(t){const g=qgg;g.innerHTML='';const s=DQ.s;if(s!=qLast){qLast=s;q
    mk('line',{x1:x+c*12,y1:y+sn*12,x2:x+c*(12+LD),y2:y+sn*(12+LD),stroke:'#c9b2ff','stroke-width':3,'marker-end':'url(#qar)'},inn);
    qGal(inn,x,y,7)}
   mk('line',{x1:36,y1:278,x2:62,y2:278,stroke:'#7fd3ff','stroke-width':2.4,'marker-end':'url(#qar)'},inn);txt('물질의 중력 (끌어당김)',{x:70,y:283,fill:'#7fd3ff','font-size':12.5,'font-weight':800},inn);
-  mk('line',{x1:270,y1:278,x2:300,y2:278,stroke:'#c9b2ff','stroke-width':3,'marker-end':'url(#qar)'},inn);txt('암흑 에너지 (밀어냄)',{x:308,y:283,fill:'#c9b2ff','font-size':12.5,'font-weight':800},inn)}
+  mk('line',{x1:270,y1:278,x2:300,y2:278,stroke:'#c9b2ff','stroke-width':3,'marker-end':'url(#qar)'},inn);txt('암흑 에너지의 작용 (밀어냄)',{x:308,y:283,fill:'#c9b2ff','font-size':12.5,'font-weight':800},inn)}
  if(s==1){const U0=.24,u=U0+(1-U0)*ease((t-qT0-.6)/5),L=44*AA(u)/AA(U0),BX=140,BY=164;   // 왼쪽: 팽창하는 공간(한 변 ∝ 우주의 크기), 오른쪽: 같은 시각까지의 밀도 그래프 (개념도), 한 번 진행 후 유지
   mk('rect',{x:BX-L/2,y:BY-L/2,width:L,height:L,fill:'rgba(181,140,255,.32)',stroke:'#c9b2ff','stroke-width':1.6},inn);
   QDOT.forEach(([x,y])=>mk('circle',{cx:BX+x*L,cy:BY+y*L,r:3.6,fill:'#ffd76b',stroke:'#fff','stroke-width':.8},inn));
@@ -427,14 +427,15 @@ function qDraw(t){const g=qgg;g.innerHTML='';const s=DQ.s;if(s!=qLast){qLast=s;q
    txt(a,{x:308,y,fill:'#e8ecff','font-size':15,'font-weight':800},inn);txt(b,{x:500,y,'text-anchor':'end',fill:c,'font-size':17,'font-weight':800},inn)});
   txt('(플랑크 위성 관측 결과)',{x:500,y:282,'text-anchor':'end',fill:'#a9b1cc','font-size':12},inn)}
  pPanel(g,QS[s][0]);const T=PT(g,734);
- if(s==0){[[572,'물질의 중력','#7fd3ff','팽창을 느리게 함',1],[740,'밀어내는 작용','#c9b2ff','팽창을 빠르게 함',0]].forEach(([x,a,c,b,inw])=>{const cx=x+78;
-   pCard(g,x,88,156,94,c);txt(a,{x:cx,y:112,'text-anchor':'middle',fill:c,'font-size':14,'font-weight':800},g);
-   mk('circle',{cx:cx-32,cy:138,r:6,fill:'url(#qgx)'},g);mk('circle',{cx:cx+32,cy:138,r:6,fill:'url(#qgx)'},g);
+ // 원인(물질 / 암흑 에너지) → 작용(끌어당김 / 밀어냄) → 결과(팽창이 느려짐 / 빨라짐)를 짝지어 비교
+ if(s==0){[[572,'물질','끌어당김 (중력)','#7fd3ff','팽창을 느리게 함',1],[740,'암흑 에너지','밀어냄 (척력처럼)','#c9b2ff','팽창을 빠르게 함',0]].forEach(([x,o,a,c,b,inw])=>{const cx=x+78;
+   pCard(g,x,84,156,128,c);pPill(g,cx,94,o,c,13,o.length*13+30);
+   txt(a,{x:cx,y:142,'text-anchor':'middle',fill:c,'font-size':14,'font-weight':800},g);
+   mk('circle',{cx:cx-32,cy:164,r:6,fill:'url(#qgx)'},g);mk('circle',{cx:cx+32,cy:164,r:6,fill:'url(#qgx)'},g);
    const d=inw?[[cx-22,cx-6],[cx+22,cx+6]]:[[cx-42,cx-62],[cx+42,cx+62]];
-   d.forEach(([x1,x2])=>mk('line',{x1,y1:138,x2,y2:138,stroke:c,'stroke-width':2.4,'marker-end':'url(#qar)'},g));
-   txt(b,{x:cx,y:170,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':700},g)});
-  T('우주는 가속 팽창하고 있으므로',{y:206,'font-size':13.5,fill:'#cfd6ee','font-weight':400});
-  pPill(g,734,216,'밀어내는 작용 = 암흑 에너지','#c9b2ff',15,260);pNote(g,272,'(정체는 아직 밝혀지지 않음)')}
+   d.forEach(([x1,x2])=>mk('line',{x1,y1:164,x2,y2:164,stroke:c,'stroke-width':2.4,'marker-end':'url(#qar)'},g));
+   txt(b,{x:cx,y:198,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':700},g)});
+  pPill(g,734,226,'우주가 가속 팽창 → 밀어내는 작용이 더 큼','#ffd76b',14,316);pNote(g,276,'(암흑 에너지의 정체는 아직 밝혀지지 않음)')}
  if(s==1){pBox(g,86,[['암흑 에너지','#c9b2ff',16],['우주 공간 자체가 가진 에너지, 척력처럼 작용','#e8ecff',13]],'#c9b2ff');
   T('우주가 팽창하면',{y:170,'font-size':12.5,fill:'#a9b1cc','font-weight':400});
   [[572,'물질의 밀도','▼ 작아짐','#ffd76b'],[740,'암흑 에너지의 밀도','= 거의 일정','#c9b2ff']].forEach(([x,a,b,c])=>{pCard(g,x,180,156,64,c);
