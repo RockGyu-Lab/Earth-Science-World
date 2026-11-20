@@ -289,7 +289,7 @@ const JC=[[255,125,105],[90,160,255]],JU=[181,140,255];
 function jDots(g,cx,cy,sc,m,rr){JP.forEach(([x,y,h])=>{const c=JC[h].map((v,i)=>Math.round(v+(JU[i]-v)*m));mk('circle',{cx:cx+x*sc,cy:cy+y*sc,r:rr,fill:`rgb(${c})`,stroke:'rgba(255,255,255,.6)','stroke-width':.8},g)})}
 // 애니메이션은 한 번만 진행하고 마지막 모습을 유지 (J.t0: 단계가 바뀌거나 다시 보기를 누른 시각)
 function jDraw(t){const g=jg;g.innerHTML='';const s=J.s,CX=270,CY=170;
- const p=t-J.t0,m=ease((p-.8)/4),mv=ease((p-6)/1.2),k=ease((p-7.4)/1.8),h=ease((p-9.4)/.6);   // 0.8~4.8초: 온도가 고르게 됨, 6~7.2초: 급팽창 전 그림을 왼쪽으로 옮김, 7.4~9.2초: 급팽창, 9.4~10초: 우주의 지평선
+ const p=t-J.t0,m=ease((p-.8)/4),mv=ease((p-6)/1.2),k=ease((p-7.4)/1.8),ky=ease((p-7.4)/3.4),h=ease((p-10.8)/.6);   // 0.8~4.8초: 온도가 고르게 됨, 6~7.2초: 급팽창 전 그림을 왼쪽으로 옮김, 7.4~9.2초: 급팽창(우주), 7.4~10.8초: 정보 전달 가능 영역이 천천히 커짐, 10.8초~: 이름표
  iHead(g,[mv>0?'급팽창 전과 후':'급팽창 이전 (우주 < 정보 전달 가능 영역)','급팽창 이후 (지금)'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#jclip)'},g);
  if(s==0){const f=ease((p-4.8)/1),LX=100,RX=360,q=1-.62*mv,bx=CX+(LX-CX)*mv,ur=56*q,er=104*q;   // 교과서 그림처럼 급팽창 전(왼쪽)과 후(오른쪽)를 나란히 놓음
@@ -300,22 +300,23 @@ function jDraw(t){const g=jg;g.innerHTML='';const s=J.s,CX=270,CY=170;
   jDots(inn,bx,CY,q,m,6*q);
   if(mv<1){const o=1-mv;txt('정보 전달 가능 영역',{x:CX+76,y:CY-84,fill:'#ffd76b','font-size':12.5,'font-weight':800,opacity:o},inn);
    txt('우주의 크기',{x:CX,y:CY+76,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800,opacity:o},inn);
-   txt(m<1?'에너지를 주고받는 중…':'온도가 고르게 됨',{x:CX,y:286,'text-anchor':'middle',fill:m<1?'#cfd6ee':'#b58cff','font-size':13,'font-weight':800,opacity:o},inn)}
+   txt(m<1?'에너지를 주고받는 중…':'온도가 고르게 됨',{x:CX,y:286,'text-anchor':'middle',fill:m<1?'#cfd6ee':'#b58cff','font-size':13,'font-weight':800,opacity:o*(m<1?.35+.65*(.5+.5*Math.cos(p*Math.PI*2/1.2)):1)},inn)}   // 진행 중임을 알 수 있게 깜빡임
   if(mv>0){txt('급팽창 전',{x:LX,y:CY-er-12,'text-anchor':'middle',fill:'#ffd76b','font-size':13.5,'font-weight':800,opacity:mv},inn);
    [['노란 원: 정보 전달 가능 영역','#ffd76b'],['보라 원: 우주의 크기','#c9b2ff']].forEach(([a,c],i)=>txt(a,{x:LX,y:CY+er+24+i*16,'text-anchor':'middle',fill:c,'font-size':11.5,'font-weight':700,opacity:mv},inn))}
-  if(k>0){const R=ur+(108-ur)*k;   // 급팽창: 오른쪽의 우주가 빛보다 빠르게 커짐
+  if(k>0){const R=ur+(108-ur)*k,YR=er+(54-er)*ky;   // 급팽창: 오른쪽의 우주(보라)는 빛보다 빠르게 크게 커지고, 정보 전달 가능 영역(노랑)은 천천히 조금만 커짐 → 우주가 정보 전달 가능 영역보다 훨씬 커짐
+   const tg=(r1,r2,sg)=>{const nx=(r1-r2)/(RX-LX),ny=sg*Math.sqrt(1-nx*nx);return[LX+r1*nx,CY+r1*ny,RX+r2*nx,CY+r2*ny]};   // 두 원에 함께 닿는 접선의 두 접점
    mk('circle',{cx:RX,cy:CY,r:R,fill:'rgba(201,178,255,.18)',stroke:'#c9b2ff','stroke-width':2},inn);mk('circle',{cx:RX,cy:CY,r:R,fill:'url(#jgu)',opacity:.85},inn);
-   [-1,1].forEach(sg=>{const x1=LX+ur*.72,y1=CY+sg*ur*.69,x2=RX-R*.72,y2=CY+sg*R*.69,an=Math.atan2(y2-y1,x2-x1),mx=x1+(x2-x1)*.62,my=y1+(y2-y1)*.62,c=Math.cos(an),sn=Math.sin(an);
+   mk('circle',{cx:RX,cy:CY,r:YR,fill:'rgba(255,246,200,.45)',stroke:'#e0b000','stroke-width':1.8,'stroke-dasharray':'5 4'},inn);
+   [-1,1].forEach(sg=>{const[x1,y1,x2,y2]=tg(er,YR,sg);mk('line',{x1,y1,x2,y2,stroke:'#ffd76b','stroke-width':1.5,'stroke-dasharray':'4 4'},inn)});
+   [-1,1].forEach(sg=>{const[x1,y1,x2,y2]=tg(ur,R,sg),an=Math.atan2(y2-y1,x2-x1),mx=x1+(x2-x1)*.62,my=y1+(y2-y1)*.62,c=Math.cos(an),sn=Math.sin(an);
     mk('line',{x1,y1,x2,y2,stroke:'#c9b2ff','stroke-width':2},inn);
     mk('path',{d:`M${mx+c*7},${my+sn*7}L${mx-c*5-sn*5},${my-sn*5+c*5}L${mx-c*5+sn*5},${my-sn*5-c*5}Z`,fill:'#c9b2ff'},inn);   // 화살촉
     const d=sg<0?7:-16,lx=(x1+x2)/2+sn*d,ly=(y1+y2)/2-c*d;   // 위쪽 선은 선 위에, 아래쪽 선은 선 아래에 글씨
-    txt('급팽창',{x:lx,y:ly,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800,transform:`rotate(${an*180/Math.PI} ${lx} ${ly})`},inn)})}
-  if(h>0){const HR=50;   // 급팽창 후: 지금 관측되는 지평선 안쪽은 급팽창 전에 정보를 주고받던 영역
-   [-1,1].forEach(sg=>mk('line',{x1:LX,y1:CY+sg*er,x2:RX-HR*.6,y2:CY+sg*HR*.8,stroke:'#ffd76b','stroke-width':1.5,'stroke-dasharray':'4 4',opacity:h},inn));
-   mk('circle',{cx:RX,cy:CY,r:HR,fill:'rgba(255,246,200,.55)',stroke:'#c99a00','stroke-width':1.8,'stroke-dasharray':'5 4',opacity:h},inn);
-   txt('우주의 지평선',{x:RX,y:CY+5,'text-anchor':'middle',fill:'#2a2550','font-size':12.5,'font-weight':800,opacity:h},inn);
-   txt('급팽창 후 우주의 크기',{x:RX,y:CY+80,'text-anchor':'middle',fill:'#4a2a9a','font-size':12.5,'font-weight':800,opacity:h},inn);
-   txt('(크기 비율은 실제와 다름)',{x:510,y:290,'text-anchor':'end',fill:'#a9b1cc','font-size':11,opacity:h},inn)}}
+    txt('급팽창',{x:lx,y:ly,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800,transform:`rotate(${an*180/Math.PI} ${lx} ${ly})`},inn)});
+   if(h>0){const lead=(a,r,x,y)=>mk('line',{x1:RX+r*Math.cos(a),y1:CY+r*Math.sin(a),x2:x,y2:y,stroke:'#e8ecff','stroke-width':1,opacity:h},inn);   // 이름표는 원의 테두리를 가리킴
+    lead(-.9,54,462,74);txt('급팽창 후',{x:514,y:62,'text-anchor':'end',fill:'#ffd76b','font-size':12,'font-weight':800,opacity:h},inn);txt('우주의 지평선',{x:514,y:77,'text-anchor':'end',fill:'#ffd76b','font-size':12,'font-weight':800,opacity:h},inn);
+    lead(.72,108,470,256);txt('급팽창 후',{x:514,y:268,'text-anchor':'end',fill:'#c9b2ff','font-size':12,'font-weight':800,opacity:h},inn);txt('우주의 크기',{x:514,y:283,'text-anchor':'end',fill:'#c9b2ff','font-size':12,'font-weight':800,opacity:h},inn);
+    txt('(크기 비율은 실제와 다름)',{x:30,y:290,fill:'#a9b1cc','font-size':11,opacity:h},inn)}}}
  if(s==1){mk('rect',{x:20,y:44,width:500,height:252,fill:'url(#jgu)',opacity:.85},inn);
   mk('circle',{cx:CX,cy:CY,r:96,fill:'rgba(255,246,200,.55)',stroke:'#c99a00','stroke-width':1.8,'stroke-dasharray':'5 4'},inn);
   zEarthAt(inn,CX,CY);txt('지구',{x:CX,y:CY+30,'text-anchor':'middle',fill:'#2a2550','font-size':12.5,'font-weight':800},inn);
@@ -338,7 +339,7 @@ function jDraw(t){const g=jg;g.innerHTML='';const s=J.s,CX=270,CY=170;
 }
 function zEarthAt(g,x,y){mk('circle',{cx:x,cy:y,r:12,fill:'url(#jearth)',stroke:'#fff','stroke-width':1},g);   // 그라디언트는 같은 그림판 안의 것을 써야 숨긴 그림판 문제 없이 보임
  mk('path',{d:`M${x-7},${y-5}q4,-4 8,0q-1,5 -5,6q-4,-1 -3,-6zM${x+2},${y+4}q4,-2 6,1q-2,4 -6,3z`,fill:'#5fbf6a',opacity:.9},g)}
-const J=stepper(JS,jstep,jprev,jnext,jnum,jcue,jDraw,[10.6,0]);
+const J=stepper(JS,jstep,jprev,jnext,jnum,jcue,jDraw,[11.6,0]);
 
 // 평탄성 문제 해결 (교과서 그림 참고): 작은 풍선 위의 개미 → 풍선이 엄청나게 커지면 → 급팽창과 평탄한 우주
 const KS=[
