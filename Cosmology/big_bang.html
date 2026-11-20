@@ -381,13 +381,13 @@ function bWave(g,x,y,ang,L,lam,col,amp=4.5,w=2){const c=Math.cos(ang),s=Math.sin
 function bNuc(g,x,y,r=10){mk('circle',{cx:x,cy:y,r,fill:'url(#bgn)',stroke:'#ffc4c4','stroke-width':1},g);txt('+',{x,y:y+r*.38,'text-anchor':'middle',fill:'#fff','font-size':r*1.2,'font-weight':800},g)}
 function bEl(g,x,y,r=5){mk('circle',{cx:x,cy:y,r,fill:'url(#bge)',stroke:'#cfe6ff','stroke-width':.8},g);if(r>4)txt('−',{x,y:y+r*.42,'text-anchor':'middle',fill:'#fff','font-size':r*1.6,'font-weight':800},g)}
 function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
- txt(['빅뱅 후 약 38만 년 이전','빅뱅 후 약 38만 년 (약 3000 K)','우주가 팽창하는 동안','지금 관측한 우주 배경 복사','하늘 전체의 우주 배경 복사 (WMAP 위성)'][bs],{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
+  txt(['빅뱅 후 약 38만 년 이전','빅뱅 후 약 38만 년 (약 3000 K)','우주가 팽창하는 동안','우주 배경 복사의 스펙트럼 (COBE 위성)','하늘 전체의 우주 배경 복사 (WMAP 위성)'][bs],{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
  if(bs<3){bNuc(g,330,25,7);txt('원자핵',{x:341,y:30,fill:'#ffc4c4','font-size':12.5,'font-weight':700},g);
   bEl(g,398,25,5);txt('전자',{x:408,y:30,fill:'#cfe6ff','font-size':12.5,'font-weight':700},g);
   bWave(g,446,25,0,18,6,'#ffd76b',3,1.6);txt('빛',{x:478,y:30,fill:'#ffd76b','font-size':12.5,'font-weight':700},g)}
  // 왼쪽 상자: 뜨거울수록 붉은 안개(불투명), 원자가 생기면 맑아짐
  const fog=bs>=2?0:1-e,mix=(a,b,k)=>Math.round(a+(b-a)*k);
- mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:`rgb(${mix(16,74,fog)},${mix(18,34,fog)},${mix(40,30,fog)})`,stroke:'rgba(255,255,255,.18)'},g);
+ mk('rect',{x:20,y:44,width:bs==3?436:500,height:252,rx:12,fill:`rgb(${mix(16,74,fog)},${mix(18,34,fog)},${mix(40,30,fog)})`,stroke:'rgba(255,255,255,.18)'},g);
  if(bs<3){
   const cl=mk('g',{},g);mk('clipPath',{id:'bclip'},cl).appendChild(mk('rect',{x:20,y:44,width:500,height:252,rx:12}));
   const inn=mk('g',{'clip-path':'url(#bclip)'},g);
@@ -407,21 +407,21 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
    if(e>.98)mk('ellipse',{cx:x,cy:y,rx:19,ry:11.4,fill:'none',stroke:'#9cc8ff','stroke-width':1,opacity:.5},inn);
    bNuc(inn,x,y,10);bEl(inn,fjx+(ox-fjx)*e,fjy+(oy-fjy)*e,5)})}
  else{ // 관측 결과(왼쪽): 2.7 K 흑체 복사 곡선과 관측값 / 오른쪽 정리판에 WMAP 위성 지도
-  const X=l=>70+l/5*420,Y=v=>262-185*v,B=l=>Math.pow(l,-5)/(Math.exp(14.388/(l*2.725))-1),BM=B(1.0626);
-  mk('line',{x1:70,y1:262,x2:498,y2:262,stroke:'#cfd6ee','stroke-width':1.2},g);mk('line',{x1:70,y1:262,x2:70,y2:66,stroke:'#cfd6ee','stroke-width':1.2},g);
+  const X=l=>70+l/5*366,Y=v=>262-185*v,B=l=>Math.pow(l,-5)/(Math.exp(14.388/(l*2.725))-1),BM=B(1.0626);
+  mk('line',{x1:70,y1:262,x2:444,y2:262,stroke:'#cfd6ee','stroke-width':1.2},g);mk('line',{x1:70,y1:262,x2:70,y2:66,stroke:'#cfd6ee','stroke-width':1.2},g);
   for(let l=0;l<=5;l++){mk('line',{x1:X(l),y1:262,x2:X(l),y2:267,stroke:'#cfd6ee'},g);txt(String(l),{x:X(l),y:278,'text-anchor':'middle',fill:'#cfd6ee','font-size':11.5},g)}
-  txt('파장 (mm)',{x:284,y:292,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},g);
+  txt('파장 (mm)',{x:257,y:292,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},g);
   yLab(g,56,66,262,'복사 세기 →');
   let d='';for(let l=.25;l<=5.001;l+=.025)d+=(d?'L':'M')+X(l).toFixed(1)+','+Y(B(l)/BM).toFixed(1);
   mk('path',{d,fill:'none',stroke:'#ff9d6b','stroke-width':2.6},g);
   [.55,.65,.8,1,1.2,1.5,1.8,2.2,2.7,3.3,4,4.8].forEach(l=>mk('circle',{cx:X(l),cy:Y(B(l)/BM),r:4,fill:'#fff',stroke:'#1b1f2a','stroke-width':1},g));
   mk('line',{x1:X(1.06),y1:66,x2:X(1.06),y2:262,stroke:'#ffd76b','stroke-dasharray':'3 3',opacity:.8},g);
   txt('세기가 가장 큰 파장 약 1 mm',{x:X(1.06)+8,y:66,fill:'#ffd76b','font-size':12,'font-weight':700},g);
-  mk('line',{x1:300,y1:120,x2:324,y2:120,stroke:'#ff9d6b','stroke-width':2.6},g);txt('2.7 K 흑체 복사 곡선',{x:330,y:124,fill:'#ffc9a8','font-size':12,'font-weight':700},g);
-  mk('circle',{cx:312,cy:142,r:4,fill:'#fff'},g);txt('관측값 (COBE 위성)',{x:330,y:146,fill:'#e8ecff','font-size':12,'font-weight':700},g)}
+  mk('line',{x1:262,y1:120,x2:286,y2:120,stroke:'#ff9d6b','stroke-width':2.6},g);txt('2.7 K 흑체 복사 곡선',{x:292,y:124,fill:'#ffc9a8','font-size':12,'font-weight':700},g);
+  mk('circle',{cx:274,cy:142,r:4,fill:'#fff'},g);txt('관측값 (COBE 위성)',{x:292,y:146,fill:'#e8ecff','font-size':12,'font-weight':700},g)}
  // 오른쪽: 단계별 정리
- mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
- txt(BS[bs][0],{x:734,y:72,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g);
+ if(bs<3)mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);   // 관측 결과는 두 그림을 같은 크기로 나란히 놓으므로 정리판 없음
+ if(bs<3)txt(BS[bs][0],{x:734,y:72,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g);
  const C=734,T=(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);
  const badge=(y,s,col)=>{const w=s.length*16+28;mk('rect',{x:C-w/2,y:y-19,width:w,height:28,rx:14,fill:col,opacity:.2},g);T(s,{y,fill:col,'font-size':16,'font-weight':800})};
  if(bs==0){bNuc(g,640,124,10);txt('원자핵',{x:658,y:129,fill:'#ffc4c4','font-size':14,'font-weight':700},g);
@@ -442,12 +442,13 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
  if(bs==2){txt('그때: 약 3000 K',{x:572,y:104,fill:'#ffb357','font-size':14,'font-weight':700},g);bWave(g,574,124,0,310,10,'#ffd76b',5,2.2);
   txt('지금: 약 2.7 K (마이크로파)',{x:572,y:170,fill:'#ff8a6b','font-size':14,'font-weight':700},g);bWave(g,574,194,0,310,80,'#ff8a6b',9,2.2);
   T('우주 팽창으로 파장이 약 1100배 길어짐',{y:246,'font-size':14.5});T('(그림의 파장은 실제 비율과 다름)',{y:270,'font-size':12,fill:'#a9b1cc','font-weight':400})}
- if(bs==3){   // 관측 결과: 오른쪽에 WMAP 위성의 하늘 전체 지도(타원) + 아래에 결론(천천히 계속 반짝임, bLoop에서 밝기만 바꿈)
-  mk('image',{href:'./lib/cmb_wmap.jpg',x:574,y:84,width:320,height:160,preserveAspectRatio:'none'},g);
-  txt('하늘 전체의 우주 배경 복사 (WMAP 위성)',{x:574,y:258,fill:'#e8ecff','font-size':12,'font-weight':700},g);
-  txt('자료: NASA / WMAP',{x:894,y:258,'text-anchor':'end',fill:'#a9b1cc','font-size':9.5},g);
-  T('(색은 약 10만분의 1의 온도 차이를 강조한 것)',{y:274,'font-size':11.5,fill:'#a9b1cc','font-weight':400});
-  bCon=T('예측과 관측이 잘 맞는다 → 빅뱅 우주론의 증거',{y:292,'font-size':14.5,'font-weight':800,fill:'#ffd76b'});bBlink()}
+ if(bs==3){   // 관측 결과: 왼쪽 스펙트럼과 같은 크기의 상자에 WMAP 위성의 하늘 전체 지도(타원) + 두 그림 아래 가운데에 결론(천천히 계속 반짝임, bLoop에서 밝기만 바꿈)
+  txt('하늘 전체의 우주 배경 복사 (WMAP 위성)',{x:486,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
+  mk('rect',{x:484,y:44,width:436,height:252,rx:12,fill:'rgb(16,18,40)',stroke:'rgba(255,255,255,.18)'},g);
+  mk('image',{href:'./lib/cmb_wmap.jpg',x:502,y:56,width:400,height:200,preserveAspectRatio:'none'},g);
+  txt('(색은 약 10만분의 1의 온도 차이를 강조한 것)',{x:702,y:276,'text-anchor':'middle',fill:'#a9b1cc','font-size':11.5},g);
+  txt('자료: NASA / WMAP',{x:910,y:290,'text-anchor':'end',fill:'#a9b1cc','font-size':9.5},g);
+  bCon=txt('예측과 관측이 잘 맞는다 → 빅뱅 우주론의 증거',{x:470,y:314,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g);bBlink()}
 }
 function bLoop(now){const dt=Math.min(.05,(now-bLast)/1000);bLast=now;const tg=bs>=1?1:0;
  bm=tg>bm?Math.min(tg,bm+dt/1.6):Math.max(tg,bm-dt/1.6);if(bs==2){bT+=dt;bw=Math.min(1,bT/5)}else{bT=0;bw=0}   // 3단계: 5초 동안 파장이 늘어난 뒤 그대로 (되풀이하지 않음)
