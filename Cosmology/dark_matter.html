@@ -336,7 +336,7 @@ const LEV=62*Math.sqrt(.15);   // 보이는 물질(전체의 약 15 %)만 있을
 function lDot(g,x,y,c,l){mk('circle',{cx:x,cy:y-4,r:4.5,fill:c},g);txt(l,{x:x+10,y,fill:'#cfd6ee','font-size':12,'font-weight':700},g)}
 let lLast=-1,lT0=0;   // 단계가 바뀐 시각
 lrp.onclick=()=>{lLast=-1};   // 다시 보기: 단계의 움직이는 그림을 처음부터 다시 보여 줌
-function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;lT0=t}lrp.classList.toggle('off',s>0||t-lT0<5.2);   // 1단계: 빛의 경로를 다 그리면 나타남(2단계는 저절로 되풀이, 3단계는 움직이지 않음)
+function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;lT0=t}lrp.classList.toggle('off',s==2||t-lT0<(s?7:5.2));   // 1·2단계: 움직이는 그림이 끝나면 나타남(3단계는 움직이지 않음)
  iHead(g,['질량이 큰 천체 주위를 지나는 빛','옆에서 본 중력 렌즈 현상','중력 렌즈로 알아낸 질량 분포'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#lclip)'},g);
  if(s==0){const MX=270,MY=206,A=.5;   // 질량을 정해 두고, 빛이 한 번 지나간 뒤 그대로 유지
@@ -353,8 +353,8 @@ function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;l
   txt('빛의 경로',{x:34,y:90,fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
   txt('질량이 큰 천체 주위에서 빛의 경로가 휘어짐',{x:270,y:288,'text-anchor':'middle',fill:'#e8ecff','font-size':13,'font-weight':800},inn)}
  if(s==1){mk('rect',{x:20,y:44,width:500,height:252,fill:'#0a0c20'},inn);
-  // 천체에서 같이 출발한 빛이 렌즈의 위와 아래로 휘어져 지구에 함께 도착 → 지구에서는 빛이 들어온 방향(위, 아래)에 천체가 보임. 9초마다 천천히 되풀이
-  const SX=66,LX=270,EX=478,CY=170,SY=CY-10,P=((t-lT0)%9)/9,f=ease(P/.5),gS=ease((P-.5)/.2),gI=ease((P-.66)/.1);
+  // 천체에서 같이 출발한 빛이 렌즈의 위와 아래로 휘어져 지구에 함께 도착 → 지구에서는 빛이 들어온 방향(위, 아래)에 천체가 보임. 한 번 진행한 뒤 멈춤(다시 보기로 되풀이)
+  const SX=66,LX=270,EX=478,CY=170,SY=CY-10,P=(t-lT0)/9,f=ease(P/.5),gS=ease((P-.5)/.2),gI=ease((P-.66)/.1);
   [CY-56,CY+36].forEach(by=>{const s2=(CY-by)/(EX-LX),AY=CY+(58-EX)*s2;
    // 빛의 경로: 멀리서는 곧게 가다가 은하단 근처(앞뒤 85px)에서 부드럽게 휘어짐 → 점을 촘촘히 찍어 길이를 따라 그림
    const L1=Math.hypot(LX-SX,by-SY),L2=Math.hypot(EX-LX,CY-by),B=85,A=[LX+(SX-LX)*B/L1,by+(SY-by)*B/L1],C=[LX+(EX-LX)*B/L2,by+(CY-by)*B/L2],pt=[[SX,SY]];
