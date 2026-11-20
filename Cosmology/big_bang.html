@@ -500,7 +500,7 @@ function zTag(g,x,y,c){mk('rect',{x:x-30,y:y-15,width:60,height:22,rx:11,fill:c,
 function zArrow(g,x,y,dir,c,o){mk('path',{d:`M${x},${y}l${-dir*10},-6v12z`,fill:c,opacity:o||1},g)}   // 오른쪽(dir 1)·왼쪽(-1)을 가리키는 화살촉, 끝점 (x, y)
 const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
 let zLast=-1,zT0=0;   // 지평선 문제: 단계가 바뀌거나 다시 보기를 누른 시각
-function zDraw(t){const g=zg;g.innerHTML='';const s=Z.s;if(s!=zLast){zLast=s;zT0=t}zrp.classList.toggle('off',s!=1||t-zT0<7.2);
+function zDraw(t){const g=zg;g.innerHTML='';const s=Z.s;if(s!=zLast){zLast=s;zT0=t}zrp.classList.toggle('off',t-zT0<(s?7.2:5.2));
  txt(['지구에서 볼 수 있는 우주','서로 닿은 적 없는 A와 B'][s],{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
  mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#10122a',stroke:'rgba(255,255,255,.18)'},g);
  const inn=mk('g',{'clip-path':'url(#zclip)'},g);
@@ -509,8 +509,11 @@ function zDraw(t){const g=zg;g.innerHTML='';const s=Z.s;if(s!=zLast){zLast=s;zT0
   mk('circle',{cx:ZB[0],cy:ZB[1],r:ZR,fill:'rgba(127,224,255,.07)',stroke:ZCB,'stroke-width':1.4,'stroke-dasharray':'5 5'},inn)}
  mk('circle',{cx:ZX,cy:ZY,r:ZR,fill:'none',stroke:'#cfd6ee','stroke-width':1.4,'stroke-dasharray':'4 4',opacity:s==1?.45:1},inn);
  if(s==0){txt('관측 가능한 우주',{x:ZX-ZR*.72-4,y:ZY-ZR*.72-6,'text-anchor':'end',fill:'#e8ecff','font-size':13,'font-weight':700},inn);
-  for(let k=0;k<10;k++){const a=k*Math.PI/5+.3,u=((t*26+k*37)%(ZR-22)),r0=ZR-u;if(r0-30<16)continue;   // 원 둘레(A와 B를 포함한 모든 방향)에서 지구로 오는 빛
-   bWave(inn,ZX+Math.cos(a)*r0,ZY+Math.sin(a)*r0,a+Math.PI,28,8,'#ffd76b',3,1.8)}
+  {const f=Math.min(1,Math.max(0,(t-zT0-.5)/4)),r0=ZR-(ZR-44)*f;   // 빅뱅 후 약 38만 년에 둘레(A·B 포함) 모든 곳에서 한 번 출발한 빛이 4초 동안 지구까지 와서 도착하면 사라짐 (계속 나오지 않음)
+   if(t-zT0>=.5&&f<1)for(let k=0;k<10;k++){const a=k*Math.PI/5,ab=k==0||k==5,c=k==0?ZCB:k==5?ZCA:'#ffd76b';   // k=0: B(오른쪽), k=5: A(왼쪽)
+    bWave(inn,ZX+Math.cos(a)*r0,ZY+Math.sin(a)*r0,a+Math.PI,28,8,c,ab?3.6:3,ab?2.4:1.8)}
+   if(f>=1){mk('circle',{cx:ZX,cy:ZY,r:20,fill:'none',stroke:'#ffd76b','stroke-width':1.6,opacity:Math.max(0,1-(t-zT0-4.5)/1.2)},inn);   // 도착
+    txt('빅뱅 후 약 38만 년에 출발한 빛 → 지금 지구에 도착',{x:ZX,y:290,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':800,opacity:Math.min(1,(t-zT0-4.5)/.5)},inn)}}
   mk('line',{x1:ZX,y1:ZY,x2:ZX+ZR*Math.cos(.75),y2:ZY+ZR*Math.sin(.75),stroke:'#ffb357','stroke-width':1.4},inn);
   txt('빛으로 138억 년',{x:ZX+ZR*.5*Math.cos(.75)+10,y:ZY+ZR*.5*Math.sin(.75)+18,fill:'#ffb357','font-size':12.5,'font-weight':700},inn);
   zTag(inn,ZA[0]+40,ZY-26,ZCA);zTag(inn,ZB[0]-40,ZY-26,ZCB)}
