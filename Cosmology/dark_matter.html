@@ -336,7 +336,7 @@ const LEV=62*Math.sqrt(.15);   // 보이는 물질(전체의 약 15 %)만 있을
 function lDot(g,x,y,c,l){mk('circle',{cx:x,cy:y-4,r:4.5,fill:c},g);txt(l,{x:x+10,y,fill:'#cfd6ee','font-size':12,'font-weight':700},g)}
 let lLast=-1,lT0=0;   // 단계가 바뀐 시각
 lrp.onclick=()=>{lLast=-1};   // 다시 보기: 단계의 움직이는 그림을 처음부터 다시 보여 줌
-function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;lT0=t}lrp.classList.toggle('off',s==1||t-lT0<5.2);   // 1·3단계: 그림이 끝나면 나타남(2단계는 저절로 되풀이)
+function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;lT0=t}lrp.classList.toggle('off',s>0||t-lT0<5.2);   // 1단계: 빛의 경로를 다 그리면 나타남(2단계는 저절로 되풀이, 3단계는 움직이지 않음)
  iHead(g,['질량이 큰 천체 주위를 지나는 빛','옆에서 본 중력 렌즈 현상','중력 렌즈로 알아낸 질량 분포'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#lclip)'},g);
  if(s==0){const MX=270,MY=206,A=.5;   // 질량을 정해 두고, 빛이 한 번 지나간 뒤 그대로 유지
@@ -370,14 +370,11 @@ function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;l
   txt('지구',{x:EX+8,y:CY+30,'text-anchor':'middle',fill:'#cfe6ff','font-size':12.5,'font-weight':800},inn);
   if(gI>0)txt('하나의 천체가 위와 아래 두 곳에 보임',{x:300,y:70,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800,opacity:gI},inn);
   txt('(크기와 거리는 실제 비율과 다름)',{x:270,y:288,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},inn)}
- const lg=s==2?ease((t-lT0-2)/3):0;   // 3단계: 보이는 질량만으로 예상한 모습(2초) → 질량이 늘어나며 실제 관측 모습으로 바뀜(3초)
- if(s==2){lSky(inn,24,lg,-.6,LEV+(62-LEV)*lg,ease(lg/.3));
-  txt('보이는 물질의 질량만 있다면',{x:32,y:66,fill:'#ffd76b','font-size':13,'font-weight':800,opacity:1-lg},inn);
-  txt('실제로 관측되는 모습',{x:32,y:66,fill:'#ffd76b','font-size':13,'font-weight':800,opacity:lg},inn);
-  txt('초록 점선: 보이는 질량만으로 예상한 상',{x:510,y:66,'text-anchor':'end',fill:'#6fe3c1','font-size':12,'font-weight':700,opacity:ease(lg/.3)},inn);
-  txt('(질량을 한 점에 모은 단순한 모형)',{x:510,y:82,'text-anchor':'end',fill:'#a9b1cc','font-size':11.5},inn);
-  txt('상이 중심 가까이 생기고 조금만 휨',{x:270,y:288,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':800,opacity:1-lg},inn);
-  txt('보라색: 중력 렌즈로 알아낸 질량 분포 (대부분 암흑 물질)',{x:270,y:288,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800,opacity:lg},inn)}
+ const lg=s==2?1:0;   // 3단계: 실제 관측 모습에 보이는 질량만으로 예상한 상(초록 점선)을 겹쳐 그림
+ if(s==2){lSky(inn,24,1,-.6,62,1);
+  [['파란색: 실제로 관측되는 상','#8fc2ff'],['흰 점선: 멀리 있는 천체의 실제 위치','#e8ecff'],['초록 점선: 보이는 질량만으로 예상한 상','#6fe3c1']].forEach(([a,c],i)=>
+   txt(a,{x:32,y:66+i*17,fill:c,'font-size':12,'font-weight':700},inn));
+  txt('보라색: 중력 렌즈로 알아낸 질량 분포 (대부분 암흑 물질)',{x:270,y:288,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800},inn)}
  pPanel(g,LS[s][0]);const T=PT(g,734);
  if(s==0){pBox(g,88,[['질량이 큰 천체 주위: 공간이 휘어짐'],['→ 빛의 경로도 휘어짐','#ffd76b',14.5]],'#ffffff');
   pCard(g,572,164,324,82,'#ffd76b',.07);   // 질량이 작을 때와 클 때 빛이 휘는 정도 비교
