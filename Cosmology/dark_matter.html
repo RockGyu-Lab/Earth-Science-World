@@ -355,10 +355,15 @@ function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;l
  if(s==1){mk('rect',{x:20,y:44,width:500,height:252,fill:'#0a0c20'},inn);
   // 천체에서 같이 출발한 빛이 렌즈의 위와 아래로 휘어져 지구에 함께 도착 → 지구에서는 빛이 들어온 방향(위, 아래)에 천체가 보임. 9초마다 천천히 되풀이
   const SX=66,LX=270,EX=478,CY=170,SY=CY-10,P=((t-lT0)%9)/9,f=ease(P/.5),gS=ease((P-.5)/.2),gI=ease((P-.66)/.1);
-  [CY-56,CY+36].forEach(by=>{const L1=Math.hypot(LX-SX,by-SY),L2=Math.hypot(EX-LX,CY-by),d=f*(L1+L2),s2=(CY-by)/(EX-LX),AY=CY+(58-EX)*s2;
-   mk('path',{d:`M${SX},${SY}L${LX},${by}L${EX},${CY}`,fill:'none',stroke:'#8fc2ff','stroke-width':1.6,opacity:.22,'stroke-linejoin':'round'},inn);
-   const [qx,qy]=d<L1?[SX+(LX-SX)*d/L1,SY+(by-SY)*d/L1]:[LX+(EX-LX)*(d-L1)/L2,by+(CY-by)*(d-L1)/L2];
-   mk('path',{d:`M${SX},${SY}`+(d>L1?`L${LX},${by}`:'')+`L${qx.toFixed(1)},${qy.toFixed(1)}`,fill:'none',stroke:'#8fc2ff','stroke-width':2.4,'stroke-linejoin':'round'},inn);
+  [CY-56,CY+36].forEach(by=>{const s2=(CY-by)/(EX-LX),AY=CY+(58-EX)*s2;
+   // 빛의 경로: 멀리서는 곧게 가다가 은하단 근처(앞뒤 85px)에서 부드럽게 휘어짐 → 점을 촘촘히 찍어 길이를 따라 그림
+   const L1=Math.hypot(LX-SX,by-SY),L2=Math.hypot(EX-LX,CY-by),B=85,A=[LX+(SX-LX)*B/L1,by+(SY-by)*B/L1],C=[LX+(EX-LX)*B/L2,by+(CY-by)*B/L2],pt=[[SX,SY]];
+   for(let k=0;k<=40;k++){const u=k/40,v=1-u;pt.push([v*v*A[0]+2*u*v*LX+u*u*C[0],v*v*A[1]+2*u*v*by+u*u*C[1]])}pt.push([EX,CY]);
+   const cum=[0];for(let i=1;i<pt.length;i++)cum.push(cum[i-1]+Math.hypot(pt[i][0]-pt[i-1][0],pt[i][1]-pt[i-1][1]));
+   const d=f*cum[cum.length-1],full='M'+pt.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join('L');
+   mk('path',{d:full,fill:'none',stroke:'#8fc2ff','stroke-width':1.6,opacity:.22},inn);
+   let i=1;while(i<pt.length-1&&cum[i]<d)i++;const w=Math.min(1,(d-cum[i-1])/(cum[i]-cum[i-1]||1)),qx=pt[i-1][0]+(pt[i][0]-pt[i-1][0])*w,qy=pt[i-1][1]+(pt[i][1]-pt[i-1][1])*w;
+   mk('path',{d:'M'+pt.slice(0,i).map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join('L')+`L${qx.toFixed(1)},${qy.toFixed(1)}`,fill:'none',stroke:'#8fc2ff','stroke-width':2.4,'stroke-linejoin':'round'},inn);
    if(f<1)mk('circle',{cx:qx,cy:qy,r:4.5,fill:'#fff',stroke:'#8fc2ff','stroke-width':2},inn);
    if(gS>0)mk('line',{x1:EX,y1:CY,x2:EX+(58-EX)*gS,y2:CY+(AY-CY)*gS,stroke:'#ffd76b','stroke-width':1.6,'stroke-dasharray':'5 4'},inn);   // 지구에서 바라본 방향
    if(gI>0){mk('ellipse',{cx:58,cy:AY,rx:11,ry:6.5,fill:'#8fc2ff',opacity:.5*gI,stroke:'#8fc2ff','stroke-dasharray':'3 3'},inn);
