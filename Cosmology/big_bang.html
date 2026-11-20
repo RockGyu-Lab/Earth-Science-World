@@ -176,7 +176,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <g id="bg"></g>
   </svg>
   <div class="stepbox sx" id="bstep"></div>
-  <!-- 단계 표시줄: 1~3단계 → 관측 결과 1(스펙트럼) → 관측 결과 2(우주 배경 복사)를 다음 단추 하나로 차례대로 -->
+  <!-- 단계 표시줄: 1~3단계 → 관측 결과(스펙트럼 + 하늘 전체 지도)를 다음 단추 하나로 차례대로 -->
   <div class="ctl">
    <button class="pb" id="bprev">◀ 이전 단계</button><button class="pb" id="bnext">다음 단계 ▶</button>
    <span class="sn" id="bnum"></span>
@@ -356,8 +356,7 @@ const BS=[
  ['1단계','빅뱅 후 <em>약 38만 년</em>까지 우주는 매우 뜨거워서 <em>원자핵과 전자가 따로</em> 떨어져 움직였습니다. 빛은 전자와 계속 부딪혀 똑바로 나아가지 못했으므로, 우주는 안개 속처럼 <em>불투명</em>했습니다.'],
  ['2단계','우주가 팽창하면서 온도가 <em>약 3000 K</em>까지 낮아지자(빅뱅 후 약 38만 년) 원자핵과 전자가 결합하여 <em>원자</em>가 만들어졌습니다. 빛과 부딪히던 전자가 원자 속으로 들어가면서 빛이 막힘 없이 똑바로 나아가게 되어 우주가 <em>투명</em>해졌습니다. 이때 전자와 마지막으로 부딪힌 빛, 즉 <em>최후로 산란된 빛</em>이 우주의 모든 곳에서 <em>사방으로</em> 퍼져 나갔으며, 이 빛이 <em>우주 배경 복사</em>입니다.'],
  ['3단계','우주가 계속 팽창하면서 우주 배경 복사의 <em>파장</em>도 함께 늘어났습니다. 약 3000 K였던 복사의 파장이 <em>약 1100배</em> 길어져, 지금은 <em>약 2.7 K</em>에 해당하는 <em>마이크로파</em>로 관측됩니다.'],
- ['관측 결과 1','<em>1965년</em> 펜지어스와 윌슨은 하늘의 모든 방향에서 거의 같은 세기로 들어오는 <em>마이크로파</em>를 발견했습니다. 이후 COBE 위성의 관측으로 이 복사가 <em>약 2.7 K 흑체 복사</em>와 정확히 맞는다는 것이 확인되었습니다. 빅뱅 우주론의 예측과 관측이 잘 맞으므로, 우주 배경 복사는 <em>빅뱅 우주론의 증거</em>가 됩니다.'],
- ['관측 결과 2','WMAP 위성이 9년 동안 관측한 하늘 전체의 우주 배경 복사입니다. 우주 배경 복사는 모든 방향에서 <em>약 2.7 K</em>로 거의 같게 관측되지만, 온도 차이를 크게 강조하여 나타내면 <em>약 10만분의 1</em> 정도의 아주 작은 온도 차이가 얼룩무늬로 보입니다. 이 작은 차이가 뒷날 <em>은하와 같은 구조</em>가 만들어지는 씨앗이 되었습니다.']];
+ ['관측 결과','<em>1965년</em> 펜지어스와 윌슨은 모든 방향에서 거의 같은 세기로 들어오는 <em>마이크로파</em>를 발견했고, COBE 위성은 이 복사가 <em>약 2.7 K 흑체 복사</em>와 정확히 맞음을 확인했습니다(왼쪽). WMAP 위성의 하늘 전체 지도(오른쪽)에서는 <em>약 10만분의 1</em>의 아주 작은 온도 차이가 보이며, 이것이 <em>은하와 같은 구조</em>의 씨앗이 되었습니다. 예측과 관측이 잘 맞으므로 우주 배경 복사는 <em>빅뱅 우주론의 증거</em>가 됩니다.']];
 // 원자핵 16개(4×4)와 전자 16개(원자핵 사이에 엇갈려 놓음). 2단계에서 전자 k는 원자핵 k로 감
 const BNU=[],BEL=[];for(let r=0;r<4;r++)for(let c=0;c<4;c++){const k=r*4+c;BNU.push([82+c*120+((k*37)%23-11),80+r*64+((k*53)%17-8)]);BEL.push([118+c*112+(r%2)*44+((k*29)%19-9),(r==3?68:114+r*64)+((k*41)%15-7)])}
 const bElPos=(k,t)=>[BEL[k][0]+8*Math.sin(t*3.1+k*2.1),BEL[k][1]+8*Math.cos(t*2.7+k*1.3)];   // 떠도는 전자의 지금 자리
@@ -407,10 +406,7 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
    const [fjx,fjy]=bElPos(k,t),ang=t*2.2+k*1.1,ox=x+19*Math.cos(ang),oy=y+19*Math.sin(ang)*.6;
    if(e>.98)mk('ellipse',{cx:x,cy:y,rx:19,ry:11.4,fill:'none',stroke:'#9cc8ff','stroke-width':1,opacity:.5},inn);
    bNuc(inn,x,y,10);bEl(inn,fjx+(ox-fjx)*e,fjy+(oy-fjy)*e,5)})}
- else if(bs==4){ // 관측 결과 2(우주 배경 복사): WMAP 위성 지도 (하늘 전체를 타원으로 펼친 지도, 은하 중심이 가운데)
-  mk('image',{href:'./lib/cmb_wmap.jpg',x:40,y:52,width:460,height:230,preserveAspectRatio:'none'},g);
-  txt('자료: NASA / WMAP Science Team',{x:512,y:290,'text-anchor':'end',fill:'#a9b1cc','font-size':10.5},g)}
- else{ // 관측 결과 1(스펙트럼): 2.7 K 흑체 복사 곡선과 관측값
+ else{ // 관측 결과(왼쪽): 2.7 K 흑체 복사 곡선과 관측값 / 오른쪽 정리판에 WMAP 위성 지도
   const X=l=>70+l/5*420,Y=v=>262-185*v,B=l=>Math.pow(l,-5)/(Math.exp(14.388/(l*2.725))-1),BM=B(1.0626);
   mk('line',{x1:70,y1:262,x2:498,y2:262,stroke:'#cfd6ee','stroke-width':1.2},g);mk('line',{x1:70,y1:262,x2:70,y2:66,stroke:'#cfd6ee','stroke-width':1.2},g);
   for(let l=0;l<=5;l++){mk('line',{x1:X(l),y1:262,x2:X(l),y2:267,stroke:'#cfd6ee'},g);txt(String(l),{x:X(l),y:278,'text-anchor':'middle',fill:'#cfd6ee','font-size':11.5},g)}
@@ -446,30 +442,24 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
  if(bs==2){txt('그때: 약 3000 K',{x:572,y:104,fill:'#ffb357','font-size':14,'font-weight':700},g);bWave(g,574,124,0,310,10,'#ffd76b',5,2.2);
   txt('지금: 약 2.7 K (마이크로파)',{x:572,y:170,fill:'#ff8a6b','font-size':14,'font-weight':700},g);bWave(g,574,194,0,310,80,'#ff8a6b',9,2.2);
   T('우주 팽창으로 파장이 약 1100배 길어짐',{y:246,'font-size':14.5});T('(그림의 파장은 실제 비율과 다름)',{y:270,'font-size':12,fill:'#a9b1cc','font-weight':400})}
- if(bs==3){mk('circle',{cx:628,cy:150,r:15,fill:'#3d7bd9',stroke:'#b9d6ff'},g);
-  for(let k=0;k<8;k++){const a=k*Math.PI/4;bWave(g,628+Math.cos(a)*58,150+Math.sin(a)*58,a+Math.PI,28,9,'#ff9d6b',2.6,1.6)}
-  [['1965년 펜지어스와 윌슨',128,'#e8ecff'],['모든 방향에서 거의 같은',152,'#cfd6ee'],['세기의 마이크로파 발견',174,'#cfd6ee']].forEach(([s,y,c])=>txt(s,{x:700,y,fill:c,'font-size':13.5,'font-weight':700},g));
-  T('COBE 위성: 약 2.7 K 흑체 복사와 일치',{y:226,'font-size':13.5});
-  T('예측과 관측이 잘 맞는다',{y:256,fill:'#ffd76b'});T('→ 빅뱅 우주론의 증거',{y:282,'font-size':17,'font-weight':800,fill:'#ffd76b'})}
- if(bs==4){   // WMAP 지도 설명: 거의 같은 온도 + 아주 작은 온도 차이(색 띠)
-  T('모든 방향에서 거의 같은 온도 (약 2.7 K)',{y:108,'font-size':14.5});
-  mk('rect',{x:590,y:128,width:288,height:14,rx:3,fill:'url(#bmapc)'},g);
-  txt('낮음',{x:590,y:160,fill:'#9cc8ff','font-size':12.5,'font-weight':700},g);txt('높음',{x:878,y:160,'text-anchor':'end',fill:'#ff9d9d','font-size':12.5,'font-weight':700},g);
-  T('평균과의 차이 ±0.0002 K',{y:160,'font-size':12.5,fill:'#cfd6ee','font-weight':400});
-  T('약 10만분의 1의 아주 작은 온도 차이',{y:196,'font-size':14.5});
-  T('(색은 실제 색이 아니라 온도 차이를 나타냄)',{y:220,'font-size':12,fill:'#a9b1cc','font-weight':400});
-  T('(타원은 하늘 전체를 세계 지도처럼 펼친 것)',{y:240,'font-size':12,fill:'#a9b1cc','font-weight':400});
-  T('→ 은하와 같은 구조가 생기는 씨앗',{y:274,'font-size':14,fill:'#ffd76b'})}
+ if(bs==3){   // 관측 결과: 오른쪽에 WMAP 위성의 하늘 전체 지도(타원) + 아래에 결론(천천히 계속 반짝임, bLoop에서 밝기만 바꿈)
+  mk('image',{href:'./lib/cmb_wmap.jpg',x:574,y:84,width:320,height:160,preserveAspectRatio:'none'},g);
+  txt('하늘 전체의 우주 배경 복사 (WMAP 위성)',{x:574,y:258,fill:'#e8ecff','font-size':12,'font-weight':700},g);
+  txt('자료: NASA / WMAP',{x:894,y:258,'text-anchor':'end',fill:'#a9b1cc','font-size':9.5},g);
+  T('(색은 약 10만분의 1의 온도 차이를 강조한 것)',{y:274,'font-size':11.5,fill:'#a9b1cc','font-weight':400});
+  bCon=T('예측과 관측이 잘 맞는다 → 빅뱅 우주론의 증거',{y:292,'font-size':14.5,'font-weight':800,fill:'#ffd76b'});bBlink()}
 }
 function bLoop(now){const dt=Math.min(.05,(now-bLast)/1000);bLast=now;const tg=bs>=1?1:0;
  bm=tg>bm?Math.min(tg,bm+dt/1.6):Math.max(tg,bm-dt/1.6);if(bs==2){bT+=dt;bw=Math.min(1,bT/5)}else{bT=0;bw=0}   // 3단계: 5초 동안 파장이 늘어난 뒤 그대로 (되풀이하지 않음)
- if(bs<3&&!p2.hidden&&!evb.hidden)bDraw((now/1000-TB));requestAnimationFrame(bLoop)}   // 관측 결과(그래프·지도)는 움직이지 않으므로 고를 때만 그림
-// bs 0~2: 과정 1~3단계 / 3: 관측 결과 1(스펙트럼) / 4: 관측 결과 2(우주 배경 복사)
-function bGo(s){bs=Math.max(0,Math.min(4,s));bw=0;const[tt,tx]=BS[bs],ob=bs>=3;bstep.innerHTML=stepHTML(tt,tx);
- bprev.disabled=bs==0;bnext.textContent=bs==4?'↺ 처음으로':bs==3?'관측 결과 2 ▶':bs==2?'관측 결과 1 ▶':'다음 단계 ▶';bnum.textContent=ob?`관측 결과 ${bs-2} / 2`:`${bs+1} / 3 단계`;bnext.classList.toggle('glow',bs==2||bs==3);
- if(bs==4){bcue.className='';bcue.textContent=''}else{bcue.className='go';bcue.innerHTML=bs<2?'<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.':bs==2?'<span class="kb">관측 결과 1</span>을 눌러 실제 관측 결과를 살펴보세요.':'<span class="kb">관측 결과 2</span>도 눌러 보세요.'}
+ if(bs<3&&!p2.hidden&&!evb.hidden)bDraw((now/1000-TB));if(bs==3)bBlink();requestAnimationFrame(bLoop)}   // 관측 결과(그래프·지도)는 움직이지 않으므로 고를 때만 그리고, 결론 글씨의 밝기만 바꿈
+let bCon=null,bO0=0;   // 관측 결과의 결론 글씨, 관측 결과에 들어온 시각
+function bBlink(){if(!bCon)return;const p=NOW()-bO0-.4;bCon.setAttribute('opacity',p<0?0:.4+.6*(.5+.5*Math.cos(p*2*Math.PI/1.6)))}   // 1.6초마다 천천히 계속 반짝임
+// bs 0~2: 과정 1~3단계 / 3: 관측 결과(스펙트럼 + WMAP 지도)
+function bGo(s){bs=Math.max(0,Math.min(3,s));bw=0;bO0=NOW();bCon=null;const[tt,tx]=BS[bs],ob=bs==3;bstep.innerHTML=stepHTML(tt,tx);
+ bprev.disabled=bs==0;bnext.textContent=bs==3?'↺ 처음으로':bs==2?'관측 결과 ▶':'다음 단계 ▶';bnum.textContent=ob?'관측 결과':`${bs+1} / 3 단계`;bnext.classList.toggle('glow',bs==2);
+ if(bs==3){bcue.className='';bcue.textContent=''}else{bcue.className='go';bcue.innerHTML=bs<2?'<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.':'<span class="kb">관측 결과</span>를 눌러 실제 관측 결과를 살펴보세요.'}
  bDraw(NOW())}
-bprev.onclick=()=>bGo(bs-1);bnext.onclick=()=>bGo(bs==4?0:bs+1);
+bprev.onclick=()=>bGo(bs-1);bnext.onclick=()=>bGo(bs==3?0:bs+1);
 bGo(0);bLast=performance.now();requestAnimationFrame(bLoop);
 
 // ---- ③ 빅뱅 우주론의 문제점 ----
