@@ -122,7 +122,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 @media (max-width:900px){#zstep,#fstep{min-height:calc(3 * 1.55em + 16px)}}   /* 좁은 화면에서는 3줄이 되는 설명이 많아 3줄 높이 */
 #zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100vh - 360px))}
 #zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100dvh - 360px))}
-#iva{display:flex;flex-direction:column}#iva[hidden]{display:none}#iva>*{order:2}#iva>svg{order:0}#iva>.ctl{order:1;width:calc(100% * 520 / 940);justify-content:flex-end;margin:4px 0 0;padding:0;min-height:0;background:none}   /* 급팽창 이론: 한 화면이라 단추 줄 없이, 다시 보기를 그림 바로 아래 왼쪽 그래프의 오른쪽 끝(시간 글자 아래)에 */
+#iva>.ctl{display:none}   /* 급팽창 이론: 한 화면이고 다시 보기도 없어서 단추 줄을 숨김 */
 #zcue,#fcue,#icue,#jcue,#kcue,#rcue,#lcue,#acue,#qcue{flex:1 1 220px;font-size:.92rem}
 #zva[hidden],#zvb[hidden],#iva[hidden],#ivb[hidden],#ivc[hidden],#rva[hidden],#rvb[hidden],#ava[hidden],#avb[hidden]{display:none}   /* 우주 배경 복사: 단계마다 설명이 2~3줄로 달라도 아래 줄이 움직이지 않게 3줄 높이 확보 */
 .sn{font-size:.9rem;font-weight:700;opacity:.8}
@@ -274,7 +274,7 @@ function iDraw(t){const g=ig;g.innerHTML='';
  pBox(g,152,[['급팽창: 빛보다 빠른 급격한 팽창','#ffd76b',14],['아주 짧은 시간 동안 크기가 엄청나게 커짐',null,13.5],['이후: 빅뱅 우주론처럼 팽창하며 식어 감','#7faaff',13.5]],'#ffd76b');
  pPill(g,652,250,'✔ 지평선 문제 해결','#6fe08f',14,156);pPill(g,816,250,'✔ 평탄성 문제 해결','#6fe08f',14,156);   // 빅뱅 우주론의 보완
 }
-const I=stepper(IS,istep,iprev,inext,inum,icue,iDraw,[5.4]);   // 한 화면이라 이전·다음 단추와 단계 표시는 숨김(다시 보기만 보임)
+const I=stepper(IS,istep,iprev,inext,inum,icue,iDraw,[0]);   // 한 화면: 단추 줄(이전·다음·다시 보기)은 숨김, 그래프는 처음 열 때 한 번 그려짐
 
 // 지평선 문제 해결 (교과서 그림 참고): 급팽창 이전 우주 < 정보 전달 가능 영역 → 급팽창 → 지평선 안쪽이 균질
 // 1단계는 '온도가 고르게 됨 → 급팽창'을 한 번에 이어서 진행하고 마지막 모습을 유지
