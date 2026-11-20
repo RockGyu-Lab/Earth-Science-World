@@ -269,12 +269,11 @@ function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=]) /g,'\u0
 [[e2a,eva],[e2b,evb]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
 
 // 수소와 헬륨의 질량비: 입자 16개(양성자 14, 중성자 2 → 7 : 1)를 골라 나타냄
-// 1단계 양성자·중성자 / 2단계 양성자 2 + 중성자 2 → 헬륨 원자핵 / 3단계 남은 양성자 12 = 수소 원자핵 / 4단계 질량비 12 : 4 = 3 : 1 / 관측 결과: 질량비 비교
+// 1단계 양성자·중성자 / 2단계 양성자 2 + 중성자 2 → 헬륨 원자핵, 남은 양성자 12 = 수소 원자핵, 질량비 12 : 4 = 3 : 1 / 관측 결과: 질량비 비교
 // 양성자와 중성자의 질량은 거의 같다고 보고 입자 1개의 질량을 1로 놓음
 const HS=[
  ['1단계','빅뱅 직후 뜨거운 우주에서 <em>양성자</em>와 <em>중성자</em>가 만들어졌습니다. 빅뱅 후 약 3분이 지났을 때 양성자와 중성자의 개수비는 약 <em>7 : 1</em>이었습니다.'],
- ['2단계(빅뱅 핵합성)','우주의 온도가 약 <em>10억 K</em>까지 낮아지자 <em>양성자 2개</em>와 <em>중성자 2개</em>가 결합하여 <em>헬륨 원자핵</em>이 만들어졌습니다.'],
- ['3단계','헬륨 원자핵을 만들고 남은 양성자 12개는 그대로 <em>수소 원자핵</em>이 되므로, 수소 원자핵과 헬륨 원자핵의 개수비는 <em>12 : 1</em>입니다. 양성자와 중성자의 질량은 거의 같으므로 입자 1개의 질량을 1로 놓으면, 수소와 헬륨의 질량비는 <em>12 : 4 = 3 : 1</em>입니다.'],
+ ['2단계(빅뱅 핵합성)','우주의 온도가 약 <em>10억 K</em>까지 낮아지자 <em>양성자 2개</em>와 <em>중성자 2개</em>가 결합하여 <em>헬륨 원자핵</em>이 만들어졌고, 남은 양성자 12개는 그대로 <em>수소 원자핵</em>이 되었습니다. 수소와 헬륨 원자핵의 개수비는 <em>12 : 1</em>이고, 양성자와 중성자의 질량은 거의 같으므로 입자 1개의 질량을 1로 놓으면 질량비는 <em>12 : 4 = 3 : 1</em>입니다.'],
  ['관측 결과와의 비교','실제 우주에서 관측한 수소와 헬륨의 질량비도 <em>약 3 : 1</em>입니다. 빅뱅 우주론으로 예측한 값이 관측과 잘 맞으므로, 수소와 헬륨의 질량비는 <em>빅뱅 우주론의 증거</em>가 됩니다.']];
 const HN=[5,10],HHE=[5,6,9,10],HPB=[];   // 중성자 번호, 헬륨 원자핵이 되는 입자 번호(가운데 2×2)
 for(let r=0;r<4;r++)for(let c=0;c<4;c++){const k=r*4+c;HPB.push([85+c*120+((k*37)%23-11),80+r*62+((k*53)%19-9)])}
@@ -294,7 +293,7 @@ function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
  mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'url(#hgb)',stroke:'rgba(255,190,190,.25)'},g);
  const jig=(k,a)=>[a*Math.sin(t*2.1+k*1.7),a*Math.cos(t*1.8+k*1.3)];
  for(let k=0;k<16;k++){if(HHE.includes(k))continue;const [jx,jy]=jig(k,3),x=HPB[k][0]+jx,y=HPB[k][1]+jy;
-  if(hs>=2)mk('circle',{cx:x,cy:y,r:21,fill:'none',stroke:'#ff9d9d','stroke-width':1.4,'stroke-dasharray':'3 3'},g);
+  if(hs>=1&&hm>=1)mk('circle',{cx:x,cy:y,r:21,fill:'none',stroke:'#ff9d9d','stroke-width':1.4,'stroke-dasharray':'3 3'},g);
   hPart(g,x,y,true,14)}
  const [cx,cy]=jig(99,3*(1-e)+1.5*e);
  for(const k of HHE){const [jx,jy]=jig(k,3*(1-e)),[ox,oy]=HOFF[k];
@@ -308,27 +307,27 @@ function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
  if(hs==0){pCard(g,604,92,260,186,'#ffb357',.07);T('양성자 : 중성자',{y:122,'font-size':17});
   const r=T('',{y:170,'font-size':34,'font-weight':800});r.innerHTML='<tspan fill="#ff9d9d">14</tspan> : <tspan fill="#dfe5f2">2</tspan>';
   T('= 7 : 1',{y:220,'font-size':34,'font-weight':800,fill:'#ffb357'});T('(입자 16개 중)',{y:256,'font-size':12.5,fill:'#a9b1cc','font-weight':400})}
- if(hs==1){hPart(g,606,140,true,10);hPart(g,630,140,true,10);txt('+',{x:654,y:147,'text-anchor':'middle',fill:'#e8ecff','font-size':20,'font-weight':700},g);
-  hPart(g,678,140,false,10);hPart(g,702,140,false,10);txt('→',{x:736,y:147,'text-anchor':'middle',fill:'#e8ecff','font-size':22,'font-weight':700},g);
-  [[-7,-7,1],[7,-7,0],[-7,7,0],[7,7,1]].forEach(([dx,dy,p])=>hPart(g,786+dx,140+dy,!!p,8.5));
-  mk('circle',{cx:786,cy:140,r:22,fill:'none',stroke:'#7fd3ff','stroke-width':1.8},g);
-  pBox(g,186,[['양성자 2개 + 중성자 2개'],['→ 헬륨 원자핵 1개','#7fd3ff',15]],'#7fd3ff')}
- if(hs==2){   // 위: 개수비(간단히) / 아래: 질량비 그림 - 질량 4씩 네모로 묶으면 수소 3묶음, 헬륨 1묶음
-  txt('개수비',{x:572,y:102,fill:'#a9b1cc','font-size':13,'font-weight':700},g);
-  txt('수소 : 헬륨 = 12 : 1',{x:896,y:103,'text-anchor':'end',fill:'#e8ecff','font-size':16,'font-weight':800},g);
-  mk('line',{x1:572,y1:118,x2:896,y2:118,stroke:'rgba(255,255,255,.15)'},g);
-  txt('질량비 (입자 1개의 질량을 1로 놓으면)',{x:572,y:139,fill:'#a9b1cc','font-size':13,'font-weight':700},g);
-  const box=(x,y)=>mk('rect',{x,y,width:52,height:48,rx:8,fill:'rgba(255,179,87,.08)',stroke:'#ffb357','stroke-width':1.4,'stroke-dasharray':'4 3'},g);
-  txt('수소',{x:572,y:178,fill:'#ff9d9d','font-size':15,'font-weight':800},g);
-  [616,676,736].forEach(x=>{box(x,148);[[-11,-11],[11,-11],[-11,11],[11,11]].forEach(([dx,dy])=>hPart(g,x+26+dx,172+dy,true,6))});
-  txt('질량 12',{x:896,y:178,'text-anchor':'end',fill:'#ff9d9d','font-size':15,'font-weight':800},g);
-  txt('헬륨',{x:572,y:236,fill:'#7fd3ff','font-size':15,'font-weight':800},g);
-  box(616,206);[[-7,-7,1],[7,-7,0],[-7,7,0],[7,7,1]].forEach(([dx,dy,p])=>hPart(g,642+dx,230+dy,!!p,7));
-  mk('circle',{cx:642,cy:230,r:18,fill:'none',stroke:'#7fd3ff','stroke-width':1.6},g);
-  txt('← 네모 1개 = 질량 4',{x:678,y:235,fill:'#a9b1cc','font-size':12},g);
-  txt('질량 4',{x:896,y:236,'text-anchor':'end',fill:'#7fd3ff','font-size':15,'font-weight':800},g);
-  T('수소 : 헬륨 = 12 : 4 = 3 : 1',{y:282,'font-size':17,'font-weight':800,fill:'#ffb357'})}
- if(hs==3){txt('빅뱅 우주론의 예측',{x:568,y:104,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);
+ if(hs==1){   // 위: 헬륨 원자핵이 만들어지는 반응 / 아래(헬륨이 다 만들어지면 또렷해짐): 개수비와 질량비 - 질량 4씩 네모로 묶으면 수소 3묶음, 헬륨 1묶음
+  hPart(g,604,100,true,8);hPart(g,624,100,true,8);txt('+',{x:644,y:106,'text-anchor':'middle',fill:'#e8ecff','font-size':17,'font-weight':700},g);
+  hPart(g,664,100,false,8);hPart(g,684,100,false,8);txt('→',{x:712,y:106,'text-anchor':'middle',fill:'#e8ecff','font-size':19,'font-weight':700},g);
+  [[-6,-6,1],[6,-6,0],[-6,6,0],[6,6,1]].forEach(([dx,dy,p])=>hPart(g,750+dx,100+dy,!!p,7));
+  mk('circle',{cx:750,cy:100,r:18,fill:'none',stroke:'#7fd3ff','stroke-width':1.6},g);txt('헬륨 원자핵',{x:778,y:105,fill:'#7fd3ff','font-size':13,'font-weight':800},g);
+  const q=mk('g',{opacity:.2+.8*hm},g);
+  mk('line',{x1:572,y1:126,x2:896,y2:126,stroke:'rgba(255,255,255,.15)'},q);
+  txt('개수비',{x:572,y:148,fill:'#a9b1cc','font-size':13,'font-weight':700},q);
+  txt('수소 : 헬륨 = 12 : 1',{x:896,y:149,'text-anchor':'end',fill:'#e8ecff','font-size':15,'font-weight':800},q);
+  txt('질량비 (입자 1개의 질량을 1로 놓으면)',{x:572,y:172,fill:'#a9b1cc','font-size':12.5,'font-weight':700},q);
+  const box=(x,y)=>mk('rect',{x,y,width:46,height:40,rx:7,fill:'rgba(255,179,87,.08)',stroke:'#ffb357','stroke-width':1.4,'stroke-dasharray':'4 3'},q);
+  txt('수소',{x:572,y:204,fill:'#ff9d9d','font-size':14.5,'font-weight':800},q);
+  [616,668,720].forEach(x=>{box(x,180);[[-9,-9],[9,-9],[-9,9],[9,9]].forEach(([dx,dy])=>hPart(q,x+23+dx,200+dy,true,5.5))});
+  txt('질량 12',{x:896,y:204,'text-anchor':'end',fill:'#ff9d9d','font-size':14.5,'font-weight':800},q);
+  txt('헬륨',{x:572,y:250,fill:'#7fd3ff','font-size':14.5,'font-weight':800},q);
+  box(616,226);[[-6,-6,1],[6,-6,0],[-6,6,0],[6,6,1]].forEach(([dx,dy,p])=>hPart(q,639+dx,246+dy,!!p,6));
+  mk('circle',{cx:639,cy:246,r:15,fill:'none',stroke:'#7fd3ff','stroke-width':1.5},q);
+  txt('← 네모 1개 = 질량 4',{x:672,y:251,fill:'#a9b1cc','font-size':12},q);
+  txt('질량 4',{x:896,y:250,'text-anchor':'end',fill:'#7fd3ff','font-size':14.5,'font-weight':800},q);
+  T('수소 : 헬륨 = 12 : 4 = 3 : 1',{y:288,'font-size':16,'font-weight':800,fill:'#ffb357',opacity:.2+.8*hm})}
+ if(hs==2){txt('빅뱅 우주론의 예측',{x:568,y:104,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);
   hBar(g,112,[[75,'#ff9d9d','수소 75%'],[25,'#7fd3ff','헬륨 25%']]);
   txt('실제 우주의 관측',{x:568,y:164,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);
   hBar(g,172,[[74,'#ff9d9d','수소 약 74%'],[24,'#7fd3ff','헬륨 약 24%'],[2,'#a9b1cc','']]);
@@ -337,12 +336,12 @@ function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
 }
 function hLoop(now){const dt=Math.min(.05,(now-hLast)/1000);hLast=now;const tg=hs>=1?1:0;
  hm=tg>hm?Math.min(tg,hm+dt/1.2):Math.max(tg,hm-dt/1.2);if(!p2.hidden&&!eva.hidden)hDraw((now/1000-TB));hraf=requestAnimationFrame(hLoop)}
-function hGo(s){hs=Math.max(0,Math.min(3,s));const[tt,tx]=HS[hs];hstep.innerHTML=stepHTML(tt,tx);
- // hs 0~2: 과정 1~3단계 / 3: 관측 결과와의 비교
- hprev.disabled=hs==0;hnext.textContent=hs==3?'↺ 처음으로':hs==2?'관측 결과 ▶':'다음 단계 ▶';hnum.textContent=hs==3?'관측 결과':`${hs+1} / 3 단계`;hnext.classList.toggle('glow',hs==2);
- if(hs==3){hcue.className='';hcue.textContent=''}else{hcue.className='go';hcue.innerHTML=hs==2?'<span class="kb">관측 결과</span>를 눌러 실제 관측과 비교해 보세요.':'<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.'}
+function hGo(s){hs=Math.max(0,Math.min(2,s));const[tt,tx]=HS[hs];hstep.innerHTML=stepHTML(tt,tx);
+ // hs 0~1: 과정 1~2단계 / 2: 관측 결과와의 비교
+ hprev.disabled=hs==0;hnext.textContent=hs==2?'↺ 처음으로':hs==1?'관측 결과 ▶':'다음 단계 ▶';hnum.textContent=hs==2?'관측 결과':`${hs+1} / 2 단계`;hnext.classList.toggle('glow',hs==1);
+ if(hs==2){hcue.className='';hcue.textContent=''}else{hcue.className='go';hcue.innerHTML=hs==1?'<span class="kb">관측 결과</span>를 눌러 실제 관측과 비교해 보세요.':'<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.'}
  hDraw(NOW())}
-hprev.onclick=()=>hGo(hs-1);hnext.onclick=()=>hGo(hs==3?0:hs+1);   // 관측 결과에서는 처음으로
+hprev.onclick=()=>hGo(hs-1);hnext.onclick=()=>hGo(hs==2?0:hs+1);   // 관측 결과에서는 처음으로
 hGo(0);hLast=performance.now();hraf=requestAnimationFrame(hLoop);
 
 // 우주 배경 복사: 수소와 헬륨의 질량비와 같은 방식의 4단계 구성
