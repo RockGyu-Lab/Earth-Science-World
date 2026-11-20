@@ -236,7 +236,8 @@ const RS=[
 const GP=[];{const r=rnd0(7);   // 나선 은하: 나선팔 2개 + 원반의 별 (반지름 1로 맞춘 자리, 점 크기, 밝기)
  for(let a=0;a<2;a++)for(let i=0;i<90;i++){const u=.1+.9*i/90,an=a*Math.PI+4.4*u+(r()-.5)*.45,uu=u+(r()-.5)*.06;GP.push([uu*Math.cos(an),uu*Math.sin(an),.9+r()*1.4,.45+r()*.5])}
  for(let i=0;i<70;i++){const u=Math.sqrt(r())*.95,an=r()*2*Math.PI;GP.push([u*Math.cos(an),u*Math.sin(an),.7+r()*.8,.25+r()*.35])}}
-function galaxy(g,cx,cy,R,tilt){const q=mk('g',{transform:`translate(${cx},${cy}) scale(1,${tilt})`},g);
+// rot: 원반 면 안에서 돈 각도(도). 화면에서 각도가 줄어드는 쪽 = 반시계 방향 회전 (나선팔이 회전 방향의 뒤로 끌리는 모양과 맞음)
+function galaxy(g,cx,cy,R,tilt,rot){const q=mk('g',{transform:`translate(${cx},${cy}) scale(1,${tilt}) rotate(${rot||0})`},g);
  mk('circle',{cx:0,cy:0,r:R,fill:'url(#rgd)'},q);
  GP.forEach(([x,y,s,o])=>mk('circle',{cx:x*R,cy:y*R,r:s*R/100,fill:'#dfe6ff',opacity:o},q));
  mk('circle',{cx:0,cy:0,r:R*.3,fill:'url(#rgc)'},q)}
@@ -248,7 +249,7 @@ let rLast=-1,rT0=0;   // 단계가 바뀐 시각: 그래프는 한 번만 그리
 function rDraw(t){const g=rgg;g.innerHTML='';const s=DR.s;if(s!=rLast){rLast=s;rT0=t}
  iHead(g,['은하의 회전 (비스듬히 본 모습)','예상한 회전 속도 (개념도)','관측한 회전 속도 (개념도)','은하를 둘러싼 암흑 물질 (개념도)'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#rclip)'},g);
- if(s==0){const CX=360,CY=160,TY=CY-50,BY=CY+50;galaxy(inn,CX,CY,130,.34);mk('ellipse',{cx:CX,cy:CY,rx:147,ry:50,fill:'none',stroke:'#e8ecff','stroke-width':1,'stroke-dasharray':'3 5',opacity:.5},inn);   // 가장자리의 회전 궤도
+ if(s==0){const CX=360,CY=160,TY=CY-50,BY=CY+50;galaxy(inn,CX,CY,130,.34,-(t*8)%360);   // 은하가 천천히 돎 (45초에 한 바퀴): 위쪽은 지구 쪽으로 다가오고 아래쪽은 멀어짐mk('ellipse',{cx:CX,cy:CY,rx:147,ry:50,fill:'none',stroke:'#e8ecff','stroke-width':1,'stroke-dasharray':'3 5',opacity:.5},inn);   // 가장자리의 회전 궤도
   // 지구는 그림의 왼쪽 멀리 있음: 시선 방향(가로)과 나란하게 움직이는 위쪽 가장자리는 다가오고, 아래쪽 가장자리는 멀어짐 (반시계 방향 회전)
   [[TY,'#7fb8ff'],[BY,'#ff8a8a']].forEach(([y,c])=>mk('line',{x1:CX-24,y1:y,x2:72,y2:y,stroke:c,'stroke-width':1.4,'stroke-dasharray':'4 4','marker-end':'url(#rar)',opacity:.85},inn));
   mk('line',{x1:CX+30,y1:TY,x2:CX-22,y2:TY,stroke:'#7fb8ff','stroke-width':3.2,'marker-end':'url(#rar)'},inn);
