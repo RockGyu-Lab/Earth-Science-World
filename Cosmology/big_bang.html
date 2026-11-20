@@ -46,6 +46,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 /* 그림 아래 조작 줄 */
 .ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
 .pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
+.pb.rp{margin-left:auto}.pb.rp.off{visibility:hidden}   /* 다시 보기: 움직이는 그림이 끝나면 나타남 */
 .pb:disabled{opacity:.4;cursor:default}
 /* 과정 단계가 끝나면 관측 결과 단추가 되풀이하여 빛남 */
 .pb.glow{animation:pbGlow 1.6s ease-in-out infinite}
@@ -211,6 +212,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <button class="pb" id="zprev">◀ 이전 단계</button><button class="pb" id="znext">다음 단계 ▶</button>
    <span class="sn" id="znum"></span>
    <span class="go" id="zcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+   <button type="button" class="pb rp off" id="zrp">↺ 다시 보기</button>
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>A에서 출발한 빛이 B에 도달하려면 시간이 얼마나 걸릴까요?</p><button type="button" class="open-think" id="thb4">정답 확인</button></div>
   <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">지평선 문제: 서로 정보를 주고받을 수 없었던 우주의 양 끝에서 온 우주 배경 복사의 온도가 거의 같음</p></div>
@@ -279,7 +281,7 @@ const HN=[5,10],HHE=[5,6,9,10],HPB=[];   // 중성자 번호, 헬륨 원자핵�
 for(let r=0;r<4;r++)for(let c=0;c<4;c++){const k=r*4+c;HPB.push([85+c*120+((k*37)%23-11),80+r*62+((k*53)%19-9)])}
 const HCX=HHE.reduce((a,k)=>a+HPB[k][0],0)/4,HCY=HHE.reduce((a,k)=>a+HPB[k][1],0)/4;
 const HOFF={5:[11,-11],6:[-11,-11],9:[11,11],10:[-11,11]};   // 헬륨 원자핵 안의 자리 (중성자는 대각선으로)
-let hs=0,hm=0,hraf=0,hLast=0;
+let hs=0,hm=0,hraf=0,hLast=0,hT0=0;
 function hPart(g,x,y,p,r){mk('circle',{cx:x,cy:y,r,fill:p?'url(#hgp)':'url(#hgn)',stroke:p?'#ffc4c4':'#eef2fb','stroke-width':1},g);
  if(p&&r>10)txt('+',{x,y:y+r*.36,'text-anchor':'middle',fill:'#fff','font-size':r*1.15,'font-weight':800},g)}
 function hBar(g,y,parts){let x=568;const W=332;
@@ -333,11 +335,12 @@ function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
   txt('실제 우주의 관측',{x:568,y:164,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);
   hBar(g,172,[[74,'#ff9d9d','수소 약 74%'],[24,'#7fd3ff','헬륨 약 24%'],[2,'#a9b1cc','']]);
   txt('기타 원소 약 2%',{x:900,y:212,'text-anchor':'end',fill:'#a9b1cc','font-size':11.5},g);
-  T('예측과 관측이 잘 맞는다',{y:246,fill:'#ffd76b'});T('→ 빅뱅 우주론의 증거',{y:272,'font-size':17,'font-weight':800,fill:'#ffd76b'})}
+  const hp=NOW()-hT0-.4,ho=hp<0?0:hp<1.2?.3+.7*(.5+.5*Math.cos(hp*2*Math.PI/.4)):1;   // 관측 결과에 들어오면 결론이 1.2초 동안 세 번 반짝이며 나타남
+  T('예측과 관측이 잘 맞는다',{y:246,fill:'#ffd76b',opacity:ho});T('→ 빅뱅 우주론의 증거',{y:272,'font-size':17,'font-weight':800,fill:'#ffd76b',opacity:ho})}
 }
 function hLoop(now){const dt=Math.min(.05,(now-hLast)/1000);hLast=now;const tg=hs>=1?1:0;
  hm=tg>hm?Math.min(tg,hm+dt/1.2):Math.max(tg,hm-dt/1.2);if(!p2.hidden&&!eva.hidden)hDraw((now/1000-TB));hraf=requestAnimationFrame(hLoop)}
-function hGo(s){hs=Math.max(0,Math.min(2,s));const[tt,tx]=HS[hs];hstep.innerHTML=stepHTML(tt,tx);
+function hGo(s){hs=Math.max(0,Math.min(2,s));hT0=NOW();const[tt,tx]=HS[hs];hstep.innerHTML=stepHTML(tt,tx);
  // hs 0~1: 과정 1~2단계 / 2: 관측 결과와의 비교
  hprev.disabled=hs==0;hnext.textContent=hs==2?'↺ 처음으로':hs==1?'관측 결과 ▶':'다음 단계 ▶';hnum.textContent=hs==2?'관측 결과':`${hs+1} / 2 단계`;hnext.classList.toggle('glow',hs==1);
  if(hs==2){hcue.className='';hcue.textContent=''}else{hcue.className='go';hcue.innerHTML=hs==1?'<span class="kb">관측 결과</span>를 눌러 실제 관측과 비교해 보세요.':'<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.'}
@@ -505,7 +508,9 @@ function zEarth(g){mk('circle',{cx:ZX,cy:ZY,r:13,fill:'url(#zearth)',stroke:'#cf
 function zPt(g,[x,y],c,l,dx){mk('circle',{cx:x,cy:y,r:6,fill:c,stroke:'#fff','stroke-width':1.2},g);txt(l,{x:x+dx,y:y+6,'text-anchor':'middle',fill:c,'font-size':17,'font-weight':800},g)}
 function zTag(g,x,y,c){mk('rect',{x:x-30,y:y-15,width:60,height:22,rx:11,fill:c,opacity:.22},g);txt('약 2.7 K',{x,y:y+1,'text-anchor':'middle',fill:c,'font-size':12.5,'font-weight':800},g)}
 function zArrow(g,x,y,dir,c,o){mk('path',{d:`M${x},${y}l${-dir*10},-6v12z`,fill:c,opacity:o||1},g)}   // 오른쪽(dir 1)·왼쪽(-1)을 가리키는 화살촉, 끝점 (x, y)
-function zDraw(t){const g=zg;g.innerHTML='';const s=Z.s;
+const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
+let zLast=-1,zT0=0;   // 지평선 문제: 단계가 바뀌거나 다시 보기를 누른 시각
+function zDraw(t){const g=zg;g.innerHTML='';const s=Z.s;if(s!=zLast){zLast=s;zT0=t}zrp.classList.toggle('off',s!=1||t-zT0<7.2);
  txt(['지구에서 볼 수 있는 우주','서로 닿은 적 없는 A와 B'][s],{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
  mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#10122a',stroke:'rgba(255,255,255,.18)'},g);
  const inn=mk('g',{'clip-path':'url(#zclip)'},g);
@@ -519,14 +524,17 @@ function zDraw(t){const g=zg;g.innerHTML='';const s=Z.s;
   mk('line',{x1:ZX,y1:ZY,x2:ZX+ZR*Math.cos(.75),y2:ZY+ZR*Math.sin(.75),stroke:'#ffb357','stroke-width':1.4},inn);
   txt('빛으로 138억 년',{x:ZX+ZR*.5*Math.cos(.75)+10,y:ZY+ZR*.5*Math.sin(.75)+18,fill:'#ffb357','font-size':12.5,'font-weight':700},inn);
   zTag(inn,ZA[0]+40,ZY-26,ZCA);zTag(inn,ZB[0]-40,ZY-26,ZCB)}
+ // 2단계는 차례대로 보여 줌: A→지구 화살표(0.3~1.6초) → '지금까지 138억 년'·정리판 첫 줄 반짝(1.6초) → 지구→B 화살표(2.6~3.9초)·'138억 년 더 필요'·A→B 줄 반짝(2.6초) → 우주의 나이 반짝(4.6초) → 질문 반짝(5.8초)
+ const zp=t-zT0,ZBL=1.2,zbk=p0=>zp<p0?0:zp<p0+ZBL?.3+.7*(.5+.5*Math.cos((zp-p0)*2*Math.PI/.4)):1,zgl=p0=>zp>=p0&&zp<p0+ZBL;   // 반짝임: 1.2초 동안 세 번
  if(s==1){   // A에서 출발한 빛: 138억 년 뒤 지구까지 (B까지는 아직) + 서로 닿은 적 없는 A와 B의 온도가 같음
-  mk('line',{x1:ZA[0],y1:ZY,x2:ZX-24,y2:ZY,stroke:'#ffd76b','stroke-width':2.4},inn);zArrow(inn,ZX-15,ZY,1,'#ffd76b');   // A → 지구
-  mk('line',{x1:ZX+15,y1:ZY,x2:ZB[0]-18,y2:ZY,stroke:'#ffd76b','stroke-width':1.6,'stroke-dasharray':'3 5',opacity:.7},inn);zArrow(inn,ZB[0]-8,ZY,1,'#ffd76b',.7);   // 지구 → B (아직 가는 중)
-  txt('지금까지 138억 년',{x:(ZA[0]+ZX)/2,y:ZY-14,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':700},inn);
-  txt('138억 년 더 필요',{x:(ZB[0]+ZX)/2,y:ZY-14,'text-anchor':'middle',fill:'#ffb357','font-size':12.5,'font-weight':700},inn);
-  const by=ZY+ZR+14;mk('path',{d:`M${ZA[0]},${by-6}V${by}H${ZB[0]}V${by-6}`,fill:'none',stroke:'#e8ecff','stroke-width':1.2},inn);
-  txt('A → B : 빛으로 276억 년',{x:ZX,y:by-6,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':700},inn);
-  txt('두 곳의 온도가 왜 같을까?',{x:ZX,y:ZY-80,'text-anchor':'middle',fill:'#ffd76b','font-size':14,'font-weight':800},inn);   // 두 온도 꼬리표 바로 위에 의문을 글로 나타냄
+  const f1=ease((zp-.3)/1.3),f2=ease((zp-2.6)/1.3);
+  if(f1>0){const x=ZA[0]+(ZX-15-ZA[0])*f1;mk('line',{x1:ZA[0],y1:ZY,x2:x-9,y2:ZY,stroke:'#ffd76b','stroke-width':2.4},inn);zArrow(inn,x,ZY,1,'#ffd76b')}   // A → 지구
+  if(f2>0){const x=ZX+15+(ZB[0]-8-ZX-15)*f2;mk('line',{x1:ZX+15,y1:ZY,x2:x-9,y2:ZY,stroke:'#ffd76b','stroke-width':1.6,'stroke-dasharray':'3 5',opacity:.7},inn);zArrow(inn,x,ZY,1,'#ffd76b',.7)}   // 지구 → B (아직 가는 중)
+  txt('지금까지 138억 년',{x:(ZA[0]+ZX)/2,y:ZY-14,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':700,opacity:zbk(1.6)},inn);
+  txt('138억 년 더 필요',{x:(ZB[0]+ZX)/2,y:ZY-14,'text-anchor':'middle',fill:'#ffb357','font-size':12.5,'font-weight':700,opacity:zbk(2.6)},inn);
+  const by=ZY+ZR+14,bq=mk('g',{opacity:zbk(2.6)},inn);mk('path',{d:`M${ZA[0]},${by-6}V${by}H${ZB[0]}V${by-6}`,fill:'none',stroke:'#e8ecff','stroke-width':1.2},bq);
+  txt('A → B : 빛으로 276억 년',{x:ZX,y:by-6,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':700},bq);
+  txt('두 곳의 온도가 왜 같을까?',{x:ZX,y:ZY-80,'text-anchor':'middle',fill:'#ffd76b','font-size':14,'font-weight':800,opacity:zbk(5.8)},inn);   // 두 온도 꼬리표 바로 위에 의문을 글로 나타냄
   zTag(inn,ZA[0]+44,ZY-52,ZCA);zTag(inn,ZB[0]-44,ZY-52,ZCB);
   txt('A의 빛이 닿은 범위',{x:ZA[0],y:ZY+ZR-26,'text-anchor':'middle',fill:ZCA,'font-size':12,'font-weight':700},inn);
   txt('B의 빛이 닿은 범위',{x:ZB[0],y:ZY+ZR-26,'text-anchor':'middle',fill:ZCB,'font-size':12,'font-weight':700},inn)}
@@ -539,10 +547,13 @@ function zDraw(t){const g=zg;g.innerHTML='';const s=Z.s;
   [[572,'A 방향',ZCA],[740,'B 방향',ZCB]].forEach(([x,a,c])=>{pCard(g,x,178,156,56,c);
    txt(a,{x:x+40,y:212,'text-anchor':'middle',fill:c,'font-size':13.5,'font-weight':800},g);txt('약 2.7 K',{x:x+106,y:214,'text-anchor':'middle',fill:c,'font-size':19,'font-weight':800},g)});
   pPill(g,734,244,'반대 방향인데도 온도가 거의 같다','#ffd76b',13.5,280);pNote(g,288,'(우주 팽창은 생각하지 않은 단순한 그림)')}
- if(s==1){pRow(g,88,'A → 지구','138억 년','#e8ecff');pRow(g,124,'A → B','276억 년','#ffb357','#ffb357');pRow(g,160,'우주의 나이','약 138억 년','#e8ecff');
-  pBox(g,206,[['서로 정보를 주고받을 수 없었던 A와 B의'],['온도가 같은 까닭은? → 지평선 문제','#ffd76b',15]],'#ffd76b')}
+ if(s==1){const glow=(y,h,p0)=>{if(zgl(p0))mk('rect',{x:570,y:y-2,width:328,height:h+4,rx:12,fill:'none',stroke:'#ffd76b','stroke-width':2.6,opacity:.5+.5*Math.cos((zp-p0)*2*Math.PI/.4)},g)};   // 반짝이는 테두리
+  [[88,'A → 지구','138억 년','#e8ecff',null,1.6],[124,'A → B','276억 년','#ffb357','#ffb357',2.6],[160,'우주의 나이','약 138억 년','#e8ecff',null,4.6]].forEach(([y,a,b,c,ca,p0])=>{
+   pRow(mk('g',{opacity:zp<p0?.3:zbk(p0)},g),y,a,b,c,ca);glow(y,30,p0)});
+  pBox(mk('g',{opacity:zp<5.8?.3:zbk(5.8)},g),206,[['서로 정보를 주고받을 수 없었던 A와 B의'],['온도가 같은 까닭은? → 지평선 문제','#ffd76b',15]],'#ffd76b');glow(206,64,5.8)}
 }
 const Z=stepper(ZS,zstep,zprev,znext,znum,zcue,zDraw);
+zrp.onclick=()=>{zLast=-1};   // 다시 보기: 2단계를 처음부터 차례대로 다시 보여 줌
 
 // 평탄성 문제: 우주의 밀도와 모양(관측: 거의 평탄) → 밀도 차이는 시간이 지날수록 커짐(개념도) → 끝으로 세운 연필에 빗댐
 const FS=[
