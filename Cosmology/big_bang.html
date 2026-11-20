@@ -335,7 +335,7 @@ function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
   txt('실제 우주의 관측',{x:568,y:164,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);
   hBar(g,172,[[74,'#ff9d9d','수소 약 74%'],[24,'#7fd3ff','헬륨 약 24%'],[2,'#a9b1cc','']]);
   txt('기타 원소 약 2%',{x:900,y:212,'text-anchor':'end',fill:'#a9b1cc','font-size':11.5},g);
-  const hp=NOW()-hT0-.4,ho=hp<0?0:hp<1.2?.3+.7*(.5+.5*Math.cos(hp*2*Math.PI/.4)):1;   // 관측 결과에 들어오면 결론이 1.2초 동안 세 번 반짝이며 나타남
+  const hp=NOW()-hT0-.4,ho=hp<0?0:.4+.6*(.5+.5*Math.cos(hp*2*Math.PI/1.6));   // 관측 결과에 들어오면 결론이 나타나 1.6초마다 천천히 계속 반짝임
   T('예측과 관측이 잘 맞는다',{y:246,fill:'#ffd76b',opacity:ho});T('→ 빅뱅 우주론의 증거',{y:272,'font-size':17,'font-weight':800,fill:'#ffd76b',opacity:ho})}
 }
 function hLoop(now){const dt=Math.min(.05,(now-hLast)/1000);hLast=now;const tg=hs>=1?1:0;
