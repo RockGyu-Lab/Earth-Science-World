@@ -364,9 +364,11 @@ const bElPos=(k,t)=>[BEL[k][0]+8*Math.sin(t*3.1+k*2.1),BEL[k][1]+8*Math.cos(t*2.
 const BNA=BEL.map(([x,y],k)=>BEL.map(([u,v],j)=>[j,Math.hypot(u-x,v-y)]).filter(([j])=>j!=k).sort((a,b)=>a[1]-b[1]).map(([j])=>j)),BNB=BNA.map(a=>a.slice(0,6));   // BNA: 가까운 차례로 모든 전자, BNB: 가까운 6개
 let bPh=null;
 // 빛 여러 개가 같은 전자에 거의 동시에 부딪히지 않도록, 다른 빛이 향하고 있거나 막 떠난 전자는 고르지 않음
-const bBusy=q=>new Set(bPh.filter(o=>o!==q).flatMap(o=>[o.a,o.b]));
+const bBusy=q=>new Set(bPh.filter(o=>o!==q&&!o.free).flatMap(o=>[o.a,o.b]));
 function bPhStep(t){if(!bPh){bPh=[];[0,5,10,15,6].forEach(e0=>{const used=new Set(bPh.flatMap(o=>[o.a,o.b])),n=BNB[e0].find(j=>!used.has(j))??BNB[e0][0];bPh.push({p2:e0,p1:e0,a:e0,b:n,t0:t,D:.8})})}
- for(const q of bPh){while(t-q.t0>q.D){const busy=bBusy(q),c0=BNB[q.b].filter(j=>j!=q.a),c1=c0.filter(j=>!busy.has(j)),c=c1.length?c1:[BNA[q.b].find(j=>j!=q.a&&!busy.has(j))],n=c[Math.floor(Math.random()*c.length)];
+ for(const q of bPh){while(!q.free&&t-q.t0>q.D){
+   if(bs>=1&&bm>.5){const [px,py]=bElPos(q.b,q.t0+q.D);Object.assign(q,{free:true,fx:px,fy:py,tf:q.t0+q.D,fa:Math.random()*2*Math.PI});break}   // 2단계: 원자가 만들어지면 이 충돌이 마지막(최후의 산란) → 그 뒤로는 똑바로 나아감
+   const busy=bBusy(q),c0=BNB[q.b].filter(j=>j!=q.a),c1=c0.filter(j=>!busy.has(j)),c=c1.length?c1:[BNA[q.b].find(j=>j!=q.a&&!busy.has(j))],n=c[Math.floor(Math.random()*c.length)];
    q.p2=q.p1;q.p1=q.a;q.a=q.b;q.b=n;q.t0+=q.D;if(t-q.t0>3)q.t0=t;const [ax,ay]=BEL[q.a],[bx,by]=BEL[q.b];q.D=Math.hypot(bx-ax,by-ay)/120}}}
 const BRAY=[[80,.3,1],[250,-.25,-1],[150,-.12,1],[200,.4,-1],[260,.18,1],[110,-.35,-1]];   // 빛줄기: [출발 높이, 기울기, 1=오른쪽으로 / -1=왼쪽으로]
 let bs=0,bm=0,bw=0,bT=0,bLast=0;   // bm: 원자 결합 정도(0~1), bw: 4단계의 파장 늘어남 정도(0~1)
@@ -394,12 +396,21 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
   const cl=mk('g',{},g);mk('clipPath',{id:'bclip'},cl).appendChild(mk('rect',{x:20,y:44,width:500,height:252,rx:12}));
   const inn=mk('g',{'clip-path':'url(#bclip)'},g);
   // 빛
-  if(bs==0||(bs==1&&e<1)){bPhStep(t);bPh.forEach(q=>{const f=Math.min(1,(t-q.t0)/q.D),P=j=>bElPos(j,t);
+  if(bs<=1){bPhStep(t);bPh.forEach(q=>{
+    if(q.free){const d=(t-q.tf)*120,ca=Math.cos(q.fa),sa=Math.sin(q.fa),L=Math.max(8,Math.min(46,d)),hx=q.fx+ca*d,hy=q.fy+sa*d,k=(t-q.tf)/1.2;   // 최후의 산란 뒤: 그 자리에서 똑바로 나아감
+     if(k<1)mk('circle',{cx:q.fx,cy:q.fy,r:7+12*k,fill:'none',stroke:'#ffe9a8','stroke-width':1.6,opacity:.9*(1-k)},inn);   // 마지막으로 부딪힌 자리: 고리가 번지며 사라짐
+     if(hx>-60&&hx<600&&hy>-20&&hy<360)bWave(inn,hx-ca*L,hy-sa*L,q.fa,L,9,'#ffd76b',4,2.2);return}
+    const f=Math.min(1,(t-q.t0)/q.D),P=j=>bElPos(j,t);
     const b=P(q.a),c=P(q.b),hx2=b[0]+(c[0]-b[0])*f,hy2=b[1]+(c[1]-b[1])*f;
     // 지금 나아가는 빛은 2단계부터와 같은 물결 화살표, 부딪힌 자리는 고리 (지나온 길은 그리지 않음)
     const ang=Math.atan2(c[1]-b[1],c[0]-b[0]),L=Math.max(8,Math.min(46,Math.hypot(hx2-b[0],hy2-b[1]))),tx=hx2-Math.cos(ang)*L,ty=hy2-Math.sin(ang)*L;
     mk('circle',{cx:b[0],cy:b[1],r:7,fill:'none',stroke:'#ffe9a8','stroke-width':1.2,opacity:.6*(1-f)},inn);
-    bWave(inn,tx,ty,ang,L,9,'#ffd76b',4,2.2)})}
+    bWave(inn,tx,ty,ang,L,9,'#ffd76b',4,2.2)});
+   const fr=bPh.filter(q=>q.free).sort((a,b)=>a.tf-b.tf);
+   if(fr.length){const q0=fr[0],k=t-q0.tf;if(k<2.4)txt('최후의 산란',{x:q0.fx,y:q0.fy-16,'text-anchor':'middle',fill:'#ffe9a8','font-size':12.5,'font-weight':800,opacity:Math.max(0,Math.min(1,k/.3,(2.4-k)/.6))},inn)}   // 처음 풀려난 빛에 잠깐 이름표
+   if(bs==1&&fr.length==bPh.length){const T0=fr[fr.length-1].tf;   // 모든 빛이 풀려난 뒤: 우주의 다른 곳에서 똑바로 퍼져 나온 빛이 가장자리에서 새로 들어옴 (갑자기 생기지 않게)
+    BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,per=700,u=((t*sp+i*131)%per)-110;if(t-(u+110)/sp<T0)return;const a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a);
+     bWave(inn,(dir>0?20:520)+c*u,44+y0+s*u,a,46,9,'#ffd76b',4,2.2)})}}
   else{const lam=bs==2?9*Math.pow(4,bw):9,col=bs==2?`rgb(255,${mix(215,110,bw)},${mix(107,90,bw)})`:'#ffd76b';
    BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,len=46*Math.pow(2,bs==2?bw:0),per=700,u=((t*sp+i*131)%per)-110,a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a),
      x=(dir>0?20:520)+c*u,y=44+y0+s*u;bWave(inn,x,y,a,len,lam,col,4+2*(bs==2?bw:0),2.2)})}
@@ -458,7 +469,8 @@ function bLoop(now){const dt=Math.min(.05,(now-bLast)/1000);bLast=now;const tg=b
 let bCon=null,bO0=0;   // 관측 결과의 결론 글씨, 관측 결과에 들어온 시각
 function bBlink(){if(!bCon)return;const p=NOW()-bO0-.4;bCon.setAttribute('opacity',p<0?0:.4+.6*(.5+.5*Math.cos(p*2*Math.PI/1.6)))}   // 1.6초마다 천천히 계속 반짝임
 // bs 0~2: 과정 1~3단계 / 3: 관측 결과(스펙트럼 + WMAP 지도)
-function bGo(s){bs=Math.max(0,Math.min(3,s));bw=0;bO0=NOW();bCon=null;const[tt,tx]=BS[bs],ob=bs==3;bstep.innerHTML=stepHTML(tt,tx);
+function bGo(s){bs=Math.max(0,Math.min(3,s));bw=0;if(bs==0)bPh=null;   // 1단계로 돌아오면 빛이 다시 전자와 부딪히기 시작
+ bO0=NOW();bCon=null;const[tt,tx]=BS[bs],ob=bs==3;bstep.innerHTML=stepHTML(tt,tx);
  bprev.disabled=bs==0;bnext.textContent=bs==3?'↺ 처음으로':bs==2?'관측 결과 ▶':'다음 단계 ▶';bnum.textContent=ob?'관측 결과':`${bs+1} / 3 단계`;bnext.classList.toggle('glow',bs==2);
  if(bs==3){bcue.className='';bcue.textContent=''}else{bcue.className='go';bcue.innerHTML=bs<2?'<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.':'<span class="kb">관측 결과</span>를 눌러 실제 관측 결과를 살펴보세요.'}
  bDraw(NOW())}
