@@ -449,6 +449,10 @@ function qDraw(t){const g=qgg;g.innerHTML='';const s=DQ.s;if(s!=qLast){qLast=s;q
   pPill(g,734,252,'아직 정체가 밝혀지지 않음','#e8ecff',13.5,220)}
 }
 const DQ=stepper(QS,qstep,qprev,qnext,qnum,qcue,qDraw);
+// 암흑 에너지 설명 상자: 높이를 이 탭에서 가장 긴 단계의 글에 맞춤 (화면 폭에 따라 다시 맞춤, 빈 줄이 남지 않게)
+function qFit(){if(!qstep.offsetParent)return;const keep=qstep.innerHTML;let h=0;qstep.style.minHeight='0';
+ QS.forEach(([tt,tx])=>{qstep.innerHTML=stepHTML(tt,tx);h=Math.max(h,qstep.offsetHeight)});qstep.innerHTML=keep;qstep.style.minHeight=h+'px'}
+a6b.addEventListener('click',()=>requestAnimationFrame(qFit));addEventListener('resize',qFit);
 DA.go(0);DQ.go(0);
 (function aLoop(now){if(!p6.hidden){const t=(now/1000-TB);if(!ava.hidden)aDraw(t);else qDraw(t);if(!ov13.hidden)iaDraw(t)}requestAnimationFrame(aLoop)})(performance.now());
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
