@@ -407,7 +407,6 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
     mk('circle',{cx:b[0],cy:b[1],r:7,fill:'none',stroke:'#ffe9a8','stroke-width':1.2,opacity:.6*(1-f)},inn);
     bWave(inn,tx,ty,ang,L,9,'#ffd76b',4,2.2)});
    const fr=bPh.filter(q=>q.free).sort((a,b)=>a.tf-b.tf);
-   if(fr.length){const q0=fr[0],k=t-q0.tf;if(k<2.4)txt('최후의 산란',{x:q0.fx,y:q0.fy-16,'text-anchor':'middle',fill:'#ffe9a8','font-size':12.5,'font-weight':800,opacity:Math.max(0,Math.min(1,k/.3,(2.4-k)/.6))},inn)}   // 처음 풀려난 빛에 잠깐 이름표
    if(bs==1&&fr.length==bPh.length){const T0=fr[fr.length-1].tf;   // 모든 빛이 풀려난 뒤: 우주의 다른 곳에서 똑바로 퍼져 나온 빛이 가장자리에서 새로 들어옴 (갑자기 생기지 않게)
     BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,per=700,u=((t*sp+i*131)%per)-110;if(t-(u+110)/sp<T0)return;const a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a);
      bWave(inn,(dir>0?20:520)+c*u,44+y0+s*u,a,46,9,'#ffd76b',4,2.2)})}}
