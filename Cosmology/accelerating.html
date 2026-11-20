@@ -89,6 +89,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
 .think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg);font-family:inherit}
 .think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
+.think .ans .rd{color:var(--no)}
 .think .exp{margin:0;font-size:.93rem;line-height:1.6}
 .think .exp+.exp{margin-top:6px}
 /* ① 현대 우주론: 정상 우주론과 빅뱅 우주론 그림판을 나란히 (좁은 화면에서는 위아래로) */
@@ -179,12 +180,15 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </div></div>
   <div class="ov" id="ov13" hidden><div class="think" role="dialog" aria-modal="true" aria-label="더 알아보기: Ia형 초신성">
    <div class="think-h"><b class="think-t"><span class="tag">더 알아보기</span>Ia형 초신성</b><button type="button" class="x" id="thx13" aria-label="닫기">닫기 ✕</button></div>
-   <svg id="iasv" viewBox="20 44 500 252" style="display:block;width:100%;height:auto;border-radius:12px;margin-bottom:8px" aria-label="쌍성계에서 백색 왜성이 동반성의 물질을 끌어당겨 질량이 태양의 약 1.4배가 되면 폭발하는 모습"><g id="iagg"></g></svg>
+   <svg id="iasv" viewBox="20 44 500 252" style="display:block;width:100%;height:auto;border-radius:12px;margin-bottom:8px" aria-label="쌍성계에서 동반성의 물질이 백색 왜성 쪽으로 흘러 넘어가 원반을 이루며 쌓이고, 백색 왜성의 질량이 태양의 약 1.4배가 되면 폭발하는 모습"><defs>
+    <radialGradient id="iadk" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffffff"/><stop offset=".18" stop-color="#fff1c2"/><stop offset=".45" stop-color="#ffc277" stop-opacity=".85"/><stop offset=".8" stop-color="#ff7a52" stop-opacity=".45"/><stop offset="1" stop-color="#ff7a52" stop-opacity="0"/></radialGradient>
+    <radialGradient id="iahs" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fffbe8"/><stop offset=".4" stop-color="#ffd38a" stop-opacity=".8"/><stop offset="1" stop-color="#ff9d6a" stop-opacity="0"/></radialGradient>
+   </defs><g id="iagg"></g></svg>
    <div class="ctl" style="margin:0 0 8px"><button type="button" class="pb" id="iare">↺ 다시 보기</button></div>
-   <p class="ans">Ia형 초신성은 쌍성계에서 백색 왜성이 폭발하는 초신성으로, 매우 밝아서 아주 먼 은하에 있어도 관측할 수 있습니다.</p>
-   <p class="exp">백색 왜성이 가까이 있는 동반성(적색 거성)의 물질을 끌어당겨 질량이 늘어나다가, 태양 질량의 약 1.4배에 이르면 폭발합니다.</p>
-   <p class="exp">Ia형 초신성은 가장 밝을 때 태양보다 수십억 배나 밝아서, 은하 하나가 내는 빛과 맞먹을 정도입니다. 그래서 수십억 광년 떨어진 먼 은하에서 폭발해도 관측할 수 있습니다.</p>
-   <p class="exp">또 거의 같은 질량에서 폭발하므로 최대 밝기가 거의 일정합니다. 그래서 겉보기 밝기를 측정하면 거리를 구할 수 있어, 먼 은하까지의 거리를 재는 기준(표준 촛불)으로 씁니다.</p>
+   <p class="ans">Ia형 초신성은 쌍성계에서 백색 왜성이 폭발하는 초신성으로, <span class="rd">최대 밝기가 거의 일정</span>해서 <span class="rd">거리를 측정하는 기준(표준 촛불)</span>으로 쓸 수 있고, <span class="rd">매우 밝아서 아주 멀리 있어도 관측</span>할 수 있습니다.</p>
+   <p class="exp">동반성(적색 거성)의 바깥층 물질이 백색 왜성 쪽으로 흘러 넘어가 백색 왜성 둘레를 돌며 원반을 이루고, 이 물질이 백색 왜성에 쌓여 질량이 늘어납니다. 질량이 태양 질량의 약 1.4배에 이르면 백색 왜성이 폭발합니다.</p>
+   <p class="exp">이처럼 거의 같은 질량에서 폭발하므로 최대 밝기가 거의 일정합니다. 그래서 겉보기 밝기를 측정하면 거리를 구할 수 있어, 먼 은하까지의 거리를 재는 기준(표준 촛불)으로 씁니다.</p>
+   <p class="exp">또 Ia형 초신성은 가장 밝을 때 태양보다 수십억 배나 밝아서, 은하 하나가 내는 빛과 맞먹을 정도입니다. 그래서 수십억 광년 떨어진 먼 은하에서 폭발해도 관측할 수 있습니다.</p>
   </div></div>
   <div class="ov" id="ov14" hidden><div class="think big" role="dialog" aria-modal="true" aria-label="자세히 이해하기: 적색 편이가 같을 때 팽창 모델에 따라 은하까지의 거리가 다른 이유는?">
    <div class="think-h"><b class="think-t"><span class="tag more">자세히 이해하기</span>적색 편이가 같을 때 팽창 모델에 따라 은하까지의 거리가 다른 이유는?</b><button type="button" class="x" id="thx14" aria-label="닫기">닫기 ✕</button></div>
@@ -277,13 +281,24 @@ const ASN=[[.05,0],[.09,.01],[.13,-.008],[.18,.006],[.23,-.004],[.28,.008],[.46,
 let iaT0=0;
 function iaDraw(t){const inn=iagg;inn.innerHTML='';const p=t-iaT0,m=Math.min(1,p/5),WX=372,WY=150;
   iBox(inn);
-  mk('circle',{cx:150,cy:150,r:66,fill:'url(#agi)'},inn);
+  // 동반성: 백색 왜성의 중력에 끌려 백색 왜성 쪽이 뾰족하게 늘어난 물방울 모양 (물질이 넘어가는 쌍성의 모습)
+  const CR=62,CX=146,TX=234,al=Math.acos(CR/(TX-CX)),ca=(CX+CR*Math.cos(al)).toFixed(1),sa=(CR*Math.sin(al)).toFixed(1);   // 둥근 별 + 백색 왜성 쪽 뾰족한 끝(TX)
+  if(p<5){const S=[[232,150],[274,151],[312,170],[338,160]];   // 물질의 흐름: 동반성의 뾰족한 끝 → 원반 가장자리 (쌍성이 돌고 있어 휘어짐)
+   mk('path',{d:`M${S[0]}C${S[1]} ${S[2]} ${S[3]}`,fill:'none',stroke:'#ff9d7a','stroke-width':9,'stroke-linecap':'round',opacity:.18},inn)}
+  mk('path',{d:`M${TX},150Q${(TX+ +ca)/2},${150-sa*.42} ${ca},${150-sa}A${CR},${CR} 0 1 0 ${ca},${150+ +sa}Q${(TX+ +ca)/2},${150+sa*.42} ${TX},150Z`,fill:'url(#agi)'},inn);
   txt('동반성 (적색 거성)',{x:150,y:240,'text-anchor':'middle',fill:'#ffb39a','font-size':12.5,'font-weight':800},inn);
-  if(p<5){const P=[[210,124],[270,96],[332,118],[WX-8,WY-4]];
-   mk('path',{d:`M${P[0]}C${P[1]} ${P[2]} ${P[3]}`,fill:'none',stroke:'#ff9d7a','stroke-width':3,opacity:.55},inn);
-   for(let k=0;k<4;k++){const[x,y]=bz(P,((t*.6+k/4)%1));mk('circle',{cx:x,cy:y,r:3.2,fill:'#ffb39a'},inn)}
-   mk('ellipse',{cx:WX,cy:WY,rx:24,ry:7,fill:'none',stroke:'#ffb39a','stroke-width':2,opacity:.8},inn);
-   mk('circle',{cx:WX,cy:WY,r:16,fill:'url(#afl)',opacity:.6},inn);mk('circle',{cx:WX,cy:WY,r:7,fill:'#fff'},inn);
+  if(p<5){const S=[[232,150],[274,151],[312,170],[338,160]],grow=.85+.3*m;
+   mk('path',{d:`M${S[0]}C${S[1]} ${S[2]} ${S[3]}`,fill:'none',stroke:'#ffb39a','stroke-width':3,'stroke-linecap':'round',opacity:.7},inn);
+   for(let k=0;k<7;k++){const u=(t*.45+k/7)%1,[x,y]=bz(S,u);mk('circle',{cx:x,cy:y,r:2.8-1.2*u,fill:'#ffd2b8',opacity:.9},inn)}
+   // 강착 원반: 백색 왜성 둘레를 도는 뜨거운 물질 (기울어져 보여 납작한 타원). 안쪽일수록 빨리 돎
+   mk('ellipse',{cx:WX,cy:WY,rx:48*grow,ry:15*grow,fill:'url(#iadk)'},inn);
+   [[42,'#ff9d7a',.5],[30,'#ffc277',.6],[19,'#fff1c2',.7]].forEach(([r,c,o])=>mk('ellipse',{cx:WX,cy:WY,rx:r*grow,ry:r*.31*grow,fill:'none',stroke:c,'stroke-width':1,opacity:o*.6},inn));
+   [[42,10,'#ffb39a'],[30,8,'#ffd38a'],[19,6,'#fff6dc']].forEach(([r,n,c])=>{const w=1.1*Math.pow(42/r,1.5);
+    for(let k=0;k<n;k++){const a=k*2*Math.PI/n-w*t;mk('circle',{cx:WX+r*grow*Math.cos(a),cy:WY+r*.31*grow*Math.sin(a),r:1.7,fill:c,opacity:.55+.45*Math.max(0,Math.sin(a))},inn)}});
+   mk('circle',{cx:339,cy:159,r:7+Math.sin(t*6)*.8,fill:'url(#iahs)'},inn);   // 흐름이 원반에 부딪히는 밝은 곳
+   mk('circle',{cx:WX,cy:WY,r:13+3*m,fill:'url(#afl)',opacity:.75},inn);mk('circle',{cx:WX,cy:WY,r:5,fill:'#fff'},inn);
+   txt('물질의 흐름',{x:282,y:136,'text-anchor':'middle',fill:'#ffb39a','font-size':11.5,'font-weight':700},inn);
+   txt('물질이 도는 원반',{x:WX,y:WY-24,'text-anchor':'middle',fill:'#ffd38a','font-size':11.5,'font-weight':700},inn);
    txt('백색 왜성',{x:WX,y:WY+34,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':800},inn)}
   else{const b=ease((p-5)/1.2);
    mk('circle',{cx:WX,cy:WY,r:12+b*90,fill:'url(#afl)'},inn);
