@@ -557,11 +557,10 @@ function zDraw(t){const g=zg;g.innerHTML='';const s=Z.s;if(s!=zLast){zLast=s;zT0
 const Z=stepper(ZS,zstep,zprev,znext,znum,zcue,zDraw);
 zrp.onclick=()=>{zLast=-1};   // 다시 보기: 2단계를 처음부터 차례대로 다시 보여 줌
 
-// 평탄성 문제: 우주의 밀도와 모양(관측: 거의 평탄) → 밀도 차이는 시간이 지날수록 커짐(개념도) → 끝으로 세운 연필에 빗댐
+// 평탄성 문제: 우주의 밀도와 모양(관측: 거의 평탄) → 밀도 차이는 시간이 지날수록 커짐(개념도)과 평탄성 문제(끝으로 세운 연필은 정리판에 작게)
 const FS=[
  ['우주의 밀도와 모양','우주의 모양은 우주의 밀도를 <em>임계 밀도</em>와 비교하여 정해집니다. 밀도가 임계 밀도보다 크면 <em>닫힌 우주</em>, 같으면 <em>평탄한 우주</em>, 작으면 <em>열린 우주</em>입니다. 우주 배경 복사의 관측 결과에 따르면 현재 우주는 <em>거의 완벽하게 평탄</em>하므로, 현재 우주의 밀도는 <em>임계 밀도와 거의 같습니다</em>.'],
- ['점점 커지는 밀도 차이','초기 우주의 밀도가 임계 밀도와 조금만 달라도 그 차이는 <em>시간이 지날수록 커집니다</em>. 밀도가 조금 컸다면 우주는 <em>일찍 수축</em>했을 것이고, 조금 작았다면 <em>너무 빨리 팽창</em>하여 별과 은하가 만들어지기 어려웠을 것입니다.'],
- ['평탄성 문제','현재 우주가 이렇게 평탄하려면 초기 우주의 밀도가 임계 밀도와 <em>매우 정밀한 수준으로 같아야</em> 합니다. 끝으로 세운 연필이 138억 년 동안 쓰러지지 않은 것과 같습니다. 그 까닭을 빅뱅 우주론으로 설명하기 어려우며, 이를 <em>평탄성 문제</em>라고 합니다.']];
+ ['평탄성 문제','초기 우주의 밀도가 임계 밀도와 조금만 달라도 그 차이는 <em>시간이 지날수록 커져</em>, 우주는 <em>일찍 수축</em>하거나 <em>너무 빨리 팽창</em>하여 별과 은하가 만들어지기 어려웠을 것입니다. 따라서 현재 우주가 이렇게 평탄하려면 초기 밀도가 임계 밀도와 <em>매우 정밀하게 같아야</em> 하는데, 빅뱅 우주론으로는 그 까닭을 설명하기 어렵습니다. 이를 <em>평탄성 문제</em>라고 합니다.']];
 const FC=['#ff9d9d','#ffd76b','#7fd3ff'];   // 닫힌 · 평탄한 · 열린 우주
 // 세 가지 우주의 모양: 3차원 면(구면·평면·말안장 면)을 비스듬히 내려다본 모습으로 그리고, 면 위에 삼각형을 그림
 // fP: 3차원 점 [x,y,z] → [화면 x, 화면 y, 깊이(클수록 앞)]. yaw: 수평 회전, el: 내려다보는 각도
@@ -609,7 +608,7 @@ function fShapes(g,hi){const op=k=>hi<0||hi==k?1:.3;
   txt('내각의 합 '+b,{x,y:260,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,opacity:o},g);
   txt(c,{x,y:280,'text-anchor':'middle',fill:'#cfd6ee','font-size':12.5,opacity:o},g)})}
 function fDraw(t){const g=flg;g.innerHTML='';const s=F.s;
- txt(['밀도에 따른 우주의 모양','우주의 크기 변화 (개념도)','끝으로 세운 연필'][s],{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
+ txt(['밀도에 따른 우주의 모양','우주의 크기 변화 (개념도)'][s],{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
  mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#10122a',stroke:'rgba(255,255,255,.18)'},g);
  if(s==0){fShapes(g,-1);mk('rect',{x:190,y:86,width:160,height:204,rx:12,fill:'none',stroke:'#ffd76b','stroke-width':2,'stroke-dasharray':'6 4'},g);txt('관측 결과: 거의 평탄',{x:270,y:74,'text-anchor':'middle',fill:'#ffd76b','font-size':14,'font-weight':800},g)}   // 세 가지 모양 중 관측된 평탄한 우주를 점선 테두리로 강조
  if(s==1){   // 시간에 따른 우주의 크기: 처음에는 거의 같다가 점점 벌어짐 (암흑 에너지는 생각하지 않음)
@@ -623,15 +622,6 @@ function fDraw(t){const g=flg;g.innerHTML='';const s=F.s;
    txt('밀도 = 임계 밀도',{x:X(1)-4,y:Y(fl(1))-10,'text-anchor':'end',fill:FC[1],'font-size':12.5,'font-weight':800},g);
    txt('너무 빨리 팽창',{x:X(1)-34,y:Y(fl(1)+.35)-2,'text-anchor':'end',fill:FC[2],'font-size':12.5,'font-weight':800},g)}
   txt('처음에는 거의 같음',{x:X(.03),y:Y(.3),fill:'#cfd6ee','font-size':12},g)}
- if(s==2){const tl=Math.sin(t*1.6)*1.2;   // 끝으로 선 연필 (살짝 흔들림), 양옆은 쓰러진 모습
-  mk('line',{x1:60,y1:258,x2:480,y2:258,stroke:'#cfd6ee','stroke-width':1.4},g);
-  const pencil=(rot,op)=>{const q=mk('g',{transform:`rotate(${rot} 270 258)`,opacity:op},g);
-   mk('path',{d:'M270,258L259,232H281Z',fill:'#f1d4a6'},q);mk('path',{d:'M270,258L266.5,249.6H273.5Z',fill:'#333'},q);
-   mk('rect',{x:259,y:92,width:22,height:140,fill:'#ffc94d',stroke:'#c9962a'},q);mk('rect',{x:259,y:80,width:22,height:12,fill:'#ff8a9a'},q);return q};
-  pencil(-62,.25);pencil(62,.25);pencil(tl,1);
-  txt('조금만 기울어도',{x:130,y:212,'text-anchor':'middle',fill:'#a9b1cc','font-size':12.5},g);txt('쓰러짐',{x:130,y:230,'text-anchor':'middle',fill:'#a9b1cc','font-size':12.5},g);
-  txt('조금만 기울어도',{x:410,y:212,'text-anchor':'middle',fill:'#a9b1cc','font-size':12.5},g);txt('쓰러짐',{x:410,y:230,'text-anchor':'middle',fill:'#a9b1cc','font-size':12.5},g);
-  txt('138억 년 동안 서 있는 연필?',{x:270,y:284,'text-anchor':'middle',fill:'#ffd76b','font-size':14,'font-weight':800},g)}
  // 오른쪽: 단계별 정리
  pPanel(g,FS[s][0]);const T=PT(g,734);
  // 오른쪽 정리판: 색 상자(카드)와 작은 그림으로 정리
@@ -646,20 +636,16 @@ function fDraw(t){const g=flg;g.innerHTML='';const s=F.s;
    txt(a,{x:626,y:y+18,fill:'#e8ecff','font-size':14,'font-weight':800},g);txt(b,{x:626,y:y+34,fill:'#a9b1cc','font-size':11.5},g);
    pill(844,y+7,n,c,13,96)});
   card(572,224,324,60,FC[1]);T('관측: 현재 우주는 거의 완벽하게 평탄',{y:248,'font-size':14.5,fill:FC[1]});T('현재 우주의 밀도 ≈ 임계 밀도',{y:272,'font-size':13.5})}
- if(s==1){T('초기의 아주 작은 밀도 차이도',{y:98,'font-size':14});T('시간이 지날수록 점점 커진다',{y:120,'font-size':14,fill:'#ffd76b'});
-  // 부채꼴로 벌어지는 세 갈래 (개념도)
-  [[30,FC[0]],[0,FC[1]],[-30,FC[2]]].forEach(([d,c])=>mk('path',{d:`M604,166C700,166 780,${166+d*.35} 870,${166+d}`,fill:'none',stroke:c,'stroke-width':2.4},g));
-  mk('circle',{cx:604,cy:166,r:4,fill:'#fff'},g);
-  txt('초기: 거의 같음',{x:604,y:212,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);txt('지금: 크게 달라짐',{x:850,y:212,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
-  txt('시간 →',{x:732,y:212,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
-  card(572,226,324,56,'#ffd76b');T('지금 우주가 거의 평탄하려면',{y:248,'font-size':13.5});T('초기 밀도 = 임계 밀도 (매우 정밀하게)',{y:270,'font-size':14,fill:'#ffd76b'})}
- if(s==2){card(572,88,324,72,'#ffffff',.05);
-  mk('circle',{cx:602,cy:124,r:18,fill:'#ffd76b','fill-opacity':.2,stroke:'#ffd76b','stroke-opacity':.6},g);txt('?',{x:602,y:132,'text-anchor':'middle',fill:'#ffd76b','font-size':22,'font-weight':800},g);
-  txt('초기 우주의 밀도는 왜 임계 밀도와',{x:630,y:118,fill:'#e8ecff','font-size':14,'font-weight':800},g);txt('이렇게 정밀하게 같았을까?',{x:630,y:142,fill:'#e8ecff','font-size':14,'font-weight':800},g);
-  txt('▼',{x:734,y:182,'text-anchor':'middle',fill:'#a9b1cc','font-size':13},g);
-  pill(734,192,'평탄성 문제','#ffd76b',18,160);
-  T('빅뱅 우주론으로는 설명하기 어려움',{y:254,'font-size':13.5,fill:'#cfd6ee','font-weight':400});
-  T('→ 급팽창 이론에서 해결 방법을 알아봅니다',{y:278,'font-size':12.5,fill:'#a9b1cc','font-weight':400})}
+ if(s==1){card(572,86,324,64,'#ffffff',.05);   // 밀도 차이 그래프(왼쪽)에서 이어지는 질문 → 연필 비유(작게) → 평탄성 문제
+  mk('circle',{cx:602,cy:118,r:17,fill:'#ffd76b','fill-opacity':.2,stroke:'#ffd76b','stroke-opacity':.6},g);txt('?',{x:602,y:126,'text-anchor':'middle',fill:'#ffd76b','font-size':21,'font-weight':800},g);
+  txt('초기 우주의 밀도는 왜 임계 밀도와',{x:630,y:113,fill:'#e8ecff','font-size':14,'font-weight':800},g);txt('이렇게 정밀하게 같았을까?',{x:630,y:136,fill:'#e8ecff','font-size':14,'font-weight':800},g);
+  card(572,160,324,56,'#ffc94d',.06);   // 끝으로 세운 연필 (작은 그림)
+  mk('rect',{x:597,y:170,width:9,height:28,fill:'#ffc94d',stroke:'#c9962a','stroke-width':.8},g);mk('rect',{x:597,y:166,width:9,height:4,fill:'#ff8a9a'},g);mk('path',{d:'M597,198L601.5,208L606,198Z',fill:'#f1d4a6'},g);
+  mk('line',{x1:588,y1:208,x2:616,y2:208,stroke:'#cfd6ee','stroke-width':1.2},g);
+  txt('끝으로 세운 연필이',{x:630,y:184,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);txt('138억 년 동안 쓰러지지 않은 것과 같음',{x:630,y:204,fill:'#cfd6ee','font-size':12.5},g);
+  txt('▼',{x:734,y:234,'text-anchor':'middle',fill:'#a9b1cc','font-size':13},g);
+  pill(734,240,'평탄성 문제','#ffd76b',16,150);
+  T('빅뱅 우주론으로는 설명하기 어려움',{y:290,'font-size':13,fill:'#cfd6ee','font-weight':400})}
 }
 const F=stepper(FS,fstep,fprev,fnext,fnum,fcue,fDraw);
 Z.go(0);F.go(0);
