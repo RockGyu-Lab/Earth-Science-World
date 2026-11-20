@@ -46,6 +46,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 /* 그림 아래 조작 줄 */
 .ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
 .pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
+.pb.rp{margin-left:auto}.pb.rp.off{visibility:hidden}   /* 다시 보기: 애니메이션이 끝나면 나타남 */
 .pb:disabled{opacity:.4;cursor:default}
 /* 과정 단계가 끝나면 관측 결과 단추가 되풀이하여 빛남 */
 .pb.glow{animation:pbGlow 1.6s ease-in-out infinite}
@@ -210,6 +211,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <button class="pb" id="qprev">◀ 이전 단계</button><button class="pb" id="qnext">다음 단계 ▶</button>
    <span class="sn" id="qnum"></span>
    <span class="go" id="qcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+   <button type="button" class="pb rp off" id="qrp">↺ 다시 보기</button>
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>우주가 팽창할수록 암흑 에너지의 영향이 점점 커지는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb12">정답 확인</button></div>
   <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">암흑 에너지: 우주를 가속 팽창시키는 에너지(척력처럼 작용) · 우주의 구성: 암흑 에너지 약 68&nbsp;%, 암흑 물질 약 27&nbsp;%, 보통 물질 약 5&nbsp;%</p></div>
@@ -385,7 +387,9 @@ const QS=[
 const QDOT=[];{const r=rnd0(23);for(let i=0;i<4;i++)for(let j=0;j<4;j++)QDOT.push([(i+.5)/4-.5+(r()-.5)*.12,(j+.5)/4-.5+(r()-.5)*.12])}   // 상자 안의 물질 (개수는 그대로)
 function qGal(g,x,y,r){mk('ellipse',{cx:x,cy:y,rx:r*1.6,ry:r,fill:'url(#qgx)'},g);mk('circle',{cx:x,cy:y,r:r*.35,fill:'#fff'},g)}
 let qLast=-1,qT0=0;   // 단계가 바뀐 시각: 애니메이션은 한 번만 진행하고 마지막 모습을 유지
-function qDraw(t){const g=qgg;g.innerHTML='';const s=DQ.s;if(s!=qLast){qLast=s;qT0=t}
+const QDUR=[5.6,5.8,2.3];   // 단계별 애니메이션 길이(초): 끝나면 '다시 보기' 단추가 나타남
+qrp.onclick=()=>{qLast=-1};   // 다시 보기: 다음 그리기에서 단계의 애니메이션을 처음부터 진행
+function qDraw(t){const g=qgg;g.innerHTML='';const s=DQ.s;if(s!=qLast){qLast=s;qT0=t}qrp.classList.toggle('off',t-qT0<QDUR[s]);
  iHead(g,['중력과 암흑 에너지 (은하 사이가 점점 빠르게 멀어짐)','우주가 팽창할 때 밀도의 변화 (개념도)','우주를 이루는 것'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#qclip)'},g);
  if(s==0){const p=t-qT0,R=44+36*Math.pow(Math.min(1,p/5.5),2),CX=270,CY=156,q=44/R;   // 은하 사이의 거리가 점점 빠르게 멀어짐
