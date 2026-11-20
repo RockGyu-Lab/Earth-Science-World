@@ -2,7 +2,7 @@
    오른쪽 끝은 본문(main 또는 .wrap)의 내용이 끝나는 자리에 맞춤
    문구를 바꿀 때는 아래 TEXT만 고치면 모든 페이지에 함께 반영됨 */
 (function () {
-  var TEXT = '© Rock Gyu';
+  var TEXT = '© RockGyu';
   var s = document.createElement('style');
   s.textContent = '.copyright{position:fixed;right:10px;bottom:4px;z-index:50;pointer-events:none;' +
     'font:500 11px/1.4 "Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;' +
