@@ -259,6 +259,8 @@ function iDraw(t){const g=ig;g.innerHTML='';
   const after=l=>l<=12?.5*(l+34):23+(l-12)*2/3,old=l=>l<-34?.5*(l+34):after(l),inf=l=>l<-36?-54+.5*(l+36):l<-34?-54+54*ease((l+36)/2):after(l);
   mk('rect',{x:X(-36),y:74,width:X(-34)-X(-36),height:224,fill:'rgba(255,215,107,.18)'},inn);
   txt('급팽창',{x:(X(-36)+X(-34))/2,y:68,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800},inn);
+  {const e=txt('빅뱅 후 약 10',{x:(X(-36)+X(-34))/2+28,y:68,fill:'#cfd6ee','font-size':12,'font-weight':700},inn);   // 급팽창 시기(지수는 위첨자)
+   [['−36',1],['초 ~ 10',0],['−34',1],['초',0]].forEach(([s,u],i)=>{const sp=mk('tspan',{dy:u?-5:(i?5:0),'font-size':u?9:12},e);sp.textContent=s})}
   mk('line',{x1:92,y1:298,x2:506,y2:298,stroke:'#cfd6ee','stroke-width':1.2},inn);mk('line',{x1:92,y1:298,x2:92,y2:70,stroke:'#cfd6ee','stroke-width':1.2},inn);
   const pw=(L,a)=>{const e=txt(L?'10':'1',{fill:'#cfd6ee','font-size':11.5,...a},inn);if(L)mk('tspan',{dy:-5,'font-size':8.5},e).textContent=String(L).replace('-','−')};   // 10의 거듭제곱 눈금 글씨(지수는 위첨자)
   [-60,-40,-20,0,20,40].forEach(L=>{mk('line',{x1:92,y1:Y(L),x2:97,y2:Y(L),stroke:'#cfd6ee'},inn);pw(L,{x:88,y:Y(L)+4,'text-anchor':'end'})});
@@ -267,7 +269,7 @@ function iDraw(t){const g=ig;g.innerHTML='';
   const path=(f,a,b)=>{let d='';for(let l=a;l<=Math.min(b,Le)+1e-9;l+=.05)d+=(d?'L':'M')+X(l).toFixed(1)+','+Y(f(l)).toFixed(1);return d};
   mk('path',{d:path(inf,-45,18),fill:'none',stroke:'#7faaff','stroke-width':3},inn);   // 급팽창 모형 (실선)
   mk('path',{d:path(old,-45,18),fill:'none',stroke:'#ffb357','stroke-width':2.6,'stroke-dasharray':'7 5'},inn);   // 기존의 빅뱅 우주론 모형 (점선): 급팽창 이후에는 실선과 겹침
-  [['#7faaff','','급팽창 모형'],['#ffb357','7 5','기존의 빅뱅 우주론 모형']].forEach(([c,da,s],i)=>{const y=86+i*18;mk('line',{x1:196,y1:y-4,x2:222,y2:y-4,stroke:c,'stroke-width':3,'stroke-dasharray':da},inn);txt(s,{x:228,y,fill:c,'font-size':12.5,'font-weight':800},inn)});
+  [['#7faaff','','급팽창 모형'],['#ffb357','7 5','기존의 빅뱅 우주론 모형']].forEach(([c,da,s],i)=>{const y=94+i*18;mk('line',{x1:196,y1:y-4,x2:222,y2:y-4,stroke:c,'stroke-width':3,'stroke-dasharray':da},inn);txt(s,{x:228,y,fill:c,'font-size':12.5,'font-weight':800},inn)});
   if(u1>=1)txt('급팽창 이후에는 두 모형이 같음',{x:X(-2),y:Y(after(-2))+30,fill:'#cfd6ee','font-size':12,'font-weight':700},inn)}
  pPanel(g,IS[0][0],288);
  [['제안','앨런 구스 (1980년대 초)'],['시기','빅뱅 후 약 10⁻³⁶초 ~ 10⁻³⁴초']].forEach(([a,b],i)=>{const y=86+i*42;
