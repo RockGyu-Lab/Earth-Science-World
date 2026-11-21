@@ -7,6 +7,7 @@
 index.html                 메인 화면 (학습실 카드 목록)
 copyright.js               모든 페이지 오른쪽 아래의 저작권 문구 (각 HTML의 </body> 앞에서 불러옴)
 README.md                  사용자용 설명서 (게시 방법, 자료 추가 방법)
+작업기록.md                날짜별 작업 기록과 남은 일 (작업을 시작할 때 읽고, 마칠 때 적음)
 Eclipses/                  일식과 월식 학습실
   Eclipse_index.html       학습실 메뉴 (탐구 01~04 카드)
   shadow.html, eclipses.html, solareclipse.html, orbit_eclipse.html
@@ -28,6 +29,11 @@ Cosmology/                 현대 우주론의 정립 학습실
 - `Expansion/`의 탐구 01~03과 `Cosmology/`의 탐구 01~05는 테스트 사이트(Earth-Test-Lab)의 `expansion.html`, `cosmology.html`을 옮긴 것입니다(Cosmology는 예전 `cosmology.html`의 탭 여섯 개를 탐구 01~05로 나누고 근거·문제점을 탐구 02 빅뱅 우주론의 탭으로 묶음. 탐구 01·02는 예전 `expansion.html`의 탭을 따로 떼어 낸 것이고, 탐구 03 `expansion.html`은 나머지 탭을 모은 것). 정식 사이트로 옮긴 뒤에는 **정식 사이트만 고칩니다.** 테스트 사이트는 자료가 어느 정도 완성될 때까지만 쓰므로, 테스트 사이트에 남은 파일은 함께 고치지 않습니다.
 - 빌드 도구나 패키지 없이, 각 자료는 CSS와 JS가 들어 있는 HTML 파일 하나입니다.
 - 학습실 메뉴 파일 이름은 `<폴더명>_index.html` 형식입니다(`Eclipse_index.html`은 예외로 단수형).
+
+## 작업 시작과 마무리
+사무실 PC, 클라우드 세션 등 여러 곳에서 이어서 작업하므로, 대화 기록이 없어도 이어 갈 수 있게 다음을 지킵니다.
+- **시작할 때:** 먼저 `git pull`로 최신 내용을 받고(올리지 않은 변경이 있으면 받기 전에 사용자에게 알림), `작업기록.md`의 "남은 일"과 최근 기록, `git log --oneline -10`을 읽은 뒤 작업합니다.
+- **마칠 때:** 사용자가 작업을 마친다고 하거나 한 묶음의 작업이 끝나면, `작업기록.md`의 맨 위(오늘 날짜 아래)에 한 일을 짧게 적고 "남은 일"을 고친 뒤 커밋해 함께 올립니다. 자세한 변경 내용은 커밋 메시지에 남기고, 기록에는 무엇을 왜 바꿨는지만 요약합니다.
 
 ## 작업 원칙
 
@@ -84,6 +90,7 @@ HTML 파일을 추가하거나 고치거나 이름을 바꾸면 다음을 확인
 - 테스트 사이트 `cosmology.html`의 `stepHTML`, `.stepbox.sx`, `.stepbox em`, `.pb.glow`를 그대로 가져다 씁니다. 테스트 사이트(Earth-Test-Lab)도 같습니다.
 
 ## 확인 방법 (이 작업 환경 기준)
+- 아래는 사무실 PC 기준입니다. 클라우드 세션(리눅스)에서는 Edge 대신 미리 설치된 Chromium(Playwright)으로 같은 크기의 화면과 링크를 확인합니다.
 - Windows + PowerShell 환경입니다. Python과 Node는 설치되어 있지 않습니다(`python`은 Microsoft Store 연결 바로가기일 뿐입니다).
 - 링크 점검: 모든 HTML의 `href="...html"`을 찾아, 각 파일 위치를 기준으로 경로가 실제로 있는지 `Test-Path`로 확인합니다.
 - 앱 안의 브라우저 미리보기는 `file://` 페이지를 `data:` 복사본으로 띄우므로 상대 경로 파일(`./lib/...`)을 읽지 못합니다. 상대 경로나 오프라인 동작은 화면 없는 Edge로 확인합니다.
