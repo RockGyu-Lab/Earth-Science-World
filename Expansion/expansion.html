@@ -661,7 +661,10 @@ function uDraw(){usv.innerHTML='';const T=uAge(uH),tc=Math.min(ut,T),f=1-tc/T,do
  for(let t=0;t<=UTM;t+=50){mk('line',{x1:uxt(t),y1:UAY,x2:uxt(t),y2:UAY+5,stroke:'#cfd6ee'},g);txt(t?t:'현재',{x:uxt(t),y:UAY+18,'text-anchor':'middle',fill:t?'#cfd6ee':'#ffd76b','font-size':t?10.5:11.5,'font-weight':t?400:700},g)}
  txt('억 년 전',{x:uxt(UTM)+12,y:UAY+4,fill:'#e8ecff','font-size':11,'font-weight':600},g);
  // 되돌린 자취(원뿔)와 그 위에 지금의 우주
- if(tc>0){mk('path',{d:`M${UXN},${UCY-UR0}L${cx.toFixed(1)},${(UCY-R).toFixed(1)}L${cx.toFixed(1)},${(UCY+R).toFixed(1)}L${UXN},${UCY+UR0}Z`,fill:'url(#uCone)'},g);
+ // 원뿔의 모서리는 두 원의 공통 접선: 반지름이 꼭짓점(처음, xT)까지의 거리에 비례하므로 꼭짓점에서 그은 접선이 두 원에 모두 접함
+ // 접점은 원의 중심에서 (r·k, ∓r·√(1−k²)) 만큼 떨어진 곳 (k = 지금 우주의 반지름 ÷ 꼭짓점까지의 거리)
+ if(tc>0){const k=UR0/(xT-UXN),kq=Math.sqrt(1-k*k),p=(x,r,s)=>`${(x+r*k).toFixed(1)},${(UCY+s*r*kq).toFixed(1)}`;
+  mk('path',{d:`M${p(UXN,UR0,-1)}L${p(cx,R,-1)}L${p(cx,R,1)}L${p(UXN,UR0,1)}Z`,fill:'url(#uCone)'},g);
   uSphere(g,UXN,UR0,1)}
  // 되돌린 때의 우주와 두 은하 (주황 화살표: 두 은하 사이의 거리)
  if(R>.5)uSphere(g,cx,R,f);
