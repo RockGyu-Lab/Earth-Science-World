@@ -5,6 +5,7 @@
 ## 폴더 구성
 - `index.html`: 지구과학 World 메인 화면 (단원별 학습실 목록, 제목 앞에 단원 번호)
 - `작업기록.md`: 날짜별 작업 기록과 남은 일 (사이트 화면에는 나오지 않음)
+- `.claude/skills/modern-html/SKILL.md`: Claude가 코드를 짤 때 따르는 최신 HTML 작성법과 지원 범위 (세 사이트 공통, 사이트 화면에는 나오지 않음)
 - `copyright.js`: 모든 페이지 오른쪽 아래에 작게 표시하는 저작권 문구 (문구를 바꿀 때는 이 파일만 고치면 됨)
 - `Eclipses/`: 일식과 월식 학습실
   - `Eclipse_index.html`: 학습실 메뉴
