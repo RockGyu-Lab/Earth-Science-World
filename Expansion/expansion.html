@@ -209,6 +209,11 @@ dialog.ov::backdrop{background:transparent}
 #usv,#ugr{max-height:max(250px,calc(100vh - 386px))}
 #usv,#ugr{max-height:max(250px,calc(100dvh - 386px))}
 #ucue{flex:1 1 200px;font-size:.92rem}
+/* 심화 꼬리표: 자주색 (생각해 보기 남색·선택 연보라·기억하기 주황과 구분) */
+:root{--deep:#a23b72;--on-deep:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--deep:#f2a3cb;--on-deep:#2b0b1c}}
+:root[data-theme="dark"]{--deep:#f2a3cb;--on-deep:#2b0b1c}
+.tag.deep{background:var(--deep);color:var(--on-deep)}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -345,7 +350,7 @@ dialog.ov::backdrop{background:transparent}
  <div class="note ask"><span class="tag">생각해 보기</span><p>2 Mpc 떨어진 두 은하가 한곳에 모이는 시간은 어떻게 될까요?</p><button type="button" class="open-think" id="thb16">정답 확인</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>허블 상수와 허블 시간은 어떤 관계가 있나요?</p><button type="button" class="open-think" id="thb17">정답 확인</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>허블 시간(약 140억 년)과 실제 우주의 나이(약 138억 년)는 왜 차이가 날까요?</p><button type="button" class="open-think" id="thb18">정답 확인</button></div>
- <div class="note ask ask2"><span class="tag">심화</span><p>허블 상수는 변하지 않는 값일까요?</p><button type="button" class="open-think" id="thb20">정답 확인</button></div>
+ <div class="note ask ask2"><span class="tag deep">심화</span><p>허블 상수는 변하지 않는 값일까요?</p><button type="button" class="open-think" id="thb20">정답 확인</button></div>
  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="eq"><i>t</i><span style="font-family:'Pretendard Variable',Pretendard,system-ui,'Noto Sans KR',sans-serif;font-size:.85em;margin-left:-3px">(허블 시간)</span><span class="eqs">=</span><span class="frac"><span>1</span><span><i>H</i></span></span></p>
   <p class="eqx">우주가 처음부터 지금까지 같은 속도로 팽창했다고 가정하고 어림한 우주의 나이<br>실제 우주의 나이는 약 138억 년입니다.</p></div>
  <dialog class="ov" id="ov16" aria-label="생각해 보기: 2 Mpc 떨어진 두 은하가 한곳에 모이는 시간은 어떻게 될까요?"><div class="think">
@@ -366,7 +371,7 @@ dialog.ov::backdrop{background:transparent}
   <p class="exp">또 허블 상수 자체도 관측 방법에 따라 약 67~73 km/s/Mpc로 조금씩 다르게 측정됩니다. 실제 우주의 나이는 우주 배경 복사를 비롯한 여러 관측 자료와 팽창 속도의 변화를 함께 고려하여 구하며, 약 138억 년입니다.</p>
  </div></dialog>
  <dialog class="ov" id="ov20" aria-label="심화: 허블 상수는 변하지 않는 값일까요?"><div class="think">
-  <div class="think-h"><b class="think-t"><span class="tag">심화</span>허블 상수는 변하지 않는 값일까요?</b><button type="button" class="x" id="thx20" aria-label="닫기">닫기 ✕</button></div>
+  <div class="think-h"><b class="think-t"><span class="tag deep">심화</span>허블 상수는 변하지 않는 값일까요?</b><button type="button" class="x" id="thx20" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">아닙니다. 허블 상수는 시간이 지나면서 변합니다. '상수'라는 이름은 같은 시기에는 우주의 어느 곳에서 보아도 같은 값이라는 뜻이며, 지금의 값을 특별히 <i>H</i>₀으로 나타냅니다.</p>
   <p class="exp">위의 모형처럼 두 은하가 같은 속도 <i>v</i>로 멀어져 왔다고 해도, 두 은하 사이의 거리 <i>r</i>는 시간이 지날수록 커지므로 허블 상수(<i>H</i> = <i>v</i> ÷ <i>r</i>)는 점점 작아집니다. 지금 1 Mpc 떨어진 두 은하는 약 70억 년 전에는 0.5 Mpc 떨어져 있었으므로, 그때의 허블 상수는 70 ÷ 0.5 = 140 km/s/Mpc로 지금의 2배였습니다.</p>
   <svg class="hfig" viewBox="0 0 540 232" role="img" aria-label="우주가 같은 빠르기로 팽창해 왔다고 가정한 모형에서 우주의 나이에 따른 허블 상수의 변화 그래프">

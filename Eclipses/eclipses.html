@@ -98,6 +98,11 @@ dialog.ov::backdrop{background:transparent}
 .pop .hl{color:#d62828;font-weight:600}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pop .hl{color:#ff7a7a}}
 :root[data-theme="dark"] .pop .hl{color:#ff7a7a}
+/* 심화 꼬리표: 자주색 (생각해 보기 남색·선택 연보라·기억하기 주황과 구분) */
+:root{--deep:#a23b72;--on-deep:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--deep:#f2a3cb;--on-deep:#2b0b1c}}
+:root[data-theme="dark"]{--deep:#f2a3cb;--on-deep:#2b0b1c}
+.tag.deep{background:var(--deep);color:var(--on-deep)}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -112,11 +117,11 @@ dialog.ov::backdrop{background:transparent}
 <div class="ctl">
 <div class="tabs" id="selrow"><button id="b1" class="on">개기일식 위치 (달이 가까울 때)</button><button id="b0">금환일식 위치 (달이 멀 때)</button></div>
 <div class="row"><button id="go">▶ 달 공전 시작</button><button id="rst" disabled>■ 처음으로</button><label>공전 속도 <input id="sp" type="range" min="0.3" max="3" step="0.1" value="1"><b id="spv">1.0배</b></label></div>
-<div class="deeprow" id="deep"><span class="tag">심화</span><span class="q">개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</span><button type="button" id="deepA">정답 확인</button></div>
+<div class="deeprow" id="deep"><span class="tag deep">심화</span><span class="q">개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</span><button type="button" id="deepA">정답 확인</button></div>
 </div>
 <div id="tip"></div>
 <dialog class="ov" id="deepOv" aria-label="심화: 개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?"><div class="pop">
- <div class="pop-h"><b><span class="tag">심화</span>개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</b><button type="button" class="x" id="deepX">닫기 ✕</button></div>
+ <div class="pop-h"><b><span class="tag deep">심화</span>개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</b><button type="button" class="x" id="deepX">닫기 ✕</button></div>
  <p class="ans">지구 대기를 통과한 붉은빛이 굴절되어 본그림자 속의 달을 비추기 때문입니다.</p>
  <svg class="fig" viewBox="0 0 640 270" role="img" aria-label="햇빛이 지구 대기를 지나며 파란빛은 흩어지고 붉은빛은 굴절되어 본그림자 속 달을 비추고, 달에서 반사된 붉은빛이 지구로 오는 모습">
   <defs>
