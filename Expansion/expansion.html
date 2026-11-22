@@ -152,7 +152,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
@@ -256,18 +259,18 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <!-- 기억하기: 허블-르메트르 법칙 -->
  <div class="note ask ask2 memo" id="hmemo"><span class="tag mem">기억하기</span><p class="eq"><i>v</i><span class="eqs">=</span><i>H</i><span class="eqs">×</span><i>r</i></p>
   <p class="eqx"><i>v</i>: 은하의 후퇴 속도 · <i>r</i>: 은하까지의 거리 · <i>H</i>: 허블 상수 (약 70 km/s/Mpc)</p></div>
- <div class="ov" id="ov10" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 멀리 있는 은하일수록 후퇴 속도는 어떻게 달라지나요?">
+ <dialog class="ov" id="ov10" aria-label="생각해 보기: 멀리 있는 은하일수록 후퇴 속도는 어떻게 달라지나요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>멀리 있는 은하일수록 후퇴 속도는 어떻게 달라지나요?</b><button type="button" class="x" id="thx10" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">멀리 있는 은하일수록 더 빠르게 멀어집니다. 은하의 후퇴 속도는 은하까지의 거리에 비례합니다.</p>
   <p class="exp">그래프의 점들은 원점을 지나는 직선 가까이에 놓입니다. 거리가 2배인 은하는 후퇴 속도도 약 2배입니다. 이 관계를 허블-르메트르 법칙이라고 하며, <i>v</i> = <i>H</i> × <i>r</i>로 나타냅니다.</p>
   <p class="exp">점들이 직선에서 조금씩 벗어나는 것은 측정에 오차가 있고, 은하마다 주변 은하의 중력 때문에 조금씩 따로 움직이기도 하기 때문입니다.</p>
- </div></div>
- <div class="ov" id="ov11" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 그래프에서 직선의 기울기는 무엇을 뜻하나요?">
+ </div></dialog>
+ <dialog class="ov" id="ov11" aria-label="생각해 보기: 그래프에서 직선의 기울기는 무엇을 뜻하나요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>그래프에서 직선의 기울기는 무엇을 뜻하나요?</b><button type="button" class="x" id="thx11" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">은하까지의 거리가 1 Mpc 늘어날 때마다 후퇴 속도가 얼마나 커지는지를 나타내는 상수로, 허블 상수(<i>H</i>)라고 부릅니다.</p>
   <p class="exp">이 자료에서 기울기는 약 70 km/s/Mpc입니다. 곧 거리가 1 Mpc 멀어질 때마다 후퇴 속도가 약 70 km/s씩 빨라집니다. 1 Mpc(메가파섹)은 약 326만 광년입니다.</p>
   <p class="exp">허블 상수는 우주가 얼마나 빠르게 팽창하는지를 나타내는 값입니다. 실제 관측으로 구한 허블 상수는 약 67~73 km/s/Mpc입니다.</p>
- </div></div>
+ </div></dialog>
 </section>
 
 <!-- ④ 팽창하는 우주: 탭 두 개가 같은 그림판을 함께 씀
@@ -293,26 +296,26 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>풍선의 중심(풍선 안쪽 한가운데)이 팽창하는 우주의 중심일까요?</p><button type="button" class="open-think" id="thb15">정답 확인</button></div>
  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">팽창하는 우주에는 특별한 중심이 없다. 어느 은하에서 관측해도 멀리 있는 은하일수록 빠르게 멀어진다.</p></div>
  </div>
- <div class="ov" id="ov12" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 풍선이 부푸는 동안 개미는 걸어가지 않았습니다. 그런데도 개미들이 서로 멀어지는 까닭은 무엇일까요?">
+ <dialog class="ov" id="ov12" aria-label="생각해 보기: 풍선이 부푸는 동안 개미는 걸어가지 않았습니다. 그런데도 개미들이 서로 멀어지는 까닭은 무엇일까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>풍선이 부푸는 동안 개미는 걸어가지 않았습니다. 그런데도 개미들이 서로 멀어지는 까닭은 무엇일까요?</b><button type="button" class="x" id="thx12" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">개미가 움직인 것이 아니라, 개미가 붙어 있는 풍선 표면이 늘어났기 때문입니다.</p>
   <p class="exp">풍선 위의 눈금 간격이 모두 같은 비율로 넓어지므로, 개미들은 제자리에 있으면서도 서로 멀어집니다. 우주에서도 은하가 공간 속을 달려가는 것이 아니라, 은하 사이의 공간 자체가 늘어나 은하들이 서로 멀어집니다.</p>
   <p class="exp">이때 개미의 크기는 변하지 않습니다. 실제 우주에서도 은하나 별처럼 중력으로 단단히 묶여 있는 천체는 우주가 팽창해도 커지지 않습니다.</p>
- </div></div>
- <div class="ov" id="ov13" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 개미 A에게서 멀리 있는 개미일수록 더 빨리 멀어지는 까닭은 무엇일까요?">
+ </div></dialog>
+ <dialog class="ov" id="ov13" aria-label="생각해 보기: 개미 A에게서 멀리 있는 개미일수록 더 빨리 멀어지는 까닭은 무엇일까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>개미 A에게서 멀리 있는 개미일수록 더 빨리 멀어지는 까닭은 무엇일까요?</b><button type="button" class="x" id="thx13" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">풍선 표면이 모든 곳에서 같은 비율로 늘어나므로, 처음 거리가 멀수록 같은 시간 동안 늘어나는 거리도 크기 때문입니다.</p>
   <p class="exp">풍선이 10초 동안 2배로 부풀면, 1 cm 떨어져 있던 개미 B는 1 cm, 3 cm 떨어져 있던 개미 C는 3 cm, 4 cm 떨어져 있던 개미 D는 4 cm 더 멀어집니다. 그래서 멀어지는 속도가 거리에 비례하고, 그래프는 원점을 지나는 직선이 됩니다.</p>
   <p class="exp">은하를 관측하여 얻은 허블-르메트르 법칙(<i>v</i> = <i>H</i> × <i>r</i>)도 이와 같은 모양입니다. 곧 멀리 있는 은하일수록 빠르게 멀어진다는 관측 결과는 우주가 팽창하고 있다는 증거입니다.</p>
- </div></div>
- <div class="ov" id="ov19" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우주가 팽창을 한다면, 태양과 지구 사이의 거리는 점점 멀어지는 것일까요?">
+ </div></dialog>
+ <dialog class="ov" id="ov19" aria-label="생각해 보기: 우주가 팽창을 한다면, 태양과 지구 사이의 거리는 점점 멀어지는 것일까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우주가 팽창을 한다면, 태양과 지구 사이의 거리는 점점 멀어지는 것일까요?</b><button type="button" class="x" id="thx19" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">아니요. 태양과 지구는 서로 중력으로 단단히 묶여 있으므로, 우주가 팽창해도 둘 사이의 거리는 늘어나지 않습니다.</p>
   <p class="exp">풍선이 부풀어도 개미의 크기가 변하지 않는 것처럼, 태양계나 은하처럼 중력으로 묶여 있는 천체들은 우주 팽창으로 커지지 않습니다.</p>
   <p class="exp">우리 은하와 안드로메다은하도 약 250만 광년 떨어져 있지만, 서로의 중력에 끌려 오히려 가까워지고 있어 수십억 년 뒤에는 충돌하여 합쳐질 것으로 예상됩니다.</p>
   <p class="exp">우주의 팽창으로 은하 간의 거리가 멀어지려면, 서로 중력의 영향을 거의 받지 않을 만큼 충분히 멀리 떨어져 있어야 합니다.</p>
- </div></div>
- <div class="ov" id="ov14" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 개미 B의 입장에서 보아도 개미 A의 입장과 같은 결과가 나올까요?">
+ </div></dialog>
+ <dialog class="ov" id="ov14" aria-label="생각해 보기: 개미 B의 입장에서 보아도 개미 A의 입장과 같은 결과가 나올까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>개미 B의 입장에서 보아도 개미 A의 입장과 같은 결과가 나올까요?</b><button type="button" class="x" id="thx14" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">네. 어느 개미의 입장에서 보아도 다른 개미들이 모두 멀어지고, 멀리 있는 개미일수록 더 빨리 멀어집니다.</p>
   <!-- 기준을 A에서 B로 바꾸어 본 그림: 풍선 표면의 좁은 부분을 평면으로 펼쳐 개미를 같은 간격의 점으로 나타냄.
@@ -321,13 +324,13 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <p class="exp">풍선 표면의 좁은 부분을 평면으로 펼쳐 개미들을 점으로 나타낸 그림입니다. 화살표는 기준 개미에게서 본 멀어지는 속도이고, 빨간 점선은 기준 개미에게서 같은 거리에 있는 곳을 이은 동심원입니다. 기준을 A에서 B로 바꾸어도 화살표가 퍼져 나가는 모양은 똑같습니다.</p>
   <p class="exp">기준 개미를 바꾸어도 그래프의 점들은 모두 같은 직선 위에 놓입니다. 모든 개미가 저마다 자기를 중심으로 다른 개미들이 멀어지는 것처럼 보지만, 실제로는 어느 개미도 특별하지 않습니다.</p>
   <p class="exp">우리은하에서 관측한 다른 은하들이 모두 멀어지는 것도 우리은하가 우주의 중심이기 때문이 아닙니다. 다른 은하에서 관측해도 똑같이 허블-르메트르 법칙이 성립합니다.</p>
- </div></div>
- <div class="ov" id="ov15" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 풍선의 중심(풍선 안쪽 한가운데)이 팽창하는 우주의 중심일까요?">
+ </div></dialog>
+ <dialog class="ov" id="ov15" aria-label="생각해 보기: 풍선의 중심(풍선 안쪽 한가운데)이 팽창하는 우주의 중심일까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>풍선의 중심(풍선 안쪽 한가운데)이 팽창하는 우주의 중심일까요?</b><button type="button" class="x" id="thx15" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">아닙니다. 개미에게 우주는 풍선의 표면뿐이고, 풍선의 안쪽은 개미가 사는 우주에 포함되지 않습니다.</p>
   <p class="exp">풍선 표면 위에는 다른 곳과 구별되는 특별한 점이 없습니다. 그래서 풍선 표면이라는 우주에는 팽창의 중심이 없습니다.</p>
   <p class="exp">풍선 모형은 3차원 공간인 우주를 2차원인 풍선 표면으로 단순화한 것입니다. 실제 우주에는 풍선의 안쪽이나 바깥쪽에 해당하는 공간이 없으며, 팽창하는 우주에는 특별한 중심이 없습니다.</p>
- </div></div>
+ </div></dialog>
 </section>
 
 <!-- ⑤ 허블 시간: 지금 1 Mpc 떨어진 두 은하를 시간을 거꾸로 되돌려 봄 (우주가 과거로 갈수록 작아져 처음의 한 점으로 모임)
@@ -345,24 +348,24 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="note ask ask2"><span class="tag">심화</span><p>허블 상수는 변하지 않는 값일까요?</p><button type="button" class="open-think" id="thb20">정답 확인</button></div>
  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="eq"><i>t</i><span style="font-family:'Pretendard Variable',Pretendard,system-ui,'Noto Sans KR',sans-serif;font-size:.85em;margin-left:-3px">(허블 시간)</span><span class="eqs">=</span><span class="frac"><span>1</span><span><i>H</i></span></span></p>
   <p class="eqx">우주가 처음부터 지금까지 같은 속도로 팽창했다고 가정하고 어림한 우주의 나이<br>실제 우주의 나이는 약 138억 년입니다.</p></div>
- <div class="ov" id="ov16" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 2 Mpc 떨어진 두 은하가 한곳에 모이는 시간은 어떻게 될까요?">
+ <dialog class="ov" id="ov16" aria-label="생각해 보기: 2 Mpc 떨어진 두 은하가 한곳에 모이는 시간은 어떻게 될까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>2 Mpc 떨어진 두 은하가 한곳에 모이는 시간은 어떻게 될까요?</b><button type="button" class="x" id="thx16" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">1 Mpc 떨어진 두 은하와 같습니다. 거리가 2배이지만, 허블-르메트르 법칙에 따라 멀어지는 속도도 2배이기 때문입니다.</p>
   <p class="exp">허블 상수가 70 km/s/Mpc이면 2 Mpc 떨어진 두 은하는 140 km/s로 멀어지므로, 걸리는 시간은 2 Mpc ÷ 140 km/s = 1 Mpc ÷ 70 km/s로 같습니다. 일반적으로 이 시간은 <i>t</i> = <i>r</i> ÷ <i>v</i> = <i>r</i> ÷ (<i>H</i> × <i>r</i>) = 1/<i>H</i>로, 두 은하 사이의 거리와 관계없이 허블 상수만으로 정해집니다.</p>
   <p class="exp">곧 시간을 거꾸로 되돌리면 우주의 모든 은하가 같은 때(1/<i>H</i> 전)에 한곳에 모입니다. 따라서 과거에는 우주의 모든 물질이 한곳에 모여 있었고 그때부터 팽창해 왔다고 생각할 수 있으며, 이렇게 구한 1/<i>H</i>를 허블 시간이라고 하며, 우주의 나이를 어림하는 데 씁니다.</p>
- </div></div>
- <div class="ov" id="ov17" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 허블 상수와 허블 시간은 어떤 관계가 있나요?">
+ </div></dialog>
+ <dialog class="ov" id="ov17" aria-label="생각해 보기: 허블 상수와 허블 시간은 어떤 관계가 있나요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>허블 상수와 허블 시간은 어떤 관계가 있나요?</b><button type="button" class="x" id="thx17" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">허블 시간(1/<i>H</i>)은 허블 상수에 반비례합니다. 허블 상수가 클수록 허블 시간은 짧아집니다.</p>
   <p class="exp">허블 상수가 크다는 것은 같은 거리에 있는 은하가 더 빠르게 멀어진다는 뜻이므로, 지금의 거리까지 오는 데 걸린 시간이 짧습니다. 허블 상수가 50 km/s/Mpc이면 약 196억 년, 70이면 약 140억 년, 100이면 약 98억 년입니다. <span class="go"><span class="kb sub">허블 상수</span> 단추를 바꿔 가며 비교해 보세요.</span></p>
- </div></div>
- <div class="ov" id="ov18" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 허블 시간(약 140억 년)과 실제 우주의 나이(약 138억 년)는 왜 차이가 날까요?">
+ </div></dialog>
+ <dialog class="ov" id="ov18" aria-label="생각해 보기: 허블 시간(약 140억 년)과 실제 우주의 나이(약 138억 년)는 왜 차이가 날까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>허블 시간(약 140억 년)과 실제 우주의 나이(약 138억 년)는 왜 차이가 날까요?</b><button type="button" class="x" id="thx18" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">허블 시간은 우주가 처음부터 지금과 같은 빠르기로 팽창해 왔다고 가정하고 구한 값이지만, 실제 우주는 팽창하는 빠르기가 시간에 따라 변해 왔기 때문입니다.</p>
   <p class="exp">우주 초기에는 물질의 중력 때문에 팽창 속도가 점점 느려졌고(감속 팽창), 약 50억~60억 년 전부터는 암흑 에너지 때문에 팽창 속도가 점점 빨라지고 있습니다(가속 팽창). 이처럼 팽창 속도가 일정하지 않았으므로 허블 시간은 우주의 나이를 어림한 값일 뿐, 실제 우주의 나이와 꼭 같지는 않습니다.</p>
   <p class="exp">또 허블 상수 자체도 관측 방법에 따라 약 67~73 km/s/Mpc로 조금씩 다르게 측정됩니다. 실제 우주의 나이는 우주 배경 복사를 비롯한 여러 관측 자료와 팽창 속도의 변화를 함께 고려하여 구하며, 약 138억 년입니다.</p>
- </div></div>
- <div class="ov" id="ov20" hidden><div class="think" role="dialog" aria-modal="true" aria-label="심화: 허블 상수는 변하지 않는 값일까요?">
+ </div></dialog>
+ <dialog class="ov" id="ov20" aria-label="심화: 허블 상수는 변하지 않는 값일까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">심화</span>허블 상수는 변하지 않는 값일까요?</b><button type="button" class="x" id="thx20" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">아닙니다. 허블 상수는 시간이 지나면서 변합니다. '상수'라는 이름은 같은 시기에는 우주의 어느 곳에서 보아도 같은 값이라는 뜻이며, 지금의 값을 특별히 <i>H</i>₀으로 나타냅니다.</p>
   <p class="exp">위의 모형처럼 두 은하가 같은 속도 <i>v</i>로 멀어져 왔다고 해도, 두 은하 사이의 거리 <i>r</i>는 시간이 지날수록 커지므로 허블 상수(<i>H</i> = <i>v</i> ÷ <i>r</i>)는 점점 작아집니다. 지금 1 Mpc 떨어진 두 은하는 약 70억 년 전에는 0.5 Mpc 떨어져 있었으므로, 그때의 허블 상수는 70 ÷ 0.5 = 140 km/s/Mpc로 지금의 2배였습니다.</p>
@@ -381,7 +384,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </svg>
   <p class="exp">실제 우주에서도 허블 상수는 우주 초기에 매우 컸고, 지금까지 계속 작아져 왔습니다. 약 50억~60억 년 전부터 우주가 가속 팽창하고 있지만, 은하가 멀어지는 속도가 빨라지는 것보다 은하 사이의 거리가 더 빠르게 늘어나므로 허블 상수는 지금도 천천히 작아지고 있습니다.</p>
   <p class="exp">한편 허블이 처음(1929년) 구한 값은 약 500 km/s/Mpc였지만, 이는 은하까지의 거리를 실제보다 가깝게 측정했기 때문입니다. 그 뒤 관측이 정밀해지면서 지금은 약 70 km/s/Mpc로 측정됩니다. 이것은 허블 상수가 실제로 변한 것이 아니라 측정값이 고쳐진 것입니다.</p>
- </div></div>
+ </div></dialog>
 </section>
 
 <script>
@@ -762,8 +765,8 @@ thb14.addEventListener('click',()=>{cFig(cfA,'A');cFig(cfB,'B')});
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13'],['ov14','thb14','thx14'],['ov15','thb15','thx15'],['ov16','thb16','thx16'],['ov17','thb17','thx17'],['ov18','thb18','thx18'],['ov19','thb19','thx19'],['ov20','thb20','thx20']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
- const closeTh=()=>{ov.hidden=true;btn.focus()};
- btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
+ const closeTh=()=>{ov.close();btn.focus()};
+ btn.addEventListener('click',()=>{(ov.open||ov.showModal());cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})});
+ ov.addEventListener('cancel',e=>{e.preventDefault();closeTh()})});
 </script></main><script src="../copyright.js"></script>

@@ -61,11 +61,29 @@ description: 수업용 인터랙티브 HTML 자료(지구과학 World, 통합과
 ## 4. HTML 구조와 접근성
 - **동작은 `<button type="button">`, 이동은 `<a href>`.** `div`에 `onclick`을 달아 단추처럼 쓰지 않는다.
 - **위쪽 탭:** `role="tablist"` 안에 `role="tab"` 단추, 각 탭에 `aria-selected`·`aria-controls`, 내용에 `role="tabpanel"`. 고른 탭만 `tabindex="0"`, 나머지는 `-1`이고 ←/→ 키로 옮겨 간다(기존 `openTab` 방식).
-- **팝업(정답 확인, 자세히 이해하기, 읽을거리):** 새로 만드는 팝업은 `<dialog>`와 `showModal()`로 만든다.
-  - Esc로 닫힘, 뒤쪽 화면 클릭·초점 막기, 닫은 뒤 초점 되돌리기를 브라우저가 해 준다.
-  - 바깥(배경)을 누르면 닫히게: `dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });` (안쪽 내용은 `<div>`로 한 번 감싼다)
-  - 배경 색은 `dialog::backdrop`으로 준다.
-  - 기존 `div.ov` 팝업이 있는 파일에 팝업을 하나 더할 때는, 한 파일 안에서 방식이 섞이지 않도록 그 파일의 `div.ov` 방식을 따른다.
+- **팝업(정답 확인, 심화, 자세히 이해하기, 읽을거리):** 모든 팝업은 `<dialog>`와 `showModal()`로 만든다(지구과학 World·통합과학 World는 2026-11-22에 모두 바꿈. 테스트 사이트에 보관한 옛 파일은 그대로 둠).
+  - Esc로 닫힘, 팝업이 열린 동안 Tab 초점이 팝업 안에 머묾, 뒤쪽 화면 막기를 브라우저가 해 준다.
+  - **정답 확인 팝업의 기본 틀**(`.ov` = 화면 전체를 덮는 반투명 판, `.think` = 내용 상자):
+    ```html
+    <dialog class="ov" id="ov7" aria-label="생각해 보기: 질문"><div class="think">
+      <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질문</b><button type="button" class="x" id="thx7" aria-label="닫기">닫기 ✕</button></div>
+      <p class="ans">답</p><p class="exp">설명</p>
+    </div></dialog>
+    ```
+    ```css
+    .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+    .ov:not([open]){display:none}
+    dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+    dialog.ov::backdrop{background:transparent}
+    ```
+    ```js
+    const close=()=>{ov.close();btn.focus()};                       // 닫을 때 할 일(애니메이션 멈춤 등)은 여기에
+    btn.onclick=()=>{ov.showModal();cl.focus()};cl.onclick=close;
+    ov.addEventListener('click',e=>{if(e.target===ov)close()});      // 바깥(판) 누르기
+    ov.addEventListener('cancel',e=>{e.preventDefault();close()});   // Esc도 같은 닫기 동작을 거치게
+    ```
+  - 팝업이 열려 있는지는 `ov.open`으로 확인한다(`hidden` 속성을 쓰지 않음).
+  - 읽을거리처럼 `.ov` 판 없이 `dialog` 자체를 상자로 쓰는 팝업이 같은 파일에 있으면, 그 모양 규칙은 `dialog:not(.ov)`로 적어 정답 확인 팝업에 번지지 않게 한다.
 - **그림:** 설명이 필요한 SVG에는 `role="img"`와 `aria-label`(무엇을 보여 주는지 한 문장). 꾸밈용 그림은 `aria-hidden="true"`.
 - **바뀌는 설명:** 단계마다 바뀌는 설명 상자에는 `aria-live="polite"`를 준다.
 - **표:** 수치 비교는 그림보다 `<table>`(머리칸 `<th>`)이 낫다.

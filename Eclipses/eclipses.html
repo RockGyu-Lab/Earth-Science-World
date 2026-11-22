@@ -71,7 +71,10 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 .tag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em}
 .pop-h b{display:flex;align-items:center;gap:8px}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .ov .pop{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .pop-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .pop-h b{color:var(--acc);font-size:1rem}
@@ -112,7 +115,7 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
 <div class="deeprow" id="deep"><span class="tag">심화</span><span class="q">개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</span><button type="button" id="deepA">정답 확인</button></div>
 </div>
 <div id="tip"></div>
-<div class="ov" id="deepOv" hidden><div class="pop" role="dialog" aria-modal="true" aria-label="심화: 개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?">
+<dialog class="ov" id="deepOv" aria-label="심화: 개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?"><div class="pop">
  <div class="pop-h"><b><span class="tag">심화</span>개기월식 때 달이 붉은색으로 보이는 이유는 무엇일까요?</b><button type="button" class="x" id="deepX">닫기 ✕</button></div>
  <p class="ans">지구 대기를 통과한 붉은빛이 굴절되어 본그림자 속의 달을 비추기 때문입니다.</p>
  <svg class="fig" viewBox="0 0 640 270" role="img" aria-label="햇빛이 지구 대기를 지나며 파란빛은 흩어지고 붉은빛은 굴절되어 본그림자 속 달을 비추고, 달에서 반사된 붉은빛이 지구로 오는 모습">
@@ -176,8 +179,8 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
   <li>대기를 통과한 빛은 <b>굴절</b>되어 지구의 본그림자 안쪽으로 휘어 들어갑니다.</li>
   <li>그래서 본그림자 속에 들어간 달은 완전히 어두워지지 않고, 이 붉은빛을 받아 <b>어두운 붉은색(구릿빛)</b>으로 보입니다.</li>
  </ol>
-</div></div>
-<div class="ov" id="realOv" hidden><div class="pop wide" role="dialog" aria-modal="true" aria-label="실제 하늘에서 본 개기일식의 진행 모습">
+</div></dialog>
+<dialog class="ov" id="realOv" aria-label="실제 하늘에서 본 개기일식의 진행 모습"><div class="pop wide">
  <div class="pop-h"><b>실제 하늘에서 본 개기일식의 진행 모습</b><button type="button" class="x" id="realX">닫기 ✕</button></div>
  <svg id="rv" viewBox="0 0 1100 450" role="img" aria-label="남쪽 하늘에서 태양이 동에서 서로 움직이는 동안, 태양보다 느리게 움직이는 달이 태양을 서쪽 가장자리부터 가려 개기일식이 일어나는 모습"></svg>
  <p class="figcap">춘분 무렵 서울(북위 약 37.5°)에서 오전 11시쯤 개기일식이 일어난다고 가정한 가상의 예입니다. 해와 달의 크기, 그리고 태양에 대해 달이 움직이는 거리는 보기 쉽게 크게 과장했습니다(실제 시지름은 둘 다 약 0.5°). 개기일식 순간은 천천히 보여 줍니다.</p>
@@ -188,8 +191,8 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
   <li>개기일식이 되면 하늘이 갑자기 어두워지고, 태양 둘레의 <b>코로나</b>와 밝은 별·행성이 보이며, 지평선 근처는 노을처럼 밝게 보입니다. 개기일식은 길어야 몇 분 정도입니다.</li>
   <li>※ 실제 일식은 맨눈이나 선글라스로 보면 안 되고, 반드시 일식 관측용 필터로 보아야 합니다.</li>
  </ol>
-</div></div>
-<div class="ov" id="real2Ov" hidden><div class="pop wide" role="dialog" aria-modal="true" aria-label="실제 밤하늘에서 본 개기월식의 진행 모습">
+</div></dialog>
+<dialog class="ov" id="real2Ov" aria-label="실제 밤하늘에서 본 개기월식의 진행 모습"><div class="pop wide">
  <div class="pop-h"><b>실제 밤하늘에서 본 개기월식의 진행 모습</b><button type="button" class="x" id="real2X">닫기 ✕</button></div>
  <svg id="rv2" viewBox="0 0 1100 450" role="img" aria-label="남쪽 밤하늘에서 달과 지구 그림자가 동에서 서로 움직이는 동안, 그림자보다 느리게 움직이는 달이 동쪽 가장자리부터 지구 그림자에 들어가 개기월식이 일어나는 모습"></svg>
  <p class="figcap">춘분 무렵 서울(북위 약 37.5°)에서 자정쯤 개기월식이 일어난다고 가정한 가상의 예입니다. 지구 그림자는 실제로 보이지 않으므로 점선으로 나타냈습니다. 달과 지구 그림자의 크기, 그리고 그림자에 대해 달이 움직이는 거리는 보기 쉽게 크게 과장했습니다(실제 달의 시지름은 약 0.5°, 본그림자의 지름은 달 지름의 약 2.7배).</p>
@@ -201,7 +204,7 @@ main{max-width:max(560px,min(960px,calc((100dvh - 270px)*900/545)))}
   <li>달 전체가 본그림자에 들어가면(<b>개기월식</b>) 달은 사라지지 않고 어두운 붉은색으로 보이며, 달빛이 약해져 주변에 별이 더 많이 보입니다. 개기월식은 1시간 넘게 이어지기도 합니다.</li>
   <li>※ 월식은 일식과 달리 맨눈으로 보아도 안전합니다.</li>
  </ol>
-</div></div>
+</div></dialog>
 <script>
 const NS="http://www.w3.org/2000/svg",sv=document.getElementById('sv'),tip=document.getElementById('tip');
 let SX=70,Rs=60;const CY=382;
@@ -406,10 +409,10 @@ sv.addEventListener('pointermove',show);sv.addEventListener('pointerdown',show);
 sv.addEventListener('pointerleave',()=>tip.style.display='none');
 setup(1);
 // 심화 질문 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-deepA.onclick=()=>{deepOv.hidden=false;deepX.focus()};
-deepX.onclick=()=>{deepOv.hidden=true;deepA.focus()};
+deepA.onclick=()=>{(deepOv.open||deepOv.showModal());deepX.focus()};
+deepX.onclick=()=>{deepOv.close();deepA.focus()};
 deepOv.addEventListener('click',e=>{if(e.target===deepOv)deepX.onclick()});
-addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!deepOv.hidden)deepX.onclick();if(!realOv.hidden)realX.onclick();if(!real2Ov.hidden)real2X.onclick()});
+deepOv.addEventListener('cancel',e=>{e.preventDefault();deepX.onclick()});
 
 // ---- '실제 진행 모습' 팝업 공통: 남쪽 하늘을 바라본 풍경 ----
 // 춘분 무렵(적위 0°) 북위 37.5°. 가로·세로 모두 1° = 5px로 펼침 (왼쪽 끝 = 동, 가운데 = 남, 오른쪽 끝 = 서)
@@ -519,9 +522,10 @@ const skyPanel=(id,title,inner,legend)=>`<rect x="900" width="200" height="450" 
  rvGo.onclick=()=>run?stop():play();
  rvR.onclick=()=>{stop();p=0;draw()};
  rvT.oninput=()=>{stop();p=rvT.value/1000;draw()};
- realB.onclick=()=>{realOv.hidden=false;p=0;draw();play();realX.focus()};
- realX.onclick=()=>{stop();realOv.hidden=true;realB.focus()};
+ realB.onclick=()=>{(realOv.open||realOv.showModal());p=0;draw();play();realX.focus()};
+ realX.onclick=()=>{stop();realOv.close();realB.focus()};
  realOv.addEventListener('click',e=>{if(e.target===realOv)realX.onclick()});
+ realOv.addEventListener('cancel',e=>{e.preventDefault();realX.onclick()});
  draw();
 })();
 
@@ -594,9 +598,10 @@ const skyPanel=(id,title,inner,legend)=>`<rect x="900" width="200" height="450" 
  rv2Go.onclick=()=>run?stop():play();
  rv2R.onclick=()=>{stop();p=0;draw()};
  rv2T.oninput=()=>{stop();p=rv2T.value/1000;draw()};
- real2B.onclick=()=>{real2Ov.hidden=false;p=0;draw();play();real2X.focus()};
- real2X.onclick=()=>{stop();real2Ov.hidden=true;real2B.focus()};
+ real2B.onclick=()=>{(real2Ov.open||real2Ov.showModal());p=0;draw();play();real2X.focus()};
+ real2X.onclick=()=>{stop();real2Ov.close();real2B.focus()};
  real2Ov.addEventListener('click',e=>{if(e.target===real2Ov)real2X.onclick()});
+ real2Ov.addEventListener('cancel',e=>{e.preventDefault();real2X.onclick()});
  draw();
 })();
 </script></main><script src="../copyright.js"></script>

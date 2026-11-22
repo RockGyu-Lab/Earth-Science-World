@@ -68,7 +68,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
@@ -151,12 +154,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>우주가 빛보다 빠르게 팽창했다는 것은 '빛보다 빠른 것은 없다'는 것과 어긋나지 않을까요?</p><button type="button" class="open-think" id="thb6">정답 확인</button></div>
   <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">급팽창 이론: 빅뱅 직후 아주 짧은 시간 동안 우주가 빛보다 빠른 속도로 급격하게 팽창함</p></div>
-  <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우주가 빛보다 빠르게 팽창했다는 것은 '빛보다 빠른 것은 없다'는 것과 어긋나지 않을까요?">
+  <dialog class="ov" id="ov6" aria-label="생각해 보기: 우주가 빛보다 빠르게 팽창했다는 것은 '빛보다 빠른 것은 없다'는 것과 어긋나지 않을까요?"><div class="think">
    <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우주가 빛보다 빠르게 팽창했다는 것은 '빛보다 빠른 것은 없다'는 것과 어긋나지 않을까요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
    <p class="ans">어긋나지 않습니다. 급팽창은 물체나 정보가 공간 속을 빛보다 빨리 움직인 것이 아니라, 공간 자체가 빠르게 늘어난 것이기 때문입니다.</p>
    <p class="exp">'빛보다 빠른 것은 없다'는 것은 물체나 정보가 공간 속을 이동하는 빠르기에 대한 이야기입니다. 급팽창 시기에는 공간 자체가 급격하게 늘어나 멀리 있는 두 지점 사이의 거리가 빛보다 빠르게 멀어졌지만, 그 사이에서 정보가 빛보다 빨리 전달된 것은 아닙니다.</p>
    <p class="exp">그래서 급팽창이 일어나는 동안 서로 가까이 있던 영역들이 정보를 주고받을 수 없을 만큼 멀리 떨어지게 됩니다.</p>
-  </div></div>
+  </div></dialog>
  </div>
  <div id="ivb" hidden>
   <svg id="jsv" viewBox="0 0 940 320" aria-label="급팽창 이전에 온도가 고르게 된 우주가 급팽창으로 커져 지평선 안쪽이 균질하게 관측되는 과정"><defs>
@@ -172,12 +175,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>급팽창 이론으로 보면, 우주 배경 복사의 온도가 모든 방향에서 거의 같은 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb7">정답 확인</button></div>
   <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">급팽창 이전: 우주 전체가 상호작용하여 온도가 고르게 됨 → 급팽창 → 지평선 안쪽이 균질하게 관측됨</p></div>
-  <div class="ov" id="ov7" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 급팽창 이론으로 보면, 우주 배경 복사의 온도가 모든 방향에서 거의 같은 까닭은 무엇일까요?">
+  <dialog class="ov" id="ov7" aria-label="생각해 보기: 급팽창 이론으로 보면, 우주 배경 복사의 온도가 모든 방향에서 거의 같은 까닭은 무엇일까요?"><div class="think">
    <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>급팽창 이론으로 보면, 우주 배경 복사의 온도가 모든 방향에서 거의 같은 까닭은 무엇일까요?</b><button type="button" class="x" id="thx7" aria-label="닫기">닫기 ✕</button></div>
    <p class="ans">지금 관측되는 우주 전체가 급팽창 이전에는 서로 상호작용할 수 있을 만큼 작은 영역이어서 온도가 고르게 되었고, 그 상태 그대로 급팽창으로 커졌기 때문입니다.</p>
    <p class="exp">급팽창 이전에는 우주의 크기가 그 당시 정보 전달이 가능한 영역보다 작았으므로, 우주 전체가 에너지를 주고받으며 온도가 고르게 될 수 있었습니다.</p>
    <p class="exp">급팽창으로 이 영역이 엄청나게 커지면서 지금은 서로 정보를 주고받을 수 없을 만큼 멀리 떨어진 A와 B도, 원래는 함께 상호작용했던 같은 영역에 있었던 것입니다. 그래서 반대 방향에서 온 우주 배경 복사의 온도도 거의 같습니다.</p>
-  </div></div>
+  </div></dialog>
  </div>
  <div id="ivc" hidden>
   <svg id="ksv" viewBox="0 0 940 320" aria-label="풍선이 엄청나게 커지면 개미가 보는 좁은 영역이 평평하게 보이는 것처럼 급팽창으로 우주가 평탄하게 보이는 까닭"><defs>
@@ -192,12 +195,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>둥근 지구의 표면이 우리에게 평평하게 느껴지는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb8">정답 확인</button></div>
   <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">급팽창으로 우주가 엄청나게 커짐 → 관측되는 우주 영역은 평탄하게 보임 → 평탄성 문제 해결</p></div>
-  <div class="ov" id="ov8" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 둥근 지구의 표면이 우리에게 평평하게 느껴지는 까닭은 무엇일까요?">
+  <dialog class="ov" id="ov8" aria-label="생각해 보기: 둥근 지구의 표면이 우리에게 평평하게 느껴지는 까닭은 무엇일까요?"><div class="think">
    <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>둥근 지구의 표면이 우리에게 평평하게 느껴지는 까닭은 무엇일까요?</b><button type="button" class="x" id="thx8" aria-label="닫기">닫기 ✕</button></div>
    <p class="ans">지구 전체의 크기에 비해 우리가 한 번에 보는 범위가 매우 좁기 때문입니다.</p>
    <p class="exp">지구는 둥글지만 반지름이 약 6400&nbsp;km로 매우 커서, 우리가 둘러볼 수 있는 좁은 범위의 표면은 거의 평평하게 보입니다.</p>
    <p class="exp">급팽창 이론도 같은 생각입니다. 급팽창으로 우주 전체가 엄청나게 커졌기 때문에, 우리가 관측할 수 있는 우주 영역은 우주 전체의 아주 작은 일부분이 되어 평탄하게 보입니다. 그래서 초기 우주의 밀도가 임계 밀도와 정밀하게 같아야 할 필요가 없습니다.</p>
-  </div></div>
+  </div></dialog>
  </div>
 </section>
 </main>
@@ -390,8 +393,8 @@ I.go(0);J.go(0);K.go(0);
 (function iLoop(now){if(!p4.hidden){const t=(now/1000-TB);if(!iva.hidden){I.tick(t);iDraw(t)}else if(!ivb.hidden){J.tick(t);jDraw(t)}else{K.tick(t);kDraw(t)}}requestAnimationFrame(iLoop)})(performance.now());
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
- const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
- ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
+ const close=()=>{ov.close();btn.focus()};btn.onclick=()=>{(ov.open||ov.showModal());cl.focus()};cl.onclick=close;
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('cancel',e=>{e.preventDefault();close()})});
 </script>
 <script src="../copyright.js"></script>
 </body>

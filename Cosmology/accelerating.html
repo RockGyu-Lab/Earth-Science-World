@@ -84,7 +84,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #adcv{display:block;width:100%;height:auto;aspect-ratio:940/460;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
 #adcue{flex:1 1 220px;font-size:.92rem}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
@@ -173,15 +176,15 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>먼 <span class="rn">I</span>a형 초신성이 예상보다 어둡게 관측된 것으로 우주가 가속 팽창한다는 것을 알 수 있는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb11">정답 확인</button></div>
   <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx"><span class="rn">I</span>a형 초신성(최대 밝기 일정) → 먼 초신성이 예상보다 어둡게 관측됨 → 우주는 가속 팽창하고 있음</p></div>
-  <div class="ov" id="ov11" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 먼 Ia형 초신성이 예상보다 어둡게 관측된 것으로 우주가 가속 팽창한다는 것을 알 수 있는 까닭은 무엇일까요?">
+  <dialog class="ov" id="ov11" aria-label="생각해 보기: 먼 Ia형 초신성이 예상보다 어둡게 관측된 것으로 우주가 가속 팽창한다는 것을 알 수 있는 까닭은 무엇일까요?"><div class="think">
    <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span><span>먼 <span class="rn">I</span>a형 초신성이 예상보다 어둡게 관측된 것으로 우주가 가속 팽창한다는 것을 알 수 있는 까닭은 무엇일까요?</span></b><button type="button" class="x" id="thx11" aria-label="닫기">닫기 ✕</button></div>
    <p class="ans">먼 초신성은 우주가 감속 팽창한다고 보고 예상한 것보다 어둡게, 즉 멀리 있고 가속 팽창으로 예상한 거리와 맞으므로 우주의 팽창 속도가 과거보다 지금 더 빨라졌다는 뜻이기 때문입니다.</p>
    <svg id="th11sv" viewBox="20 44 500 252" style="display:block;width:100%;height:auto;border-radius:12px;margin:4px 0 8px" aria-label="먼 Ia형 초신성의 관측 그래프: 먼 초신성은 감속 팽창으로 예상한 거리보다 멀리 있고, 가속 팽창으로 예상한 거리와 맞음"><g id="th11g"></g></svg>
    <p class="exp">그래프의 세 선은 같은 적색 편이에서 우주가 감속 팽창, 등속 팽창(팽창 속도 일정), 가속 팽창한다고 보고 예상한 거리이고, 노란 점은 실제로 관측한 <span class="rn">I</span>a형 초신성입니다. 가까운 초신성은 세 선과 거의 같지만, 먼 초신성일수록 감속 팽창의 선보다 위에 있고 가속 팽창의 선과 맞습니다.</p>
    <p class="exp"><span class="rn">I</span>a형 초신성은 최대 밝기가 거의 일정하므로, 어둡게 보일수록 멀리 있습니다. 물질의 중력 때문에 팽창 속도가 점점 느려졌다고 보고 계산한 거리보다 실제 먼 초신성까지의 거리가 더 멀었습니다.</p>
    <p class="exp">같은 적색 편이인데 거리가 더 멀다는 것은 빛이 오는 데 시간이 더 걸렸다는 뜻이고, 이는 과거에는 우주가 지금보다 느리게 팽창했다는 뜻입니다. 즉, 우주의 팽창 속도는 과거보다 지금 더 빨라졌으며, 우주는 가속 팽창하고 있습니다.</p>
-  </div></div>
-  <div class="ov" id="ov13" hidden><div class="think" role="dialog" aria-modal="true" aria-label="더 알아보기: Ia형 초신성">
+  </div></dialog>
+  <dialog class="ov" id="ov13" aria-label="더 알아보기: Ia형 초신성"><div class="think">
    <div class="think-h"><b class="think-t"><span class="tag">더 알아보기</span><span><span class="rn">I</span>a형 초신성 <small class="rd-how">읽는 법: <b>일에이형</b> (<span class="rn">I</span>는 로마 숫자 1)</small></span></b><button type="button" class="x" id="thx13" aria-label="닫기">닫기 ✕</button></div>
    <svg id="iasv" viewBox="20 44 500 252" style="display:block;width:100%;height:auto;border-radius:12px;margin-bottom:8px" aria-label="쌍성계에서 동반성의 물질이 백색 왜성 쪽으로 흘러 넘어가 원반을 이루며 쌓이고, 백색 왜성의 질량이 태양의 약 1.4배가 되면 폭발하는 모습"><defs>
     <radialGradient id="iadk" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffffff"/><stop offset=".18" stop-color="#fff1c2"/><stop offset=".45" stop-color="#ffc277" stop-opacity=".85"/><stop offset=".8" stop-color="#ff7a52" stop-opacity=".45"/><stop offset="1" stop-color="#ff7a52" stop-opacity="0"/></radialGradient>
@@ -192,14 +195,14 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <p class="exp">동반성(적색 거성)의 바깥층 물질이 백색 왜성 쪽으로 흘러 넘어가 백색 왜성 둘레를 돌며 원반을 이루고, 이 물질이 백색 왜성에 쌓여 질량이 늘어납니다. 질량이 태양 질량의 약 1.4배에 이르면 백색 왜성이 폭발합니다.</p>
    <p class="exp">이처럼 거의 같은 질량에서 폭발하므로 최대 밝기가 거의 일정합니다. 그래서 겉보기 밝기를 측정하면 거리를 구할 수 있어, 먼 은하까지의 거리를 재는 기준(표준 촛불)으로 씁니다.</p>
    <p class="exp">또 <span class="rn">I</span>a형 초신성은 가장 밝을 때 태양보다 수십억 배나 밝아서, 은하 하나가 내는 빛과 맞먹을 정도입니다. 그래서 수십억 광년 떨어진 먼 은하에서 폭발해도 관측할 수 있습니다.</p>
-  </div></div>
-  <div class="ov" id="ov14" hidden><div class="think big" role="dialog" aria-modal="true" aria-label="자세히 이해하기: 적색 편이가 같을 때 팽창 모델에 따라 은하까지의 거리가 다른 이유는?">
+  </div></dialog>
+  <dialog class="ov" id="ov14" aria-label="자세히 이해하기: 적색 편이가 같을 때 팽창 모델에 따라 은하까지의 거리가 다른 이유는?"><div class="think big">
    <div class="think-h"><b class="think-t"><span class="tag more">자세히 이해하기</span>적색 편이가 같을 때 팽창 모델에 따라 은하까지의 거리가 다른 이유는?</b><button type="button" class="x" id="thx14" aria-label="닫기">닫기 ✕</button></div>
    <div class="adnote"><p>z = 1인 은하를 관측하는 경우를 예를 들어 봅시다.</p>
 <p><b class="em">적색 편이 z = 1</b>: 관측한 빛의 파장이 처음의 <b class="em">2배</b>로 늘어났다는 뜻입니다. 빛이 오는 동안 우주(공간)도 <b class="em">2배</b>로 커졌습니다.</p></div>
    <canvas id="adcv" width="940" height="460" aria-label="등속·가속·감속 팽창하는 세 고무줄(우주)이 1에서 2로 늘어나는 데 걸린 시간을 시계로 보여 주고, 고무줄 아래에 늘어나는 빠르기를 숫자로, 그 아래에 빛이 온 거리 막대를 그린 그림"></canvas>
    <div class="ctl"><button type="button" class="pb" id="adplay">▶ 재생</button><button type="button" class="pb" id="adreset">↺ 처음부터</button><span id="adcue"></span></div>
-  </div></div>
+  </div></dialog>
  </div>
  <div id="avb" hidden>
   <svg id="qsv" viewBox="0 0 940 320" aria-label="우주를 가속 팽창시키는 암흑 에너지의 특징과 우주의 구성"><defs>
@@ -215,12 +218,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>우주가 팽창할수록 암흑 에너지의 영향이 점점 커지는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb12">정답 확인</button></div>
   <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">암흑 에너지: 우주를 가속 팽창시키는 에너지(척력처럼 작용) · 우주의 구성: 암흑 에너지 약 68&nbsp;%, 암흑 물질 약 27&nbsp;%, 보통 물질 약 5&nbsp;%</p></div>
-  <div class="ov" id="ov12" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우주가 팽창할수록 암흑 에너지의 영향이 점점 커지는 까닭은 무엇일까요?">
+  <dialog class="ov" id="ov12" aria-label="생각해 보기: 우주가 팽창할수록 암흑 에너지의 영향이 점점 커지는 까닭은 무엇일까요?"><div class="think">
    <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우주가 팽창할수록 암흑 에너지의 영향이 점점 커지는 까닭은 무엇일까요?</b><button type="button" class="x" id="thx12" aria-label="닫기">닫기 ✕</button></div>
    <p class="ans">우주가 팽창하면 물질의 밀도는 작아지지만, 암흑 에너지의 밀도는 거의 일정하기 때문입니다.</p>
    <p class="exp">물질의 양은 변하지 않으므로 우주가 팽창하여 부피가 커지면 물질의 밀도는 작아지고, 팽창을 느리게 하는 중력의 효과도 약해집니다.</p>
    <p class="exp">반면 암흑 에너지는 우주 공간 자체가 가진 에너지여서 공간이 늘어나도 밀도가 거의 일정합니다. 그래서 시간이 지날수록 암흑 에너지가 차지하는 비율이 커지고, 우주는 점점 더 빠르게 팽창합니다.</p>
-  </div></div>
+  </div></dialog>
  </div>
 </section>
 </main>
@@ -375,9 +378,9 @@ const DA=stepper(AS,astep,aprev,anext,anum,acue,aDraw);
 // 2·3단계(예상보다 어두운 초신성, 우주의 가속 팽창) 설명 상자 오른쪽 아래의 [자세히 이해하기]: z = 1인 빛이 오는 데 걸린 시간 비교(ov14 팝업)를 띄움
 const moreBtn=document.createElement('button');moreBtn.type='button';moreBtn.className='morebtn';moreBtn.textContent='🔍 자세히 이해하기';
 {const g0=DA.go;DA.go=s=>{g0(s);astep.classList.toggle('hasmore',DA.s>=1);if(DA.s>=1)astep.append(moreBtn)}}
-{const close=()=>{ov14.hidden=true;adClose();moreBtn.focus()};
- moreBtn.onclick=()=>{ov14.hidden=false;adOpen();thx14.focus()};thx14.onclick=close;   // 열 때마다 처음부터
- ov14.addEventListener('click',e=>{if(e.target===ov14)close()});ov14.addEventListener('keydown',e=>{if(e.key=='Escape')close()})}
+{const close=()=>{ov14.close();adClose();moreBtn.focus()};
+ moreBtn.onclick=()=>{(ov14.open||ov14.showModal());adOpen();thx14.focus()};thx14.onclick=close;   // 열 때마다 처음부터
+ ov14.addEventListener('click',e=>{if(e.target===ov14)close()});ov14.addEventListener('cancel',e=>{e.preventDefault();close()})}
 
 // 암흑 에너지: 가속 팽창의 원인 → 암흑 에너지의 특징(밀도 변화) → 우주의 구성
 const QS=[
@@ -454,11 +457,11 @@ function qFit(){if(!qstep.offsetParent)return;const keep=qstep.innerHTML;let h=0
  QS.forEach(([tt,tx])=>{qstep.innerHTML=stepHTML(tt,tx);h=Math.max(h,qstep.offsetHeight)});qstep.innerHTML=keep;qstep.style.minHeight=h+'px'}
 a6b.addEventListener('click',()=>requestAnimationFrame(qFit));addEventListener('resize',qFit);
 DA.go(0);DQ.go(0);
-(function aLoop(now){if(!p6.hidden){const t=(now/1000-TB);if(!ava.hidden)aDraw(t);else qDraw(t);if(!ov13.hidden)iaDraw(t)}requestAnimationFrame(aLoop)})(performance.now());
+(function aLoop(now){if(!p6.hidden){const t=(now/1000-TB);if(!ava.hidden)aDraw(t);else qDraw(t);if(ov13.open)iaDraw(t)}requestAnimationFrame(aLoop)})(performance.now());
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
- const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
- ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
+ const close=()=>{ov.close();btn.focus()};btn.onclick=()=>{(ov.open||ov.showModal());cl.focus()};cl.onclick=close;
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('cancel',e=>{e.preventDefault();close()})});
 // Ia형 초신성 알아보기 창: 열 때와 다시 보기를 누를 때 애니메이션을 처음부터 한 번 진행
 thb13.addEventListener('click',()=>{iaT0=NOW()});
 thb11.addEventListener('click',()=>{th11g.innerHTML='';iBox(th11g);aObs(th11g,1,true)});   // 생각해 보기 답 창: 관측 그래프를 다 그린 모습으로 다시 보여 줌
@@ -553,10 +556,10 @@ $('adplay').onclick=()=>{if(t>=TMAX)t=0;play=!play;upd()};
 $('adreset').onclick=()=>{t=0;play=false;upd()};
 let last=performance.now();
 (function loop(now){const dt=Math.min(.1,(now-last)/1000);last=now;
- if(play&&!ov14.hidden){t=Math.min(TMAX,t+dt*10);if(t>=TMAX){play=false;upd()}else draw()}   // 1초에 10억 년 (팝업이 열려 있을 때만)
+ if(play&&ov14.open){t=Math.min(TMAX,t+dt*10);if(t>=TMAX){play=false;upd()}else draw()}   // 1초에 10억 년 (팝업이 열려 있을 때만)
  requestAnimationFrame(loop)})(last);
 window.adOpen=()=>{t=0;play=false;fit();upd()};window.adClose=()=>{play=false;upd()};
-window.addEventListener('resize',()=>{if(!ov14.hidden)fit()});
+window.addEventListener('resize',()=>{if(ov14.open)fit()});
 })();
 </script>
 <script src="../copyright.js"></script>

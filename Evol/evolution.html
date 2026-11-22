@@ -48,7 +48,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
@@ -151,19 +154,19 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
  </div>
  <!-- 생각해 보기: 꼬리표 + 질문 + [정답 확인] → 팝업 (정식 사이트 eclipses.html 심화 질문과 같은 형식) -->
  <div class="note ask"><span class="tag">생각해 보기</span><p>0.5 <i class="v">M</i><sub class="sun">☉</sub>과 15 <i class="v">M</i><sub class="sun">☉</sub>이 원시별에서 주계열이 될 때, 크기와 온도는 어떻게 변하나요?</p><button type="button" class="open-think" id="thb7">정답 확인</button></div>
- <div class="ov" id="ov7" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 0.5 M☉과 15 M☉이 원시별에서 주계열이 될 때, 크기와 온도는 어떻게 변하나요?">
+ <dialog class="ov" id="ov7" aria-label="생각해 보기: 0.5 M☉과 15 M☉이 원시별에서 주계열이 될 때, 크기와 온도는 어떻게 변하나요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span><span>0.5 <i class="v">M</i><sub class="sun">☉</sub>과 15 <i class="v">M</i><sub class="sun">☉</sub>이 원시별에서 주계열이 될 때, 크기와 온도는 어떻게 변하나요?</span></b><button type="button" class="x" id="thx7" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">두 별 모두 수축하여 크기가 작아집니다. 0.5 <i class="v">M</i><sub class="sun">☉</sub>은 표면 온도가 거의 변하지 않고, 15 <i class="v">M</i><sub class="sun">☉</sub>은 표면 온도가 크게 높아집니다.</p>
   <p class="exp">0.5 <i class="v">M</i><sub class="sun">☉</sub>의 원시별은 H-R도에서 거의 수직으로 아래로 내려옵니다. 표면 온도는 거의 그대로인데 광도가 크게 줄어들므로, 반지름이 작아진 것입니다(<i class="v">L</i> ∝ <i class="v">R</i>²<i class="v">T</i>⁴).</p>
   <p class="exp">15 <i class="v">M</i><sub class="sun">☉</sub>의 원시별은 H-R도에서 거의 수평으로 왼쪽으로 이동합니다. 광도는 거의 그대로인데 표면 온도가 크게 높아지므로, 이때도 반지름은 작아집니다.</p>
   <p class="exp">두 별 모두 수축하는 동안 중심부 온도는 계속 올라가며, 약 1,000만 K에 이르러 수소 핵융합 반응이 시작되면 주계열성이 됩니다. <span class="go"><span class="kb sub">0.5 <i class="v">M</i><sub class="sun">☉</sub></span>과 <span class="kb sub">15 <i class="v">M</i><sub class="sun">☉</sub></span>을 골라 재생하며 H-R도의 경로를 비교해 보세요.</span></p>
- </div></div>
+ </div></dialog>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요? (모두 보기 체크 후 재생)</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
- <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?">
+ <dialog class="ov" id="ov1" aria-label="생각해 보기: 질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 클수록 주계열에 도달하는 시간은 어떻게 달라지나요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">질량이 클수록 짧아집니다.</p>
   <p class="exp">질량이 큰 원시별일수록 빠르게 수축하여 중심부 온도가 빨리 올라가므로 주계열에 더 빨리 도달합니다. (15 <i class="v">M</i><sub class="sun">☉</sub> 약 6만 년, 1 <i class="v">M</i><sub class="sun">☉</sub> 약 5,000만 년)</p>
- </div></div>
+ </div></dialog>
 </section>
 
 <!-- ② 주계열 단계: 위 정역학 평형, 아래 수소 핵융합 반응 -->
@@ -178,11 +181,11 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
     <button class="pb" id="fplay">▶ 자동 진행</button></div></div>
  </div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?</p><button type="button" class="open-think" id="thb2">정답 확인</button></div>
- <div class="ov" id="ov2" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?">
+ <dialog class="ov" id="ov2" aria-label="생각해 보기: 주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>주계열성 중심부에서 일어나는 수소 핵융합 반응을 하나의 반응식으로 나타내면 어떻게 될까요?</b><button type="button" class="x" id="thx2" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">4H → He + 에너지</p>
   <p class="exp">수소 원자핵 4개가 헬륨 원자핵 1개로 바뀌며, 이때 줄어든 질량(질량 결손)이 에너지로 방출됩니다(E = mc²). p-p 연쇄 반응과 CNO 순환 반응 모두 결과는 같습니다.</p>
- </div></div>
+ </div></dialog>
 </section>
 
 <!-- ③ 후주계열 단계: 소메뉴 셋 (주계열 이후 변화 / 거성과 초거성의 내부 구조 / 질량에 따른 진화 경로) -->
@@ -197,17 +200,17 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
   <span class="unit" id="pmhint" hidden><span class="go">그림의 각 단계를 눌러 보세요.</span></span>
  </div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</p><button type="button" class="open-think" id="thb4">정답 확인</button></div>
- <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?">
+ <dialog class="ov" id="ov4" aria-label="생각해 보기: 우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</b><button type="button" class="x" id="thx4" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">별의 내부에서 핵융합으로 만들어지고, 행성상 성운과 초신성 폭발로 우주에 퍼진 원소들입니다.</p>
   <p class="exp">이 원소들이 성간 물질이 되었다가 다시 태양계와 지구, 생명체를 이루는 재료가 되었습니다.</p>
- </div></div>
+ </div></dialog>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?</p><button type="button" class="open-think" id="thb3">정답 확인</button></div>
- <div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?">
+ <dialog class="ov" id="ov3" aria-label="생각해 보기: 질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?</b><button type="button" class="x" id="thx3" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">질량이 태양 정도인 별은 적색 거성을 거쳐 행성상 성운과 백색 왜성이 되고, 질량이 매우 큰 별은 초거성을 거쳐 초신성 폭발 후 중성자별이나 블랙홀이 됩니다.</p>
   <p class="exp">질량이 클수록 중심부 온도가 높아 더 무거운 원소까지 핵융합이 일어나고, 일생을 더 격렬하게 마칩니다.</p>
- </div></div>
+ </div></dialog>
 </section>
 
 <!-- ④ 별의 진화와 순환: 성간 물질을 가운데 두고 두 고리(질량이 태양과 비슷한 별 / 매우 큰 별)가 8자 모양으로 순환 -->
@@ -217,17 +220,17 @@ sub.sun{font-size:.68em;line-height:0;margin-left:.04em}
  <div class="subtabs" id="cysel"><button data-v="sun" class="on">질량이 태양과 비슷한 별</button><button data-v="big">질량이 태양보다 매우 큰 별</button><button data-v="cmp">진화 속도 비교</button></div>
  <div class="cyfig"><svg id="cyv" viewBox="0 0 960 500"></svg><div class="cyb" id="cytool"><button class="pb" id="cyplay">▶ 순환 따라가기</button><span id="cyhint">각 단계를 눌러도 설명을 볼 수 있습니다.</span></div></div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?</p><button type="button" class="open-think" id="thb5">정답 확인</button></div>
- <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?">
+ <dialog class="ov" id="ov5" aria-label="생각해 보기: 철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">초신성 폭발 과정에서 만들어집니다.</p>
   <p class="exp">별 내부의 핵융합 반응으로는 철까지만 만들어집니다. 철보다 무거운 원소(금, 우라늄 등)는 초신성이 폭발할 때 생기는 엄청난 에너지 속에서 원자핵이 많은 중성자를 흡수하여 만들어지고, 폭발과 함께 우주로 흩어집니다.</p>
- </div></div>
+ </div></dialog>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?</p><button type="button" class="open-think" id="thb6">정답 확인</button></div>
- <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?">
+ <dialog class="ov" id="ov6" aria-label="생각해 보기: 질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 클수록 별의 수명은 어떻게 달라질까요? 그 이유는 무엇일까요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">질량이 클수록 별의 수명은 짧아집니다. 질량이 큰 별일수록 중심부 온도가 높아 핵융합 반응이 빠르게 일어나 수소를 빨리 소모하기 때문입니다.</p>
   <p class="exp">질량이 큰 별은 수소를 더 많이 가지고 있지만, 그보다 훨씬 많은 에너지를 내보내므로 연료가 금방 바닥납니다. 질량이 태양과 비슷한 별은 약 100억 년, 질량이 태양의 약 10배 이상인 별은 수천만 년 이하를 삽니다. 그래서 질량이 큰 별이 만든 원소가 먼저 성간 물질로 돌아갑니다.</p>
- </div></div>
+ </div></dialog>
 </section>
 
 <script>
@@ -770,9 +773,9 @@ drawCy();
 
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ov7','thb7','thx7'],['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
- const closeTh=()=>{ov.hidden=true;btn.focus()};
- btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
+ const closeTh=()=>{ov.close();btn.focus()};
+ btn.addEventListener('click',()=>{(ov.open||ov.showModal());cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})});
+ ov.addEventListener('cancel',e=>{e.preventDefault();closeTh()})});
 </script></main><script src="../copyright.js"></script>
 </body></html>

@@ -152,7 +152,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
@@ -268,47 +271,47 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="eq"><i>v</i><span class="eqs">=</span><span class="frac"><span>Δλ</span><span>λ<sub>0</sub></span></span><span class="eqs">×</span><i>c</i></p>
   <p class="eqx">λ<sub>0</sub>: 원래 파장 · Δλ: 파장의 변화량(관측 파장 − 원래 파장) · <i>v</i>: 다가오거나 멀어지는 속력 · <i>c</i>: 빛의 속력</p></div>
  </div>
- <div class="ov" id="ov7" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?">
+ <dialog class="ov" id="ov7" aria-label="생각해 보기: 별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?</b><button type="button" class="x" id="thx7" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">다가올 때는 원래보다 짧아지고(청색 편이), 멀어질 때는 원래보다 길어집니다(적색 편이).</p>
   <p class="exp">별은 파면 하나를 내보낸 뒤 다음 파면을 내보낼 때까지 움직입니다. 그래서 별이 다가오는 쪽에서는 파면 사이의 간격(파장)이 좁아지고, 멀어지는 쪽에서는 넓어집니다.</p>
   <p class="exp">이 때문에 스펙트럼의 흡수선이 다가올 때는 짧은 파장(파란색) 쪽으로, 멀어질 때는 긴 파장(빨간색) 쪽으로 옮겨 갑니다.</p>
- </div></div>
- <div class="ov" id="ov8" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?">
+ </div></dialog>
+ <dialog class="ov" id="ov8" aria-label="생각해 보기: 별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?</b><button type="button" class="x" id="thx8" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">파장이 더 많이 길어집니다. 적색 편이가 커져서 흡수선이 긴 파장 쪽으로 더 멀리 옮겨 갑니다.</p>
   <p class="exp">파장의 변화량은 별이 멀어지는 속력에 비례합니다(Δλ/λ<sub>0</sub> = <i>v</i>/<i>c</i>). 이 그림에서 별이 빛 속력의 0.05배로 멀어지면 파장이 원래의 1.05배가 되고, 그 2배인 0.1배로 멀어지면 1.1배가 됩니다. 곧 속력이 2배가 되면 파장이 늘어난 양도 2배가 됩니다. <span class="go"><span class="kb sub">천천히 멀어질 때</span>와 <span class="kb sub">빨리 멀어질 때(2배)</span>를 눌러 비교해 보세요.</span></p>
   <p class="exp">멀리 있는 은하일수록 적색 편이가 크게 관측된다는 사실은 탐구 03(허블-르메트르 법칙과 우주 팽창)에서 살펴봅니다.</p>
- </div></div>
- <div class="ov" id="ov9" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 멀어지는 별에서 적색 편이가 나타나면, 별이 실제로 붉게 보일까요?">
+ </div></dialog>
+ <dialog class="ov" id="ov9" aria-label="생각해 보기: 멀어지는 별에서 적색 편이가 나타나면, 별이 실제로 붉게 보일까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>멀어지는 별에서 적색 편이가 나타나면, 별이 실제로 붉게 보일까요?</b><button type="button" class="x" id="thx9" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">아니요. 별빛의 파장이 모두 조금씩 길어질 뿐, 별의 색이 눈에 띄게 붉어지는 것은 아닙니다.</p>
   <p class="exp">별빛은 여러 파장의 빛이 섞여 있습니다. 파장이 모두 길어지면 파란빛은 초록빛 쪽으로, 초록빛은 노란빛 쪽으로 옮겨 가지만, 그만큼 보라색 바깥(자외선)에 있던 빛이 보라색 쪽으로 들어와 별의 전체 색은 거의 그대로입니다. 게다가 실제 별의 속력은 빛 속력보다 매우 느려서 파장의 변화도 아주 작습니다.</p>
   <p class="exp">그래서 적색 편이는 별의 색이 아니라, 원래 위치를 알고 있는 <b>흡수선</b>이 파장이 긴 쪽으로 옮겨 간 것을 보고 확인합니다.</p>
- </div></div>
+ </div></dialog>
  <!-- 해보기(오리가 만든 물결파 팝업) + 생각해 보기 2개 (꼬리표 + 질문 + 정답 확인 팝업) -->
  <div id="dask">
  <div class="note ask"><span class="tag">생각해 보기</span><p>음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb5">정답 확인</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb6">정답 확인</button></div>
  <div class="note ask ask2"><span class="tag try">해보기</span><p>헤엄치는 오리가 만든 물결파에서도 도플러 효과가 나타나는지 확인해 보세요.</p><button type="button" class="open-think try" id="dtryb">열기</button></div>
  </div>
- <div class="ov" id="ovd" hidden><div class="think wide" role="dialog" aria-modal="true" aria-label="해보기: 헤엄치는 오리가 만든 물결파">
+ <dialog class="ov" id="ovd" aria-label="해보기: 헤엄치는 오리가 만든 물결파"><div class="think wide">
   <div class="think-h"><b class="think-t"><span class="tag try">해보기</span>헤엄치는 오리가 만든 물결파</b><button type="button" class="x" id="dtryx" aria-label="닫기">닫기 ✕</button></div>
   <p class="exp">물 위에 떠 있는 나뭇잎을 관찰자로 보고, 오리가 정지하고 있을 때, 다가올 때, 멀어질 때 나뭇잎이 흔들리는 빠르기(진동수)를 비교해 보세요.</p>
   <div id="dslot"></div>
- </div></div>
- <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?">
+ </div></dialog>
+ <dialog class="ov" id="ov5" aria-label="생각해 보기: 음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">음원이 다가올 때는 관찰자 쪽의 파장이 짧아지고, 멀어질 때는 파장이 길어집니다.</p>
   <p class="exp">음원은 파면 하나를 내보낸 뒤 다음 파면을 내보낼 때까지 앞으로 이동합니다. 그래서 음원이 나아가는 앞쪽에서는 파면 사이의 간격(파장)이 좁아지고, 뒤쪽에서는 넓어집니다.</p>
   <p class="exp">파동이 퍼지는 속력은 그대로이므로, 파장이 짧아진 쪽에서는 진동수가 커지고(소리는 높게 들림), 파장이 길어진 쪽에서는 진동수가 작아집니다(소리는 낮게 들림). 이때 구급차의 사이렌이 내는 소리 자체는 바뀌지 않습니다.</p>
- </div></div>
- <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?">
+ </div></dialog>
+ <dialog class="ov" id="ov6" aria-label="생각해 보기: 음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">음원이 빠르게 움직일수록 파장의 변화 폭이 커집니다. 앞쪽의 파장은 더 짧아지고, 뒤쪽의 파장은 더 길어집니다.</p>
   <p class="exp">음원은 파면을 한 번 내보내고 다음 파면을 내보낼 때까지(한 주기 동안) 일정한 거리를 이동하고, 앞쪽 파장은 이 거리만큼 짧아지고 뒤쪽 파장은 이 거리만큼 길어집니다. 음원이 빨라지면 한 주기 동안 이동하는 거리가 늘어나므로 파장의 변화도 커집니다.</p>
   <p class="exp">예를 들어 구급차가 소리 속력의 0.3배로 움직이면 앞쪽 파장은 원래의 0.7배, 뒤쪽 파장은 1.3배가 됩니다. 속력을 2배(소리 속력의 0.6배)로 하면 앞쪽은 0.4배, 뒤쪽은 1.6배가 됩니다. <span class="go"><span class="kb sub">천천히 움직일 때</span>와 <span class="kb sub">빨리 움직일 때(2배)</span>를 눌러 비교해 보세요.</span></p>
- </div></div>
+ </div></dialog>
 </section>
 <script>
 
@@ -557,12 +560,12 @@ function dTry(open){dStop();const bs=dmov.querySelectorAll('button');
  bs[1].textContent=open?'움직일 때':'천천히 움직일 때';bs[2].hidden=!!open;
  // 오리 팝업은 늘 정지하고 있을 때로 시작하고, 닫으면 구급차는 열기 전에 고른 경우로 돌아감
  if(open){dSaved=[dmv,dk];dmv=0;dk=1}else if(dSaved){[dmv,dk]=dSaved}segPick(dmov,String(dmv?dk:0));
- if(open){dhold.style.height=(sview.offsetHeight+dctl.offsetHeight+8)+'px';sview.before(dhold);dslot.append(sview,dctl);dsrc='d';ovd.hidden=false;dtryx.focus()}
- else{dhold.before(sview,dctl);dhold.remove();dsrc='a';ovd.hidden=true;dtryb.focus()}
+ if(open){dhold.style.height=(sview.offsetHeight+dctl.offsetHeight+8)+'px';sview.before(dhold);dslot.append(sview,dctl);dsrc='d';(ovd.open||ovd.showModal());dtryx.focus()}
+ else{dhold.before(sview,dctl);dhold.remove();dsrc='a';ovd.close();dtryb.focus()}
  dInit()}
 dtryb.onclick=()=>dTry(1);dtryx.onclick=()=>dTry(0);
 ovd.addEventListener('click',e=>{if(e.target===ovd)dTry(0)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ovd.hidden)dTry(0)});
+ovd.addEventListener('cancel',e=>{e.preventDefault();dTry(0)});
 sndb.onclick=()=>{dsnd=dsnd?0:1;sndb.classList.toggle('on',!!dsnd);sndb.textContent=dsnd?'🔊 소리 켬':'🔇 소리 끔';sndb.setAttribute('aria-pressed',!!dsnd);
  if(dsnd&&draf){aStart();dSound()}if(!dsnd)aSet(0,0)};
 
@@ -670,8 +673,8 @@ hpick('s');
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13'],['ov14','thb14','thx14'],['ov15','thb15','thx15'],['ov16','thb16','thx16'],['ov17','thb17','thx17'],['ov18','thb18','thx18']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
- const closeTh=()=>{ov.hidden=true;btn.focus()};
- btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
+ const closeTh=()=>{ov.close();btn.focus()};
+ btn.addEventListener('click',()=>{(ov.open||ov.showModal());cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})});
+ ov.addEventListener('cancel',e=>{e.preventDefault();closeTh()})});
 </script></main><script src="../copyright.js"></script>

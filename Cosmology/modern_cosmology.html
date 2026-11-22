@@ -66,7 +66,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
@@ -141,18 +144,18 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="note ask"><span class="tag">생각해 보기</span><p>두 우주론의 공통점은 무엇일까요?</p><button type="button" class="open-think" id="thb2">정답 확인</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>두 우주론 중 어느 것이 옳은지 알아내려면 무엇을 관측해야 할까요?</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
  <div class="note ask ask2 memo wait" id="cmemo"><span class="tag mem">기억하기</span><p class="mtx">정상 우주론: 질량 증가, 밀도·온도 일정 &nbsp;/&nbsp; 빅뱅 우주론: 질량 일정, 밀도·온도 감소</p></div>
- <div class="ov" id="ov2" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 두 우주론의 공통점은 무엇일까요?">
+ <dialog class="ov" id="ov2" aria-label="생각해 보기: 두 우주론의 공통점은 무엇일까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>두 우주론의 공통점은 무엇일까요?</b><button type="button" class="x" id="thx2" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">두 우주론 모두 <b>우주가 팽창한다</b>는 것을 인정합니다.</p>
   <p class="exp">허블-르메트르 법칙으로 멀리 있는 은하일수록 빠르게 멀어진다는 것, 즉 우주가 팽창한다는 것이 관측되었습니다. 정상 우주론과 빅뱅 우주론은 모두 이 관측 사실을 받아들이며, 크게 보면 우주는 어느 곳에서나 고르게 퍼져 있다고 생각합니다.</p>
   <p class="exp">차이는 팽창하는 동안 우주가 어떻게 변하는지에 있습니다. 정상 우주론에서는 팽창으로 생긴 빈 공간에 새로운 물질이 계속 만들어져 밀도와 온도가 일정하게 유지되고, 빅뱅 우주론에서는 질량이 일정하므로 팽창할수록 밀도와 온도가 낮아집니다.</p>
- </div></div>
- <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 두 우주론 중 어느 것이 옳은지 알아내려면 무엇을 관측해야 할까요?">
+ </div></dialog>
+ <dialog class="ov" id="ov1" aria-label="생각해 보기: 두 우주론 중 어느 것이 옳은지 알아내려면 무엇을 관측해야 할까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>두 우주론 중 어느 것이 옳은지 알아내려면 무엇을 관측해야 할까요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">과거의 우주가 지금과 달랐는지를 확인하면 됩니다.</p>
   <p class="exp">정상 우주론에서는 우주가 언제나 지금과 같은 모습이지만, 빅뱅 우주론에서는 과거의 우주가 지금보다 훨씬 뜨겁고 밀도가 컸습니다. 따라서 뜨거웠던 초기 우주가 남긴 빛(우주 배경 복사)이 관측되거나, 먼 우주(과거의 우주)가 가까운 우주와 다르게 보인다면 빅뱅 우주론을 뒷받침하는 증거가 됩니다.</p>
   <p class="exp">실제로 1965년에 우주 배경 복사가 발견되면서 빅뱅 우주론이 널리 받아들여졌습니다. 자세한 내용은 탐구 02(빅뱅 우주론)의 <b>빅뱅 우주론의 근거</b>에서 알아봅니다.</p>
- </div></div>
+ </div></dialog>
 </section>
 </main>
 
@@ -224,8 +227,8 @@ cAll();cLast=performance.now();craf=requestAnimationFrame(cLoop);   // 단추 �
 
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
- const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
- ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
+ const close=()=>{ov.close();btn.focus()};btn.onclick=()=>{(ov.open||ov.showModal());cl.focus()};cl.onclick=close;
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('cancel',e=>{e.preventDefault();close()})});
 </script>
 <script src="../copyright.js"></script>
 </body>

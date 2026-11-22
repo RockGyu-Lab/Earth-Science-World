@@ -67,7 +67,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
@@ -154,12 +157,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>태양계에서는 바깥쪽 행성일수록 공전 속도가 느린데, 은하의 바깥쪽 별은 왜 빠르게 돌고 있을까요?</p><button type="button" class="open-think" id="thb9">정답 확인</button></div>
   <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">은하의 회전 속도: 은하 바깥쪽에서도 회전 속도가 거의 일정함 → 보이지 않는 물질(암흑 물질)이 넓게 분포함</p></div>
-  <div class="ov" id="ov9" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 태양계에서는 바깥쪽 행성일수록 공전 속도가 느린데, 은하의 바깥쪽 별은 왜 빠르게 돌고 있을까요?">
+  <dialog class="ov" id="ov9" aria-label="생각해 보기: 태양계에서는 바깥쪽 행성일수록 공전 속도가 느린데, 은하의 바깥쪽 별은 왜 빠르게 돌고 있을까요?"><div class="think">
    <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>태양계에서는 바깥쪽 행성일수록 공전 속도가 느린데, 은하의 바깥쪽 별은 왜 빠르게 돌고 있을까요?</b><button type="button" class="x" id="thx9" aria-label="닫기">닫기 ✕</button></div>
    <p class="ans">은하에는 보이지 않는 암흑 물질이 바깥쪽까지 넓게 퍼져 있어서, 바깥쪽의 별도 큰 중력을 받기 때문입니다.</p>
    <p class="exp">태양계는 질량의 대부분(약 99.8&nbsp;%)이 가운데의 태양에 모여 있습니다. 그래서 태양에서 멀수록 받는 중력이 약해지고, 바깥쪽 행성일수록 공전 속도가 느립니다.</p>
    <p class="exp">은하에서 별이 도는 빠르기는 그 별의 궤도 안쪽에 있는 질량에 따라 달라집니다. 바깥쪽 별의 회전 속도가 줄지 않는다는 것은 바깥쪽으로 갈수록 궤도 안쪽의 질량이 계속 늘어난다는 뜻입니다. 빛을 내는 물질은 바깥쪽에 적으므로, 보이지 않는 암흑 물질이 넓게 분포한다고 생각합니다.</p>
-  </div></div>
+  </div></dialog>
  </div>
  <div id="rvb" hidden>
   <svg id="lsv" viewBox="0 0 940 320" aria-label="질량이 큰 은하단이 멀리 있는 천체의 빛을 휘게 하는 중력 렌즈 현상으로 암흑 물질이 있다는 것을 알아보는 과정"><defs>
@@ -177,12 +180,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>빛을 내지 않는 암흑 물질을 중력 렌즈 현상으로 알아낼 수 있는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb10">정답 확인</button></div>
   <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">중력 렌즈: 빛이 휘어진 정도로 구한 은하단의 질량 &gt; 보이는 물질의 질량 → 암흑 물질이 있음</p></div>
-  <div class="ov" id="ov10" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 빛을 내지 않는 암흑 물질을 중력 렌즈 현상으로 알아낼 수 있는 까닭은 무엇일까요?">
+  <dialog class="ov" id="ov10" aria-label="생각해 보기: 빛을 내지 않는 암흑 물질을 중력 렌즈 현상으로 알아낼 수 있는 까닭은 무엇일까요?"><div class="think">
    <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>빛을 내지 않는 암흑 물질을 중력 렌즈 현상으로 알아낼 수 있는 까닭은 무엇일까요?</b><button type="button" class="x" id="thx10" aria-label="닫기">닫기 ✕</button></div>
    <p class="ans">빛의 경로가 휘어지는 정도는 빛을 내는지와 관계없이, 렌즈 역할을 하는 천체의 전체 질량에 따라 달라지기 때문입니다.</p>
    <p class="exp">암흑 물질은 빛을 내거나 반사하지 않아 망원경으로 직접 볼 수 없지만, 질량이 있으므로 주위의 공간을 휘게 하여 그 근처를 지나는 빛의 경로를 휘게 합니다.</p>
    <p class="exp">따라서 멀리 있는 천체의 상이 휘어진 모습을 분석하면 은하단에 있는 보이는 물질과 보이지 않는 물질을 모두 합한 질량을 알 수 있습니다. 이 질량이 보이는 물질의 질량보다 훨씬 크므로, 은하단에 암흑 물질이 많이 있다는 것을 알 수 있습니다.</p>
-  </div></div>
+  </div></dialog>
  </div>
 </section>
 </main>
@@ -417,8 +420,8 @@ d5a.addEventListener('click',()=>requestAnimationFrame(dFit));d5b.addEventListen
 (function dLoop(now){if(!p5.hidden){const t=(now/1000-TB);if(!rva.hidden)rDraw(t);else lDraw(t)}requestAnimationFrame(dLoop)})(performance.now());
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
- const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
- ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
+ const close=()=>{ov.close();btn.focus()};btn.onclick=()=>{(ov.open||ov.showModal());cl.focus()};cl.onclick=close;
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('cancel',e=>{e.preventDefault();close()})});
 </script>
 <script src="../copyright.js"></script>
 </body>

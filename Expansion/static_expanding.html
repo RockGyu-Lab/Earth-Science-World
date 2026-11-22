@@ -163,7 +163,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
@@ -299,7 +302,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
  </div>
 
- <div class="ov" id="ovc" hidden><div class="think" role="dialog" aria-modal="true" aria-label="세 사람의 생각 비교">
+ <dialog class="ov" id="ovc" aria-label="세 사람의 생각 비교"><div class="think">
   <div class="think-h"><b class="think-t">세 사람의 생각 비교</b><button type="button" class="x" id="cxc" aria-label="닫기">닫기 ✕</button></div>
   <table class="cmp">
    <thead><tr><th></th><th>뉴턴</th><th>아인슈타인</th><th>프리드만</th></tr></thead>
@@ -309,17 +312,17 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
     <tr><th>해결 아이디어</th><td>우주는 무한하고 별이 고르게 퍼져 있어 모든 방향의 힘이 상쇄된다.</td><td>중력과 반대로 밀어내는 우주 상수가 중력과 균형을 이룬다.</td><td>우주는 멈춰 있지 않고 팽창하고 있어서, 중력이 팽창을 늦출 뿐 별들이 한곳으로 모이지 않는다.</td></tr>
    </tbody>
   </table>
- </div></div>
- <div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 뉴턴, 아인슈타인, 프리드만의 생각을 정적 우주와 팽창 우주로 구분해 보세요.">
+ </div></dialog>
+ <dialog class="ov" id="ov3" aria-label="생각해 보기: 뉴턴, 아인슈타인, 프리드만의 생각을 정적 우주와 팽창 우주로 구분해 보세요."><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>뉴턴, 아인슈타인, 프리드만의 생각을 정적 우주와 팽창 우주로 구분해 보세요.</b><button type="button" class="x" id="thx3" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">정적 우주: 뉴턴, 아인슈타인 / 팽창 우주: 프리드만</p>
   <p class="exp">뉴턴과 아인슈타인은 우주의 크기가 변하지 않는다고 보고, 별들이 한곳으로 모이지 않는 까닭을 각각 무한하고 균일한 별의 분포와 우주 상수로 설명했습니다. 프리드만은 우주가 멈춰 있을 필요가 없으며, 시간에 따라 팽창(또는 수축)할 수 있다고 보았습니다.</p>
- </div></div>
- <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?">
+ </div></dialog>
+ <dialog class="ov" id="ov1" aria-label="생각해 보기: 아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">생각이나 계산만으로는 정할 수 없고, 실제 우주를 관측하여 우주의 크기가 변하지 않는지, 팽창하고 있는지를 확인해야 합니다.</p>
   <p class="exp">두 사람은 같은 일반 상대성 이론의 방정식에서 출발했지만, 우주가 실제로 어떤 모습인지는 방정식만으로 정할 수 없습니다. 예를 들어 멀리 있는 은하들이 우리에게서 멀어지고 있는지를 관측하면 판단할 수 있습니다. 탐구 03(허블-르메트르 법칙과 우주 팽창)에서 은하를 관측한 결과를 살펴봅시다.</p>
- </div></div>
+ </div></dialog>
 </section>
 <script>
 
@@ -462,8 +465,8 @@ fInit();
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13'],['ov14','thb14','thx14'],['ov15','thb15','thx15'],['ov16','thb16','thx16'],['ov17','thb17','thx17'],['ov18','thb18','thx18']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);if(!ov)return;
- const closeTh=()=>{ov.hidden=true;btn.focus()};
- btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
+ const closeTh=()=>{ov.close();btn.focus()};
+ btn.addEventListener('click',()=>{(ov.open||ov.showModal());cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})});
+ ov.addEventListener('cancel',e=>{e.preventDefault();closeTh()})});
 </script></main><script src="../copyright.js"></script>

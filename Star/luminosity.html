@@ -118,7 +118,10 @@ svg.arw{display:inline-block;width:1.35em;height:.9em;vertical-align:-.08em;marg
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .okc{color:#5fd08a}:root:not([data-theme="light"]) .badc{color:#ff8f7d}}
 :root[data-theme="dark"] .okc{color:#5fd08a}:root[data-theme="dark"] .badc{color:#ff8f7d}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .think{background:var(--bg);width:min(640px,100%);max-height:100%;overflow:auto;padding:12px 16px;border:1px solid var(--bd);border-radius:10px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .think-h{display:flex;justify-content:space-between;align-items:center}
 .think-t{color:var(--acc);font-size:.95rem}
@@ -197,11 +200,11 @@ body[data-step="3"] #q1svg{max-height:max(160px,calc(100dvh - 464px))}
 </div>
 </section>
 <!-- 실제 별 비교의 생각해 보기 (팝업) -->
-<div class="ov" id="thOv" hidden><div class="think realq" role="dialog" aria-modal="true" aria-label="생각해 보기">
+<dialog class="ov" id="thOv" aria-label="생각해 보기"><div class="think realq">
 <div class="think-h"><b class="think-t">생각해 보기</b><button type="button" class="x" id="thX">닫기 ✕</button></div>
 <p>베텔게우스는 태양보다 표면 온도가 낮은데도 태양보다 약 9만 배 밝습니다. 왜 그럴까요? <button type="button" class="ansbtn" id="realA">정답 확인</button></p>
 <p class="ans" id="realAns" hidden>광도는 <b>반지름의 제곱</b>과 <b>표면 온도의 네제곱</b>에 비례합니다(L ∝ R²T⁴). 베텔게우스는 표면 온도가 낮아 온도 효과는 태양의 약 0.15배에 불과하지만, 반지름이 태양의 약 760배라 반지름 효과가 약 58만 배나 됩니다. 그래서 둘을 곱한 광도는 태양의 약 9만 배가 됩니다. 즉, 별의 광도는 온도만으로 정해지지 않고 <b>크기(반지름)</b>의 영향도 매우 큽니다.</p>
-</div></div>
+</div></dialog>
 
 <script>
 const NS="http://www.w3.org/2000/svg",TS=5772;
@@ -315,9 +318,9 @@ const realBtn=document.getElementById('realBtn'),realBox=document.getElementById
 realBtn.onclick=()=>{realBox.hidden=!realBox.hidden;realBtn.setAttribute('aria-expanded',!realBox.hidden);realBtn.classList.toggle('on',!realBox.hidden)};
 // 생각해 보기 팝업: 단추로 열고, 닫기·바깥 누르기·Esc로 닫음
 const thOv=document.getElementById('thOv'),thB=document.getElementById('realThink'),thX=document.getElementById('thX');
-thB.onclick=()=>{thOv.hidden=false;thX.focus()};thX.onclick=()=>{thOv.hidden=true;thB.focus()};
+thB.onclick=()=>{(thOv.open||thOv.showModal());thX.focus()};thX.onclick=()=>{thOv.close();thB.focus()};
 thOv.addEventListener('click',e=>{if(e.target===thOv)thX.onclick()});
-addEventListener('keydown',e=>{if(e.key==='Escape'&&!thOv.hidden)thX.onclick()});
+thOv.addEventListener('cancel',e=>{e.preventDefault();thX.onclick()});
 mathify(thOv);
 document.getElementById('realA').onclick=e=>{const a=document.getElementById('realAns');a.hidden=!a.hidden;e.target.textContent=a.hidden?'정답 확인':'답 닫기'};
 render();

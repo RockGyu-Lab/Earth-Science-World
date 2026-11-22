@@ -78,7 +78,10 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
 .open-think{margin-left:6px;padding:3px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
+.ov:not([open]){display:none}
+/* 팝업은 <dialog class="ov">: 화면 전체를 덮는 반투명 판(.ov) 안에 내용 상자. 브라우저의 dialog 기본 모양을 덮어씀 */
+dialog.ov{width:auto;height:auto;max-width:none;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:visible;color:inherit}
+dialog.ov::backdrop{background:transparent}
 .think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
 .think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
@@ -108,11 +111,11 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
  <svg id="sv1" viewBox="0 0 900 590"></svg>
  <div class="stars" id="stars"><span class="qmsg">유명한 별</span></div>
  <div class="ask ask-b"><span class="tag">생각해 보기</span><p>H-R도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
- <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: H-R도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?">
+ <dialog class="ov" id="ov1" aria-label="생각해 보기: H-R도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>H-R도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">왼쪽으로 갈수록 별의 표면 온도가 높아집니다.</p>
   <p class="exp">H-R도의 가로축은 왼쪽이 고온, 오른쪽이 저온입니다. 분광형도 왼쪽부터 O, B, A, F, G, K, M형 순서로, 표면 온도가 높은 별부터 낮은 별 순서입니다.</p>
- </div></div>
+ </div></dialog>
 </section>
 
 <!-- ② H-R도 상의 별의 분류 -->
@@ -120,11 +123,11 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
  <div class="bar"><div class="seg">별의 분류<div class="bs" id="gsel"></div></div><label class="chk"><input type="checkbox" id="rad"> 반지름이 같은 선</label></div>
  <div class="note" id="gnote"></div>
  <svg id="sv2" viewBox="0 0 1000 600"></svg>
- <div class="ov" id="ov" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 거성과 백색왜성은 왜 광도가 다를까요?">
+ <dialog class="ov" id="ov" aria-label="생각해 보기: 거성과 백색왜성은 왜 광도가 다를까요?"><div class="think">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>거성과 백색왜성은 왜 광도가 다를까요?</b><button type="button" class="x" id="thx" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">반지름이 크게 다르기 때문입니다.</p>
   <p class="exp">별의 광도는 반지름과 표면 온도에 따라 달라집니다. 거성은 반지름이 매우 커서 표면 온도가 낮아도 광도가 크고, 백색왜성은 반지름이 매우 작아서 표면 온도가 높아도 광도가 작습니다.</p>
- </div></div>
+ </div></dialog>
 </section>
 <div id="tip"></div>
 
@@ -283,14 +286,14 @@ TABS.forEach((t,i)=>{t.onclick=()=>openTab(i);t.onkeydown=e=>{if(e.key=='ArrowRi
 pickStar('태양');setG('all');
 // 생각해 보기 답 팝업: '정답 확인'는 설명 칸을 다시 그릴 때마다 새로 생기므로 설명 칸에서 누름을 받음. 닫기·바깥 누르기·Esc로 닫힘
 {const ov=document.getElementById('ov1'),bt=document.getElementById('thb1'),cl=document.getElementById('thx1');
- const closeTh=()=>{ov.hidden=true;bt.focus()};
- bt.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
+ const closeTh=()=>{ov.close();bt.focus()};
+ bt.addEventListener('click',()=>{(ov.open||ov.showModal());cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})}
+ ov.addEventListener('cancel',e=>{e.preventDefault();closeTh()})}
 {const ov=document.getElementById('ov'),cl=document.getElementById('thx'),gn=document.getElementById('gnote');
- const closeTh=()=>{ov.hidden=true;const b=document.getElementById('thb');if(b)b.focus()};
- gn.addEventListener('click',e=>{if(e.target.closest('#thb')){ov.hidden=false;cl.focus()}});
+ const closeTh=()=>{ov.close();const b=document.getElementById('thb');if(b)b.focus()};
+ gn.addEventListener('click',e=>{if(e.target.closest('#thb')){(ov.open||ov.showModal());cl.focus()}});
  cl.addEventListener('click',closeTh);ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
- document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})}
+ ov.addEventListener('cancel',e=>{e.preventDefault();closeTh()})}
 </script></main><script src="../copyright.js"></script>
 </body></html>
