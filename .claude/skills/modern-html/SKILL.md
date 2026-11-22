@@ -1,6 +1,6 @@
 ---
 name: modern-html
-description: 수업용 인터랙티브 HTML 자료(지구과학 World, 통합과학 World, Earth-Test-Lab)의 HTML·CSS·JavaScript를 짜거나 고칠 때 따르는 최신 작성법과 지원 범위 기준. 새 자료·새 탭·팝업·애니메이션·그래프를 만들거나, 기존 코드의 구조·동작을 손볼 때 먼저 읽는다. 설명 글만 고칠 때는 읽지 않아도 된다.
+description: 수업용 인터랙티브 HTML 자료(지구과학 World, 통합과학 World, Earth-Test-Lab)의 HTML·CSS·JavaScript를 짜거나 고칠 때 따르는 최신 작성법과 지원 범위 기준, iPad(Safari) canvas 점검. 새 자료·새 탭·팝업·애니메이션·그래프를 만들거나, 기존 코드의 구조·동작을 손볼 때 먼저 읽는다. 설명 글만 고칠 때는 읽지 않아도 된다.
 ---
 
 # 최신 HTML 작성법 (수업용 단일 HTML 자료)
@@ -99,7 +99,7 @@ description: 수업용 인터랙티브 HTML 자료(지구과학 World, 통합과
   - 탭·작은 메뉴를 바꾸면 돌던 애니메이션을 `cancelAnimationFrame`으로 반드시 멈춘다.
   - 반짝임처럼 되풀이되는 효과는 `setInterval`보다 CSS 애니메이션으로 만든다.
 - **끌기·누르기:** Pointer Events(`pointerdown`·`pointermove`·`pointerup` + `setPointerCapture`)로 마우스·손가락·펜을 한꺼번에 처리하고, 끄는 영역에 `touch-action: none`을 준다. 키보드로도 같은 조작이 되게 ←/→ 키를 함께 단다.
-- **canvas:** `devicePixelRatio`만큼 키워 그려 선명하게 하고, 크기가 바뀌는 것은 `ResizeObserver`로 감지한다.
+- **canvas:** `devicePixelRatio`만큼 키워 그려 선명하게 하고, 크기가 바뀌는 것은 `ResizeObserver`로 감지한다 화면 밖 그림판을 쓸 때는 9번(iPad 점검)을 지킨다.
 - **움직임 줄이기 설정 읽기:** `matchMedia('(prefers-reduced-motion: reduce)').matches`.
 - 전역 변수가 많아지면 한 탭의 코드를 `{ … }` 블록이나 함수로 묶어 이름이 겹치지 않게 한다.
 
@@ -132,5 +132,26 @@ description: 수업용 인터랙티브 HTML 자료(지구과학 World, 통합과
 4. **움직임 줄이기:** `reducedMotion: 'reduce'`에서 깨지지 않는지.
 5. **오프라인:** `page.route('**/*', r => r.request().url().startsWith('file:') ? r.continue() : r.abort())`로 외부 접속을 막고 기능이 동작하는지.
 6. **키보드:** Tab으로 단추·탭에 초점이 보이고, Enter/Space로 눌리며, 팝업이 Esc로 닫히는지.
+7. **iPad(Safari):** canvas를 고쳤으면 9번을 점검하고, 사용자에게 iPad로 확인해 달라고 알린다.
 
 화면 사진은 사용자에게 보여 줄 것이면 `deviceScaleFactor: 2`, 확인용이면 1로 찍는다.
+
+## 9. iPad(Safari) 점검 (canvas)
+학생들은 주로 **iPad(Safari)**로 자료를 본다. 크롬에서 괜찮아도 iPad에서만 생기는 문제가 있으니, canvas 그림을 짜거나 고칠 때마다 아래를 점검한다.
+
+- **화면 밖 그림판(offscreen canvas) 하나를 한 프레임 안에서 여러 그림이 번갈아 덮어쓰지 않는다.**
+  - 까닭: Safari는 `drawImage`를 늦게 처리한다. 그래서 같은 화면 밖 그림판을 그림 A용으로 칠해 `drawImage`한 뒤 곧바로 그림 B용으로 다시 칠하면, 화면의 그림 A에 B의 내용이 섞여 깜빡인다. Chromium에서는 생기지 않는다.
+  - 실제로 생긴 곳: 통합과학 World `ENSO/elnino.html`의 수온 편차 지도. 지도 두 개(엘니뇨·라니냐)가 함께 보일 때 앞 지도가 깜빡였다(2026-11-22).
+  - 고친 방법: 지도마다 따로 그림판을 두었다(`gridMap`의 `GBUF`). 자료(지도 격자)를 열쇠로 그림판을 하나씩 만들어 다시 쓴다.
+    ```js
+    const GBUF = new Map();            // 그림(자료)마다 화면 밖 그림판 하나
+    function gbuf(key) {
+      let b = GBUF.get(key);
+      if (!b) { const c = document.createElement('canvas'); c.width = W; c.height = H;
+                const x = c.getContext('2d'); b = { c, x, im: x.createImageData(W, H) }; GBUF.set(key, b); }
+      return b;
+    }
+    ```
+- **그림마다 화면 밖 그림판을 따로 두거나, 바뀌지 않는 그림은 한 번만 칠해 둔다.** 매 프레임 같은 그림을 다시 칠할 필요가 없으면 처음에 한 번 칠한 그림판을 `drawImage`로 옮기기만 한다(빠르고 깜빡임도 없음).
+- 한 그림판을 여러 그림이 함께 써야 하면, 같은 프레임 안에서 내용을 바꾸지 않는다(다음 프레임에 바꾸거나, 그림판을 나눈다).
+- **확인:** 클라우드 세션에는 Safari가 없어 Chromium으로만 확인할 수 있다. canvas 그림처럼 iPad 확인이 필요한 변경이면, 올린 뒤 사용자에게 **iPad로 열어 봐 달라고** 알린다(어느 탭·메뉴에서 무엇을 보면 되는지 함께).
