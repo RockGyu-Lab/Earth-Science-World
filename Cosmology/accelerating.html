@@ -235,7 +235,10 @@ function resetAll(){TB=performance.now()/1000;aLast=qLast=-1;[DA,DQ].forEach(o=>
 
 // SVG 그리기 도우미
 const SVGNS='http://www.w3.org/2000/svg';
-function mk(t,a,p){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function mk(t,a,p){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,(k=='marker-end'||k=='marker-start')&&a.stroke?headFor(a[k],a.stroke):a[k]);if(p)p.appendChild(e);return e}
+// iPad(Safari) 대비: 화살촉의 fill="context-stroke"(선 색 따르기)를 옛 Safari가 몰라 검게 칠함 → 선 색마다 화살촉 marker를 복제해 그 색으로 칠해 씀
+function headFor(u,col){const m=/^url\(#([\w-]+)\)$/.exec(u),src=m&&document.getElementById(m[1]);if(!src||src.querySelector('path').getAttribute('fill')!=='context-stroke')return u;
+ const id=m[1]+'_'+String(col).replace(/[^0-9a-z]/gi,'');if(!document.getElementById(id)){const c=src.cloneNode(true);c.id=id;c.querySelector('path').setAttribute('fill',col);src.parentNode.appendChild(c)}return `url(#${id})`}
 // Ia형의 I는 로마 숫자이므로 머리와 발에 가로선이 있는 세리프 글꼴로 씀
 function txt(s,a,p){const e=mk('text',a,p);String(s).split(/(I)(?=a형)/).forEach(q=>{if(q==='I')mk('tspan',{'font-family':'"Times New Roman",Times,Georgia,serif'},e).textContent='I';else e.appendChild(document.createTextNode(q))});return e}
 // 단계 설명 상자: 파란 제목 + 설명. 비(7 : 1), 식(12 : 4 = 3 : 1), 수와 단위(2.7 K)가 줄 끝에서 갈라지지 않게
