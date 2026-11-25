@@ -337,7 +337,7 @@ let aLast=-1,aT0=0;   // 단계가 바뀐 시각: 애니메이션은 한 번만 
 function aDraw(t){const g=agg;g.innerHTML='';const s=DA.s;if(s!=aLast){aLast=s;aT0=t}
  iHead(g,['같은 밝기의 천체를 멀리서 보면','먼 Ia형 초신성의 관측 (개념도)','우주의 크기 변화 (개념도)'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#aclip)'},g);
- if(s==0){const EX=56,EY=160,pl=.85+.15*Math.sin(t*3);
+ if(s==0){const EX=56,EY=160,pl=1;   // 초신성 크기·밝기는 고정 (계속 변하면 별의 밝기가 원래 변한다고 오해할 수 있음)
   mk('circle',{cx:EX,cy:EY,r:13,fill:'url(#aearth)',stroke:'#fff','stroke-width':1},inn);txt('지구',{x:EX,y:EY+32,'text-anchor':'middle',fill:'#cfe6ff','font-size':12.5,'font-weight':800},inn);
   [1,2,3].forEach(d=>{const x=EX+118*d,b=1/(d*d);
    mk('line',{x1:x-14,y1:EY,x2:EX+18,y2:EY,stroke:'#ffd76b','stroke-width':1.2,'stroke-dasharray':'3 5',opacity:.25+.5*b},inn);
